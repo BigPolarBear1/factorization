@@ -71,5 +71,5 @@ The cool thing is, if you find a smooth with only 1 or 2 odd exponent factors...
 
 I guess when I get back from running, I'll add a sieve interval. Thats like 10 minutes of copy paste work. Step size will just be the modulus (made up from the smooth factors). Later we can adjust this step size based on the quadratic coefficient (i.e multiply the modulus be a smooth factor, or divide by one, etc). So get that sieve interval shit out of the way today... then tomorrow, I'll add the p-adic lifting.... then it's done. And then I need to fix that sloppy brainfog code. God damn. I don't know what's wrong with me. Maybe from running ultra marathons. Or maybe the CIA poisoned me. Definitely something those cowards would do. Fucking CIA pussies. I would beat any CIA fucker in a fist fight. Fucking shitheads.
 
-
+Update: Quickly added some sieve interval code for the find_similar family of functions. It's all ready now for tomorrow to add the final missing piece (and most crucial piece) ... p-adic lifting. That's the engine that will make this entire approach work. This will work. I know it will. So tomorrow will be the moment of truth.... and if it works... there is no going back. Endless others way this could have gone down. It is funny how circumstances have conspired to have it happen this way... oh well.
 
