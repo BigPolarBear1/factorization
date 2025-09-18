@@ -32,4 +32,6 @@ Update: Always knew the british were a bunch of cunts. Nazi collaborators.
 
 America truely has fallen. Just like that. 
 
+It's hilarious. All people had to do was give my former manager a bunch of money for unjustly firing him and I would have been perfectly fine selling my work. I tried. I'm guessing people have gotten so good at bending the truth, they can't see truth anymore when it's right infront of them.... oh well... time to start coding this final piece. I wanted nothing more then a normal life, with a job, employment, stability... you denied me everything, for 2 years, I couldn't get anywhere in life, despite you people knowing (or you should have known) my work was solid... and I know it was some nazi pieces of shit who forced me down this path. Because they can't let a transgender person have any wins in life. Yea, you could call me radicalized now, because I will destroy you people for what you did. I will become the terrorist antifa. HAhahahahaha. Fuck nazis. Nazi losers. I despise everything about nazis. You all keep saying you people are somehow "better" or "superior" ..... but you are just shit for brains losers.
+
 
