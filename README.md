@@ -67,5 +67,7 @@ Which is a fraction of what would otherwise be required.
 
 But yea, this will not work well until I implement p-adic lifting and sieve intervals. Otherwise it just becomes too difficult to find these "similar smooths" at higher bits. 
 
+The cool thing is, if you find a smooth with only 1 or 2 odd exponent factors... you only need to find a couple of similar smooths to succeed. Ofcourse they will be hard to find, but with p-adic lifting, it is possible. You could in theory factor a 200-bit number with only 5 smooths or something this way. 
+
 
 
