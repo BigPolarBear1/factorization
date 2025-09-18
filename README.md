@@ -44,23 +44,23 @@ Run: python3 run_qs.py -keysize 25 -base 50 -debug 1 -lin_size 10 -quad_size 100
 Just run on 25-bit numbers, this can't possibly work on bigger numbers until I implement p-adic lifting and sieve_intervals... but it demonstrates the idea.
 Code is also very sloppy. Going through a period of particulary bad brain fog. I'll fix it soon. 
 
-You should see output like this:
+You should see output like this:</br></br>
 
-Constructing quad interval took: 2.091426908998983
-Processing quad interval took: 0.09593547700205818
-Generating new modulus:  6815
-Looking for similar smooths, amount needed: 8 initial smooth factors: {5, 43, 47, 19, 29, -1}
-Found a similar smooth {2, 5, 47, 19, 29}
-Found a similar smooth {2, 43, 47, 29}
-Found a similar smooth {43, 29, -1}
-Found a similar smooth {2, 29}
-Found a similar smooth {5, 43, 19}
-Found a similar smooth {5, 43, 47, 19, -1}
-Found a similar smooth {5, 43, 19}
-Found a similar smooth {43, 47}
-sim_found:  8
-Running linear algebra step with #smooths:  9
-[SUCCESS]Factors are: 2503 and 2777
+Constructing quad interval took: 2.091426908998983</br>
+Processing quad interval took: 0.09593547700205818</br>
+Generating new modulus:  6815</br>
+Looking for similar smooths, amount needed: 8 initial smooth factors: {5, 43, 47, 19, 29, -1}</br>
+Found a similar smooth {2, 5, 47, 19, 29}</br>
+Found a similar smooth {2, 43, 47, 29}</br>
+Found a similar smooth {43, 29, -1}</br>
+Found a similar smooth {2, 29}</br>
+Found a similar smooth {5, 43, 19}</br>
+Found a similar smooth {5, 43, 47, 19, -1}</br>
+Found a similar smooth {5, 43, 19}</br>
+Found a similar smooth {43, 47}</br>
+sim_found:  8</br>
+Running linear algebra step with #smooths:  9</br>
+[SUCCESS]Factors are: 2503 and 2777</br></br>
 
 So with a factor base of 50, here we are able to succeed after finding only 9 smooths (pulled from different quadratic coefficients).
 Which is a fraction of what would otherwise be required. 
