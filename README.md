@@ -36,4 +36,36 @@ It's hilarious. All people had to do was give my former manager a bunch of money
 
 Update: Let me just clean up what I got and upload it and go for a run. I still need to implement the p-adic lifting.. but I am having a particulary bad day. These last few months I constantly feel like I'm right at the threshold of having some type of nervous breakdown. Like, just going into the woods and hanging myself or some shit. It's really hard. It's really hard constantly having to think back to people and places I can't see again. While stuck in this really small room. Just getting this really intense claustrophobia from being stuck here for 2 years. Let me clean up this code and upload it and go for a run.... it demonstrates what I'm trying to do already. And I guess it's basically the same as disclosure as anyone can just implement the p-adic step themselves. Ofcourse the question is... will anyone admit I'm right or will they just keep denying everything right until I set a factoring record? Or are they hoping I kill myself before that happens? Because that is what this looks like. This is 100% what this looks like.
 
+Update: I have uploaded my work in progress:
+
+Build: python3 setup.py build_ext --inplace
+Run: python3 run_qs.py -keysize 25 -base 50 -debug 1 -lin_size 10 -quad_size 100_000
+
+Just run on 25-bit numbers, this can't possibly work on bigger numbers until I implement p-adic lifting and sieve_intervals... but it demonstrates the idea.
+Code is also very sloppy. Going through a period of particulary bad brain fog. I'll fix it soon. 
+
+You should see output like this:
+
+Constructing quad interval took: 2.091426908998983
+Processing quad interval took: 0.09593547700205818
+Generating new modulus:  6815
+Looking for similar smooths, amount needed: 8 initial smooth factors: {5, 43, 47, 19, 29, -1}
+Found a similar smooth {2, 5, 47, 19, 29}
+Found a similar smooth {2, 43, 47, 29}
+Found a similar smooth {43, 29, -1}
+Found a similar smooth {2, 29}
+Found a similar smooth {5, 43, 19}
+Found a similar smooth {5, 43, 47, 19, -1}
+Found a similar smooth {5, 43, 19}
+Found a similar smooth {43, 47}
+sim_found:  8
+Running linear algebra step with #smooths:  9
+[SUCCESS]Factors are: 2503 and 2777
+
+So with a factor base of 50, here we are able to succeed after finding only 9 smooths (pulled from different quadratic coefficients).
+Which is a fraction of what would otherwise be required. 
+
+But yea, this will not work well until I implement p-adic lifting and sieve intervals. Otherwise it just becomes too difficult to find these "similar smooths" at higher bits. 
+
+
 
