@@ -69,5 +69,7 @@ But yea, this will not work well until I implement p-adic lifting and sieve inte
 
 The cool thing is, if you find a smooth with only 1 or 2 odd exponent factors... you only need to find a couple of similar smooths to succeed. Ofcourse they will be hard to find, but with p-adic lifting, it is possible. You could in theory factor a 200-bit number with only 5 smooths or something this way. 
 
+I guess when I get back from running, I'll add a sieve interval. Thats like 10 minutes of copy paste work. Step size will just be the modulus (made up from the smooth factors). Later we can adjust this step size based on the quadratic coefficient (i.e multiply the modulus be a smooth factor, or divide by one, etc). So get that sieve interval shit out of the way today... then tomorrow, I'll add the p-adic lifting.... then it's done. And then I need to fix that sloppy brainfog code. God damn. I don't know what's wrong with me. Maybe from running ultra marathons. Or maybe the CIA poisoned me. Definitely something those cowards would do. Fucking CIA pussies. I would beat any CIA fucker in a fist fight. Fucking shitheads.
+
 
 
