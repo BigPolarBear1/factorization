@@ -38,7 +38,7 @@ Update: Let me just clean up what I got and upload it and go for a run. I still 
 
 Update: I have uploaded my work in progress:
 
-Build: python3 setup.py build_ext --inplace
+Build: python3 setup.py build_ext --inplace</br>
 Run: python3 run_qs.py -keysize 25 -base 50 -debug 1 -lin_size 10 -quad_size 100_000
 
 Just run on 25-bit numbers, this can't possibly work on bigger numbers until I implement p-adic lifting and sieve_intervals... but it demonstrates the idea.
