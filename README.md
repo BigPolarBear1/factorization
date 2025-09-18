@@ -29,3 +29,7 @@ This shouldn't take much longer... maybe one more day... I'll go for a run now t
 Update: Back from running. So agitated. I hope nobody gets in my face when I feel like this, because I feel like I'll end up in jail. I guess that's what trauma and being treated like shit does to a person. I'll get some food and shower and write some skeleton logic for that last step so it's 100% done tomorrow... this ends tomorrow, I don't care, it's been dragging on for too long now. It ends tomorrow. And I know this isn't some "gimmick" or one of those ideas that will "maybe work"... this will work for sure. This will work 100%. This is it. This is what I needed. My breakthrough. If I can succeed with only a fraction of smooths..... lol.... do you know how big numbers I can factor? RSA-1024 definitely about to die for sure. And after that, I am not stopping. THIS WILL NEVER END UNTIL IM DEAD. I'LL GO AFTER ECC TOO. YEA, SAY GOODBYE TO YOUR CRYPTO YOU FUCKING WANKERS. Crypto grifting nazis pieeces of shit. 
 
 Update: Always knew the british were a bunch of cunts. Nazi collaborators.
+
+America truely has fallen. Just like that. 
+
+
