@@ -73,3 +73,5 @@ I guess when I get back from running, I'll add a sieve interval. Thats like 10 m
 
 Update: Quickly added some sieve interval code for the find_similar family of functions. It's all ready now for tomorrow to add the final missing piece (and most crucial piece) ... p-adic lifting. That's the engine that will make this entire approach work. This will work. I know it will. So tomorrow will be the moment of truth.... and if it works... there is no going back. Endless others way this could have gone down. It is funny how circumstances have conspired to have it happen this way... oh well.
 
+Update: Bah, slept absolutely horrible. I'll go for a run, let me see if I can upload some barebones p-adic lifting tonight. Else it will be for monday, because I dont have much time this weekend. I don't know what's wrong with me. Maybe I'm having overtraining symptoms from changing my weekly running mileage from 50k a week to 100k a week in less then 6 weeks. Although I refuse to accept I have limits. Limits are just in the head.  hahahahahahha
+
