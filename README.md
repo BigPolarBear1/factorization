@@ -1,14 +1,14 @@
 # factorization
 
-The PoC under PoC_Files will easily factor above 200 bits. 
+The PoC under PoC_Files will easily factor above 200 bits. </br></br>
 
-However, that one is basically just using the number theory from my paper to achieve default SIQS. 
+However, that one is basically just using the number theory from my paper to achieve default SIQS. </br></br>
 
-in PoC_Files_Find_Similar_WIP I am attempting to sieve in the direction of the quadratic coefficient and linear coefficient. This way in theory we need much less smooths.
+in PoC_Files_Find_Similar_WIP I am attempting to sieve in the direction of the quadratic coefficient and linear coefficient. This way in theory we need much less smooths.</br></br>
 
-For PoC_Files_Find_Similar_WIP:
-Buid: python3 setup.py build_ext --inplace
-Run: python3 run_qs.py -keysize 30 -base 100 -debug 1 -lin_size 1_00 -quad_size 100_000
+For PoC_Files_Find_Similar_WIP:</br>
+Build: python3 setup.py build_ext --inplace</br>
+Run: python3 run_qs.py -keysize 30 -base 100 -debug 1 -lin_size 1_00 -quad_size 100_000</br></br>
 
 You will see some output like this:</br></br>
 
