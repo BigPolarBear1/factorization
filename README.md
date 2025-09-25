@@ -49,7 +49,7 @@ These are 3 smooths that have the same factorization.
 126249^2-13431013\*4\*9 = 15455293533 (3 x 3 x 3 x 3 x 3 x 3 x 43 x 79 x 79 x 79) </br>
 294581^2-13431013\*4\*49 = 84145487013 3 x 3 x 3 x 3 x 7 x 7 x 43 x 79 x 79 x 79 </br>
 
-These smooths are bogus. They are permutations of the same smooth just multiplying the linear coefficient by 3 or 7 and the quadratic coefficient by its squares. I do wonder... can we create such permutations with a single odd extra factor? That's something I need to experiment with. Because that would be an extremely powerful tool.
+These smooths are bogus. They are permutations of the same smooth just multiplying the linear coefficient by 3 or 7 and the quadratic coefficient by its squares. I do wonder... can we create such permutations with a single odd extra factor? That's something I need to experiment with. Because that would be an extremely powerful tool. Let me go for a run. Then I will spent the rest of the evening trying to generate permutations of smooth that get just one extra odd factor. Maybe I can pull it off. Because then I can generate smooths exactly with the factors I want to have...... hmm. Maybe.. worth a shot. I'm going to get killed by the CIA while out on my run, rip.
 
 
 
