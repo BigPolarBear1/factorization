@@ -49,11 +49,8 @@ These are 3 smooths that have the same factorization.
 126249^2-13431013\*4\*9 = 15455293533 (3 x 3 x 3 x 3 x 3 x 3 x 43 x 79 x 79 x 79) </br>
 294581^2-13431013\*4\*49 = 84145487013 3 x 3 x 3 x 3 x 7 x 7 x 43 x 79 x 79 x 79 </br>
 
-This is just what happens if we multiple the linear coefficient, 42083, by 3 and the quadratic coefficient by 9, or by 7 and 49.
-This is an easy way to generate smooths instantly from a starting smooth. 
-But all of those should be congruent mod N. These should be bad smooths.
-These alone should never, never, never, yield the factorization of N. 
-Or would they? OR WOULD THEY? I need to double check this. Just in the odd case I'm dismissing this as something that won't work, while it will. Because generating these types of smooths by multiplying coefficients, it's instantly. It lets me create smooths out of thin air. I need to make sure there really is never ever any use for these types of smooth... fucking brain fog. My intuition tells me these are just bogus smooths, just permutations of the original smooths. But in the above example, it is mainly just bogus smooths and still succeed when taking the GCD. So I need to spent some good amount of time on that, just in case my intuition is wrong. 
+These smooths are bogus. They are permutations of the same smooth. I do wonder... can we create such permutations with a single odd extra factor? That's something I need to experiment with. Because that would be an extremely powerful tool.
+
 
 
 
