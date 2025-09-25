@@ -32,7 +32,7 @@ Right now it just p-adicaly lifts linear coefficients and then checks them witho
 If a smooth candidate is bigger then 0, then it will add the modulus to the quadratic coefficient to generate a smaller smooth.
 
 So while I was adding the modulus to the quadratic coefficient, I also realized, that once the smooth becomes a big negative number, I can then again add the modulus to the linear coefficient.
-I wonder how I can find that sweet spot where we get a  super small smooth by adding the modulus to the linear/quadratic coefficients.
+I wonder how I can find that sweet spot where we get a  super small smooth candidate by adding the modulus to the linear/quadratic coefficients.
 I'll spent some time on that... because that may be an easy way to find smooths. 
 
 Then next, we need some simple heuristic to chinese remainder coefficients together... but only those that are going to garantuee a smooth. Just want to go after those easy to find smooths. 
