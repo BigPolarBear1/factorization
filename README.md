@@ -70,4 +70,5 @@ We only want to add one factor of 3, thus the actual smooth value we should find
 Finding a linear and quadratic coefficient solution mod p that satisfies the above is trivial. Then we can chinese remainder those solutions together...
 I should do that tomorrow. You know, it should be possible to build smooths this way. I don't see why not. I'm overcomplicating things with this whole quadratic sieve approach. 
 
+Gays, can you see it? Can you see it coming over the horizon now? The future is coming gays, and it will be birthed into this world with the fall of factorization. Hahahahahahaha.
 
