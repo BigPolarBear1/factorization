@@ -72,3 +72,5 @@ I should do that tomorrow. You know, it should be possible to build smooths this
 
 Gays, can you see it? Can you see it coming over the horizon now? The future is coming gays, and it will be birthed into this world with the fall of factorization. Hahahahahahaha.
 
+I'm going to go hard on this building smooths approach tomorrow, figure this shit out. TIME TO FINISH THIS. Time's up. 
+
