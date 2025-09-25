@@ -37,11 +37,11 @@ I'll spent some time on that... because that may be an easy way to find smooths.
 
 Then next, we need some simple heuristic to chinese remainder coefficients together... but only those that are going to garantuee a smooth. Just want to go after those easy to find smooths. 
 
-Another thing I need to triple, quadruple check is this:
+Another thing I need to triple, quadruple check is this:</br>
 
-Found a similar smooth{43, 79} co: 42083 quad: 1
-Found a similar smooth{43, 79} co: 126249 quad: 9
-Found a similar smooth{43, 79} co: 294581 quad: 49
+Found a similar smooth{43, 79} co: 42083 quad: 1 </br>
+Found a similar smooth{43, 79} co: 126249 quad: 9 </br>
+Found a similar smooth{43, 79} co: 294581 quad: 49 </br>
 
 These are 3 smooths that have the same factorization.
 
