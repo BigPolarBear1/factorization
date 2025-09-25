@@ -52,5 +52,22 @@ These are 3 smooths that have the same factorization.
 These smooths are bogus. They are permutations of the same smooth just multiplying the linear coefficient by 3 or 7 and the quadratic coefficient by its squares. I do wonder... can we create such permutations with a single odd extra factor? That's something I need to experiment with. Because that would be an extremely powerful tool. Let me go for a run. Then I will spent the rest of the evening trying to generate permutations of smooth that get just one extra odd factor. Maybe I can pull it off. Because then I can generate smooths exactly with the factors I want to have...... hmm. Maybe.. worth a shot. I'm going to get killed by the CIA while out on my run, rip.
 
 
+Update: That very last idea above... yeap yeap yeap... that was the correct train of thoughts.
+
+I.e: 
+
+If N=4387</br>
+
+316^2-4387\*4\*1 = 82,308 = 2 x 2 x 3 x 19 x 19 x 19 (original smooth)</br>
+
+
+(316\*3)^2-4387\*4\*9 = 740,772 = 2 x 2 x 3 x 3 x 3 x 19 x 19 x 19  (linear co multiplied by 3 and quadratic co multiplied by 9)</br>
+
+We only want to add one factor of 3, thus the actual smooth value we should find: </br>
+
+(?\*?)^2-4387\*4\*? = 246,924 = 2 x 2 x 3 x 3 x 19 x 19 x 19</br>
+
+Finding a linear and quadratic coefficient solution mod p that satisfies the above is trivial. Then we can chinese remainder those solutions together...
+I should do that tomorrow. You know, it should be possible to build smooths this way. I don't see why not. I'm overcomplicating things with this whole quadratic sieve approach. 
 
 
