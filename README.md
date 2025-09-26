@@ -76,3 +76,23 @@ I'm going to go hard on this building smooths approach tomorrow, figure this shi
 
 Bah, you know, this seems incredibly promising. Not just to make an improved SIQS version. But to actually straight up destroy the factorization problem. God damnit. Why didn't I explore this avenue much much much earlier. Like many months ago. It's kind of obvious in retrospect. I guess it is just the reality of research. Sometimes it takes a while to see the obvious. Perhaps when one is setting upon a task as grand as destroying factorization, perhaps, in that case, everything happens when it is supposed to happen. This better be it now. The factorization killer. Let's see. Otherwise I can still explore adding the modulus to both the linear and quadratic coefficient to keep finding that sweet spot where we get a small smooth candidate. But I would much rather straight up build smooths. That would be the real killer. Then even the largest RSA keys come tumbling down. And I can finally check that box and start applying my work to ECC. Perhaps with the threat of true financial collapse (or atleast the crypto eco-system) people will finally take me serious.
 
+---------------------------------------------------------------------------------------
+EUREKA!!!!! I GOT IT. YOU CAN SUCCEED AFTER FINIDNG JUST 1 SMOOTH. 1 SMOOTH!!!!!!!!!!!!!
+
+So a particular smooth. Will actually have multiple valid linear coefficient / quadratic coefficient combinations.
+
+I.e:
+
+2038^2-4387*4*232 =  82308 has as factors: [2, 2, 3, 19, 19, 19]
+
+but also:
+
+316^2-4387*4*1 =  82308 has as factors: [2, 2, 3, 19, 19, 19]
+
+And adding both linear coefficient would yield the factor of N when taking the gcd: 316+2038 = 0 mod 107 (107*41 = 4387)
+
+HENCE. When we find a smooth. We need to find another linear coefficient and another quadratic coefficient for THAT particular smooth. 
+WHICH IS ALL STUFF WE KNOW HOW TO DO!!!! IT IS STUFF WE KNOW HOW TO DO!!!! I GOT IT!! FUCK YEA. HAHAHHHAAHAHAHHAAHAHAA.
+
+THE FUTURE IS COMING, AND THE FUTURE WILL BE GAY (AND QUEER, AND TRANS). Fuck you all. Could have just paid former manager a few million and bought my work.. but no.... you had to do it like this. Burn in hell fuckers.
+
