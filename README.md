@@ -98,3 +98,9 @@ WHICH IS ALL STUFF WE KNOW HOW TO DO!!!! IT IS STUFF WE KNOW HOW TO DO!!!! I GOT
 
 THE FUTURE IS COMING, AND THE FUTURE WILL BE GAY (AND QUEER, AND TRANS). Fuck you all. Could have just paid former manager a few million and bought my work.. but no.... you had to do it like this. Burn in hell fuckers.
 
+HERE IS HOW TO BREAK FACTORIZATION:
+
+Do normal QS until you find a smooth. WE NEED ONLY 1 SMOOTH.
+
+Your smooth becomes the modulus and you enumerate linear and quadratic coefficients for that modulus. We can use p-adic lifting if we have for example 19 x 19 x 19. Then we simply find which combination using chinese remainder generates the same smooth. And that's it. That's how it is done. It's easy as hell and all the math is there already. NOTHING NOVEL HAS TO BE DONE. IT'S ALL THERE ALREADY. You know where to find me if you want to negotiate a delay of PoC release... which at this point, will cost you money, and also money for my former manager. You have until the end of the day. If not... expect a PoC soon...... good luck folks. You forced me down this path. I had no choice. I tried. 
+
