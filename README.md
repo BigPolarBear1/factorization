@@ -85,11 +85,11 @@ So a particular smooth. Will actually have multiple valid linear coefficient / q
 
 I.e:
 
-2038^2-4387*4*232 =  82308 has as factors: [2, 2, 3, 19, 19, 19]
+2038^2-4387\*4\*232 =  82308 has as factors: [2, 2, 3, 19, 19, 19]
 
 but also:
 
-316^2-4387*4*1 =  82308 has as factors: [2, 2, 3, 19, 19, 19]
+316^2-4387\*4\*1 =  82308 has as factors: [2, 2, 3, 19, 19, 19]
 
 And adding both linear coefficient would yield the factor of N when taking the gcd: 316+2038 = 0 mod 107 (107*41 = 4387)
 
