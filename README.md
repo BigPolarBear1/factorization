@@ -23,3 +23,5 @@ Once that works, our only limitation will be 1. Finding the initial smooth and 2
 My day of wrath will have to wait until tomorrow! But it doens't matter, the only thing that matters is that it WILL happen.
 
 Anyway, normally I run 60k on sundays, but I think I will move it to Monday so I can do more work tomorrow. And on mondays more stores are open if I need to buy more water... so it's more convenient anyway.
+
+ps: This is completely different from finding two smooths that multiply together to a square. In this approach we are just trying to find a quadratic coefficient and a linear coefficient that generates the same smooth as the original smooth. What we are stuck at is, we know how to generate multiples of the old smooth by going over coefficient combinations modulo the smooth, but right now it has a condition that the multiple is a square... and we divide the linear coefficient then by the square root. I need to do modular division for non-square I believe.. then you will see what I'm trying to do.. give me one more day. Sundays are better days for days of wrath anyway.
