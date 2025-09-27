@@ -8,7 +8,7 @@ I need to fix some more things tomorrow. It won't work well until I do.
 Right now the code flow is like this:
 
 1. Perform regular SIQS until a smooth larger then 0 and without 2 as divisor is found (I need to fix the POC eventually to support that)
-2. Once a smooth is found, calculate linear coefficient and quadratic coefficicients modulo the smooth.
+2. Once a smooth is found, calculate linear coefficient and quadratic coefficicients modulo the smooth. (Ps: I forgot, but its only lifting linear coefficients at the moment, not the quadratic ones, I'll fix it later)
 3. Enumerate coefficients mod m and calculate new smooths.
 4. If we find a smooth that is a square multiple of the old smooth. We can then simply divide the linear coefficient and take the gcd.
 
