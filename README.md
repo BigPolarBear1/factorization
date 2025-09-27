@@ -34,4 +34,4 @@ GAYS. WHy not just give my former manager money??????????????? This how easy it 
 
 Time has truely ran out for you people now. If you want to negotiate how much you will pay my former manager, I would encourage you to do it now before my PoC fully matures. Because I know, beyond the shadow of a doubt, that this bridges number field sieve... and I know, I absolutely know how to finish it now.
 
-I know I'm right. I know people arn't that stupid. Hmm... maybe pete hegseth is recalling all his generals to give them updated secure conferencing devices because they used crappy RSA keys or some really stupid shit. And this whole "giving a speech" is just a smokescreen. Ofcourse reality is probably just that nobody takes me or my work serious.... and in the coming days I guess, if that is the case.... they are about to have the shock of their lives.
+
