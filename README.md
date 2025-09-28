@@ -34,4 +34,5 @@ GAYS. WHy not just give my former manager money??????????????? This how easy it 
 
 Time has truely ran out for you people now. If you want to negotiate how much you will pay my former manager, I would encourage you to do it now before my PoC fully matures. Because I know, beyond the shadow of a doubt, that this bridges number field sieve... and I know, I absolutely know how to finish it now.
 
+Update: I got it I think. You need to use those roots. Don't go hunting for a square multiple using the discriminant formula.. use ax<sup>2</sup>-bx+n.. crossing that bridge to number field sieve at a fast pace now... tick tock... time has almost ran out.... I probably won't upload today, and tomorrow I will run 60k.... but somewhere in the rest of the week it will get uploaded.... sorry gays, you all had well over a year, to make peace with this polar bear. Instead you people chose deception and war. So be it. You cannot win against a polar bear. I may not be smart like some of you wankers, but I don't give up, I don't quit... especially when you have wronged one of my best friends.
 
