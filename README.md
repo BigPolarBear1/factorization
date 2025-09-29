@@ -1,3 +1,5 @@
+Note: I figured out how to cross the bridge to number field sieve's appraoch. Once implemented, this should yield an algorithm that is basically number field sieve on steroids. I finally figured out how and when we can divide coefficients. The idea is to divide coefficients, by finding multiples of the original smooth, then dividing the coefficients so it also generates the original smooth, but hopefully with distinct coefficients from the original smooth, which we can then use to take the GCD. The corrent PoC generates smooth multiples using the discriminant formula. But I figured out how to also do it using the quadratics from my paper (by plugging in the root and calculating the result)... and with that figured out, I am now ready to this week, cross that bridge over to number field sieve... nobody took me serious. So now you will find out. 
+
 Update: Just uploaded a new work in progress PoC.
 
 To build: python3 setup.py build_ext --inplace</br>
