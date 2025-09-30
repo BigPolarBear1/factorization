@@ -59,3 +59,5 @@ Pete hegseth is such a fucking loser. Bro should grow some eyes on his back. Cry
 Update: Shit mood today. Fucking hate people. Updating my paper, documenting my bridge to number field sieve and what i've found. That should be enough already for others to complete my work while I complete it myself in the coming days.... fuck you assholes.
 
 Update: Updated my paper a little. Now I figure out the very last step (see paper). Should be easy enough. 
+
+Update: Oops, too fast. Re-uploaded and fixed a bunch of types. HAhahaa... almost there now fuckers.
