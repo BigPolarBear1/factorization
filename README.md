@@ -63,3 +63,5 @@ Update: Shit mood today. Fucking hate people. Updating my paper, documenting my 
 Update: Updated my paper a little. Now I figure out the very last step (see paper). Should be easy enough. 
 
 Update: Oops, too fast. Re-uploaded and fixed a bunch of types. HAhahaa... almost there now fuckers.
+
+Update: Yea, nice timing to start fly a bunch of military jets in the area. Go fuck yourself. Fuck nato. Fuck america. I will fight you all. Fuck you losers. You lost, you fucking pieces of shit. YOU LOST. You threw away any chance this is going to end well. The west has fallen. Because you keep attacking transgender people. Fucking losers. Shit for brains losers. Literallay, had you treated me with respect a year ago, europe could have gained the biggest strategic advantage ever. Yet you chose the american lapdog path. Hahahahaha. Morrons. Could have won the war in Ukrain by now. Losers. 
