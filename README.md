@@ -57,3 +57,5 @@ All the math and tech bros mad because my math paper doens't have algebraic lett
 Pete hegseth is such a fucking loser. Bro should grow some eyes on his back. Cry baby bitch. He's an obviously insecure man, of small stature. Hasn't seen honorable combat in his entire life. Just a fucking bitch loser trying to act though. Fucking despise weaklings like pete hegseth. Come to europe and ill fucking hunt you down you fucking american piece of shit.
 
 Update: Shit mood today. Fucking hate people. Updating my paper, documenting my bridge to number field sieve and what i've found. That should be enough already for others to complete my work while I complete it myself in the coming days.... fuck you assholes.
+
+Update: Updated my paper a little. Now I figure out the very last step (see paper). Should be easy enough. 
