@@ -8,7 +8,7 @@ If you see the proof of concept that I uploaded some days ago.. the find_similar
 
 I will update the paper with what I found tomorrow and uploaded a PoC shortly after.
 
-Unless microsoft pays my former manager 100 milliom (because they waited too long the price has gone up) right now, then I might postpone.
+Unless microsoft pays my former manager 100 million (because they waited too long the price has gone up) right now, then I might postpone.
 
 Factorization has fallen. Prepare yourselves. Prepare yourselves for the disaster of your own making.
 I wanted to sell my work. You chased away buyers and ruined my life, drive me to the brink of hopelessness and despair. 
