@@ -16,3 +16,6 @@ I wanted to sell my work. You chased away buyers and ruined my life, drive me to
 You all deserve what is coming. Dies Irae. 
 
 The time of reckoning is now.
+
+I will bring the future into this world. And you are either with me, or against me. 
+Playtime is over, now we get serious.
