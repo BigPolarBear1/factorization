@@ -19,3 +19,6 @@ The time of reckoning is now.
 
 I will bring the future into this world. And you are either with me, or against me. 
 Playtime is over, now we get serious.
+
+ps: The american cryptologic advantage got fucked by a "dude in a dress". Morrons. Tell pete hegseth, military leadership is about strategy. You win wars with strategy. Not by acting like a shit for brains morron. You got outplayed by a "dude in a dress", fucking losers.
+ 
