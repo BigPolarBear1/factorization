@@ -21,4 +21,6 @@ I will bring the future into this world. And you are either with me, or against 
 Playtime is over, now we get serious.
 
 ps: The american cryptologic advantage got fucked by a "dude in a dress". Morrons. Tell pete hegseth, military leadership is about strategy. You win wars with strategy. Not by acting like a shit for brains morron. You got outplayed by a "dude in a dress", fucking losers.
+
+pps: Between now and disclosure.. do not try to talk me out of it unless you are willing to pay my former manager 100 million. At this late stage, that is the only way to stop what is going to happen. Every day you people did nothing, the price went up. Now it is at 100 million. The price will be paid, one way or another. And after this, the price will keep going up. And I will break ECC as well. I am very reasonable, but you pushed me to this. Now I don't care anymore. Dies Irae fuckers. Day of wrath is here.
  
