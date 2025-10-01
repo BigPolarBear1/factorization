@@ -1,4 +1,4 @@
-You can be with me, or you can be against me. I will birth into this world the future. And you have to choose right now if you are going to work with me, or against me. My patience is gone. After 2 years of unemployment and hopelessness, my patience for this bullshit is gone. I 0 patience left. Right this moment, make your choice or lose for all eternity.
+You can be with me, or you can be against me. I will birth into this world the future. And you have to choose right now if you are going to work with me, or against me. My patience is gone. After 2 years of unemployment and hopelessness, my patience for this bullshit is gone. I have 0 patience left. Right this moment, make your choice or lose for all eternity.
 
 Update: Updated the paper, added chapter VII. I have also notified my non-western friends. Because pete hegseth is a cunt and america about to lose everything by a dude in a dress. Life is funny, isn't it? Expect your networks to get hit very soon. 
 
