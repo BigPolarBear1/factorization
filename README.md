@@ -2,6 +2,8 @@ BIG UPDATE::: ALMOST THERE. Ignore the last few sentences in the paper at chapte
 
 BIG UPDATE2::: Bah, it seems what I was thinking about in the paper might actually be correct. Let me verify tomorrow for sure and upload a PoC. I'm just getting confused by something idiotic. But all my calculations seem to be consistently yielding the expected result.. there just is this corner case I need to sort out... with some luck factorization falls tomorrow.
 
+YEA YEA YEA. THIS SHIT I"M DOING IS CORRECT. WATCH TOMORROW ASSHOLES. 
+
 EUREKA!!!
 
 Yesterday I added chapter 7 to the paper. 
