@@ -4,6 +4,8 @@ BIG UPDATE2::: Bah, it seems what I was thinking about in the paper might actual
 
 YEA YEA YEA. THIS SHIT I"M DOING IS CORRECT. WATCH TOMORROW ASSHOLES. 
 
+IT WILL WORK. I FIGURED IT OUT. WATCH TOMORROW. I AM ANTIFA, FROM THE WOKIE RESISTANCE, HERE TO DESTROY AMERCA. HAHAHAHAHHAHAHAHAHAHAHAHHAHAHAHA. Going to make the future gay and queer and no army in the world can stop me. Not even a pussy cunt like pete hegseth. 
+
 EUREKA!!!
 
 Yesterday I added chapter 7 to the paper. 
