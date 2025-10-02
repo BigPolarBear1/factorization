@@ -1,3 +1,5 @@
+BIG UPDATE::: ALMOST THERE. Ignore the last few sentences in the paper at chapter VII for now. That's not entirely correct. But I have all the pieces now to finish my work. My next commit will include a working PoC. I'm going to stop committing until then. Should be in the coming days.... better to just upload code that works and sets a factorization record then add ideas to a paper that I'll have to rewrite later anyway.
+
 EUREKA!!!
 
 Yesterday I added chapter 7 to the paper. 
