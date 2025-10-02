@@ -1,5 +1,7 @@
 BIG UPDATE::: ALMOST THERE. Ignore the last few sentences in the paper at chapter VII for now. That's not entirely correct. But I have all the pieces now to finish my work. My next commit will include a working PoC. I'm going to stop committing until then. Should be in the coming days.... better to just upload code that works and sets a factorization record then add ideas to a paper that I'll have to rewrite later anyway.
 
+BIG UPDATE2::: Bah, it seems what I was thinking about in the paper might actually be correct. Let me verify tomorrow for sure and upload a PoC. I'm just getting confused by something idiotic. But all my calculations seem to be consistently yielding the expected result.. there just is this corner case I need to sort out... with some luck factorization falls tomorrow.
+
 EUREKA!!!
 
 Yesterday I added chapter 7 to the paper. 
