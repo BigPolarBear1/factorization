@@ -1,5 +1,5 @@
-IT IS OVER. Final solution will be uploaded this evening. I have just put together the last few pieces.  IT IS OVER AND GO TO HELL FOR EVERYTHING YOU PEOPLE DID.
-YOU HAVE RADICALIZED ME TO BECOME THE WOKE RESISTANCE. I AM NOW YOUR WORST NIGHTMARE. COME BRING YOUR ARMIES YOU FUCKING LOSERS. YOU'RE WEAK. YOU'RE ALL WEAK. THE FUTURE WILL BE GAY. HAHAHHAAHAHAHAHA
+IT IS OVER. Final solution will be uploaded this evening. I have just put together the last few pieces.  IT IS OVER AND GO TO HELL FOR EVERYTHING YOU PEOPLE DID.</br>
+YOU HAVE RADICALIZED ME TO BECOME THE WOKE RESISTANCE. I AM NOW YOUR WORST NIGHTMARE. COME BRING YOUR ARMIES YOU FUCKING LOSERS. YOU'RE WEAK. YOU'RE ALL WEAK. THE FUTURE WILL BE GAY. HAHAHHAAHAHAHAH</br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
 
 
 
