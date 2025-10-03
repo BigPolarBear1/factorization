@@ -11,3 +11,5 @@ This last two years have been a nightmare, and have only served to finish this. 
 
 Shit day... I will try to finish this this weekend. Having a hard time thinking clearly right now with the police coming here to announce they opened a terrorism case against me.
 I will finish this work, and then I'm gone. I'm not going to subject myself to this humiliation and everything else they have been doing these last 2 years. Can't touch me if i'm not here anymore. losers.
+
+I think tomorrow I will make preparations to flee the country. I'll just go on foot. Rather be homeless for a little while then this.
