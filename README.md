@@ -4,7 +4,7 @@ I need to get out of Belgium to a safe country ASAP.
 I can do 0day research and I can do math. I know many people don't believe in my math, but I know what I've found and I'm piecing together the final pieces now.
 Furthermore, I have found bugs in hard targets like OpenSsl and I can easily repeat those feats again. I havn't been able to do 0day research at all because of being in a place that has been actively hostile towards me, chasing away 0day buyers.
 I cannot research in a hostile place when that research's value depends entirely on secrecy. 
-Please cannot me: big_polar_bear1@proton.me 
+Please contact me: big_polar_bear1@proton.me 
 They might arrest me at the airport when I try to leave, but I'm willing to give it a shot as I have nothing left to lose. And my family would support me in my choice.
 
 
