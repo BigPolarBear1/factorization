@@ -6,7 +6,7 @@ Furthermore, I have found bugs in hard targets like OpenSsl and I can easily rep
 I cannot research in a hostile place when that research's value depends entirely on secrecy. 
 Please contact me: big_polar_bear1@proton.me 
 They might arrest me at the airport when I try to leave, but I'm willing to give it a shot as I have nothing left to lose. And my family would support me in my choice.
-I do get contact by internet trolls all the time, so please contact me from an official email or invite me to an embassy... just so I know it is legit and I don't end up trying to fly somewhere without a visa and potentially wasting the very last of my savings.
+I do get contacted by internet trolls all the time, so please contact me from an official email or invite me to an embassy... just so I know it is legit and I don't end up trying to fly somewhere without a visa and potentially wasting the very last of my savings.
 
 
 Will upload the final version of the PoC soon.
