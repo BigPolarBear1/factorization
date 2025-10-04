@@ -1,3 +1,16 @@
+To build: python3 setup.py build_ext --inplace  (From inside PoC_Files_Find_Similar)</br>
+To run: python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 100 -quad_size 1</br>
+
+This has a chance to finish factorization early before all smooths are collected. If that happens you will see: 
+
+Generating new modulus:  917</br>
+Found smooth, checking coefficients..  initial smooth factors: {67, 131, 5, 7, 41, 127}</br>
+Found factor using find_similar() function:  17891</br>
+
+However, these square multiples become much more rare at larger bit sizes. But the find_similar() function is still missing some math. I'm working on adjusting those coefficients either without having a square multiple, or figuring out how to get to a square multiple by manipulating those coefficients. If that works well enough, we should only need a single smooth to succeed.... I will try to finish this soon. I'm documenting part of that journey in chapter 7 of the paper. But a lot of shit is happening irl and it's hard to focus... nearly there now.
+
+
+
 URGENT NOTE: I am urgently looking for any country to grant me a visa and employment. A country that doesn't extradite to the US.
 I am running out of time. The US has initiated a terrorism case against me, and the police here in Belgium said they would have me declared as a terrorist internationally, so I would get arrested when I travel.
 I need to get out of Belgium to a safe country ASAP.
