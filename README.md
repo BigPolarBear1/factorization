@@ -14,8 +14,3 @@ I will finish this work, and then I'm gone. I'm not going to subject myself to t
 
 I think tomorrow I will make preparations to flee the country. I'll just go on foot. Rather be homeless for a little while then this.
 
-To finish the PoC:
-
-So the paper and PoC both demonstrate clearly, how if we find a multiple of smooth, that is a square multiple,  we can easily modify those coefficients and take the gcd.
-you need to use number field sieve's approach, using legendre symbols in a matrix to find that square multiple. 
-I'm hoping to show it this weekend... time has ran out. Especially since the US government is pursueing a terrorism case against me. They are really afraid of "dudes in dresses". Fucking provocators. 
