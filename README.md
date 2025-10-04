@@ -7,7 +7,7 @@ Generating new modulus:  917</br>
 Found smooth, checking coefficients..  initial smooth factors: {67, 131, 5, 7, 41, 127}</br>
 Found factor using find_similar() function:  17891</br>
 
-However, these square multiples become much more rare at larger bit sizes. But the find_similar() function is still missing some math. I'm working on adjusting those coefficients either without having a square multiple, or figuring out how to get to a square multiple by manipulating those coefficients. If that works well enough, we should only need a single smooth to succeed.... I will try to finish this soon. I'm documenting part of that journey in chapter 7 of the paper. But a lot of shit is happening irl and it's hard to focus... nearly there now.
+However, these square multiples become much more rare at larger bit sizes. But the find_similar() function is still missing some math. I'm working on adjusting those coefficients either without having a square multiple, or figuring out how to get to a square multiple by manipulating those coefficients. If that works well enough, we should only need a single smooth to succeed.... I will try to finish this soon. I'm documenting part of that journey in chapter 7 of the paper. But a lot of shit is happening irl and it's hard to focus... nearly there now. Btw.. I am absolutely convinced this is possible... and this would easily break RSA-1024. And I really need help and protection from a country because the US is literally coming after me. Help me and I will give you the world, I promise you that...
 
 
 
