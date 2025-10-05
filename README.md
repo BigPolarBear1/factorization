@@ -25,6 +25,8 @@ Update: Ok... there we go. Let me go for a run and when I come back I'll update 
 
 Update: EUREKA. FIGURED IT OUT! Ok, let me go for a run first, then I will show you to do it. 
 
+Update: Got back from running. Need shower and food. Then I'll finish the paper tonight. I know how to do it. It's just something similar like number field sieve's taking square roots over finite fields steps... but different enough that I struggled with it for a while I guess... it's the same deal like my variant of quadratic sieve... where its more about the coefficients and discrimant formula then the roots fo polynomials... which makes shit a little confusing. I know exactly how to do it... watch this assholes.
+
 URGENT NOTE: I am urgently looking for any country to grant me a visa and employment. A country that doesn't extradite to the US.
 I am running out of time. The US has initiated a terrorism case against me, and the police here in Belgium said they would have me declared as a terrorist internationally, so I would get arrested when I travel.
 I need to get out of Belgium to a safe country ASAP.
