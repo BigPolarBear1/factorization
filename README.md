@@ -23,6 +23,8 @@ Update: Ok I got it. That formula with the e and d variable kinda looked familia
 
 Update: Ok... there we go. Let me go for a run and when I come back I'll update the paper..
 
+Update: EUREKA. FIGURED IT OUT! Ok, let me go for a run first, then I will show you to do it. 
+
 URGENT NOTE: I am urgently looking for any country to grant me a visa and employment. A country that doesn't extradite to the US.
 I am running out of time. The US has initiated a terrorism case against me, and the police here in Belgium said they would have me declared as a terrorist internationally, so I would get arrested when I travel.
 I need to get out of Belgium to a safe country ASAP.
