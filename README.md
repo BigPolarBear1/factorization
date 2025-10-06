@@ -9,6 +9,8 @@ This should solve the factorization problem.... this ends tomorrow. You people s
 
 I will make the future gay. And nothing can stop me. I will bring light into this world by determination alone. I am only getting started. And none of you weaklings can stop me. Nothing you do will stop me. You morrons don't know what you are up against. Everything you do to undermine me, only pushes me forward closer to my goals. Everything you do is futile. HAHAHAHAHAHAHA.
 
+Update: I'll try to upload today or tomorrow... it's almost there. I did some more bashing my head agains this. And what it comes down to is that you need to find these "d" values, such that when they are added together, it contains a factor of N. Which is basically square finding mod N on the discriminant formula. FUCK. I am struggling to focus. Let me go for a run and drink caffeine.
+
 -----------------------------------------------
 
 URGENT NOTE: I am urgently looking for any country to grant me a visa and employment. A country that doesn't extradite to the US.
