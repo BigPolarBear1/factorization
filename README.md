@@ -11,6 +11,8 @@ I will make the future gay. And nothing can stop me. I will bring light into thi
 
 Update: I'll try to upload today or tomorrow... it's almost there. I did some more bashing my head agains this. And what it comes down to is that you need to find these "d" values, such that when they are added together, it contains a factor of N. Which is basically square finding mod N on the discriminant formula. FUCK. I am struggling to focus. Let me go for a run and drink caffeine.
 
+UPDATE: Added some more observation to the final chapter. It's becoming chaotic again. I think tomorrow I can begin finalizing the algorithm. I'm having some ideas on how to finish this. Similar to what number field sieve does. Once that is complete I'll have to simplify everything... finding that initial smooth with quadratic sieve probably isn't even needed. Let me test some theories tomorrow and I'll finish that chapter, so atleast a first draft of the algorithm is complete... then I'll implement that in code completely and begin simplying and removing steps that arn't really needed.
+
 -----------------------------------------------
 
 URGENT NOTE: I am urgently looking for any country to grant me a visa and employment. A country that doesn't extradite to the US.
