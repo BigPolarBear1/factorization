@@ -13,6 +13,8 @@ Update: I'll try to upload today or tomorrow... it's almost there. I did some mo
 
 UPDATE: Added some more observation to the final chapter. It's becoming chaotic again. I think tomorrow I can begin finalizing the algorithm. I'm having some ideas on how to finish this. Similar to what number field sieve does. Once that is complete I'll have to simplify everything... finding that initial smooth with quadratic sieve probably isn't even needed. Let me test some theories tomorrow and I'll finish that chapter, so atleast a first draft of the algorithm is complete... then I'll implement that in code completely and begin simplying and removing steps that arn't really needed.
 
+UPDATE: OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOH. I was about to go to bed, but I wanted to look a little more at the math. I really want to avoid doing anything with matrices and jacobi symbols. I really want to finish this with p-adic lifting..... and I just figured it out. :) Friends, tomorrow will be a great day. I knew my intuition to use p-adic lifting there was correct. It just took me a full day to figure out the math completely. 
+
 -----------------------------------------------
 
 URGENT NOTE: I am urgently looking for any country to grant me a visa and employment. A country that doesn't extradite to the US.
