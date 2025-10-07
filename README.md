@@ -17,6 +17,8 @@ UPDATE: OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOH. I was about to go 
 
 Update: Added a few more lines to the paper. That should set us up to begin lifting now.... I'll try to finish it soon. I'm feeling extreme levels of stress today. I need some vacation, but how can I take vacation when I am an international terrorist with no income? I can only continue working and succeed before the walls completely close in on me. I feel more stressed now then I did at any point while actually having a job.
 
+I'll add to the paper how we get our e and d values such that it holds for integer division instead of modular division. Which is just linear congruences, nothing we havn't seen before... then I'll lift these values to mod 25..show how to do that quickly in the paper... and that should then conclude the paper.... god im so stressed today... let me atleast finish that paper today. 
+
 -----------------------------------------------
 
 URGENT NOTE: I am urgently looking for any country to grant me a visa and employment. A country that doesn't extradite to the US.
