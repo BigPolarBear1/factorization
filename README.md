@@ -11,7 +11,7 @@ if N = 4387</br>
 159^2-4387\*4\*1= 77337</br>
 1553^2-4387\*4\*137 = 77337</br>
 1\*3946^2-3946\*159 = 3346 mod 7733   ( and 7733 mod 4387 = 3346)7</br>
-137\*7654^2-7654\*1553 = 3346 mod 77337</br>7</br>
+137\*7654^2-7654\*1553 = 3346 mod 7733</br></br>
 
 So you see what is happening there? Because I see what is happening there... it's this last and final step where the full quadratic polynomial comes into play and not just the discriminant formula. You use this do to your p-adic lifting and find that correct coefficient.
 
