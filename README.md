@@ -3,6 +3,8 @@ To run: python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 100 -quad_size
 
 UPDATE: Check the final chapter in my paper. I just realized today as I was working out the details, where I do things like mod ( N, 5 ), it's too much brute force calculations with N in the modulus and not practical. But we can use our original polynomial instead that found the initial smooth. It's nearly there now..... let me fix that paper today or tomorrow.
 
+Update: Bah, yea, you need to replace that mod N by your original polynomial. Then do p-adic lifting. My intuition was correct, but I went on a little incorrect tangent in the paper. I'll upload the final version maybe tomorrow.. just massive stress today for some reason.
+
 -----------------------------------------------
 
 URGENT NOTE: I am urgently looking for any country to grant me a visa and employment. A country that doesn't extradite to the US.
