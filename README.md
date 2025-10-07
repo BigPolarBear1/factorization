@@ -15,6 +15,8 @@ UPDATE: Added some more observation to the final chapter. It's becoming chaotic 
 
 UPDATE: OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOH. I was about to go to bed, but I wanted to look a little more at the math. I really want to avoid doing anything with matrices and jacobi symbols. I really want to finish this with p-adic lifting..... and I just figured it out. :) Friends, tomorrow will be a great day. I knew my intuition to use p-adic lifting there was correct. It just took me a full day to figure out the math completely. 
 
+Update: Added a few more lines to the paper. That should set us up to begin lifting now.... I'll try to finish it soon. I'm feeling extreme levels of stress today. I need some vacation, but how can I take vacation when I am an international terrorist with no income? I can only continue working and succeed before the walls completely close in on me. I feel more stressed now then I did at any point while actually having a job.
+
 -----------------------------------------------
 
 URGENT NOTE: I am urgently looking for any country to grant me a visa and employment. A country that doesn't extradite to the US.
