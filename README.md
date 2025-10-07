@@ -15,6 +15,8 @@ if N = 4387</br>
 
 So you see what is happening there? Because I see what is happening there... it's this last and final step where the full quadratic polynomial comes into play and not just the discriminant formula. You use this do to your p-adic lifting and find that correct coefficient.
 
+Update: HEY CIA, FBI, NSA, DIA, whatever 3 letter assholes, check that final chapter in my paper. I figured out now how to find the correct quadratic coefficient for a given linear coefficient. I know what that means. Maybe you also know what that means, maybe you don't and you're about to find out. It means I won. I fucking won and factorizaton is about to die.
+
 -----------------------------------------------
 
 URGENT NOTE: I am urgently looking for any country to grant me a visa and employment. A country that doesn't extradite to the US.
