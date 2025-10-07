@@ -17,6 +17,8 @@ So you see what is happening there? Because I see what is happening there... it'
 
 Update: HEY CIA, FBI, NSA, DIA, whatever 3 letter assholes, check that final chapter in my paper. I figured out now how to find the correct quadratic coefficient for a given linear coefficient. I know what that means. Maybe you also know what that means, maybe you don't and you're about to find out. It means I won. I fucking won and factorizaton is about to die.
 
+Update: Its because we have a type of triangulation mechanism now, I don't know the proper math name for it. But we know we are looking for a quadratic coefficient that works in the original modulus and the one we are lifting in. It's very similar to what number field sieve does. 
+
 -----------------------------------------------
 
 URGENT NOTE: I am urgently looking for any country to grant me a visa and employment. A country that doesn't extradite to the US.
