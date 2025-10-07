@@ -3,9 +3,6 @@ To run: python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 100 -quad_size
 
 UPDATE: Check the final chapter in my paper. I just realized today as I was working out the details, where I do things like mod ( N, 5 ), it's too much brute force calculations with N in the modulus and not practical. But we can use our original polynomial instead that found the initial smooth. It's nearly there now..... let me fix that paper today or tomorrow.
 
-
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH. I see it now. I went on a little tangent there. If we just purely focus on finding distinct coefficients that reproduce the original smooth in the integers, that's way easier then finding it mod N because then we end up having to consider too many solutions mod p. But it was the correct line of thinking. Fuck I'm stressed today.
-
 -----------------------------------------------
 
 URGENT NOTE: I am urgently looking for any country to grant me a visa and employment. A country that doesn't extradite to the US.
