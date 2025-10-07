@@ -19,6 +19,8 @@ Update: Added a few more lines to the paper. That should set us up to begin lift
 
 I'll add to the paper how we get our e and d values such that it holds for integer division instead of modular division. Which is just linear congruences, nothing we havn't seen before... then I'll lift these values to mod 25..show how to do that quickly in the paper... and that should then conclude the paper.... god im so stressed today... let me atleast finish that paper today. 
 
+UPDATE: Ergh, you know, I was thinking about this since yesterday, but I can use the polynomial representing the original smooth and use that in the modulus, like number field sieve does. I'm going to have to refactor that chapter. I really don't want to work with a setup like mod ( N , 5 ) or whatever... I should just use a polynomial ring, that's way more convenient. 
+
 -----------------------------------------------
 
 URGENT NOTE: I am urgently looking for any country to grant me a visa and employment. A country that doesn't extradite to the US.
