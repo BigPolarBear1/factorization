@@ -5,6 +5,16 @@ UPDATE: Check the final chapter in my paper. I just realized today as I was work
 
 Update: Bah, yea, you need to replace that mod N by your original polynomial. Then do p-adic lifting. My intuition was correct, but I went on a little incorrect tangent in the paper. I'll upload the final version maybe tomorrow.. just massive stress today for some reason.
 
+Update: OMG. I'M A MORRON.... here check this:
+
+if N = 4387
+159^2-4387\*4\*1= 7733
+1553^2-4387\*4\*137 = 7733
+1\*3946^2-3946\*159 = 3346 mod 7733   ( and 7733 mod 4387 = 3346)
+137\*7654^2-7654\*1553 = 3346 mod 7733
+
+So you see what is happening there? Because I see what is happening there... it's this last and final step where the full quadratic polynomial comes into play and not just the discriminant formula. You use this do to your p-adic lifting and find that correct coefficient.
+
 -----------------------------------------------
 
 URGENT NOTE: I am urgently looking for any country to grant me a visa and employment. A country that doesn't extradite to the US.
