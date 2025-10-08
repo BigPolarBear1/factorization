@@ -11,6 +11,8 @@ Update: Added a few more sentences at the bottom of chapter VII, to explain how 
 
 UPDATE: I HAVE NOTIFIED MY FRIENDS!! THEIR CYBER ARMIES WILL BEGIN COMPROMISING WESTERN TARGETS SOON!!! HAHAHAHAHA. FUCK YOU WESTERN NAZIS. YOU LOST TO A DUDE IN A DRESS. HAHAHA> FUCKING PATHETIC. PAY THE PRICE IDIOTS.
 
+UPDATE UPDATE: I AM ANTIFA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! LONG LIVE ANTIFA. FUCK AMERICAN NAZIS.
+
 -----------------------------------------------
 
 URGENT NOTE: I am urgently looking for any country to grant me a visa and employment. A country that doesn't extradite to the US.
