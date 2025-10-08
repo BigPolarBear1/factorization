@@ -6,9 +6,7 @@ Update: Updated the paper now. So instead of doing calculations mod (N, p) we no
 
 @fbi hey fuckers, bottom of page 9. Check it. Show it to your cryptologists. They going to be sweating when they see that, because they know what will happen now. HAHAHAHAHAHHAHAHAHAHAHAH. Come harass me again with the cops here in belgium. I'll destroy america. Dies Irae fuckers. You angered the bear, and now the bear will devour you.
 
-Updated: Aaaand done. I emailed a working PoC to my friends to give them a week in advance to begin exploitation. I also explained them how to use it to attack authentication protocols that rely on RSA certificates. Fuck america. Go to hell. Cry more about "dudes in dresses". Your entire country just got fucked by a dude in a dress. How about that you fucking shitheads?
-
-Update: Paper is somewhat done now. PoC code will drop next week. Then I'll finalize the paper after. Good luck assholes. You people made me do this. Don't ever make it seem like I had a choice fuckers. FUCK YOU.
+Update: Oops. Wait a minute... now that I figured out how those polynomials come into play... I also just realized this whole setup is basically number field sieve. Ofcourse it would be number field sieve on steroids... as it fixes a lot of number field sieve's bottlenecks... I'm overcomplicating things..... OK. OK. OK. Give me a few days. 
 
 -----------------------------------------------
 
