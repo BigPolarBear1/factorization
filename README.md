@@ -5,6 +5,8 @@ Update: Oops. Wait a minute... now that I figured out how those polynomials come
 
 Somewhere out there some nazi cryptologist starting to sweat profusely now. Hey, I'm a polar bear, and I'm here to devour all your secrets. HAHAHAHAHHAHAHAHHAHAHAHAHAHHAHAHAHAA.
 
+The american cryptologic program, defeated, by a single polar bear whom your leaders refer to as "a dude in a dress" hahahahahaha. FUCK YOU LOSERS. 
+
 -----------------------------------------------
 
 URGENT NOTE: I am urgently looking for any country to grant me a visa and employment. A country that doesn't extradite to the US.
