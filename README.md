@@ -17,6 +17,8 @@ TIME TO TEACH NAZIS SOME RESPECT. THE TIME HAS COME!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 Don't worry gays, we're going to make math cool again and destroy nazis. Cryptology for everyone. The age of the cipherpunk is here. Or whatever. Fuck it all. I'm dead already. This entire project has been a suicide run. Nothing left to lose. Going down in a blaze of (math) glory. Hahahaa.
 
+Update: Now that the math research is completely done and we've 100% succesfully bridged over to number field sieve's approach (but better) I am going to rush out a PoC now.... and as soon as I got a first draft working... I am going to release it... I WILL WIN. NOBODY WILL STOP. COME KILL ME THEN FUCKERS. FUCKING AMERICAN PUSSIES. I PISS ON YOUR SOLDIERS. FUCK YOU LOSERS.
+
 -----------------------------------------------
 
 URGENT NOTE: I am urgently looking for any country to grant me a visa and employment. A country that doesn't extradite to the US.
