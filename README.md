@@ -19,6 +19,8 @@ Don't worry gays, we're going to make math cool again and destroy nazis. Cryptol
 
 Update: Now that the math research is completely done and we've 100% succesfully bridged over to number field sieve's approach (but better) I am going to rush out a PoC now.... and as soon as I got a first draft working... I am going to release it... I WILL WIN. NOBODY WILL STOP ME. COME KILL ME THEN FUCKERS. FUCKING AMERICAN PUSSIES. I PISS ON YOUR SOLDIERS. FUCK YOU LOSERS.
 
+To the FBI loser who launched a terrorism case against me: HEY YOU COME TO EUROPE AND I PUNCH YOU IN YOUR SHITHEAD FACE DUMB PIECE OF SHIT. YOU LOST TO A DUDE IN A DRESS. PATHETIC. YOU ARE ALL PATHETIC. FUCK THE FBI. FUCKING LOSERS. GO CRY YOU FUCKING MORRONS.
+
 -----------------------------------------------
 
 URGENT NOTE: I am urgently looking for any country to grant me a visa and employment. A country that doesn't extradite to the US.
