@@ -25,6 +25,8 @@ Update: Updated the paper now. So instead of doing calculations mod (N, p) we no
 
 Updated: Aaaand done. I emailed a working PoC to my friends to give them a week in advance to begin exploitation. I also explained them how to use it to attack authentication protocols that rely on RSA certificates. Fuck america. Go to hell. Cry more about "dudes in dresses". Your entire country just got fucked by a dude in a dress. How about that you fucking shitheads?
 
+Update: Paper is somewhat done now. PoC code will drop next week. Then I'll finalize the paper after. Good luck assholes. You people made me do this. Don't ever make it seem like I had a choice fuckers. FUCK YOU.
+
 -----------------------------------------------
 
 URGENT NOTE: I am urgently looking for any country to grant me a visa and employment. A country that doesn't extradite to the US.
