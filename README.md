@@ -13,6 +13,8 @@ UPDATE: I HAVE NOTIFIED MY FRIENDS!! THEIR CYBER ARMIES WILL BEGIN COMPROMISING 
 
 UPDATE UPDATE: I AM ANTIFA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! LONG LIVE ANTIFA. FUCK AMERICAN NAZIS.
 
+TIME TO TEACH NAZIS SOME RESPECT. THE TIME HAS COME!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! No more secrets.
+
 -----------------------------------------------
 
 URGENT NOTE: I am urgently looking for any country to grant me a visa and employment. A country that doesn't extradite to the US.
