@@ -15,6 +15,8 @@ UPDATE UPDATE: I AM ANTIFA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! LONG LIVE 
 
 TIME TO TEACH NAZIS SOME RESPECT. THE TIME HAS COME!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! No more secrets.
 
+Don't worry gays, we're going to make math cool again and destroy nazis. Cryptology for everyone. The age of the cipherpunk is here. Or whatever. Fuck it all. I'm dead already. This entire project has been a suicide run. Nothing left to lose. Going down in a blaze of (math) glory. Hahahaa.
+
 -----------------------------------------------
 
 URGENT NOTE: I am urgently looking for any country to grant me a visa and employment. A country that doesn't extradite to the US.
