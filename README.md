@@ -25,6 +25,8 @@ FUCK. I AM SO EXCITED THAT I WON, I WANT TO GO PUNCH SOME PIECE OF SHIT NAZI RIG
 
 Welcome to the end times, hahahahahaha. End times of the boring times. Because now we're going to have the gay times instead. Ooooooooooook. I'm going to sleep. Maybe I can finish the code tomorrow already.
 
+You know... its funny in a way... now that I see how it works... fucking hell man, I should have known this 6 months ago, because it's so obvious.... and there was times last spring and summer that I got really close to figuring it out, but then gave up and ended up chasing my own tail for a while. God damnit. These infosec assholes had so much time now to prepare for this moment. Next time, I must be more relentless. There should be no mercy anymore going forward. When I break ECC. It should come out of nowhere. Hahahaha. Fuck you. 
+
 -----------------------------------------------
 
 URGENT NOTE: I am urgently looking for any country to grant me a visa and employment. A country that doesn't extradite to the US.
