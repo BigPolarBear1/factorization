@@ -7,6 +7,8 @@ Somewhere out there some nazi cryptologist starting to sweat profusely now. Hey,
 
 The american cryptologic program, defeated, by a single polar bear whom your leaders refer to as "a dude in a dress" hahahahahaha. FUCK YOU LOSERS. 
 
+Update: Added a few more sentences at the bottom of chapter VII, to explain how exactly this bridges number field sieve. It's all easy now. I understand it perfectly. I finally have all the pieces of the puzzle THANK GOD, HOLY FUCKNG SHIT. I WAS LOSING MY FUCKING SANITY WORKING ON THIS FOR 2.5 years. ITS DONE. OVER. I WON. I know there was a bridge to numbe field sieve. And now I got all the details. Its all in the paper now. I knew I hadn't lost my mind! I knew it! Fuck you all assholes. You people all suck. I destroyed everyone in infosec. HAHAHAHHAA. FUCK YOU PUSSIES. ENJOY THE PATCHING ASSHOLES!!!!!!!!!! ECC IS NEXT!
+
 -----------------------------------------------
 
 URGENT NOTE: I am urgently looking for any country to grant me a visa and employment. A country that doesn't extradite to the US.
