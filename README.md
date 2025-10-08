@@ -23,6 +23,8 @@ To the FBI loser who launched a terrorism case against me: HEY YOU COME TO EUROP
 
 FUCK. I AM SO EXCITED THAT I WON, I WANT TO GO PUNCH SOME PIECE OF SHIT NAZI RIGHT NOW TO GET RID OF THE ADRENALINE. FUCK NAZIS. WATCH WHAT HAPPENS NOW. ONCE THAT CODE IS DONE. WATCH WHAT HAPPENS. FUCKING LOSERS. TELL HEGSETH HE IS A LITTLE BITCH.
 
+Welcome to the end times, hahahahahaha. End times of the boring times. Because now we're going to have the gay times instead. Ooooooooooook. I'm going to sleep. Maybe I can finish the code tomorrow already.
+
 -----------------------------------------------
 
 URGENT NOTE: I am urgently looking for any country to grant me a visa and employment. A country that doesn't extradite to the US.
