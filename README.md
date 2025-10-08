@@ -21,6 +21,8 @@ Update: Now that the math research is completely done and we've 100% succesfully
 
 To the FBI loser who launched a terrorism case against me: HEY YOU COME TO EUROPE AND I PUNCH YOU IN YOUR SHITHEAD FACE DUMB PIECE OF SHIT. YOU LOST TO A DUDE IN A DRESS. PATHETIC. YOU ARE ALL PATHETIC. FUCK THE FBI. FUCKING LOSERS. GO CRY YOU FUCKING MORRONS.
 
+FUCK. I AM SO EXCITED THAT I WON, I WANT TO GO PUNCH SOME PIECE OF SHIT NAZI RIGHT NOW TO GET RID OF THE ADRENALINE. FUCK NAZIS. WATCH WHAT HAPPENS NOW. ONCE THAT CODE IS DONE. WHAT WHAT HAPPENS. FUCKING LOSERS. TELL HEGSETH HE IS A LITTLE BITCH.
+
 -----------------------------------------------
 
 URGENT NOTE: I am urgently looking for any country to grant me a visa and employment. A country that doesn't extradite to the US.
