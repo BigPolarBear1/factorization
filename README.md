@@ -1,7 +1,7 @@
 To build: python3 setup.py build_ext --inplace  (From inside PoC_Files_Find_Similar)</br>
 To run: python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 100 -quad_size 1</br>
 
-Update: Oops. Wait a minute... now that I figured out how those polynomials come into play... I also just realized this whole setup is basically number field sieve. Ofcourse it would be number field sieve on steroids... as it fixes a lot of number field sieve's bottlenecks... I'm overcomplicating things..... OK. OK. OK. Give me a few days. All the math is here already. Check the last chapter in the paper. It already explains how to bridge my quadratic sieve appraoch to number field sieve's appraoch. It's basically the same thing. But to finish the algorithm, you need to thus also use number field sieve's appraoch. 
+Update: Oops. Wait a minute... now that I figured out how those polynomials come into play... I also just realized this whole setup is basically number field sieve. Ofcourse it would be number field sieve on steroids... as it fixes a lot of number field sieve's bottlenecks... I'm overcomplicating things..... OK. OK. OK. Give me a few days. All the math is here already. Check the last chapter in the paper. It already explains how to bridge my quadratic sieve appraoch to number field sieve's appraoch. It's basically the same thing. But to finish the algorithm, you need to thus also use number field sieve's appraoch. You don't need to find an initial smooth using QS. You simply use the math I explained there to achieve the same thing number field sieve does... without having to worry about irreducible polynomials and all that stuff.
 
 -----------------------------------------------
 
