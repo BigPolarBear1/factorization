@@ -10,6 +10,8 @@ Update: Ok, chapter VII is now completey done. I am never touching or refactorin
 DIES IRAE FUCKERS. FUCKING NAZIS. I'M AM GOING TO WORK DAY AND NIGHT NOW TO FINSH THIS FINAL STRETCH. ITS ALL THERE. ALL THE MATH IS THERE NOW. FUCK YOU PIECES OF SHIT. FUCK YOU NAZIS. FUCK AMERICA. FUCK EUROPE. FUCK ALL YOU NAZI PIECES OF SHIT. I'LL END YOU PEOPLE. GO TO HELL FOR WHAT YOU PEOPLE DID. DAY OF RECKONING IS HERE.
 
 YOU FUCKING LOSERS GOT DESTROYED BY A "DUDE IN A DRESS" (TO QOUTE THAT FUCKING RETARD HEGSETH). PATHETIC. YOU ARE ALL PATHETIC LOSERS. GO CRY FUCKING LOSERS.
+
+Update: Oops, a bit too fast with chapter VII, you do need that e and d variable from the versions I uploaded yesterday. Let me fix that.
  
 -----------------------------------------------
 
