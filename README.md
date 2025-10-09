@@ -11,6 +11,8 @@ Update: Added a few more sentences at the bottom of chapter VII, to explain how 
 
 Update: That chapter VII is a mess. I'm going to fix it tomorrow while I also write the final chapter now and the PoC code. I understand now how it is supposed to work. It's weird, because none of this shit that I learned today is new, its all stuff I knew already. Somehow it just lined up in my head the right way I guess. Having these polynomials ommit the + N at the end, it makes it so that we output results that are basicaly the modulus - N. You want that different between modulus and polynomial output for it to work. Because than you can go hunting for quadratic residues. And then you get number field sieve... but better. ERGH. TOMORROW. WATCH. IT ALL LINED UP IN MY HEAD NOW.
 
+Update: Going to delete chapter VII. Its just convoluted. I understand it now. Ill write it down tomorrow and begin work on the PoC... both will be done before the end of the week. God damnit. It was so obvious.. I must suck at math. How did I miss this for so many months. Cursing right now. I should quit math. None of the greats like Galois or Legendre or Fermat would have struggled this long. They would have figured it out in a day. FUCK. What a waste of time. Tomorrow I will fix everything. i see it now. FUuuuck. Im fucking mentally challenged. Everyone must think im an idiot. Ofcourse I cqnt fucking focus bc you people ruined my life! FUCK YOU. Tomorrow this ends. THIS ENDS TOMORROW
+
 -----------------------------------------------
 
 URGENT NOTE: I am urgently looking for any country to grant me a visa and employment. A country that doesn't extradite to the US.
