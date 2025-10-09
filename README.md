@@ -1,3 +1,5 @@
+Note: I am antifa
+
 To build: python3 setup.py build_ext --inplace  (From inside PoC_Files_Find_Similar)</br>
 To run: python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 100 -quad_size 1</br>
 
