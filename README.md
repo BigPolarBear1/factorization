@@ -2,6 +2,8 @@ To build: python3 setup.py build_ext --inplace  (From inside PoC_Files_Find_Simi
 To run: python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 100 -quad_size 1</br>
 
 UPDATE: I HAVE SIMPLIFIED CHAPTER VII IN THE PAPER TO A SINGLE PAGE. NOW IT IS STRAIGHT FORWARD WITH THAT BRIDGE TO NUMBER FIELD SIEVE COMPLETED. I WILL SHOW YOU NUMBER FIELD SIEVE, BUT FASTER AND BETTER NOW IN THE FNAL CHAPTER!!! DIES IRAE. THE TIME OF RECKONING IS HERE BITCHES.
+
+Update: Ok, chapter VII is now completey done. I am never touching or refactoring that chapter again. It's perfect now. That concludes all the math research and background to write the final chapter now, "The Polar Bear algorithm". First a quick break. Then I'll begin. I'm hoping to finish it today, then the code in the coming days.
  
 -----------------------------------------------
 
