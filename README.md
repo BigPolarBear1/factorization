@@ -12,6 +12,8 @@ DIES IRAE FUCKERS. FUCKING NAZIS. I'M AM GOING TO WORK DAY AND NIGHT NOW TO FINS
 YOU FUCKING LOSERS GOT DESTROYED BY A "DUDE IN A DRESS" (TO QOUTE THAT FUCKING RETARD HEGSETH). PATHETIC. YOU ARE ALL PATHETIC LOSERS. GO CRY FUCKING LOSERS.
 
 I guess that chapter VII sufficiently explains the link to number field sieve. I'll go ahead and start implementing the final algorithm in code. I tried to find a numerical example by hand by it's too hard. I need atleast some code thats going to calculate quadratic and linear coefficients for a factor base. I'm working hard now to finish all of it ASAP. I see how it works now. It's basically number field sieve with reducable polynomials I guess. Hmm. I need to push hard now. The clock is ticking now. All the info is there... if I don't finish it someone else will. I rather it be me after spending 2.5 years on it.
+
+Alright..... let me start working on that code now.... the final version...
  
 -----------------------------------------------
 
