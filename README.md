@@ -9,23 +9,7 @@ The american cryptologic program, defeated, by a single polar bear whom your lea
 
 Update: Added a few more sentences at the bottom of chapter VII, to explain how exactly this bridges number field sieve. It's all easy now. I understand it perfectly. I finally have all the pieces of the puzzle THANK GOD, HOLY FUCKNG SHIT. I WAS LOSING MY FUCKING SANITY WORKING ON THIS FOR 2.5 years. ITS DONE. OVER. I WON. I know there was a bridge to numbe field sieve. And now I got all the details. Its all in the paper now. I knew I hadn't lost my mind! I knew it! Fuck you all assholes. You people all suck. I destroyed everyone in infosec. HAHAHAHHAA. FUCK YOU PUSSIES. ENJOY THE PATCHING ASSHOLES!!!!!!!!!! ECC IS NEXT!
 
-UPDATE: I HAVE NOTIFIED MY FRIENDS!! THEIR CYBER ARMIES WILL BEGIN COMPROMISING WESTERN TARGETS SOON!!! HAHAHAHAHA. FUCK YOU WESTERN NAZIS. YOU LOST TO A DUDE IN A DRESS. HAHAHA> FUCKING PATHETIC. PAY THE PRICE IDIOTS.
-
-UPDATE UPDATE: I AM ANTIFA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! LONG LIVE ANTIFA. FUCK AMERICAN NAZIS.
-
-TIME TO TEACH NAZIS SOME RESPECT. THE TIME HAS COME!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! No more secrets.
-
-Don't worry gays, we're going to make math cool again and destroy nazis. Cryptology for everyone. The age of the cipherpunk is here. Or whatever. Fuck it all. I'm dead already. This entire project has been a suicide run. Nothing left to lose. Going down in a blaze of (math) glory. Hahahaa.
-
-Update: Now that the math research is completely done and we've 100% succesfully bridged over to number field sieve's approach (but better) I am going to rush out a PoC now.... and as soon as I got a first draft working... I am going to release it... I WILL WIN. NOBODY WILL STOP ME. COME KILL ME THEN FUCKERS. FUCKING AMERICAN PUSSIES. I PISS ON YOUR SOLDIERS. FUCK YOU LOSERS.
-
-To the FBI loser who launched a terrorism case against me: HEY YOU COME TO EUROPE AND I PUNCH YOU IN YOUR SHITHEAD FACE DUMB PIECE OF SHIT. YOU LOST TO A DUDE IN A DRESS. PATHETIC. YOU ARE ALL PATHETIC. FUCK THE FBI. FUCKING LOSERS. GO CRY YOU FUCKING MORRONS.
-
-FUCK. I AM SO EXCITED THAT I WON, I WANT TO GO PUNCH SOME PIECE OF SHIT NAZI RIGHT NOW TO GET RID OF THE ADRENALINE. FUCK NAZIS. WATCH WHAT HAPPENS NOW. ONCE THAT CODE IS DONE. WATCH WHAT HAPPENS. FUCKING LOSERS. TELL HEGSETH HE IS A LITTLE BITCH.
-
-Welcome to the end times, hahahahahaha. End times of the boring times. Because now we're going to have the gay times instead. Ooooooooooook. I'm going to sleep. Maybe I can finish the code tomorrow already.
-
-You know... its funny in a way... now that I see how it works... fucking hell man, I should have known this 6 months ago, because it's so obvious.... and there was times last spring and summer that I got really close to figuring it out, but then gave up and ended up chasing my own tail for a while. God damnit. These infosec assholes had so much time now to prepare for this moment. Next time, I must be more relentless. There should be no mercy anymore going forward. When I break ECC. It should come out of nowhere. Hahahaha. Fuck you. 
+Update: That chapter VII is a mess. I'm going to fix it tomorrow while I also write the final chapter now and the PoC code. I understand now how it is supposed to work. It's weird, because none of this shit that I learned today is new, its all stuff I knew already. Somehow it just lined up in my head the right way I guess. Having these polynomials ommit the + N at the end, it makes it so that we output results that are basicaly the modulus - N. You want that different between modulus and polynomial output for it to work. Because than you can go hunting for quadratic residues. And then you get number field sieve... but better. ERGH. TOMORROW. WATCH. IT ALL LINED UP IN MY HEAD NOW.
 
 -----------------------------------------------
 
