@@ -15,6 +15,8 @@ Update: Going to delete chapter VII. Its just convoluted. I understand it now. I
 
 
  Aaaaah. 4 am. I should sleep first. Long day tomorrow of doing math.
+
+ Update: RISE AND SHINE ASSHOLES. I HAD SOME GOOD SLEEP (relative). I WILL NOW STOP GOING FOR RUNS AND DO MATH, EAT AND SLEEP UNTIL THE WORK IS DONE NOW. BECAUSE I KNOW HOW TO DO IT NOW. EXPECT THE FINAL VERSION OF THE PAPER TONIGHT AND POC IN THE COMING DAYS. TIME'S UP. TIME TO FACE THE MUSIC FOR EVERYTHING YOU PEOPLE DID.
  
 -----------------------------------------------
 
