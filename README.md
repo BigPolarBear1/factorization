@@ -16,6 +16,8 @@ I guess that chapter VII sufficiently explains the link to number field sieve. I
 Alright..... let me start working on that code now.... the final version...
 
  Update: Going to get some sleep. With some luck I can upload some PoC code soon. Now that I undenrstand it, I can finish it... struggling with depression right now. When I started this project I was still living in vancouver, anticipating my move to the US, where everything went wrong.. so many people and places I havnt seen since anymore. I don't think I"ll get over it for the rest of my life. These people took more from me then they could ever imagine... I have to finish this now... 
+
+ Update: After this I will quit math. I got off on a good start. But when my work was 99% complete, it took me nearly a year to finish that last 1% lol. All my heroes, Galois, Fermat, Legendre, Euler, they would have seen it within a day. I don't compare to them. I will have to quit to save myself from further embarassment. 
  
 -----------------------------------------------
 
