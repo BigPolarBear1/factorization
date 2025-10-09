@@ -14,6 +14,8 @@ YOU FUCKING LOSERS GOT DESTROYED BY A "DUDE IN A DRESS" (TO QOUTE THAT FUCKING R
 I guess that chapter VII sufficiently explains the link to number field sieve. I'll go ahead and start implementing the final algorithm in code. I tried to find a numerical example by hand by it's too hard. I need atleast some code thats going to calculate quadratic and linear coefficients for a factor base. I'm working hard now to finish all of it ASAP. I see how it works now. It's basically number field sieve with reducable polynomials I guess. Hmm. I need to push hard now. The clock is ticking now. All the info is there... if I don't finish it someone else will. I rather it be me after spending 2.5 years on it.
 
 Alright..... let me start working on that code now.... the final version...
+
+ Update: Going to get some sleep. With some luck I can upload some PoC code soon. Now that I undenrstand it, I can finish it... struggling with depression right now. When I started this project I was still living in vancouver, anticipating my move to the US, where everything went wrong.. so many people and places I havnt seen since anymore. I don't think I"ll get over it for the rest of my life. These people took more from me then they could ever imagine... I have to finish this now... 
  
 -----------------------------------------------
 
