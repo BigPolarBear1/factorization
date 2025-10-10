@@ -211,7 +211,7 @@ def solve_roots(prime,n):
             z=0
             while z < prime:
                 for root in roots:
-                    res=(root**2-4387*4*z)%prime
+                    res=(root**2-n*4*z)%prime
                     if jacobi(res,prime) != -1:
                         try:
                             c=hmap_p[str(z)]
@@ -224,7 +224,7 @@ def solve_roots(prime,n):
             z=0
             while z < prime:
                 for root in roots:
-                    res=(root**2-4387*4*z)%prime
+                    res=(root**2-n*4*z)%prime
                     if jacobi(res,prime) != -1:
                         try:
                             c=hmap_p[str(z)]
@@ -478,5 +478,6 @@ if __name__ == "__main__":
     parse_args()
     print_banner()
     main()
+
 
 
