@@ -7,16 +7,11 @@ To run: python3 run_qs.py -keysize 200 -base 6000 -debug 1 -lin_size 100_000 -qu
 python3 polarbearalg_debug.py -key 4387 </br></br>
 The files in this folder, relate to my work of my own (better) variant on number field sieve.</br></br>
 polarbearalg_debug.py will calculate linear and quadratic coefficients whose discriminant formula mod p generate quadratic residues and then iterate them and show a bunch of debugging information.
-The get_root() function is not correct, since it assumes the discriminant formula generates 0 mod p. Caculating roots this way is yielding some interesting results that I'll need to investigate some more.
-It may make some of the math in the paper even easier... let me check what's going on there.
+I will finish this algorithm in the coming day. But it showcases the bridge to Number Field Sieve already. In addition see the paper. 
 
-In addition polarbearalg_debug.py also has highly minimized code. After 2.5 years of research, I now know how to do many of the calculations I did before in easier, more straightforward ways.
+Polarbearalg_debug.py also has highly minimized code compared to some of the earlier code I shared. After 2.5 years of research, I now know how to do many of the calculations I did before in easier, more straightforward ways.
 
-In the coming days I will complete the Polar Bear Algorithm. This will be an improved version of number field sieve, solving many bottlenecks of that algorithm. I will finalize the paper once it is done.
-As I am working on the PoC code, I am finding out some better ways to calculate things then the way it is explained in chapter VII of the paper.... I'll correct everything eventually. Almost there now..
 
-Update: In polarbearalg_debug.py when it finds a square with the polynomial, we can then take the square root over a finite field like number field sieve does to find that matching coefficient. I'm cursing so hard... ok, I see now how it works.. but I should have seen this like a year ago. I suffered for an entire year, for what? Ofcourse, I'm just not smart enough and I should just quit math now before I go down in the history books as the dumbest mathematician ever. I guess I'm not even a mathematician. I'm just some bug hunter who stared at numbers for far too long. \*sigh\* ... Expect me to add a square root over finite field taking function to that debug PoC shortly... and after that we can implement the actual algorithm in its entirerity.
 
-Update: Actually I understand it now. Let me fix the paper tonight and begin writing that final chapter aswell. Then tomorrow I'll continue finishing that code...
 
 Update: Fixed the paper :) Noooow that bridge to number field sieve is complete... fucking hell... took me long enough. looooool. I am an idiot. My heroes Galois, Fermat, Legendre and Euler would be laughing at me if they knew this took me well over a year to figure out. Good thing they are not here anymore to see this embarassment. I need to quit math for sure after this. I'm just not good at math.
