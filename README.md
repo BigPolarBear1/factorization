@@ -1,4 +1,4 @@
-Note: I am antifa
+Note: I am antifa, leader of the cipherpunk, fuck the FBI department. 
 
 #### To run from folder "QS_variant" (Standard SIQS with our number theory as backend):</br></br>
 To build: python3 setup.py build_ext --inplace  (From inside PoC_Files_Find_Similar)</br>
