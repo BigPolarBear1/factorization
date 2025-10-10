@@ -19,3 +19,5 @@ The files in this folder, relate to my work of my own (better) variant on number
 polarbearalg_debug.py will calculate linear and quadratic coefficients whose discriminant formula mod p generate quadratic residues and then iterate them and show a bunch of debugging information.
 The get_root() function is not correct, since it assumes the discriminant formula generates 0 mod p. Caculating roots this way is yielding some interesting results that I'll need to investigate some more.
 It may make some of the math in the paper even easier... let me check what's going on there.
+
+In addition polarbearalg_debug.py also has highly minimized code. After 2.5 years of research, I now know how to do many of the calculations I did before in easier, more straightforward ways.
