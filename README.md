@@ -21,3 +21,6 @@ The get_root() function is not correct, since it assumes the discriminant formul
 It may make some of the math in the paper even easier... let me check what's going on there.
 
 In addition polarbearalg_debug.py also has highly minimized code. After 2.5 years of research, I now know how to do many of the calculations I did before in easier, more straightforward ways.
+
+In the coming days I will complete the Polar Bear Algorithm. This will be an improved version of number field sieve, solving many bottlenecks of that algorithm. I will finalize the paper once it is done.
+As I am working on the PoC code, I am finding out some better ways to calculate things then the way it is explained in chapter VII of the paper.... I'll correct everything eventually. Almost there now..
