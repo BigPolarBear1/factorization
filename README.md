@@ -20,6 +20,8 @@ Alright..... let me start working on that code now.... the final version...
  Update: After this I will quit math. I got off on a good start. But when my work was 99% complete, it took me nearly a year to finish that last 1% lol. All my heroes, Galois, Fermat, Legendre, Euler, they would have seen it within a day. I don't compare to them. I will have to quit to save myself from further embarassment. 
 
  Update: I think once this is done (in the coming days), I want to take a break for a year. Just to compile my research methodology, so I can show people from countries that treat me with respect exactly why I'm always succeeding, even without that deep technical knowledge. Because I have a very systematic research approach and its probably wildly different from what most people do. And also study up on some number theory and abstract algeba, and dissappear into the arctic wilderness for a while. Depression. I don't hear anything anymore from my friends that msft forced me to leave behind. And I don't want to message them either, being an international terrorist, it would just get them into trouble... it's probably better this way. I better get used to the complete social isolation anyway, because I have a feeling that this will be the rest of my life now. Better to just be completely alone. Too much trauma happened anyway. I don't feel like I can relate to people anymore anyway. They havn't seen as much as I have. People who have had sheltered lives.. I just can't relate to them anymore.
+
+Update: https://github.com/BigPolarBear1/factorization/tree/main/Polar_Bear_Algorithm I will upload some code here tonight. First will be some debugging code to showcase the math from the paper. 
  
 -----------------------------------------------
 
