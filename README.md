@@ -14,3 +14,5 @@ Polarbearalg_debug.py also has highly minimized code compared to some of the ear
 Update: Oops, I get it now. I see the entire picture now lol. OMG. It's not even difficult. 
 
 So zx^2-yx will generate one side of the congruence, zx^2-yx+kN will generate another. Where kN is a multiple of N. One of them needs to be a square in the integers... then the other one you just take the square root mod m. Ok ok. Let me fix everything tomorow. Holy fuck shit, I am legit mentally challenged. Fucking taking 2.5 years to make sense of fucking quadratics. Wtf is wrong with me. This is why I dropped out of highschool.. I'm just not cut out for this shit. Just don't have that mental sharpness required to do math... Oh well... still broke factorization I guess. 
+
+Update: Updated both the PoC and Paper to demonstrate this... now all we do is complete this by using the smallest polynomial to find a square in the integer, and the other one with +kN to find one in mod m.... and down goes the factorization problem... good luck assholes.
