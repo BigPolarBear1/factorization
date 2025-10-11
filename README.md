@@ -4,7 +4,7 @@ Note: I am antifa, leader of the cipherpunk, fuck the FBI department.
 To build: python3 setup.py build_ext --inplace  (From inside PoC_Files_Find_Similar)</br>
 To run: python3 run_qs.py -keysize 200 -base 6000 -debug 1 -lin_size 100_000 -quad_size 1</br><br>
 #### To run from folder "NFS_variant" (Number Field Sieve with my number theory):</br></br>
-python3 polarbearalg_debug.py -key 4387 </br></br>
+python3 polarbearalg_debug.py -key 4387 -z 1 </br></br>
 The files in this folder, relate to my work of my own (better) variant on number field sieve.</br></br>
 polarbearalg_debug.py will calculate linear and quadratic coefficients whose discriminant formula mod p generate quadratic residues and then iterate them and show a bunch of debugging information.
 I will finish this algorithm in the coming day. But it showcases the bridge to Number Field Sieve already. In addition see the paper. 
