@@ -11,16 +11,6 @@ I will finish this algorithm in the coming day. But it showcases the bridge to N
 
 Polarbearalg_debug.py also has highly minimized code compared to some of the earlier code I shared. After 2.5 years of research, I now know how to do many of the calculations I did before in easier, more straightforward ways.
 
-
-
-
-Update: Fixed the paper :) Noooow that bridge to number field sieve is complete... fucking hell... took me long enough. looooool. I am an idiot. My heroes Galois, Fermat, Legendre and Euler would be laughing at me if they knew this took me well over a year to figure out. Good thing they are not here anymore to see this embarassment. I need to quit math for sure after this. I'm just not good at math.
-
-Ps: I will finish this in the coming days... this is a disaster of your own making. You treat me like shit. I will go to China for this disrespect. Fucking losers. All you people do is cry about trans people like little bitches. Yea well, had this coming. Morrons. 
-
-Pps: I am a polar bear. And I can devour any human at any time. I can devour the entire world if I decide to do so. Morrons. You went after a polar bear. How dumb can you be. Time's up. 
-
-
 To do:
 
 1. Add to the paper how to find the correct linear and quadratic coefficient if we find a square mod m with the quadratic polynomial. Since we must adjust it so it generates that square with the polynomial in the integers instead. This the analogue for NFS's taking square roots over finite fields step.
