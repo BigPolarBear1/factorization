@@ -19,3 +19,16 @@ Update: Fixed the paper :) Noooow that bridge to number field sieve is complete.
 Ps: I will finish this in the coming days... this is a disaster of your own making. You treat me like shit. I will go to China for this disrespect. Fucking losers. All you people do is cry about trans people like little bitches. Yea well, had this coming. Morrons. 
 
 Pps: I am a polar bear. And I can devour any human at any time. I can devour the entire world if I decide to do so. Morrons. You went after a polar bear. How dumb can you be. Time's up. 
+
+
+To do:
+
+1. Add to the paper how to find the correct linear and quadratic coefficient if we find a square mod m with the quadratic polynomial. Since we must adjust it so it generates that square with the polynomial in the integers instead. This the analogue for NFS's taking square roots over finite fields step.
+
+2. Add that to the debug PoC
+
+3. Add to the paper how to find squares mod m, which we can then finish by adjust the coefficients and taking the gcd.
+
+4. Write the non-debug PoC which combines all these things.
+
+5. Taunt the FBI and everyone who has wronged me in my life. Because I won. I know I won. And I told all my Chinese friends already and they will be destroying your networks soon. Because go to hell for how you people treat me. Fucking losers.
