@@ -17,7 +17,7 @@ To do:
 
 2. Add that to the debug PoC
 
-3. Add to the paper how to find squares mod m, which we can then finish by adjust the coefficients and taking the gcd.
+3. Add to the paper how to find squares mod m, which we can then finish by adjusting the coefficients and taking the gcd.
 
 4. Write the non-debug PoC which combines all these things.
 
