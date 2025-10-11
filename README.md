@@ -11,14 +11,4 @@ I will finish this algorithm in the coming day. But it showcases the bridge to N
 
 Polarbearalg_debug.py also has highly minimized code compared to some of the earlier code I shared. After 2.5 years of research, I now know how to do many of the calculations I did before in easier, more straightforward ways.
 
-To do:
-
-1. Add to the paper how to find the correct linear and quadratic coefficient if we find a square mod m with the quadratic polynomial. Since we must adjust it so it generates that square with the polynomial in the integers instead. This the analogue for NFS's taking square roots over finite fields step.
-
-2. Add that to the debug PoC
-
-3. Add to the paper how to find squares mod m, which we can then finish by adjusting the coefficients and taking the gcd.
-
-4. Write the non-debug PoC which combines all these things.
-
-5. Taunt the FBI and everyone who has wronged me in my life. Because I won. I know I won. And I told all my Chinese friends already and they will be destroying your networks soon. Because go to hell for how you people treat me. Fucking losers.
+Update: Actually what I was doing before was better. Using the polynomials with the +N and -N ommitted. You probably want to use those instead. Since they generate smaller values in the integers. It's the same thing like number field sieve... where that entire integer value needs to factor over your algebraic factor base. Because else you can't really take your square root over a finite field. It becomes complicated then. Let me show tomorrow how to do it... slow day today.. my way of doing math research, is very different from what most people do probably... just a lot of python code and print functions, like with polarbearalg_debug.py ... and then I look at the output and make sense of the patterns. Thats how I have been doing math for 2.5 years now. Alright, I need a break for today now.
