@@ -381,14 +381,16 @@ def gen_comb(collected,mod,z,n,factor_base):
         if eq1_b <2:
             continue
         factors,value=factorise_fast(eq1_b,factor_base)
-     
+        sq_mod=0
+
         if abs(eq1_b)**0.5%1==0:
             can=abs(eq1_b)**0.5
+            sq_mod=1
             print("     [i]Found square with y1 in mod: "+str(mod)+" : "+str(can))
         if abs(eq1)**0.5%1==0:
             can=abs(eq1)**0.5
             print("     [i]Found square with y1 in Z: "+" : "+str(can))
-            if eq1%n == eq1_b%n:
+            if eq1%n == eq1_b%n and sq_mod == 1:
                 print("     [i]Found a square relation!!!!!!!!!!!!!!!!!!")
 
 
