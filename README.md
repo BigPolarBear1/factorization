@@ -15,3 +15,4 @@ Polarbearalg_debug.py also has highly minimized code compared to some of the ear
 Update: I finished a first complete draft of the paper. The entire full algorithm is described there now. I also uploaded two pocs to NFS_Variant, polarbearalg_debug and polarbearalg_debug2, read the last chapter of the paper to understand them.
 I will now work on finishing the full algorithm in code, which will be uploaded shortly...
 
+Note: This absolutely destroys the factorization problem. And either a massive deception is ongoing and people know already or you are all about to find out.... either way, good luck I guess.
