@@ -27,3 +27,5 @@ Update: Oops, that PoC that I uploaded for the NFS_Variant last night was broken
 Update: Ok. I will add some more stuff to the paper this evening and upload a debug2 PoC also. It's beautiful. Now that I understand everything. Holy shit. It's like seeing the arctic for the first time.
 
 These things also hold true mod p (like without combining primes to a larger modulus). I was afraid there would be some catch there.... so that means you can literally just build square relations.. 
+
+Ok... I'm going to make some food... and then I'm going to begin explaining how to build square relations in the integers, from the ground up. I am now 100% convinced that people must have known and that is also exactly why I am going to China. Because if this is how they treat people who make a major breakthrough in cryptology.. then screw them. 
