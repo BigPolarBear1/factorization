@@ -25,3 +25,6 @@ To do:
 Update: Oops, that PoC that I uploaded for the NFS_Variant last night was broken. I fixed it now. I think this debug PoC is good now. I may eventually add some logic to take square roots over finite fields.. but I will start the final algorithm now... once I implement it there I may try to port it over to the debug PoC aswell. But the debug PoC is just to show how the math works, nothing more. And to use as a research tool.
 
 Update: Thinking about how I will implement the final version of the algorithm... I might change some things in the paper eventually. Instead of using all quadratic residues... it's better to just use coefficients that result in 0 mod p. I guess I'll add a switch to the _debug.py PoC to change between both eventually. 
+
+
+HAH!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Got it. 
