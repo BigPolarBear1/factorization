@@ -25,3 +25,5 @@ To do:
 Update: Oops, that PoC that I uploaded for the NFS_Variant last night was broken. I fixed it now. I think this debug PoC is good now. I may eventually add some logic to take square roots over finite fields.. but I will start the final algorithm now... once I implement it there I may try to port it over to the debug PoC aswell. But the debug PoC is just to show how the math works, nothing more. And to use as a research tool.
 
 Update: Ok. I will add some more stuff to the paper this evening and upload a debug2 PoC also. It's beautiful. Now that I understand everything. Holy shit. It's like seeing the arctic for the first time.
+
+These things also hold true mod p (like without combining primes to a larger modulus). I was afraid there would be some catch there.... so that means you can literally just build square relations.. 
