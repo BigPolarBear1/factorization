@@ -368,7 +368,7 @@ def gen_comb(collected,mod,z,n,factor_base):
         y0%=mod
         disc_y0=y0**2-n*4*z
         x=get_root(n,mod,y0,z) 
-        eq0=(z*x**2-x*y0)#%mod
+        eq0=(z*x**2-x*y0)%mod
         eq0_b=(z*x**2-x*y0+n)%mod
         y1=formal_deriv(y0,x,z)
         disc_y1=y1**2+n*4*z
@@ -388,12 +388,9 @@ def gen_comb(collected,mod,z,n,factor_base):
         if abs(eq1)**0.5%1==0:
             can=abs(eq1)**0.5
             print("     [i]Found square with y1 in Z: "+" : "+str(can))
-        if abs(eq0_b)**0.5%1==0:
-            can=abs(eq0_b)**0.5
-            print("     [i]Found square with y0 in mod: "+str(mod)+" : "+str(can))
-        if abs(eq0)**0.5%1==0:
-            can=abs(eq0)**0.5
-            print("     [i]Found square with y0 in Z: "+str(can))
+            if eq1%n == eq1_b%n:
+                print("     [i]Found a square relation!!!!!!!!!!!!!!!!!!")
+
 
 
 def find_comb(lists,n,procnum,return_dict,rstart,rstop,hmap):
