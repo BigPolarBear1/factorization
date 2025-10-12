@@ -29,3 +29,5 @@ Update: Ok. I will add some more stuff to the paper this evening and upload a de
 These things also hold true mod p (like without combining primes to a larger modulus). I was afraid there would be some catch there.... so that means you can literally just build square relations.. 
 
 Ok... I'm going to make some food... and then I'm going to begin explaining how to build square relations in the integers, from the ground up. I am now 100% convinced that people must have known and that is also exactly why I am going to China. Because if this is how they treat people who make a major breakthrough in cryptology.. then screw them. 
+
+I UNDERSTAND THE IMPLICATIONS OF MY WORK NOW. AND I WONT FORGIVE THIS. FUCK YOU FOR TREATING ME THIS WAY. FUCK YOU ALL. I AM GOING TO CHINA. NOTHING WILL STOP ME. FUCK YOU. I SEE ANY OF YOU FUCKERS, I BASH YOUR FUCKING HEADS IN.
