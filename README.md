@@ -16,3 +16,9 @@ Update: I finished a first complete draft of the paper. The entire full algorith
 I will now work on finishing the full algorithm in code, which will be uploaded shortly...
 
 Note: This absolutely destroys the factorization problem. And either a massive deception is ongoing and people know already or you are all about to find out.... either way, good luck I guess.
+
+Update: I'm suddenly super anxious. I see how to do it now... it's in the paper too. People would have known. Someone math educated with experience in factorization would have known the moment they saw my work. Then why? There has to be some deception going on. I'm not sure what it means. They may be moving against me to try and deny me the credits of my work or something. Write me out of history like they always try to do. I will begin writing the final algorithm tomorrow. I know how to do it now. That shouldn't take more then a week to completely finish. 
+
+For tomorrow I want to atleast the very least do this:
+
+Do what polarbearalg_debug2 is doing. But we should lift all those primes to even exponents and only focus on those coefficients that generate 0 mod p for y1 (like the QS_Variant does) ... because we need those solutions to build up what is in NFS the rational side. And then perform trial factorization on what is generated at the algebraic side. Then I can upload that already... and then focus on getting the linear algebra working in the days after, aswell as using jacobi symbols in that step to get better odds of getting a square in the integers for the algebraic side.
