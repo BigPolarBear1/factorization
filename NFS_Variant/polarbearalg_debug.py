@@ -372,7 +372,7 @@ def gen_comb(collected,mod,z,n,factor_base):
         eq0_b=(z*x**2-x*y0+n)%mod
         y1=formal_deriv(y0,x,z)
         disc_y1=y1**2+n*4*z
-        eq1=(z*x**2+x*y1)#%mod
+        eq1=(z*x**2+x*y1)%mod
 
         eq1_b_full=(z*x**2+x*y1-n)
         eq1_b=eq1_b_full%mod
@@ -381,17 +381,18 @@ def gen_comb(collected,mod,z,n,factor_base):
         if eq1_b <2:
             continue
         factors,value=factorise_fast(eq1_b,factor_base)
-        sq_mod=0
+        sq_z=0
 
         if abs(eq1_b)**0.5%1==0:
             can=abs(eq1_b)**0.5
-            sq_mod=1
-            print("     [i]Found square with y1 in mod: "+str(mod)+" : "+str(can))
+            sq_z=1
+            print("     [i]Found square with zx^2-x+kN in Z: "+" : "+str(can))
         if abs(eq1)**0.5%1==0:
             can=abs(eq1)**0.5
-            print("     [i]Found square with y1 in Z: "+" : "+str(can))
-            if eq1%n == eq1_b%n and sq_mod == 1:
+            print("     [i]Found square with zx^2-x in Z: "+" : "+str(can))
+            if eq1%n == eq1_b%n and sq_z == 1:
                 print("     [i]Found a square relation!!!!!!!!!!!!!!!!!!")
+   
 
 
 
