@@ -21,3 +21,5 @@ To do:
 -Show an example where we have a polynomial with a square in the integers (zx^2-yx) and another polynomial (zx^2-yx+kN) with a quadratic residue mod m, and take the square root over a finite field. I should demonstrate that in code and in the paper
 
 -Demonstrate how to combine polynomials to generate that square relation we just talked about.. just like NFS does... use some linear algebra... easy enough. I'll write this in code first and release it.. then demonstrate a full numerical example in the paper also. 
+
+Update: Wait a sec, still missing one piece.. let me figure it out today. Ignore that last part of the paper for now.
