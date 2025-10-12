@@ -22,4 +22,4 @@ To do:
 
 -Demonstrate how to combine polynomials to generate that square relation we just talked about.. just like NFS does... use some linear algebra... easy enough. I'll write this in code first and release it.. then demonstrate a full numerical example in the paper also. 
 
-Update: Oops, that PoC that I uploaded for the NFS_Variant last night was broken. I fixed it now. I think this debug PoC is good now. I will start working on the actual algorithm now which will combine results to get that square relation... the same way normal NFS does...
+Update: Oops, that PoC that I uploaded for the NFS_Variant last night was broken. I fixed it now. I think this debug PoC is good now. I may eventually add some logic to take square roots over finite fields.. but I will start the final algorithm now... once I implement it there I may try to port it over to the debug PoC aswell. But the debug PoC is just to show how the math works, nothing more. And to use as a research tool.
