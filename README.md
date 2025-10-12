@@ -12,21 +12,6 @@ I will finish this algorithm in the coming day. But it showcases the bridge to N
 
 Polarbearalg_debug.py also has highly minimized code compared to some of the earlier code I shared. After 2.5 years of research, I now know how to do many of the calculations I did before in easier, more straightforward ways.
 
-Update: So zx^2-yx will generate one side of the congruence, zx^2-yx+kN will generate another. Where kN is a multiple of N. One of them needs to be a square in the integers... then the other one you just take the square root mod m. Ok ok. Let me fix everything tomorow. Holy fuck shit, I am legit mentally challenged. Fucking taking 2.5 years to make sense of fucking quadratics. Wtf is wrong with me. This is why I dropped out of highschool.. I'm just not cut out for this shit. Just don't have that mental sharpness required to do math... Oh well... still broke factorization I guess. 
-
-Update: Updated both the PoC and Paper to demonstrate this... now all we do is complete this by using the smallest polynomial to find a square in the integer, and the other one with +kN to find one in mod m.... and down goes the factorization problem... good luck assholes.
-
-To do:
-
--Show an example where we have a polynomial with a square in the integers (zx^2-yx) and another polynomial (zx^2-yx+kN) with a quadratic residue mod m, and take the square root over a finite field. I should demonstrate that in code and in the paper
-
--Demonstrate how to combine polynomials to generate that square relation we just talked about.. just like NFS does... use some linear algebra... easy enough. I'll write this in code first and release it.. then demonstrate a full numerical example in the paper also. 
-
-Update: Oops, that PoC that I uploaded for the NFS_Variant last night was broken. I fixed it now. I think this debug PoC is good now. I may eventually add some logic to take square roots over finite fields.. but I will start the final algorithm now... once I implement it there I may try to port it over to the debug PoC aswell. But the debug PoC is just to show how the math works, nothing more. And to use as a research tool.
-
-Update: Ok. I will add some more stuff to the paper this evening and upload a debug2 PoC also. It's beautiful. Now that I understand everything. Holy shit. It's like seeing the arctic for the first time.
-
-These things also hold true mod p (like without combining primes to a larger modulus). I was afraid there would be some catch there.... so that means you can literally just build square relations.. 
-
-Ok... I'm going to make some food... and then I'm going to begin explaining how to build square relations in the integers, from the ground up. I am now 100% convinced that people must have known and that is also exactly why I am going to China. Because if this is how they treat people who make a major breakthrough in cryptology.. then screw them. 
+Update: I finished a first complete draft of the paper. The entire full algorithm is described there now. I also uploaded two pocs to NFS_Variant, polarbearalg_debug and polarbearalg_debug2, read the last chapter of the paper to understand them.
+I will now work on finishing the full algorithm in code, which will be uploaded shortly...
 
