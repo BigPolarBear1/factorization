@@ -385,11 +385,12 @@ def gen_comb(collected,mod,z,n,factor_base):
         eq0_b=(z*x**2-x*y0+n)%mod
         y1=formal_deriv(y0,x,z)
         disc_y1=y1**2+n*4*z
-        eq1=(z*x**2+x*y1)%mod
+        eq1_full=(z*x**2+x*y1)
+        eq1=eq1_full%mod
         eq1_b_full=(z*x**2+x*y1-n)
-        factors,rem=factorise_fast(eq1_b_full,factor_base)
+        factors,rem=factorise_fast(eq1_full,factor_base)
         eq1_b=eq1_b_full%mod
-        print("[*]y0: "+str(y0)+" y1: "+" polynomial root: "+str(x)+" polynomial of y1: "+str(eq1)+" with -N: "+str(eq1_b_full)+" odd exp factors algebraic side: "+str(factors)+" rem: "+str(rem))
+        print("[*]y0: "+str(y0)+" y1: "+" polynomial root: "+str(x)+" polynomial of y1: "+str(eq1)+" without mod: "+str(eq1_full)+" odd exp factors algebraic side: "+str(factors)+" rem: "+str(rem))
 
 
 
