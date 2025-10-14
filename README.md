@@ -20,3 +20,5 @@ Compared to v01, I have further expanded the sieving logic and it also makes sur
 Next I will implement the linear algebra step... if that doesn't work well enough, I'll have to investigate adding a quadratic character base (legendre symbols) as well. 
 
 My initial goal is just to get it to work, no matter how convoluted or bad.. once it works, I can begin optimizing and simplifying everything. I may have to change some things on how I represent both sides of the congruence to get the linear algebra step to work... we'll see. Let me implement the linear algebra step first, and then I can debug the math if it doesn't work straight out of the box.
+
+Update: Thinking some more about it... I'll have to change somethings eventually. What is in NFS the algebraic side, we definitely want that to be just zx^2+yx (without -N) ... just to make sure we get small values there. However, what is in NFS the rational side, that I will need to represent differently then I'm doing right now... but for now, let me get this working first... and then I'll simplify and optimize. Get the easiest path working first, and then figure out the rest. 
