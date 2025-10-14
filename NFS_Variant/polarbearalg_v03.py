@@ -6,9 +6,7 @@
 ####I am working on my own custom number field sieve implementation using reducible quadratic polynomials.
 
 ###To do:
-#1. If we can factor the algebraic side of a  factor base then we should create a matrix row. 
-#2. Once we have our full matrix, do everything else like standard number field sieve... except for the final step, we take the square root over a modulus instead of polynomial ring.
-
+##This is now a QS-NFS hybrid. However one side of the congruence, we don't need to find a square in the integers, but only mod m. I'll finish it soon.
 
 ###Changelog:
 #v0.2: Improved sieving for smooths and making sure both sides of the congruence are smooth.
@@ -741,5 +739,6 @@ if __name__ == "__main__":
     parse_args()
     print_banner()
     main()
+
 
 
