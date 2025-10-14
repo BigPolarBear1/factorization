@@ -12,16 +12,11 @@ I will finish this algorithm in the coming day. But it showcases the bridge to N
 
 Polarbearalg_debug.py also has highly minimized code compared to some of the earlier code I shared. After 2.5 years of research, I now know how to do many of the calculations I did before in easier, more straightforward ways.
 
-Update: I have begun finalizing the algorithm under Polarbearalg_v01.py
+Update: Uploaded polarbearalg_v02:
 
-This will do number field sieve with my own number theory up until the sieving portion.
+Use: python3 polarbearalg_v02 -key 4387
 
-What still needs to be done is:
+Compared to v01, I have further expanded the sieving logic and it also makes sure both sides of the congruence are smooth now (the same way NFS does).
+Next I will implement the linear algebra step... if that doesn't work well enough, I'll have to investigate adding a quadratic character base (legendre symbols) as well. 
 
-If an algebraic smooth is found, we should construct a matrix row.
-Once enough such rows are found, we should then do the linear algebra step.
-And once a solution is found, we just take a square root over a finite field.
-
-Should all be finished somewhere this week... 
-
-Update: I'll get the linear algebra working tomorrow... straightforward enough... just copy paste from my QS PoC... then I can verify all the math. Then that's either going to work and I can probably finish the PoC completely very quickly.. or there will still be some hidden snakes in the math that I'll need to figure out (but I'm sure I can manage as I now understand things far better then before)... we'll see tomorrow. Today was a slow day.. just depression. I need to finish this soon. I think come January I'm just going to spent a year in the wilderness by myself... these last two years changed me... I feel deeply disgusted by humanity.
+My initial goal is just to get it to work, no matter how convoluted or bad.. once it works, I can begin optimizing and simplifying everything. I may have to change some things on how I represent both sides of the congruence to get the linear algebra step to work... we'll see. Let me implement the linear algebra step first, and then I can debug the math if it doesn't work straight out of the box.
