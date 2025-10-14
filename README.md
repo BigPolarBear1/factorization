@@ -8,12 +8,6 @@ This version is somewhat done, but it doesn't achieve much of an advantage, as t
 Use: python3 polarbearalg_v03 -key 4387 (The debug versions are just for the math in the paper in the final chapter.. I'll rewrite that final chapter one last time once the code is fully done)</br></br>
 The files in this folder, relate to my work of my own (better) variant on number field sieve.</br></br>
 
-Polarbearalg_debug.py also has highly minimized code compared to some of the earlier code I shared. After 2.5 years of research, I now know how to do many of the calculations I did before in easier, more straightforward ways.
-
-Update: Uploaded polarbearalg_v03:
-
-Use: python3 polarbearalg_v03 -key 4387
-
 LINEAR ALGEBRA IS WORKING!!!!!!!!! WE DID IT!!!!! However, this is now a NFS-QS hybrid. We now do square finding in the integers on both sides of the congruence. However, one side we should reduce that to mod m and take a square root over a finite field. Let me figure out this final step now :) Almost!
 
 Ok.... the fact that the linear algebra works, that's a big morale boost. Even though it isnt yet true NFS... but it is only one final step away from true NFS (well, true NFS, but better and faster).
