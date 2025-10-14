@@ -23,3 +23,5 @@ Once enough such rows are found, we should then do the linear algebra step.
 And once a solution is found, we just take a square root over a finite field.
 
 Should all be finished somewhere this week... 
+
+Update: I'll get the linear algebra working tomorrow... straightforward enough... just copy paste from my QS PoC... then I can verify all the math. Then that's either going to work and I can probably finish the PoC completely very quickly.. or there will still be some hidden snakes in the math that I'll need to figure out (but I'm sure I can manage as I now understand things far better then before)... we'll see tomorrow. Today was a slow day.. just depression. I need to finish this soon. I think come January I'm just going to spent a year in the wilderness by myself... these last two years changed me... I feel deeply disgusted by humanity.
