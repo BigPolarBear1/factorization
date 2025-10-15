@@ -14,3 +14,5 @@ Ok.... the fact that the linear algebra works, that's a big morale boost. Even t
 Damn, I needed this small win today. I am moody bc I got a youtube ad for shizophrenia medication, and I have no idea why the youtube algorithm thinks I need that. I have however, often questioned my sanity these last 2 years... because everyone ignores my work and acts like I'm crazy. I know I'm not crazy. One last effort now. I'll go sleep, then tomorrow, I'll sort it out. 
 
 I'm glad it is finally working.. but I am cursing myself for not realizing I could do this sooner... I'm not good at math at all. I'm like an idiot, falling over, trying to find the lightswitch in the dark. But I won't give up. I will turn on the light, so I can see everything! HAHAHAHAHAHAHAHAHAHA.
+
+I'm literally single handedly defeating every western intelligence agency by myself right now. And it's fucking hilarious. Fucking western pussies. Cry more about dudes in dresses. Fucking losers. Piss on you. I'm waging war against you people and I'm winning. I'm fucking destroying you losers.
