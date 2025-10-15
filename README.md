@@ -18,3 +18,5 @@ I'm glad it is finally working.. but I am cursing myself for not realizing I cou
 I'm literally single handedly defeating every western intelligence agency by myself right now. And it's fucking hilarious. Fucking western pussies. Cry more about dudes in dresses. Fucking losers. Piss on you. I'm waging war against you people and I'm winning. I'm fucking destroying you losers.
 
 Update: Eureka... I think I got it. I'll upload somewhere this evening.
+
+Update: Worst brain fog ever today. So the trick is, we should only have to do trail factorization for zx^2+yx, not for zx^2+yx-N... but if we found a square on one side, by representing it the way I am.. we should also be able to derive the other square from that... that shouldn't be difficult at all, because all the math is there. let me take a break for a few hours and see if the brain fog clears up tonight so I can finish this.
