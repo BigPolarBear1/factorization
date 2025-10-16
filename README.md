@@ -26,3 +26,5 @@ Ofcourse THEN you need to take a square root over a finite field somehow after t
 I have written some code already, and it does work, it generates the correct linear coefficients and roots mod p instead of using +n for the second polynomial, the only thing that's missing is taking a square root over a finite field. That's the only thing missing right now.
 
 UPDATE: I have added polarbearalg_v05 ... its broken, but it will generate, what is in NFS the algebraic side, correctly now. (use v04 for a working version that works in the integers fully). So for v06 I have to add some jacobi symbols for the linear algebra step to work with. But I'm having headache big time right now... lets see when I can get it done. 
+
+Update: Yea, polarbearalg_v05.py, the linear algebra step there will be broken until a quadratic character base is added, like in number field sieve. I'm having a pounding headache right now. And tomorrow I have to go somewhere the entire day... but I'll see if I can get a first draft uploaded with a quadratic character base tomorrow evening. Having that quadratic character base is super crucial though.
