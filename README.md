@@ -12,12 +12,12 @@ Just uploaded v04. I switched back to using all quadratic residues instead of ju
 So right now one side is represented by zx^2-yx and the other side by zx^2-yx+n. However by appending n to the other polynomial, we generate smooth candidates that are too big on one side. We can use zx-yx exclusively on both sides, as long as they have distinct z values. I'll get that to work tomorrow... in theory that should work... and if I get that to work... then people have a big problem tomorrow lol. Anyway, I'm going to try and relax and get a few hours of sleep soon first... if that doesn't work (which I doubt), I'll attempt number field sieve's approach.. we'll see.
 
 My brain does some weird things sometimes. Actually doing this:
-if y0= 148, z=1 and N=4387
+if y0= 148, z=1 and N=4387</br>
 
-left side: 1\*74^2-148\*74 = -(74^2)
-right side: 1\*74^2-148\*74+4387 = -(33^2)
+left side: 1\*74^2-148\*74 = -(74^2)</br>
+right side: 1\*74^2-148\*74+4387 = -(33^2)</br>
 
-but the right side can also be expressed as: 1\*33^2-66\*33
+but the right side can also be expressed as: 1\*33^2-66\*33</br>
 
 However, if we have a linear coefficient, for example 5 mod 13, then calculating what that coefficient will be at +4387, is simply taking the square root of (5**2-4*4387) mod 13.
 So thats how you generate smaller values on that other side of the congruence instead of adding +4387 to the polynomial.
