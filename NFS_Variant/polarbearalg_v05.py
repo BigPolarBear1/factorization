@@ -1,3 +1,7 @@
+########################!!!!!!!!!!!!!!!!NOTE THIS VERSION IS BROKEN ON PURPOSE. USE V04 FOR A WORKING VERSION THAT WORKS COMPLETELY IN THE INTEGERS. THIS SIMPLY CONVERTS ONE SIDE OF THE CONGRUENCE TO AN ALGEBRAIC SIDE.. IT NEEDS MORE WORK FOR THE LINEAR ALGEBRA STEP TO WORK, WILL FIX IN V06
+
+
+
 ###Author: Essbee Vanhoutte
 ###WORK IN PROGRESS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -751,5 +755,6 @@ if __name__ == "__main__":
     parse_args()
     print_banner()
     main()
+
 
 
