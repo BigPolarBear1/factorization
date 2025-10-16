@@ -21,4 +21,6 @@ but the right side can also be expressed as: 1\*33^2-66\*33</br>
 
 However, if we have a linear coefficient, for example 5 mod 13, then calculating what that coefficient will be at +4387, is simply taking the square root of (5**2-4*4387) mod 13.
 So thats how you generate smaller values on that other side of the congruence instead of adding +4387 to the polynomial.
-Ofcourse THEN you need to take a square root over a finite field somehow after the linear algebra step. AND THAT I WILL FIGURE OUT NOW IN THE COMING DAYS. 
+Ofcourse THEN you need to take a square root over a finite field somehow after the linear algebra step. AND THAT I WILL FIGURE OUT NOW IN THE COMING DAYS.
+
+I have written some code already, and it does work, it generates the correct linear coefficients and roots mod p instead of using +n for the second polynomial, the only thing that's missing is taking a square root over a finite field. That's the only thing missing right now.
