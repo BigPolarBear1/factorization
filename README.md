@@ -13,8 +13,8 @@ So right now one side is represented by zx^2-yx and the other side by zx^2-yx+n.
 
 Example:
 
-1\*74^2-148\*74 = -(74^2)
-3\*9^2-148\*9   = -(33^2) 
+1\*74^2-148\*74 = -(74^2)</br>
+3\*9^2-148\*9   = -(33^2)</br></br>
 
 Here we use a different quadratic coefficient instead of generating the other square like this 1\*74^2-148\*74+4387 
 
