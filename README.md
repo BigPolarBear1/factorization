@@ -11,12 +11,3 @@ The files in this folder, relate to my work of my own (better) variant on number
 Just uploaded v04. I switched back to using all quadratic residues instead of just 0 solutions and removed lifting for now.
 So right now one side is represented by zx^2-yx and the other side by zx^2-yx+n. However by appending n to the other polynomial, we generate smooth candidates that are too big on one side. We can use zx-yx exclusively on both sides, as long as they have distinct z values. I'll get that to work tomorrow... in theory that should work... and if I get that to work... then people have a big problem tomorrow lol. Anyway, I'm going to try and relax and get a few hours of sleep soon first... if that doesn't work (which I doubt), I'll attempt number field sieve's approach.. we'll see.
 
-Example:
-
-1\*74^2-148\*74 = -(74^2)</br>
-3\*9^2-148\*9   = -(33^2)</br></br>
-
-Here we use a different quadratic coefficient instead of generating the other square like this 1\*74^2-148\*74+4387 
-
-I'm trying to get the exact math working mod p, to generate smooths like this. Give me a few days.. shouldn't take too long.
-So yea, that's it's, I know it is...  Let me push hard now to finish it.. the uploaded PoC is almost there.. but instead of zx^2-yx and zx^2-yx+N on the other side, we need zx^2-yx on both sides, but with distinct quadratic coefficients. Almost there....
