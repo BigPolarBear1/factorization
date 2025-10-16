@@ -623,7 +623,7 @@ def lift_all(old,z,n,max_exp):
 
 def find_comb(lists,n,procnum,return_dict,rstart,rstop,hmap,hmap2):
     ret_array=[[],[],[],[],[],[],[],[]]
-    max_exp=2
+    max_exp=1
     z=g_z
     z_max=z+10
     factor_base=copy.deepcopy(lists)
@@ -747,5 +747,6 @@ if __name__ == "__main__":
     parse_args()
     print_banner()
     main()
+
 
 
