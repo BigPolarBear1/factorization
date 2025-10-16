@@ -19,4 +19,4 @@ Example:
 Here we use a different quadratic coefficient instead of generating the other square like this 1\*74^2-148\*74+4387 
 
 I'm trying to get the exact math working mod p, to generate smooths like this. Give me a few days.. shouldn't take too long.
-
+So yea, that's it's, I know it is...  Let me push hard now to finish it.. the uploaded PoC is almost there.. but instead of zx^2-yx and zx^2-yx+N on the other side, we need zx^2-yx on both sides, but with distinct quadratic coefficients. Almost there....
