@@ -10,4 +10,8 @@ The files in this folder, relate to my work of my own (better) variant on number
 
 I have also uploaded polarbearalg_v05. v04 works fully in the integers on both side of the congruence. v05 converts the bigger side to an algebraic one. However, the linear algebra step in v05 is failing now, because it also needs a quadratic character base (i.e you just take the coefficient y0 and calculate jacobi((y0^2-n\*4\*z),prime). That should force square relations with some multiple of N inbetween.... if you don't do that, the linear algebra step will just yield two squares smaller then N.... which we don't want. Additionally, you may also have to take a square root over a finite field then... but I'll have to check how to do that once my quadratic character base is implemented, I have some ideas how that would work though. 
 
-UPDATE: I AM A MORRON. OVERCOMPLICATING EVERYTHING OMG. GOT IT NOW. ILL UPLOAD THE CORRECT WAY TO DO IT TODAY OR TOMORROW
+UPDATE: I AM A MORRON. OVERCOMPLICATING EVERYTHING OMG. GOT IT NOW. ILL UPLOAD THE CORRECT WAY TO DO IT TODAY OR TOMORROW.
+
+UPDATE2: That earlier work I did, with the find_similar stuff, last month. Finding a square multiple of a smooth and then adjusting the coefficients.
+That's what I needed to do. But I need to combine that approach with what I'm doing now, using linear algebra. Damn. Let me try to get a working PoC asap.
+ 
