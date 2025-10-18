@@ -15,3 +15,4 @@ UPDATE: I AM A MORRON. OVERCOMPLICATING EVERYTHING OMG. GOT IT NOW. ILL UPLOAD T
 UPDATE2: That earlier work I did, with the find_similar stuff, last month. Finding a square multiple of a smooth and then adjusting the coefficients.
 That's what I needed to do. But I need to combine that approach with what I'm doing now, using linear algebra. Damn. Let me try to get a working PoC asap.
  
+UPDATE3: GOD DAMNIT. I'M TO SLOW IN MY HEAD. FUCK. THIS SHOULDN"T HAVE TAKEN AN ENTIRE MONTH TO CONNECT THE DOTS HERE. MY HEROES GALOIS. FERMAT, LEGENDE AND EULER ARE LAUGHING AT ME FROM THE AFTERLIFE. FUCK. Give me a few days to completely refactor everything and get the correct fucking appraoch working this time (the one where I combine what I was doing a month ago with what I'm doing now)
