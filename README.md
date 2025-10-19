@@ -16,3 +16,5 @@ UPDATE2: That earlier work I did, with the find_similar stuff, last month. Findi
 That's what I needed to do. But I need to combine that approach with what I'm doing now, using linear algebra. Damn. Let me try to get a working PoC asap.
  
 UPDATE3: GOD DAMNIT. I'M TO SLOW IN MY HEAD. FUCK. THIS SHOULDN"T HAVE TAKEN AN ENTIRE MONTH TO CONNECT THE DOTS HERE. MY HEROES GALOIS. FERMAT, LEGENDE AND EULER ARE LAUGHING AT ME FROM THE AFTERLIFE. FUCK. Give me a few days to completely refactor everything and get the correct fucking appraoch working this time (the one where I combine what I was doing a month ago with what I'm doing now)
+
+UPDATE: Almost now. I see now how it can be done. I may be able to finish my work finally either tomorrow or early next week. When this is finally over... it better birth into this world the gay future, or I am going to be seriously angry. Going to be a waste of 2.5 years otherwise. 
