@@ -30,7 +30,7 @@ God damnit.
 
 Example:
 
-If we calculate linear coeficients mod 15015.
+If we calculate linear coeficients mod 15015 where N=4387.
 
 One linear coefficient and one quadratic coefficient will be: y0 = 13502 and z = 1.
 
