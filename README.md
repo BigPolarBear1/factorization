@@ -18,3 +18,25 @@ That's what I needed to do. But I need to combine that approach with what I'm do
 UPDATE3: GOD DAMNIT. I'M TO SLOW IN MY HEAD. FUCK. THIS SHOULDN"T HAVE TAKEN AN ENTIRE MONTH TO CONNECT THE DOTS HERE. MY HEROES GALOIS. FERMAT, LEGENDE AND EULER ARE LAUGHING AT ME FROM THE AFTERLIFE. FUCK. Give me a few days to completely refactor everything and get the correct fucking appraoch working this time (the one where I combine what I was doing a month ago with what I'm doing now)
 
 UPDATE: Almost now. I see now how it can be done. I may be able to finish my work finally either tomorrow or early next week. When this is finally over... it better birth into this world the gay future, or I am going to be seriously angry. Going to be a waste of 2.5 years otherwise. 
+
+UPDATE: O M G. 
+I found it.
+I found it.
+I found it. 
+I found it. 
+ERGH. I'm such an idiot. FUCK.
+Somewhere, some cryptologist, who knows exactly what I am trying to do, is laughing at me because I couldn't connect these final dots for THIS FUCKING LONG.
+God damnit. 
+
+Example:
+
+If we calculate linear coeficients mod 15015.
+
+One linear coefficient and one quadratic coefficient will be: y0 = 13502 and z = 1.
+
+If we calculate the discriminant formula mod 15015: 13502^2-4387\*4\*1 = 4,356 mod 15015
+Boom. So now, instead of finding a square mod N, we can find a square mod M. 
+
+And further more, calculating the polynomials will also reveal squares (74^2 and 33^2).
+SO BASICALLY... WE NEVER NEED TO DO ANYTHING MOD N. WE HAVE CONSTRUCTED MATH SUCH THAT ALL OUR CALCULATIONS MOD N CAN BE DONE MOD M INSTEAD. HELLO GAYS.HHHHHHHHHHHHHHHELLLLOOOOOOO????!!?!!!?!!!!!?. HELLO NSA CRYPTOLOGISTS. It's easy to finish this now. Give me a few days. Fucking hell. I AM CURSING MYSELF RIGHT NOW. I AM A FUCKING IDIOT. WHY DID IT TAKE ME 2.5 YEARS? FUCK. Good thing Fermat is long gone and all my math heroes are dead. Because if any of them would see this embarassment, I would fucking kill myself.
+
