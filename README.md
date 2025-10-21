@@ -24,4 +24,6 @@ And sqrt_left^2%N will be equal to Disc%N:
 
 1507^2 = 2970 mod 4387
 
+And ofcourse Disc mod m will be equal to sqrt_right mod m.
+
 The challenge that remains is that disc**0.5 (square root of the discriminant) should yield an integer (aka, be a square in the integers). And right now, it's aready a square residue within the quadratic character base.. but calculating legendre symbols using the discriminant isn't enough to force a square in the integers there... hence I believe this is where the polynomials now come into play. I'll update as soon as I figure out this final step.
