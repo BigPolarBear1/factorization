@@ -12,3 +12,16 @@ To run: python3 polarbearalg_08.py -key 4387
 
 This is slowly getting there now. It will work with p_mod_amount=6 but not with p_mod_amount=5 ... because the issue is that if we make the modulus smaller, and we getting wrapping around when we modulo reduce the discriminant output, even with the quadratic character base... we just end up with a discriminant that generates square residues within that quadratic character base... but not an actual square. But atleast it generates square residues. 
 The last ingredient missing in that PoC, is to get that quadratic character base, to generate squares in the integers, not just quadratic residues... and for that, I believe I should be able to pull it off now using the polynomial equations and everything I learned there. Because something very distinct happens there when we have a square relation in the integers... I'm sure I can leverage it. Let me spent a few days doing the math... once that is done.... that's it.. my work will be done.
+
+Some info about polarbearalg_08, during the linear step with p_mod_amount=5 and -key 4387 you would see for example:</br></br>
+
+sqrt_right:  1903</br>
+sqrt_left:  1507</br>
+disc%N: 2970 disc**0.5: 1.3131543342473657e+24 jacobi_symbols: [0, 1, 0, 1, 1, 1, 1]</br>
+
+Disc%N represents sqrt_right in the integers, where is sqrt_right is just mod m. 
+And sqrt_left^2%N will be equal to Disc%N:
+
+1507^2 = 2970 mod 4387
+
+The challenge that remains is that disc**0.5 (square root of the discriminant) should yield an integer (aka, be a square in the integers). And right now, it's aready a square residue within the quadratic character base.. but calculating legendre symbols using the discriminant isn't enough to force a square in the integers there... hence I believe this is where the polynomials now come into play. I'll update as soon as I figure out this final step.
