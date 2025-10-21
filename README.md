@@ -27,3 +27,5 @@ And sqrt_left^2%N will be equal to Disc%N:
 And ofcourse Disc mod m will be equal to sqrt_right mod m.
 
 The challenge that remains is that disc**0.5 (square root of the discriminant) should yield an integer (aka, be a square in the integers). And right now, it's aready a square residue within the quadratic character base.. but calculating legendre symbols using the discriminant isn't enough to force a square in the integers there... hence I believe this is where the polynomials now come into play. I'll update as soon as I figure out this final step.
+
+Also, now that I have a PoC where I can find a square relation that is correct after the linear algebra step and ones that arn't correct.. I can debug what is going on, calculate the full polynomials and roots and all that... so if it is at all possible... I will know within the coming days. Everything else is set-up correctly already. Just this one last thing now, and I know I have figured out enough of the number theory by now that I can achieve it..
