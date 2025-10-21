@@ -7,13 +7,8 @@ This version is somewhat done, but it doesn't achieve much of an advantage, as t
 #### To run from folder "NFS_variant" (Number Field Sieve with our number theory as backend using reducible quadratic polynomials mod m):</br></br>
 To run: python3 polarbearalg_debug.py -key 4387 
 
-I just uploaded polarbearalg_07.py
-To run: python3 polarbearalg_07.py -key 4387
+I just uploaded polarbearalg_08.py
+To run: python3 polarbearalg_08.py -key 4387
 
-This one finds smooths (or squares) mod m. This works if the modulus is large enough. 
-HOWEVER... we can work with smaller moduli aswell... using all the number theory we have figured out so far... and THAT, I will upload very soon...
-
-And also due to working mod m, we can also take square roots mod m etc.... get that same deal going like number field sieve...
-
-
-Update: So polarbearalg_07 ... it works for large enough moduli because of having a small quadratic coefficient relative to the modulus. Meaning that if we have one square, and we subtract n\*4\*z, it doesn't end up wrapping around the modulus. But..... and here is the interesting part. If we do have a wrap around... then even after performing the linear algebra step... we'll likely end up with two squares that generate a different value mod N.... but it just becomes a matter of "how often do I need to add the modulus such that they become congruent mod N?". But as long as that number (the one we need to reach by adding the modulus to our square mod m) ... is also a square, which we should be able to garantue using legendre symbols... then we can simply take a square root mod m and we don't need to know what that other huge number will be... as long as both of them are the same square (or just a square residue I suppose?) mod m. I see how it works. I'll have to rewrite that final chapter in my paper once more... but let me finish the code first now... otherwise I keep going round and round. I don't understand why I wasn't able to comprehend this earlier... because now that I see it so clearly, it's kind of simple. I guess the last time I tried to do this, I hadn't yet fully understood quadratic coefficients.... and that greatly helped to understand what is happening I guess.
+This is slowly getting there now. It will work with p_mod_amount=6 but not with p_mod_amount=5 ... because the issue is that if we make the modulus smaller, and we getting wrapping around when we modulo reduce the discriminant output, even with the quadratic character base... we just end up with a discriminant that generates square residues within that quadratic character base... but not an actual square. But atleast it generates square residues. 
+The last ingredient missing in that PoC, is to get that quadratic character base, to generate squares in the integers, not just quadratic residues... and for that, I believe I should be able to pull it off now using the polynomial equations and everything I learned there. Because something very distinct happens there when we have a square relation in the integers... I'm sure I can leverage it. Let me spent a few days doing the math... once that is done.... that's it.. my work will be done.
