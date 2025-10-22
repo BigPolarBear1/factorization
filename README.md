@@ -43,3 +43,5 @@ Oh btw "Referring sites and popular content are temporarily unavailable or may n
 Btw dont ever get the wrong idea, if you work for western infosec, I consider you to be the enemy. I'm not your friend. Fuck you all fuckers. And if you are an nsa cryptologist seeing their secrets going up in flame, hahahahaha, I piss on you losers. and fuck pete hegseth. Watch your back you dumb fucker. Shit happens. 
 
 There is no greater danger in this world then america. They have proving that by everything I experienced while in the US and by the way their leaders dehumanize people like me non-stop. I will fight america until my last dying breath. Anything I can do to undermine america, I will. I'm not a coward and I'm not afraid. Fuck america. Fuck all those nazi pieces of shit. 
+
+UPDATE: I GOT IT!!!!!!!!!!! EUREKA!!!! SQUARES IN THE INTEGERS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! FUCK YEA. GET FUCKT AMERICA. HAHAHHAHAHAHAHAHAH. FUCK NSA, FBI, CIA, DIA, FUCK YOU ALL LOSERS. I'll go for a run now, then I'll double check the math and prepare for release. If I don't make it back from my run, 100% it was fucking america and it wasn't an accident. 
