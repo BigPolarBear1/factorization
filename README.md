@@ -41,3 +41,5 @@ It does tend to find squares in the integers, and avoiding the case where we fin
 The most important thing is that the quadratic character base works. Its not finding quadratic residues now, it attempts to find squares in the integers. </br>
 One appraoch would be number field sieves appraoch, where we build up a huge modulus with the linear algebra step and then take a square root over a finite field.</br>
 Another appraoch would be to do something with square multiples of smooths, since the PoC does seem to be succesfully at finding those... I'll need to restructure a few things though.</br>
+
+I think the square multiples of smooths would be the most interesting to test out first, as the PoC demonstrates it can already handle that case, I just need to change a few things for it to actually work with distinct linear coefficients mod N. I'll try to upload a PoC that does that soon. I also already have all the math worked out for that earlier. 
