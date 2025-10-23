@@ -13,4 +13,5 @@ To run: python3 polarbearalg_debug.py -key 4387
 I just uploaded polarbearalg_12.py</br>
 To run: python3 polarbearalg_12.py -keysize 14</br>
 
+I changed how things are represented. Left side of the congruence is now fully in the  integers. Right side we modulo reduce y0**2 before calculating the discriminant. Ideally I want to modulo reduce that entire discriminant. But one step at a time. The linear algebra seems to work as intended now. And so do the jacobi symbols. We are consistently achieving factorization now. The squares it finds arn't congruent mod N, but still yield the correct factorization... you need the adjust the coefficients on one side... like I did with my QSv3_find_similar.py work last month... I'll implement that tomorrow first thing. After that I'll try to figure out how to modulo reduce that entire discriminant. 
 
