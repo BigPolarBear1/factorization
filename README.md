@@ -14,7 +14,7 @@ The quadratic character base is now succesfully implemented. </br>
 
 For example: </br>
 
-python3 polarbearalg_19.py -key 57599</br>
+python3 polarbearalg_10.py -key 57599</br>
 
 We get three different types of square relations. The one without wrapping around of the modulus:</br> 
 
