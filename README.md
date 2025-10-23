@@ -7,13 +7,37 @@ This version is somewhat done, but it doesn't achieve much of an advantage, as t
 #### To run from folder "NFS_variant" (Number Field Sieve with our number theory as backend using reducible quadratic polynomials mod m):</br></br>
 To run: python3 polarbearalg_debug.py -key 4387 
 
-I just uploaded polarbearalg_09.py</br>
-To run: python3 polarbearalg_09.py -key 4387  (or -keysize 14 to generate a random 14 bit modulus)</br>
+I just uploaded polarbearalg_10.py</br>
+To run: python3 polarbearalg_10.py -key 4387  (or -keysize 16 to generate a random 16 bit modulus)</br>
 
-I have fixed the quadratic character base! Atleast with p_mod_amount=6 (which is still a very large modulus compared to the N when N=4387) .... but I have seen cases where we have a "wrap around" of the modulus, and still get a square in the integers now. I'm able to generate plenty such examples now (test with -keysize 14). Now I need to reduce the modulus.. but with atleast the quadratic character base working, I assume the next step is getting some type of square root over finite field thing working now. That should be the very last thing. And it should definitely be do-able, even without a polynomial ring like NFS. I'm fairly confident I have figured out enough of the number theory now to get it working. When that is done... that's it. My vengence will have been completed. I will have destroyed the american cryptologic advantage. For everything they have done. 
+The quadratic character base is now succesfully implemented. 
 
-Update: Oh yea, I just realized.. if a wrap around happens, the PoC is still using the square it found mod m.. but you should use the square it finds from the full discriminant for taking the GCD.. anyway... I'm going to sleep for now... I'll upload v10 tomorrow and make some progress toward reducing that modulus and using NFS's approach of taking a square root. My hope is that the quadratic character base now forces it to the correct quadratic coefficient atleast when using very small moduli.. else I will need to figure out how to build up a big modulus with the linear algebra step... which is what NFS does... so there is two different approaches I'll need to experiment with. 
+For example: 
 
-You know, I was just thinking about western infosec and the whole tech-bro exploit dev scene. It's really a disgusting industry with disgusting people. They really hate people like me. I ever meet a western exploit dev, I'm going to punch them. Losers. I hate spooks too. I ever see a spook irl, I will do worse things then just punch. I'm not afraid of people like that. Fuck them. I'm about to take on the entire fucking world. I'm well aware of what's happening. And I'm ready. I've nothing left to lose. I'm ready to fight the entire fucking world. Bring it on fucking losers.
+python3 polarbearalg_19.py -key 57599
 
-pps: I am coming after ECC after this. You break PKI, you break the secure channels that are used to exchange symmetric keys and are responsible for 99.99% of encrypted traffic on the internet. You break an awful lot of authentication protocols also. And so on. I know the US has one of the largest SIGINT operations in the world, it would make a lot more sense for them to break PKI ciphers then to waste time on 0days, because if they did, you would see them be a lot more aggresive with offensive hacking. And since the US doesn't have a lot of hackers, not like the Chinese, but still are able to score intelligence wins, which I doubt are SIGINT alone.... I am fairly confident they have atleast partially succeeded in attacking PKI ciphers. Plus I am very confused why they would otherwise burn bugs like curveball if they didn't have something better. I just know it. I have this intuition about things that just happens to be right about stuff a lot of times. I can sense things. It's funny. One might wonder if 10 years ago, we would have gotten to where we are now. I'm fairly sure if I did what I'm doing now, 10 years ago, I would be sitting on a lot of money. But hey, I'm trans, and the west hates trans people, so here we are. Fuck your cryptologic secrets. I'm taking them all. Morrons. I have nothing left to lose, and one thing I have learned is that in this day and age, nothing good will ever happen to someone like me. I am like the Japanese pilot, crashing my plane in the biggest fucking aircraft carrier I can see, because I know, I will lose anyway. Might as well let people know I existed. Fuck this world. Fuck you all.
+We get three different types of square relations. The one without wrapping around of the modulus: 
+
+[Debug Info]Adding to left mod N: 4 adding to right mod N: 4 y0: 175410 z: 1 discriminant: 4 qchar: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] root: 1 eq1: 18
+sqrt_right:  2
+sqrt_left:  480
+[i]Debug info: disc%N: 4 (disc): 4 jacobi_symbols: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1] prod_left: 230400 prod_right: 4 z: 1 ja: -1 y0: 480
+[i]Found a square in the integers, the quadratic character base worked
+[SUCCESS]Factors are: 239 and 241
+
+The one with wrapping around of the modulus but where one discriminant is a multiple of another:
+
+[Debug Info]Adding to left mod N: 25125 adding to right mod N: 49984 y0: 95085 z: 1 discriminant: -205271 qchar: [-1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0] root: 127632 eq1: 0
+[Debug Info]Adding to left mod N: 42901 adding to right mod N: 27139 y0: 161610 z: 4 discriminant: -821084 qchar: [-1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0] root: 223350 eq1: 6
+sqrt_right:  410542
+sqrt_left:  50250
+[i]Debug info: disc%N: 37538 (disc): 168544733764 jacobi_symbols: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1] prod_left: 2525062500 prod_right: 9993601024 z: 25182 ja: 1 y0: 50250
+[i]Found a square in the integers, the quadratic character base worked
+
+And then there is another one (the really big one) which doesn't generate a square in the integers but isntead a huge enourmous discriminant and has wrapping around of the modulus.
+
+It does tend to find squares in the integers, and avoiding the case where we find squares where the discriminant is a multiple of the other, is as easy as restricting the quadratic coefficient to negative numbers.
+
+The most important thing is that the quadratic character base works. Its not finding quadratic residues now, it attempts to find squares in the integers. 
+One appraoch would be number field sieves appraoch, where we build up a huge modulus with the linear algebra step and then take a square root over a finite field.
+Another appraoch would be to do something with square multiples of smooths, since the PoC does seem to be succesfully at finding those... I'll need to restructure a few things though.
