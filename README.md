@@ -17,3 +17,5 @@ I changed how things are represented. Left side of the congruence is now fully i
 Inched again a little closer now to the final solution. I know I've won already. Everything else now is trivial and Ill figure it out in mere days now. I'm just doing my victory lap now. 
 
 Update: uploaded v13. All this does compared to v12 is remove the left side from the matrix. Since we are having that to be squares in the integers, there is no reason to perform linear algebra on it. I've also worked out what is happening and how to adjust our results so we get a square that is congruent mod N instead... I'll add that for v14.. either tonight or hopefully tomorrow.
+
+Update: Thinking about more about this. This is exactly the analogue with NFS that I have been searching for for atleast half a year now. So in essense, what I need to do now, is what is in NFS "taking a square root over a finite field" ... that way we generate squares congruent mod N and succeed at taking the GCD more often. Once that is done, I have a pretty good idea how the final algorithm is supposed to come together.
