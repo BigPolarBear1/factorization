@@ -16,4 +16,4 @@ I just uploaded polarbearalg_v14.py</br>
 To run: python3 polarbearalg_v14.py -keysize 14</br>
 
 Update: Fixed the jacobi symbols to use the full coefficient. Doesn't make sense there to use it mod m. Else it will just find pairs of roots mod m. 
-Anyway.... now the final step is to get these two squares in the integers adjust so they become two squares congruent mod N. Like NFS does I guess.... give me the weekend to figure this out. After that we're as good as done. I'll just need to refactor some things then to get to the final algorithm. 
+Anyway.... now the final step is to get these two squares in the integers adjusted so they become two squares congruent mod N. Like NFS does I guess.... give me the weekend to figure this out. After that we're as good as done. I'll just need to refactor some things then to get to the final algorithm. 
