@@ -12,8 +12,7 @@ This version is somewhat done, but it doesn't achieve much of an advantage, as t
 #### To run from folder "NFS_variant" (Number Field Sieve with our number theory as backend using reducible quadratic polynomials mod m):</br></br>
 To run: python3 polarbearalg_debug.py -key 4387 
 
-I just uploaded polarbearalg_v14.py</br>
-To run: python3 polarbearalg_v14.py -keysize 14</br>
+I just uploaded polarbearalg_v12.py</br>
+To run: python3 polarbearalg_v12.py -keysize 14</br>
 
-Update: Fixed the jacobi symbols to use the full coefficient. Doesn't make sense there to use it mod m. Else it will just find pairs of roots mod m. 
-Anyway.... now the final step is to get these two squares in the integers adjusted so they become two squares congruent mod N. Like NFS does I guess.... give me the weekend to figure this out. After that we're as good as done. I'll just need to refactor some things then to get to the final algorithm. 
+Update: I went back to v12. I was getting a little ahead of myself. Let me double check some of my assumptions again. I need to really dig in for a few days and do the math.
