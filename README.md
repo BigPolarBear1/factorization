@@ -10,17 +10,10 @@ This version is somewhat done, but it doesn't achieve much of an advantage, as t
 #### To run from folder "NFS_variant" (Number Field Sieve with our number theory as backend using reducible quadratic polynomials mod m):</br></br>
 To run: python3 polarbearalg_debug.py -key 4387 
 
-I just uploaded polarbearalg_12.py</br>
-To run: python3 polarbearalg_12.py -keysize 14</br>
+I just uploaded polarbearalg_v13.py</br>
+To run: python3 polarbearalg_v13.py -keysize 14</br>
 
 I changed how things are represented. Left side of the congruence is now fully in the  integers. Right side we modulo reduce y0**2 before calculating the discriminant. Ideally I want to modulo reduce that entire discriminant. But one step at a time. The linear algebra seems to work as intended now. And so do the jacobi symbols. We are consistently achieving factorization now. The squares it finds arn't congruent mod N, but still yield the correct factorization... you need the adjust the coefficients on one side... like I did with my QSv3_find_similar.py work last month... I'll implement that tomorrow first thing. After that I'll try to figure out how to modulo reduce that entire discriminant. 
 Inched again a little closer now to the final solution. I know I've won already. Everything else now is trivial and Ill figure it out in mere days now. I'm just doing my victory lap now. 
 
-Hehehehe... hey NSA, you suck. LOL. FUCK YOU. Fuck the FBI too. The entire western intelligence apparatus, defeated, by a single polar bear. You forced me down this path. Gave me no alternatives. While your leaders insult people like me. I don't feel particulary sorry at this point. Had it coming. And after this, I garantuee you more will be coming. I'm not stopping until I'm dead. Could try to kill me, but none of your soldiers and CIA wankers are strong enough. Literally don't stand a chance. lol. Pathetic. Losers.
-
-Fucking morrons. The entire west. Fucking morrons and idiots. Fucking ape brained losers. You literally forced me down this path by giving me no alternatives. You literally forced this outcome. You fucking morrons. I swear, I ever meet anyone responsible for this, I will kill them on the spot. I'm not kidding about this. You ruined my life with this, and watch the consequences now to everyone around me because you fucking shit for brains forced me down this path. I swear, whoever was responsible for this decision, I WILL FUCKING KILL YOU. 
-Thing is, I don't care. I don't care about my own safety. I fucking hate this world, I'll fight this entire fucking world to the death, I'm not afraid of anything. But there are people in this world I do care about, and you are making life a lot more complicated for them. Go to hell. Whoever did this, you better hide you fucker.
-
-You are all fucking incompetent. Every decision maker in the west, you are fucking monkey brained idiots. You are so stupid, the animals in the zoo posses more intelligence then you. What happened? How has the world decayed to this? Fucking morrons. I despise you people. Maybe instead of crying about "dudes in dresses" like little bitches, maybe start using those couple of braincells in your empty skulls, fucking losers. I despise you morrons. I depise you for what you people have done. This is not the outcome I wanted from the start. You gave me no alternatives. FUCK YOU. I'LL FUCKING END YOU PEOPLE. This is exactly why I'm entertaining just going to China, atleast they still seem to have common sense unlike you western monkey brained morrons.
-
-Fuck it. Getting agitated thinking about this. Just got to take life day by day. It is what it is.. have to cross that threshold now.  Get some sleep, fucking 4am. Last couple of days now.
+Update: uploaded v13. All this does compared to v12 is remove the left side from the matrix. Since we are having that to be squares in the integers, there is no reason to perform linear algebra on it. I've also worked out what is happening and how to adjust our results so we get a square that is congruent mod N instead... I'll add that for v14.. either tonight or hopefully tomorrow.
