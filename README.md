@@ -12,7 +12,7 @@ This version is somewhat done, but it doesn't achieve much of an advantage, as t
 #### To run from folder "NFS_variant" (Number Field Sieve with our number theory as backend using reducible quadratic polynomials mod m):</br></br>
 To run: python3 polarbearalg_debug.py -key 4387 
 
-I just uploaded polarbearalg_v15.py</br>
-To run: python3 polarbearalg_v15.py -keysize 14</br>
+I just uploaded polarbearalg_v12.py</br>
+To run: python3 polarbearalg_v12.py -keysize 14</br>
 
 Update: Ignore that PoC for now. I did some thinking, and I'm going off on a tangent here. I need to regroup. Tomorrow I'll take some example I'm familiar with, i.e 148^2 = 66^2 mod 4387, and modulo reduce both squares, try to figure out how I would assemble those mod m using linear algebra. There's no point in just trying random stuff. Literally, the only times I made progress with my math is when I stop doing chaotic shit, and just think about the problem for a moment. I know I almost have it... I just need to implement it correctly. 
