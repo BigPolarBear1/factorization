@@ -19,3 +19,5 @@ Update: Ergh. v15 has some strange behavior. It's able to consistently yield the
 
 And this is also something I noticed earlier.
 So if we have a square mod M, it's roots mod M have a significant chance of yielding the factorization when taking the gcd. And I understand how that may happen, since we calculate these things from possible factors mod p. (see first chapters in paper). And I do remember these becoming more sparse as N becomes bigger.... which prevented me from just bruteforce taking the GCD on root combinations mod M. But I may be able to achieve it with linear algebra... hmm. I got to dig in tomorrow. There is something here I can use.
+
+I really need to get to the bottom of this tomorrow.. I have this feeling that figuring this out, will also show me how to correctly implement this linear algebra step.  Lets see. Anyway... I need to sleep i guess. Days are too short.
