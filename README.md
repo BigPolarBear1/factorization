@@ -12,7 +12,10 @@ This version is somewhat done, but it doesn't achieve much of an advantage, as t
 #### To run from folder "NFS_variant" (Number Field Sieve with our number theory as backend using reducible quadratic polynomials mod m):</br></br>
 To run: python3 polarbearalg_debug.py -key 4387 
 
-I just uploaded polarbearalg_v12.py</br>
-To run: python3 polarbearalg_v12.py -keysize 14</br>
+I just uploaded polarbearalg_v15.py</br>
+To run: python3 polarbearalg_v15.py -keysize 14</br>
 
-Update: I went back to v12. I was getting a little ahead of myself. Let me double check some of my assumptions again. I need to really dig in for a few days and do the math.
+Update: Ergh. v15 has some strange behavior. It's able to consistently yield the factorization with two squares that are not congruent mod N. And very abstractly I have a sense for what is happening. The interesting thing is, this behavior also persist when I modulo reduce the entire discriminant. There is something happening there. 
+
+And this is also something I noticed earlier.
+So if we have a square mod M, it's roots mod M have a significant chance of yielding the factorization when taking the gcd. And I understand how that may happen, since we calculate these things from possible factors mod p. (see first chapters in paper). And I do remember these becoming more sparse as N becomes bigger.... which prevented me from just bruteforce taking the GCD on root combinations mod M. But I may be able to achieve it with linear algebra... hmm. I got to dig in tomorrow. There is something here I can use.
