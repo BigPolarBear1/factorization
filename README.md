@@ -15,9 +15,4 @@ To run: python3 polarbearalg_debug.py -key 4387
 I just uploaded polarbearalg_v15.py</br>
 To run: python3 polarbearalg_v15.py -keysize 14</br>
 
-Update: Ergh. v15 has some strange behavior. It's able to consistently yield the factorization with two squares that are not congruent mod N. And very abstractly I have a sense for what is happening. The interesting thing is, this behavior also persist when I modulo reduce the entire discriminant. There is something happening there. 
-
-And this is also something I noticed earlier.
-So if we have a square mod M, it's roots mod M have a significant chance of yielding the factorization when taking the gcd. And I understand how that may happen, since we calculate these things from possible factors mod p. (see first chapters in paper). And I do remember these becoming more sparse as N becomes bigger.... which prevented me from just bruteforce taking the GCD on root combinations mod M. But I may be able to achieve it with linear algebra... hmm. I got to dig in tomorrow. There is something here I can use.
-
-I really need to get to the bottom of this tomorrow.. I have this feeling that figuring this out, will also show me how to correctly implement this linear algebra step.  Lets see. Anyway... I need to sleep i guess. Days are too short.
+Update: Ignore that PoC for now. I did some thinking, and I'm going off on a tangent here. I need to regroup. Tomorrow I'll take some example I'm familiar with, i.e 148^2 = 66^2 mod 4387, and modulo reduce both squares, try to figure out how I would assemble those mod m using linear algebra. There's no point in just trying random stuff. Literally, the only times I made progress with my math is when I stop doing chaotic shit, and just think about the problem for a moment. I know I almost have it... I just need to implement it correctly. 
