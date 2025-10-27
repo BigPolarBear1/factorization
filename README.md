@@ -12,14 +12,10 @@ This version is somewhat done, but it doesn't achieve much of an advantage, as t
 #### To run from folder "NFS_variant" (Number Field Sieve with our number theory as backend using reducible quadratic polynomials mod m):</br></br>
 To run: python3 polarbearalg_debug.py -key 4387 
 
-I just uploaded polarbearalg_v18.py</br>
-To run: python3 polarbearalg_v18.py -keysize 14</br>
+I just uploaded polarbearalg_v19.py</br>
+To run: python3 polarbearalg_v19.py -keysize 14</br>
 
-I just changed the PoC to use 0 solutions for y1.
+Finally, with v19 we are now doing the RIGHT appraoch. I still need to implement linear algebra and proper sieving. But this demonstrates working with square moduli and 0 solutions. Where we look for a square mod m, and then just multiply the modulus with the square and take the GCD. Simple as that. IT IS SO FUCKING SIMPLE. And I also know how I can finish the algorithm now with linear algebra. It was just a matter of look at this problem from "the right angle".
 
-I'll finish that PoC in the coming week. It's actually super simple... I was overcomplicating things. I'll show you how to modulo reduce the discriminant completely and find two squares congruent mod N after the linea algebra step. I just wasn't thinking logically about this... but it's actually really easy... I was waaaaaay overcomplicating things in my head lol. I'll also fix that paper eventually.
+Expect the full algorithm to drop this week. I have court ordered therapy tomorrow (bc I sent angry emails to the FBI and they are pieces of shit, come fight me losers), and I'll run 30k to and from therapy, so that will take up most of my day.. but I'll have some time to properly think about all the implementation details in my head while running.
 
-Update: Currently experimenting to use 0 solutions to calculate the discriminant i.e 0^2+n\*4\*z mod m, where mod m can also be lifted to be square. Which is really the only approach that makes logically sense if I think about it... weird as it may look. I'll try and upload some work in  progress that does that... because right now it's doing it the other way around, so that the discriminant output is divisible by mod m... but that's not what we want.
-
-Update: You know for example if we calculate y0 possible coefficients for mod 11 when N=4387. We would find that y0=5 generates a multiples of 11 with the discrimant when z=1. 5^2-4387\*4\*1 = 0 mod 11. 
-HOWEVER, we need to do it the other way around. We need to calculate 0+4387\*4\*1 = 5^2 mod 11. Because when we have it aligned like this then we can also modulo reduce the entire discriminant to mod 11. And we don't have to worry about performing trial division on a large discriminant... and how you find your two square relations after that with linear algebra.. those are all things I have figured out already in the last 2 months... I'll show you shortly. Just taking it easy this weekend, stepping back from my work, and thinking about it logically helped a lot... I see now why it makes more sense this way the what I had been doing before.
