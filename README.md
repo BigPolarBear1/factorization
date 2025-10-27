@@ -19,3 +19,4 @@ Finally, with v19 we are now doing the RIGHT appraoch. I still need to implement
 
 Expect the full algorithm to drop this week. I have court ordered therapy tomorrow (bc I sent angry emails to the FBI and they are pieces of shit, come fight me losers), and I'll run 30k to and from therapy, so that will take up most of my day.. but I'll have some time to properly think about all the implementation details in my head while running.
 
+Sad day for the NSA, FBI, CIA, DIA, and all the other cunts. The amerian cryptologic advantage, destroyed by a single polar bear. I am stronger then all of america combined, HAHAHAHAHAHAHAHAHHAHAHHAA.
