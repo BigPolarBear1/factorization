@@ -19,3 +19,4 @@ I just changed the PoC to use 0 solutions for y1.
 
 I'll finish that PoC in the coming week. It's actually super simple... I was overcomplicating things. I'll show you how to modulo reduce the discriminant completely and find two squares congruent mod N after the linea algebra step. I just wasn't thinking logically about this... but it's actually really easy... I was waaaaaay overcomplicating things in my head lol. I'll also fix that paper eventually.
 
+Update: Currently experimenting to use 0 solutions to calculate the discriminant i.e 0^2+n\*4\*z mod m, where mod m can also be lifted to be square. Which is really the only approach that makes logically sense if I think about it... weird as it may look. I'll try and upload some work in  progress that does that... because right now it's doing it the other way around, so that the discriminant output is divisible by mod m... but that's not what we want.
