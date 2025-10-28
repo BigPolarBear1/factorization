@@ -24,3 +24,5 @@ Sad day for the NSA, FBI, CIA, DIA, and all the other cunts. The amerian cryptol
 I know this is it. This is the thing I overlooked for half a year. Using square moduli and finding a square mod m. It's so straight forward and simple... but I guess I just missed it for half a year. All my heroes, Galois, Euler, Fermat and Legendre would be laughing at me if they knew it took me half a year... but that's fine, I succeeded in the end. And now we're here. I hope you have a good day today western infosec, because the storm is coming now. And it's time to pay the price.
 
 Ps: In v19... the discriminant im calculating there, that can now also be swapped out with polynomials of the shape zx^2-yx. Without appending +N... hence resulting in a small integer value. Its easy now to finish it. Its very similar to NFS. Its literally NFS with reducible quadratics.
+
+The biggest irony of all this is that I tried so damn hard to sell my work.. yet I was forced down this path. And I think we all know why. There is no way I will stay in the west after all this. No way.
