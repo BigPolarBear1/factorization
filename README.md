@@ -26,3 +26,5 @@ I know this is it. This is the thing I overlooked for half a year. Using square 
 Ps: In v19... the discriminant im calculating there, that can now also be swapped out with polynomials of the shape zx^2-yx. Without appending +N... hence resulting in a small integer value. Its easy now to finish it. Its very similar to NFS. Its literally NFS with reducible quadratics.
 
 The biggest irony of all this is that I tried so damn hard to sell my work.. yet I was forced down this path. And I think we all know why. There is no way I will stay in the west after all this. No way.
+
+Anyway.. if I have an "accident" this week.. garantuee you it was cowardly americans.
