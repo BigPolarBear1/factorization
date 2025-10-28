@@ -32,3 +32,5 @@ Anyway.. if I have an "accident" this week.. garantuee you it was cowardly ameri
 WTF IS GOING ON. It's like someone has compromised my home router and is desperately trying to get a foodhold on my personal machines. Everything is just breaking lately. Like fucking everything. What the fuck can I do about it? All I can do is finish my work, and publish it. You can't stop it. Come try to stop it, I will fucking kill you. Fucking pussies. Fucking american pussies. I piss on you people.
 
 I GARANTUEE, I FIND OUT I AM BEING TARGETED BY A WESTERN NATION AND I PROMISE YOU, YOU WILL HAVE SEALED YOUR FATE. RIGHT FROM THE START YOU PEOPLE DISRESPECTED ME, GO TO HELL FUCKERS. YOUR ENTIRE COUNTRY GOT DESTROYED, YOU KNOW WHY? BECAUSE YOU JUST CAN'T RESPECT LGBTQ PEOPLE. ITS PATHETIC AND YOU'RE ALL FUCKING MORRONS AND WEAKLINGS. FUCK YOU. I PISS ON YOUR ARMIES, INCOMPETENT LOSERS. FUCK YOU.
+
+Oh there we are. Thanks for the free 0day you losers. Losers gonna be losers. NSA, more like national sucker agency. HAHAHA. Incompetent fuckers.
