@@ -28,3 +28,5 @@ Ps: In v19... the discriminant im calculating there, that can now also be swappe
 The biggest irony of all this is that I tried so damn hard to sell my work.. yet I was forced down this path. And I think we all know why. There is no way I will stay in the west after all this. No way.
 
 Anyway.. if I have an "accident" this week.. garantuee you it was cowardly americans.
+
+WTF IS GOING ON. It's like someone has compromised my home router and is desperately trying to get a foodhold on my personal machines. Everything is just breaking lately. Like fucking everything. What the fuck can I do about it? All I can do is finish my work, and publish it. You can't stop it. Come try to stop it, I will fucking kill you. Fucking pussies. Fucking american pussies. I piss on you people.
