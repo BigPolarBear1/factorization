@@ -400,7 +400,7 @@ def gen_comb(collected,mod,z,n,factor_base,ret_array,quad_base):
             x=get_root(n,mod,y0,z) 
             x*=z
             x%=mod
-            eq=x**2-n*z#y0*x
+            eq=x**2-(n%mod)*z#y0*x
 
             
             eq_o=abs(eq)**0.5
