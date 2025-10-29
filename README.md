@@ -29,6 +29,7 @@ This will allow us to discard many of the bad solutions. Not all. But many. But 
 
 I will now continue re-implementing the linear algebra step. It's simple now :). 
 
+Another sad day for the NSA, FBI, CIA, DIA, fuck america and micosoft. There was so many chances to avoid this, but none were taking. Which doesn't suprise me with western leaders constantly crying about "dudes in dresses". How does it feel to be destroyed by a dude in a dress huh? Not so funny now? Fucking losers. Come fight me hahaha.
 
 
 
