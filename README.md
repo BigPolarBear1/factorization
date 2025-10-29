@@ -12,24 +12,24 @@ This version is somewhat done, but it doesn't achieve much of an advantage, as t
 #### To run from folder "NFS_variant" (Number Field Sieve with our number theory as backend using reducible quadratic polynomials mod m):</br></br>
 To run: python3 polarbearalg_debug.py -key 4387 (for use with the final chapter of the paper... but ignore this and use PoC below until I refactor the paper one final time)
 
-I just uploaded polarbearalg_v19.py</br>
-To run: python3 polarbearalg_v19.py -keysize 14</br>
+I just uploaded polarbearalg_v20.py</br>
+To run: python3 polarbearalg_v20.py -keysize 14</br>
 
-Finally, with v19 we are now doing the RIGHT appraoch. I still need to implement linear algebra and proper sieving. But this demonstrates working with square moduli and 0 solutions. Where we look for a square mod m, and then just multiply the modulus with the square and take the GCD. Simple as that. IT IS SO FUCKING SIMPLE. And I also know how I can finish the algorithm now with linear algebra. It was just a matter of look at this problem from "the right angle".
+Right side of the congruence is now 0 solutions for y1 and square moduli.
+Right side if perfect already.
 
-Expect the full algorithm to drop this week. I have court ordered therapy tomorrow (bc I sent angry emails to the FBI and they are pieces of shit, come fight me losers), and I'll run 30k to and from therapy, so that will take up most of my day.. but I'll have some time to properly think about all the implementation details in my head while running.
+Left side, in v19 we used the discriminant there. 
+But I am now reducing it to the polynomial:
 
-Sad day for the NSA, FBI, CIA, DIA, and all the other cunts. The amerian cryptologic advantage, destroyed by a single polar bear. I am stronger then all of america combined, HAHAHAHAHAHAHAHAHHAHAHHAA.
+(y1 will always be 0)
+x^2+0*x-(N%mod)\*z
 
-I know this is it. This is the thing I overlooked for half a year. Using square moduli and finding a square mod m. It's so straight forward and simple... but I guess I just missed it for half a year. All my heroes, Galois, Euler, Fermat and Legendre would be laughing at me if they knew it took me half a year... but that's fine, I succeeded in the end. And now we're here. I hope you have a good day today western infosec, because the storm is coming now. And it's time to pay the price.
+Note that we also modulo reduce N. And for any z, we recalculate the root by multiplying it by z mod m. This way we can move z to (N%mod)\*z instead.
+This will allow us to discard many of the bad solutions. Not all. But many. But with a quadratic character base, we can reduce this further.
 
-Ps: In v19... the discriminant im calculating there, that can now also be swapped out with polynomials of the shape zx^2-yx. Without appending +N... hence resulting in a small integer value. Its easy now to finish it. Its very similar to NFS. Its literally NFS with reducible quadratics.
+I will now continue re-implementing the linear algebra step. It's simple now :). 
 
-The biggest irony of all this is that I tried so damn hard to sell my work.. yet I was forced down this path. And I think we all know why. There is no way I will stay in the west after all this. No way.
 
-Anyway.. if I have an "accident" this week.. garantuee you it was cowardly americans.
 
-Update: Fuck it, didn't get much work done today at all with therapy and running all afternoon, and then kind of crashed in the evening after having food. Tomorrow I want to make some progress toward substituting that discriminant with a polynomial of the shape zx^2-yx.. either that or find a way to completely modulo reduce that discriminant, one of those two appraoches I'll get working for sure. It should be perfectly do-able now, I know all the math for it. And then we end up with something that looks a lot like NFS. But better. Way better for so many reasons. I don't get it, because I feel the way I am doing things is so much more straightforward then irreducible polynomials, number fields and polynomial rings like NFS does. Guess not being burdened with all that complicated shit when I started my research helped guide me down the correct path of doing things... like water taking the path of least resistance. It's the same like when I was a bug hunter, I did my best work when I knew the least, because it forced me to be creative. I should limit how much math I learn from books going forward, maybe some undergraduate number theory, abstract algebra and linear algebra stuff.... but nothing else... I want nothing else to burden my creativity. I do not want my creativity tainted by ideas of humans. I am a polar bear.
 
-Update: In polarbearalg_debug, when we calculate the polynomials (not the discriminant), we only get a nice square when the quadratic coefficient is 1 (and sometimes its squares), but I figured out the math now how to adjust the root based on the quadratic coefficient mod m, such that we also get that square at other quadratic coefficients.... and since that square is going to be the discriminant divided by 4 ... we can replace the discriminant on one side with zx^2-yx ... and the other side we will have 0 solutions and square moduli. Fuck, all of this took so long.... give me a few days. This is it, this is the perfect analogue of NFS with reducible quadratic polynomials. It's so hilarious... people had so many chances to avoid what is happening now... instead I was treated like this. And now we're here. It's time to pay the price now. And I couldn't care less. You people deserved this. I don't care what people will say, how people will portray my actions.. you people deserved this. You people deserved this misery.
 
