@@ -31,6 +31,8 @@ I will now continue re-implementing the linear algebra step. It's simple now :).
 
 Another sad day for the NSA, FBI, CIA, DIA, fuck america and micosoft. There was so many chances to avoid this, but none were taking. Which doesn't suprise me with western leaders constantly crying about "dudes in dresses". How does it feel to be destroyed by a dude in a dress huh? Not so funny now? Fucking losers. Come fight me hahaha.
 
+Somewhere in the US, a nazi cryptologist has to review the code I uploaded today... and he's going to have a really bad day today. I guess yesterday was a bad day too.. but with that discriminant further reduced... well.. life's a bitch, sucks to be a nazi.
+
 
 
 
