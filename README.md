@@ -12,8 +12,8 @@ This version is somewhat done, but it doesn't achieve much of an advantage, as t
 #### To run from folder "NFS_variant" (Number Field Sieve with our number theory as backend using reducible quadratic polynomials mod m):</br></br>
 To run: python3 polarbearalg_debug.py -key 4387 (for use with the final chapter of the paper... but ignore this and use PoC below until I refactor the paper one final time)
 
-I just uploaded polarbearalg_v20.py</br>
-To run: python3 polarbearalg_v20.py -keysize 14</br>
+I just uploaded polarbearalg_v21.py</br>
+To run: python3 polarbearalg_v21.py -keysize 14</br>
 
 Right side of the congruence is now 0 solutions for y1 and square moduli.
 Right side if perfect already.
@@ -33,6 +33,7 @@ Another sad day for the NSA, FBI, CIA, DIA, fuck america and micosoft. There was
 
 Somewhere in the US, a nazi cryptologist has to review the code I uploaded today... and he's going to have a really bad day today. I guess yesterday was a bad day too.. but with that discriminant further reduced... well.. life's a bitch, sucks to be a nazi.
 
+Update: added some further improvements to v21. It will succeed now if the modulus is large enough. But since everything is properly aligned now the way it should be.. we should be able to assemble a sufficiently large enough modulus now with linear algebra. This should now set me up perfectly to finally get that linear algebra portion working.
 
 
 
