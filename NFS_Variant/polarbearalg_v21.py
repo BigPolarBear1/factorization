@@ -411,9 +411,10 @@ def gen_comb(collected,mod,z,n,factor_base,ret_array,quad_base):
 
 
             y1=abs(eq**0.5)
-            y0=y0//2
+           
 
             print(" mod: "+str(mod)+" z: "+str(z)+" y0: "+str(y0%n)+" y1: "+str(y1%n)+" root: "+str(x)+" eq: "+str(eq_o))
+            y0=y0//2
             factor=gcd(y1+y0,n)
             if factor != 1 and factor != n:
                 print("Factored N: "+str(factor)+" and: "+str(n//factor))
