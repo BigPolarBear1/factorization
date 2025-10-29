@@ -12,8 +12,8 @@ This version is somewhat done, but it doesn't achieve much of an advantage, as t
 #### To run from folder "NFS_variant" (Number Field Sieve with our number theory as backend using reducible quadratic polynomials mod m):</br></br>
 To run: python3 polarbearalg_debug.py -key 4387 (for use with the final chapter of the paper... but ignore this and use PoC below until I refactor the paper one final time)
 
-I just uploaded polarbearalg_v21.py</br>
-To run: python3 polarbearalg_v21.py -keysize 14</br>
+I just uploaded polarbearalg_v22.py</br>
+To run: python3 polarbearalg_v22.py -keysize 14</br>
 
 Right side of the congruence is now 0 solutions for y1 and square moduli.
 Right side if perfect already.
