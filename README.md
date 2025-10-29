@@ -35,5 +35,4 @@ Somewhere in the US, a nazi cryptologist has to review the code I uploaded today
 
 Update: added some further improvements to v21. It will succeed now if the modulus is large enough. But since everything is properly aligned now the way it should be.. we should be able to assemble a sufficiently large enough modulus now with linear algebra. This should now set me up perfectly to finally get that linear algebra portion working.
 
-
-
+Update: I did some more math before calling it a day. So using x^2+0*x-(N%mod)\*z, if we modulo reduce N, whatever remains after dividing by the modulus, must be a valid prime for that quadratic coefficient. As long as that condition is met, we can increase the modulus while staying aligned mod n. That's how you get that linear algebra to remain congruent mod n. I'll show tomorrow... it's funny... all it took was just slowing down for a moment and thinking logically about this. Took me half a year, but whatever. I've only been doing math for 2.5 years. Started from nothing. I'll take all this knowledge with me to my next project, and next time it won't take this long.
