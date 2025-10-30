@@ -19,3 +19,5 @@ Made some further improvements compared to v22. Now instead of trying coefficien
 
 Anyway... this work should now see completion within days if no further roadblocks occure.. I am mentally so fucking tired. People hoped I would break before I would succeed.. that I would just dissappear. Out of sight and out of mind or whatever. I will succeed no matter cost. 
 
+Hmm, just doing some thinking, if we already have a square mod p^2, then that should be enough, we shouldn't have to multiply multiples ones together like I'm doing in v3 to grow that modulus, which isn't great, especially it it also forces the root to grow larger. Square root over a finite field... hmm, I may be able to pull that off now. Let me do the math.
+
