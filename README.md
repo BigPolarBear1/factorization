@@ -21,3 +21,5 @@ Anyway... this work should now see completion within days if no further roadbloc
 
 Hmm, just doing some thinking, if we already have a square mod p^2, then that should be enough, we shouldn't have to multiply multiples ones together like I'm doing in v3 to grow that modulus, which isn't great, especially it it also forces the root to grow larger. Square root over a finite field... hmm, I may be able to pull that off now. Let me do the math.
 
+Hmm... I was running just now and it struck me.
+If: x^2+yx-zn is functionally the same as zx^2+yx ... then I should use the shorter polynomial. Let me check how that might work.. 
