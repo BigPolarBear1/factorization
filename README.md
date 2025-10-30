@@ -23,3 +23,5 @@ Hmm, just doing some thinking, if we already have a square mod p^2, then that sh
 
 Hmm... I was running just now and it struck me.
 If: x^2+yx-zn is functionally the same as zx^2+yx ... then I should use the shorter polynomial. Let me check how that might work.. 
+
+You know, if the quadratic coefficient and modulus share a factor...then a shorter polynomial works easily... because when it is like this: x^2+yx-zn we can drop the zn mod m if the modulus and quadratic coefficient are equal. leaving just x^2+yx. I guess learning today how to transform the shape of the polynomial from zx^2-yx+n to x^2-yx+zn was an important thing I had to figure out... maybe rather then modulo reducing n I should focus on the case where the quadratic coefficient and modulus share a common factor... because that surely makes more intuitive sense... alright alright, let me bash my head against that tomorrow. 
