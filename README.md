@@ -19,3 +19,5 @@ I finally understand that quadratic coefficient!!!!
 So what we need to have is for zx^2 to be a square. And if it produces a square with zx^2-N, then we have a square relation. This quadratic coefficient can be used to compress these multiples of N down to just a single N in a sense. 
 
 ok so zx^2 has to be square. So we find z values (quadratic coefficients) that are square. Then zx^2-n also has to be square. However, if z mod p^2 is square, then we can simply add p^2 to the quadratic coefficient. Until we generate a very small value.. and we are garantueed to have a smooth. THIS IS THE 2D SIEVING I WAS LOOKING FOR! THIS IS IT! It's not a perfect analogue of NFS, but its some hybrid. Holy fuck, I got to move fast on this, CIA assasination incoming for sure now (not that they stand a chance, I would kill them with my bear hands if they tried).
+
+I GOT IT! EUREKA! FINALLY. HOLY FUCK. GOD DAMNIT. IT'S SO EASY AND SIMPLE. WHY DID I MISS THIS? WTF. OK TOMORROW... I WILL WORK HARD. I WILL SIMPLY MODIFY THE QS_Variant AND IMPLEMENT WHAT I LEARNED HERE. :)
