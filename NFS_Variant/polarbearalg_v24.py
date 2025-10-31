@@ -26,8 +26,8 @@ g_z=1
 key=0                 #Define a custom modulus to factor
 keysize=12            #Generate a random modulus of specified bit length
 workers=1    #max amount of parallel processes to use
-p_amount=20 #amount of primes in factor base
-p_mod_amount=20 #amount of primes in the modulus
+p_amount=40 #amount of primes in factor base
+p_mod_amount=40 #amount of primes in the modulus
 g_enable_custom_factors=0
 g_p=107
 g_q=41
@@ -422,13 +422,13 @@ def gen_comb(collected,mod,z,n,factor_base,ret_array,quad_base,hmap2):
             y1=abs(eq2**0.5)
             test2=n_red+mod*i
             lside=z*(x2**2)
-            if abs(eq2**0.5)%1 ==0 and lside**0.5%1==0:
-                print("y0: "+str(y0)+" x: "+str(x)+" eq: "+str(eq)+" x2: "+str(x2)+" eq2: "+str(abs(eq2)**0.5)+" mod: "+str(mod)+" i: "+str(i)+" z: "+str(z))
+            if abs(eq2**0.5)%1 ==0 and lside**0.5%1==0 and eq2>0:
+                print("y0: "+str(y0)+" x: "+str(x)+" eq: "+str(eq2)+" x2: "+str(x2)+" eq2: "+str(abs(eq2)**0.5)+" mod: "+str(mod)+" i: "+str(i)+" z: "+str(z**0.5))
            # if n%eq2 != test2%eq2:
              #   i+=1 
              #   continue
 
-            if abs(eq2**0.5)%1 != 0 or lside**0.5%1!=0:# or test != 0:
+            if abs(eq2**0.5)%1 != 0 or lside**0.5%1!=0 or eq2<0:# or test != 0:
                 i+=1
                 continue 
 
@@ -441,8 +441,9 @@ def gen_comb(collected,mod,z,n,factor_base,ret_array,quad_base,hmap2):
             ret_array[2][-1].append(jac)
            
             new_root=lside**0.5#int((z*(x2**2))**0.5)
-            print(new_root)
             factor=gcd(new_root+y1,n)
+            if (new_root+y1)%n !=0 and (factor == 1 or factor ==n):
+                print("WTF********************8",(new_root+y1)%n)
             if factor != 1 and factor != n:
                 print("Factored N: "+str(factor)+" and: "+str(n//factor))
                 sys.exit()
