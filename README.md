@@ -24,3 +24,5 @@ Update: BRAIN FOG! Square root over a finite field. Because I need to adjust tha
 
 I have added to the paper a chapter on coefficient lifting. I will begin on the final chapter tonight also... but let me go for a run first. 
 I should really rewrite that entire paper some day.. I guess I'll just finish that final chapter now... and complete the PoC... getting that PoC out is top priority.. then I can take a break from work and just do easy things... like rewriting that paper into something that looks more like an actual math paper.
+
+Update: DAMNIT. I just had an insight. I wrote today in the final chapter of my paper that we can have both a root of 74 and 41 mod 121. And that 74 works only for mod 121 while 41 whill solve for 0 for any mod p since it is a factor of N... and I just started thinking some more about that and running some quick numbers... and something just hit me... god damnit. I might be the biggest idiot alive. Let me check tomorrow.. it better not be THIS easy.
