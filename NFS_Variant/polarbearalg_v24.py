@@ -411,7 +411,7 @@ def gen_comb(collected,mod,z,n,factor_base,ret_array,quad_base,hmap2):
             x%=mod
             n_red=n%mod
             eq=x**2-(n)*z
-            eq2=z*x2**2-(n%mod)
+            eq2=z*x2**2-(n)
             if eq == 0:
                 i+=1
                 continue
@@ -422,10 +422,10 @@ def gen_comb(collected,mod,z,n,factor_base,ret_array,quad_base,hmap2):
             y1=abs(eq2**0.5)
             test2=n_red+mod*i
             if abs(eq2**0.5)%1 ==0:
-                print("y0: "+str(y0)+" x: "+str(x)+" eq: "+str(eq)+" x2: "+str(x2)+" eq2: "+str(eq2**0.5)+" mod: "+str(mod)+" i: "+str(i)+" z: "+str(z))
-            #if n%eq2 != test2%eq2:
-              #  i+=1 
-               # continue
+                print("y0: "+str(y0)+" x: "+str(x)+" eq: "+str(eq)+" x2: "+str(x2)+" eq2: "+str(abs(eq2)**0.5)+" mod: "+str(mod)+" i: "+str(i)+" z: "+str(z))
+           # if n%eq2 != test2%eq2:
+             #   i+=1 
+             #   continue
 
             if abs(eq2**0.5)%1 != 0:# or test != 0:
                 i+=1
@@ -439,7 +439,8 @@ def gen_comb(collected,mod,z,n,factor_base,ret_array,quad_base,hmap2):
             ret_array[1][-1].append(x)
             ret_array[2][-1].append(jac)
            
-            new_root=(int(z*(x2**2)**0.5))
+            new_root=int((z*(x2**2))**0.5)
+            #print(new_root)
             factor=gcd(new_root+y1,n)
             if factor != 1 and factor != n:
                 print("Factored N: "+str(factor)+" and: "+str(n//factor))
