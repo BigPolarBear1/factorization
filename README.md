@@ -16,6 +16,4 @@ I just uploaded polarbearalg_v24.py</br>
 To run: python3 polarbearalg_v24.py -keysize 14</br>
 
 I finally understand that quadratic coefficient!!!! 
-So what we really want is for zx^2 to be a square mod p^2.... then if zx^2-(n%p^2) is also square we have a high likelyhood of having a square relation mod N. 
-
-Let me make some more progress tomorrow... I am suddenly making huge leaps of progress. It's all finally connecting. Everything I've learned in the last 2.5 years.
+So what we need to have is for zx^2 to be a square. And if it produces a square with zx^2-N, then we have a square relation. This quadratic coefficient can be used to compress these multiples of N down to just a single N in a sense. 
