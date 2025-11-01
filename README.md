@@ -33,3 +33,5 @@ Update: OK, I got enough sleep last night. Today I will finish this. I am so tir
 
 
 Eureka! I figured it out. FINALLY. WTF. I'll add it to the paper today.
+
+Update: Added some more info to the paper. Let me now keep expanding on this.. I also changed the title of the paper to "factorization - a three year journey", its only 2.5 years so far, but by the time my paper is fully ready it will be 3 years... although I am hoping to have a fully functional PoC this month the latest.
