@@ -398,7 +398,7 @@ def gen_comb(collected,mod,z2,n,factor_base,ret_array,quad_base,hmap2):
         y0_temp%=mod
         i=0
         eq2=-1
-        while eq2<n:
+        while eq2<n:# and i < 100:
             z=z2+i*mod
             y0=y0_temp
             x2=get_root(n,mod,y0,z) 
@@ -409,11 +409,13 @@ def gen_comb(collected,mod,z2,n,factor_base,ret_array,quad_base,hmap2):
             div=eq/mod
           #  print(div/z)
             square=abs(eq2**0.5)
-            if square%1 != 0 or eq2 < 0:
+            if square%1 != 0 or eq2 < 1:
                 i+=1
                 continue
             hit=0
-            if eq/(square) == z:  
+          #  print(eq)
+          #  print(square)
+            if eq/(mod) == z:  
                # print("y0: "+str(y0)+" x2: "+str(x2)+" eq2: "+str(eq2**0.5)+" mod: "+str(mod)+" i: "+str(i)+" z: "+str(z)+" eq: "+str(eq/(mod))+" x: "+str(x))
                 hit=1
             if hit !=1:
