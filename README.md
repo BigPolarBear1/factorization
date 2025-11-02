@@ -18,3 +18,4 @@ I also updated the paper a bit more today. So v28, if zx^2-n is a square, and x^
 
 It demonstrates the core ideas and math already. I need to do proper sieving now and add linear algebra.. this should definitely be done now very shortly... people would have known I'm doing everything right... I hope you all go to hell for treating me like this despite knowing I'm doing everything right. 
 
+What I am doing is literally NFS with reducible polynomials. Show me anyone else who has done this before, I dare you? You're all fools. Never gave me another option. Do you think this is what I want to do? I still have stalkers stalking me from dropping 0days in 2018, sending me hatemail.. and that was just fucking windows LPEs, do you know the shitstorm this will cause? Lol. Might aswell just kill me right now and get it over with.
