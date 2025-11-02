@@ -428,7 +428,7 @@ def gen_comb(collected,mod,z,n,factor_base,ret_array,quad_base,hmap2):
                     if y02**2%n == sqrt_start**2%n:
                         z2=(y02**2-sqrt_start**2)/n
                         print("y0: "+str(y0)+" x2: "+str(x2)+" eq2**0.5: "+str(eq2**0.5)+" mod: "+str(mod)+" i: "+str(i)+" z: "+str(z)+" eq/mod: "+str(eq/(mod))+" x: "+str(x))
-                        print("Factored N: "+str(factor)+" and: "+str(n//factor)+" y0: "+str(y02)+" y1: "+str(sqrt_start)+" div: "+str(div/z)+" ja: "+str(jacobi(sqrt,z*4*n))+" z/mod: "+str(z2/mod))
+                        print("Factored N: "+str(factor)+" and: "+str(n//factor)+" y0: "+str(y02)+" y1: "+str(sqrt_start)+" div: "+str(div/z)+" ja: "+str(jacobi(sqrt,z*4*n))+" z/mod: "+str(z2/eq2))
 
 
                         hit=0
