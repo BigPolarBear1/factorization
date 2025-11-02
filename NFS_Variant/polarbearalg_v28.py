@@ -408,12 +408,12 @@ def gen_comb(collected,mod,z2,n,factor_base,ret_array,quad_base,hmap2):
           #  print(str(eq2)+" "+str(i))
             div=eq/mod
           #  print(div/z)
-            
-            if abs(eq2**0.5)%1 != 0 or eq2 < 0:
+            square=abs(eq2**0.5)
+            if square%1 != 0 or eq2 < 0:
                 i+=1
                 continue
             hit=0
-            if eq/(mod) == z:  
+            if eq/(square) == z:  
                # print("y0: "+str(y0)+" x2: "+str(x2)+" eq2: "+str(eq2**0.5)+" mod: "+str(mod)+" i: "+str(i)+" z: "+str(z)+" eq: "+str(eq/(mod))+" x: "+str(x))
                 hit=1
             if hit !=1:
