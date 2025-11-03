@@ -18,4 +18,4 @@ In v29 .... where it bruteforce tries to figure out the multiplier to our quadra
 
 Oh I will make a few minor corrections to the paper when I get back from running. I understand it again a tiny little bit better now then yesterday. Everday I learn a little more... 
 
-Today while running, it felt a bit crowded. Perhaps it is my paranoia. There is 2 possibilities... people know what im about to disclose.. or Im just dealing with stress, anxiety and hyper vigilance and people are totally oblivious about the disaster that is about to be unleashed.
+Update: I have edited the final chapter a little in the paper. The stuff I added yesterday in there was full of mistakes... was a bit too fast there yesterday. This is solid now though and v29.py clearly demonstrates what is going on. So tomorrow I really want to fix p-adic lifting to find this multiplier for the quadratic coefficient. Once that is done, all the math will be done. Then its simply trivial stuff.. adding sieving and linear algebra... just basic stuff.
