@@ -21,3 +21,5 @@ Update: I added v29 ... it shows what I wrote above... I should be able to find 
 
 
 Update: Or wait... this literally just tells us something about squaredness mod p. If we set y1 to be the square... then we know y0 will be divisible by the square root for some  y1^2+n\*y1\*multiplier  ... so we have full information on y1 (it has the be the entire square) and we have information mod p on y0 and the z (z will be p times some multiplier such that n\*multiplier is a quadratic residue mod p). I'm so sleepy today, I might just go for a run now. But this should be enough info to do some type of p-adic lifting in a different prime field to find that correct multiplier. 
+
+Update: Oops... with this information we can easily do p-adic lifting now, I just quickly did the math manually.. I'm going to take a break for the rest of the day. P-adic lifting requires atleast 7 hours of sleep. Nobody should perform p-adic lifting of polynomial coefficients while sleep deprived. I could do it I guess.. it's not complicated... but after 2.5 years of doing math... I just can't be bothered anymore to work like a maniac every day. 
