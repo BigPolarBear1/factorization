@@ -18,4 +18,6 @@ Update: I am soo tired today. I started out implementing the linear algebra. And
 
 Update: I added v29 ... it shows what I wrote above... I should be able to find that correct multiple using p-adic lifting or something similar... because those multiples are definitely not random and are definetely influenced by legendre symbols (solely based on the prime factors of those numbers.. I been doing this stuff for long enough now to immediatly recognize something like that...)... let me work that out today now.. before I do the linear algebra. No point in trying to get the linear algebra to work before I figure out the details of this.
 
-Update: AAAAH ofcourse. If we have zx^2-n, and the result is square, then x^2-n*z will be divisible by that square AND z. Hence, zx^2-n just filters out the z value out of the smooth candidate. Now for this shortened version to work, we need to add legendre symbols for z to our linear algebra. Because the more square this is, the better. 
+
+
+Update: Or wait... this literally just tells use something about squaredness mod p. If we set y1 to be the square... then we now y0 will be divisible by the square root for some  y1^2+n\*p^2\*multiplier  ... so we have full information on y1 (it has the be the entire square) and we have information mod p on y0 and the z (z will be p times some multiplier such that n\*multiplier is a quadratic residue mod p). I'm so sleepy today, I might just go for a run now. But this should be enough info to do some type of p-adic lifting in a different prime field to find that correct multiplier. 
