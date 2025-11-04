@@ -11,8 +11,8 @@ To run: python3 run_qs.py -keysize 200 -base 6000 -debug 1 -lin_size 100_000 -qu
 This version is somewhat done, but it doesn't achieve much of an advantage, as the main strength of my work will be the NFS_Variant, which performs NFS with reducible quadratic polynomials<br><br>
 #### To run from folder "NFS_variant" (Number Field Sieve with our number theory as backend using reducible quadratic polynomials mod m):</br></br>
 
-I just uploaded polarbearalg_v31.py</br>
-To run: python3 polarbearalg_v31.py -keysize 20</br>
+I just uploaded polarbearalg_v32.py</br>
+To run: python3 polarbearalg_v32.py -keysize 20</br>
 
 
 I've added some legendre symbols to that loop that tries to find the correct multiplier for the quadratic coefficient. 
