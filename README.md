@@ -11,11 +11,11 @@ To run: python3 run_qs.py -keysize 200 -base 6000 -debug 1 -lin_size 100_000 -qu
 This version is somewhat done, but it doesn't achieve much of an advantage, as the main strength of my work will be the NFS_Variant, which performs NFS with reducible quadratic polynomials<br><br>
 #### To run from folder "NFS_variant" (Number Field Sieve with our number theory as backend using reducible quadratic polynomials mod m):</br></br>
 
-I just uploaded polarbearalg_v29.py</br>
-To run: python3 polarbearalg_v29.py -keysize 20</br>
+I just uploaded polarbearalg_v31.py</br>
+To run: python3 polarbearalg_v31.py -keysize 20</br>
 
-In v29 .... where it bruteforce tries to figure out the multiplier to our quadratic coefficient (which we know will be divisible by y1 if we set y1 to be the square we found with zx^2-n) ... that now has to be replaced with p-adic lifting instead. I just manually did the math, and it is very do-able. Since we know the value of y1 in the integers (the square we found), and we know the value of y0 mod y1**0.5. And we also now the quadratic coefficient is y1 times a multiplier that we must find. That's all the information we need. I didn't sleep enough last night, so I'm going for a run now and calling it a day. I'm just not in the mood to write this p-adic lifting code while sleep deprived. I'll add it to the PoC tomorrow.... once that works... we implement some better sieving and linear algebra... and our NFS variant will be complete. It doesn't matter if we are restricted to smooth finding using zx^2-n, because we can add the modulus to z, and have a linear multiplier there lets use generate values extremely close to n... hence producing very small smooth candidates.. additionally we don't care if zx^2 is square or not, since we don't use it.
 
-Oh I will make a few minor corrections to the paper when I get back from running. I understand it again a tiny little bit better now then yesterday. Everday I learn a little more... 
+I've added some legendre symbols to that loop that tries to find the correct multiplier for the quadratic coefficient. 
+And actually thinking about this, I need to get these legendre symbols working in my linear algebra step, similar to what NFS does with the quadratic character base.
+I was thinking before that I should do p-adic lifting here to find that multiplier... but since the correct solution can be represented by legendre symbols, I should probably just implement that in my linear algebra step... then we don't really need p-adic lifting to find that correct multiplier. So I guess the next step now is to calculate some examples by hand to figure out the exact implementation details of the linear algebra step and how that would work. I think v31 is good now, it shows all the math, and also how legendre symbols come into play. Now it's time to get serious and start building a proper algorithm.
 
-Update: I have edited the final chapter a little in the paper. The stuff I added yesterday in there was full of mistakes... was a bit too fast there yesterday. This is solid now though and v29.py clearly demonstrates what is going on. So tomorrow I really want to fix p-adic lifting to find this multiplier for the quadratic coefficient. Once that is done, all the math will be done. Then its simply trivial stuff.. adding sieving and linear algebra... just basic stuff.
