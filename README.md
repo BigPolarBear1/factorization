@@ -18,9 +18,9 @@ I started slowly digging in today for about an hour or two (having bad brain fog
 
 (this is a small toy example)
 
-poly1: 3^2+17\*3 = 60 	(3\*20)     9+51
-poly2: 7^2+17\*7 = 168  ( 7\*24)    49+119
+poly1: 3^2+17\*3 = 60 	(3\*20)   </br>  
+poly2: 7^2+17\*7 = 168  ( 7\*24)    </br>  
 
-poly1\*poly2: 21^2+17\*21 = 798 (21\*38)   
+poly1\*poly2: 21^2+17\*21 = 798 (21\*38)   </br>  
 
 Lets say we multiple poly1 and poly2 together. The output of the new polynomial will be 21*38. The 21 we can easily predict... but that 38... how can I predict the residue of that mod p such that I can transform that part into legendre symbols? That's all I need. I'm sure with everything I have worked out so far, I can solve this. I solve this last issue, and I'm done. The moment I solve this, a few hours later I'll have a PoC ready to upload and it's over. I'll bash my head against this tomorrow the entire day. 
