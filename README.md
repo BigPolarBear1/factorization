@@ -24,3 +24,7 @@ poly2: 7^2+17\*7 = 168  ( 7\*24)    </br>
 poly1\*poly2: 21^2+17\*21 = 798 (21\*38)   </br>  
 
 Lets say we multiple poly1 and poly2 together. The output of the new polynomial will be 21*38. The 21 we can easily predict... but that 38... how can I predict the residue of that mod p such that I can transform that part into legendre symbols? That's all I need. I'm sure with everything I have worked out so far, I can solve this. I solve this last issue, and I'm done. The moment I solve this, a few hours later I'll have a PoC ready to upload and it's over. I'll bash my head against this tomorrow the entire day. 
+
+Update: *sigh* I'm a idiot. It's this fucking brain fog. It's just the way my life is right now, I feel claustrophobic, feel like I can't breath or think. Almost there... doesn't matter. 
+
+1089^2+4387\*1089 = 2442^2   (5476\*1089) .... so in this example which I covered in the paper...  I know where that 5476 comes from... thats just the square of the root which produced 1089 (74^2-4387 = 1089). Yea, I know how to setup my legendre symbols now. Time to finish it tomorrow... 
