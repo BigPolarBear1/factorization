@@ -34,3 +34,5 @@ Just thinking about this... you know.. I usually see activity from my stalker wh
 
 
 Update: Slowly grinding away today. Having some brain fog. So the core of this appraoch is, when we implement linear algebra... the new quadratic coefficient should be a square when multiplying smooth candidates together. That garantuees a square relation. So I just need to figure out how I'm going to represent that with legendre symbols... I'm slowly chipping away on it now.. give me a few days to complete this. 
+
+Update: Ok ok, I see how to finish my work now. I just got to work out the number theory of how this quadratic coefficient changes when we mutiply results together... because then I can construct my quadratic character base.. I've found a nice numerical example already that I can begin taking apart. Going to take a break for a few hours. I'll figure it out very soon... and once that happens... that is it, my work will be finished and it will finally be over. Literally the last meters before the finish line now... no rush, no stress. I better enjoy these last moments of calm.. becaues once this is done.. shit's going to be a mess after that.
