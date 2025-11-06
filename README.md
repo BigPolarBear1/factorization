@@ -42,3 +42,5 @@ Update: Alright, I had 7 hours of sleep. I'm going to finish this today. Almost 
 Update: Let me update the paper first with these recent findings. It will help organizing my thoughts. 
 
 If this was somebody's classified algorithm, they must be spooked out of their mind, HAHAHAHHAHAHAHAHHAHAAH. Get fucked losers. 
+
+Like, literally, the only way I can explain why nobody is trying to stop me is because you are all so fucking spooked, you are frozen like deer staring at headlights. Weaklings. Quit your jobs losers.
