@@ -44,3 +44,5 @@ Update: Let me update the paper first with these recent findings. It will help o
 If this was somebody's classified algorithm, they must be spooked out of their mind, HAHAHAHHAHAHAHAHHAHAAH. Get fucked losers. 
 
 Like, literally, the only way I can explain why nobody is trying to stop me is because you are all so fucking spooked, you are frozen like deer staring at headlights. Weaklings. Quit your jobs losers.
+
+Update: Alright gays, I have updated the paper. Now let me figure out how that math would work for other primes, other then those used to generate our coefficients. I probably just have to recalculate the root modulo some other prime...
