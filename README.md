@@ -40,3 +40,5 @@ You know what I truely hate the most? Living in a world full of ape brained morr
 Update: Alright, I had 7 hours of sleep. I'm going to finish this today. Almost 3 years of research. I used to think spending 6 weeks to find an openssl bug was completely insane... but this is on another level. I'm starting to worry my life is too short, to do all the math things I want to do. 
 
 Update: Let me update the paper first with these recent findings. It will help organizing my thoughts. 
+
+If this was somebody's classified algorithm, they must be spooked out of their mind, HAHAHAHHAHAHAHAHHAHAAH. Get fucked losers. 
