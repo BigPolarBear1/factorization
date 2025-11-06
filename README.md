@@ -48,3 +48,5 @@ Like, literally, the only way I can explain why nobody is trying to stop me is b
 Update: Alright gays, I have updated the paper. Now let me figure out how that math would work for other primes, other then those used to generate our coefficients. I probably just have to recalculate the root modulo some other prime...
 
 UPDATE: I JUST RAN THE NUMBERS!!!!!!!! YES, FOR OTHER PRIMES, YOU JUST RECALCULATE THE ROOTS. EUREKA!!!! I WILL FINISH THE PAPER TONIGHT, AND THEN THE CODE TONIGHT OR TOMORROW. MY WORK HAS FINISHED!!! I need a break few hours first though and also go for a run, I am stressed out of my mind, you wouldn't believe.
+
+I'll try to just finish the paper tonight, show how to construct legendre symbols for the other primes using the example with the 3 quadratic polynomials I added earlier to the paper... and then just do the code tomorrow. I am stressed out of my mind right now. What the fuck does it even matter. Ah man. I have no other choices left. Just got to keep going down this road, until the bitter end. 
