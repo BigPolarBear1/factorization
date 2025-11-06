@@ -46,3 +46,5 @@ If this was somebody's classified algorithm, they must be spooked out of their m
 Like, literally, the only way I can explain why nobody is trying to stop me is because you are all so fucking spooked, you are frozen like deer staring at headlights. Weaklings. Quit your jobs losers.
 
 Update: Alright gays, I have updated the paper. Now let me figure out how that math would work for other primes, other then those used to generate our coefficients. I probably just have to recalculate the root modulo some other prime...
+
+UPDATE: I JUST RAN THE NUMBERS!!!!!!!! YES, FOR OTHER PRIMES, YOU JUST RECALCULATE THE ROOTS. EUREKA!!!! I WILL FINISH THE PAPER TONIGHT, AND THEN THE CODE TONIGHT OR TOMORROW. MY WORK HAS FINISHED!!! I need a break few hours first though and also go for a run, I am stressed out of my mind, you wouldn't believe.
