@@ -11,8 +11,8 @@ To run: python3 run_qs.py -keysize 200 -base 6000 -debug 1 -lin_size 100_000 -qu
 This version is somewhat done, but it doesn't achieve much of an advantage, as the main strength of my work will be the NFS_Variant, which performs NFS with reducible quadratic polynomials<br><br>
 #### To run from folder "Improved_QS_Variant" (Sort of a QS/NFS hybrid that improves on Quadratic Sieve using the number theory I developped):</br></br>
 
-I just uploaded polarbearalg_v34.py</br>
-To run: python3 polarbearalg_v34.py -keysize 20</br>
+I just uploaded polarbearalg_v35.py</br>
+To run: python3 polarbearalg_v35.py -keysize 20</br>
 
 I fixed the PoC..... lol. 
 It was actually extremely simple. I was way too overcomplicating everything inside my head.
@@ -27,3 +27,5 @@ So using zx^2-N I can create very small smooths. And yes, it is true, that zx^2 
 Its a good day today! I have succeeded. It is finished. I can't believe it. I got to go tell my parents. After nearly 3 years, I have succesfully improved the quadratic sieve algorithm! Hah! Fuck you haters who dismissed me.
 
 Update: I have quickly updated the paper. I'll add a full numerical example once the PoC is fully finished. I will now begin further developping the PoC... will begin uploading improved version in the coming days.
+
+Update: in v35 I've replaced the left side with legendre symbols... and it still appears to work. So we do not need to worry about trail factorization of zx^2 at all. Holy fuck. This blows any existing factorization algorithm out of the water. LOL. What a shit day this is going to be for the NSA. HAHAHAAHAHAHAHA.
