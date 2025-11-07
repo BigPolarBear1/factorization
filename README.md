@@ -22,4 +22,4 @@ I will need to optimize the PoC now in the coming days though. It doesn't matter
 
 I'll edit the paper shortly and then move on to finish the PoC.
 
-
+So using zx^2-N I can create very small smooths. And yes, it is true, that zx^2 must also factor over the factor base ... but that's easy enough, since we can add the modulus to either x or z. So it's not hard to create values there that factorise over the factor base. Let me finish the paper and I'll show how to do it soon. LOL. It's so simple. OMG. I must have severe brain damage. I literally took half a year to figure this out. What the fuck is wrong with me. CIA must have caused brain damage to prevent me from figuring this out. Fuckers. I'll hunt them down. I'll devour them like a polar bear.
