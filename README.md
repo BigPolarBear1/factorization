@@ -16,7 +16,7 @@ To run: python3 polarbearalg_v34.py -keysize 20</br>
 
 I fixed the PoC..... lol. 
 It was actually extremely simple. I was way too overcomplicating everything inside my head.
-It done! MY WORK IS COMPLETE! Check v34, it has the linear algebra working.
+Its done! MY WORK IS COMPLETE! Check v34, it has the linear algebra working.
 
 I will need to optimize the PoC now in the coming days though. It doesn't matter that we need to do trial factorization on both sides of the conguences, because both sides will be  much smaller numbers then with traditional QS.
 
