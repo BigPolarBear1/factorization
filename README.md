@@ -11,11 +11,11 @@ To run: python3 run_qs.py -keysize 200 -base 6000 -debug 1 -lin_size 100_000 -qu
 This version is somewhat done, but it doesn't achieve much of an advantage, as the main strength of my work will be the NFS_Variant, which performs NFS with reducible quadratic polynomials<br><br>
 #### To run from folder "Improved_QS_Variant" (Sort of a QS/NFS hybrid that improves on Quadratic Sieve using the number theory I developped):</br></br>
 
-I just uploaded polarbearalg_v35.py</br>
-To run: python3 polarbearalg_v35.py -keysize 20</br>
+I just uploaded polarbearalg_v34.py</br>
+To run: python3 polarbearalg_v34.py -keysize 20</br>
 
 I fixed the PoC..... lol. 
 It was actually extremely simple. I was way too overcomplicating everything inside my head.
 Its done! MY WORK IS COMPLETE! Check v34, it has the linear algebra working.
 
-Update: in v35 I've replaced the left side with legendre symbols... and it still appears to work. So we do not need to worry about trail factorization of zx^2 at all. Holy fuck. This blows any existing factorization algorithm out of the water. LOL. What a shit day this is going to be for the NSA. HAHAHAAHAHAHAHA.
+Update: So using zx^2-N, we can garantuee very small smooth candidates. Since we can add the modulus to either z or x. However, zx^2 must also be square, but there is a number of tricks we can use there to garantuee its factorization. 
