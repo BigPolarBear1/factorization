@@ -24,4 +24,7 @@ Update: Alright, I am awoken again. Some days I really hate being unemployed and
 
 You know, I really wished I hadn't found out that microsoft had gone in and retroactively downgraded one of my remote RCE bugs. Which should have been a critical bug. But they argued that since it was a stack buffer overrun it would need to be combined with an info leak, so they released it as important initially. (which didn't make sense, because they rate remote stack buffer overruns as critical all the time). Then after they fired me, they somehow downgraded it to info disclosure. Which makes even less sense since I literally had a POC proving full control over the size and contents of the stack overflow. That CVE was bundled with some OOB reads as well.... but that still doesn't make sense. Someone would have gone back after they fired me, and literally took the time to downgrade my work. Which makes me feel even more angry. These people NEVER valued my work. They were jealous of everything I did from the start. If I ever see anyone from MSRC, they better start running for their life. Im not kidding. I will go to jail if I ever see anyone from MSRC.
 
-Update: Oh actually, I thin if I flip this entire setup the other way around.. it may work better.. I'll upload a PoC in 30  min.
+Update: Oh actually, I think if I flip this entire setup the other way around.. it may work better.. I'll upload a PoC in 30  min.
+
+Update: AAAAAAAAAAh. The idea was correct, but I was doing it the wrong way around. Give me a few hours to correct this. Fuck.
+
