@@ -11,8 +11,8 @@ To run: python3 run_qs.py -keysize 200 -base 6000 -debug 1 -lin_size 100_000 -qu
 This version is somewhat done, but it doesn't achieve much of an advantage, as the main strength of my work will be the NFS_Variant, which performs NFS with reducible quadratic polynomials<br><br>
 #### To run from folder "Improved_QS_Variant" (Sort of a QS/NFS hybrid that improves on Quadratic Sieve using the number theory I developped):</br></br>
 
-I just uploaded polarbearalg_v34.py</br>
-To run: python3 polarbearalg_v34.py -keysize 20</br>
+I just uploaded polarbearalg_v36.py</br>
+To run: python3 polarbearalg_v36.py -keysize 20</br>
 
 I fixed the PoC..... lol. 
 It was actually extremely simple. I was way too overcomplicating everything inside my head.
