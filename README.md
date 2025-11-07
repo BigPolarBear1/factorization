@@ -11,9 +11,15 @@ To run: python3 run_qs.py -keysize 200 -base 6000 -debug 1 -lin_size 100_000 -qu
 This version is somewhat done, but it doesn't achieve much of an advantage, as the main strength of my work will be the NFS_Variant, which performs NFS with reducible quadratic polynomials<br><br>
 #### To run from folder "NFS_variant" (Number Field Sieve with our number theory as backend using reducible quadratic polynomials mod m):</br></br>
 
-I just uploaded polarbearalg_v33.py</br>
-To run: python3 polarbearalg_v33.py -keysize 20</br>
+I just uploaded polarbearalg_v34.py</br>
+To run: python3 polarbearalg_v34.py -keysize 20</br>
 
-Oops. I simplified all of that math in v33. This is much simpler and straight forward. This is about as simplified as it gets. Now I need to implement linear algebra instead of just hoping for a case where zx^2 is square and zx^2-n is square. 
+I fixed the PoC..... lol. 
+It was actually extremely simple. I was way too overcomplicating everything inside my head.
+It done! MY WORK IS COMPLETE! Check v34, it has the linear algebra working.
 
-Update: Ergh. I'm so dumb. I definitely need to quit math. Lets see... this should just work if I implement the linear algebra like this... give me an hour... 
+I will need to optimize the PoC now in the coming days though. It doesn't matter that we need to do trial factorization on both sides of the conguences, because both sides will be  much smaller numbers then with traditional QS.
+
+I'll edit the paper shortly and then move on to finish the PoC.
+
+
