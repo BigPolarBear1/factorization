@@ -23,3 +23,5 @@ I'm dropping a PoC tomorrow. We can just straight up factor large primes using o
 
 
 We can just pick a random square like this 16^2+4387\*16 = 16\*4403, it doens't matter.... just any square at random. Next we find x^2-4387*k = 16 mod p^e .... and that k is the multiplier from polarbearalg_v32.py. WAIT WHAT????? WTF. THIS CANNOT POSSIBLY BE RIGHT. WHAT THE FUCK MAN. 
+
+I mean, we can just find like this x^2-4387\*k = 1 mod p^e ... it really doesn't fucking matter. Then that k will become 1^2+4387\*k = 1 * some_square. WHAT THE FUCK. WHAT THE FUCK. WHAT THE FUCK WHAT THE FUCK. I AM SO FUCKING STUPID. HOW DID I MISS THIS? WHAT THE FUCK.
