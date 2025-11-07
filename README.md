@@ -16,3 +16,4 @@ To run: python3 polarbearalg_v33.py -keysize 20</br>
 
 Oops. I simplified all of that math in v33. This is much simpler and straight forward. This is about as simplified as it gets. Now I need to implement linear algebra instead of just hoping for a case where zx^2 is square and zx^2-n is square. 
 
+Update: Ergh. I'm so dumb. I definitely need to quit math. Lets see... this should just work if I implement the linear algebra like this... give me an hour... 
