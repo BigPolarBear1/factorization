@@ -9,7 +9,7 @@ I have been unemployed for 2 years. I am looking for work. I would like some way
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 200 -base 6000 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 This version is somewhat done, but it doesn't achieve much of an advantage, as the main strength of my work will be the NFS_Variant, which performs NFS with reducible quadratic polynomials<br><br>
-#### To run from folder "NFS_variant" (Number Field Sieve with our number theory as backend using reducible quadratic polynomials mod m):</br></br>
+#### To run from folder "Improved_QS_Variant" (Sort of a QS/NFS hybrid that improves on Quadratic Sieve using the number theory I developped):</br></br>
 
 I just uploaded polarbearalg_v34.py</br>
 To run: python3 polarbearalg_v34.py -keysize 20</br>
