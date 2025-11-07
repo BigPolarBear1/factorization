@@ -414,7 +414,7 @@ def gen_comb(collected,mod,z2,n,factor_base,ret_array,quad_base,hmap2):
             factors_left,rem=factorise_fast(smooth_can_left,factor_base)
 
             factors_right,rem2=factorise_fast(smooth_can_right,factor_base)
-            if rem == 1 and rem2 == 1:
+            if rem2 == 1:
                 jac=[]
                 for prime in quad_base:
                     ja=jacobi(smooth_can_left,prime)
