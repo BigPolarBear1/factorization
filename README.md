@@ -18,3 +18,5 @@ So the idea is that you want to generate smooths using square moduli and setting
 
 
 People would have known. The only reason I didn't immedialty see this is because I dropped out of highschool and 2.5 years ago I didn't even know basic algebra. I swear, whoever made this decision, this deception... this betrayal even... I will find you and I will end you. Fucking morons. 
+
+Update: !!!!!!!!!!!!! I did some brainstorming... I really hate having to factorize that Z.... but, all the way back in september... when I was messing around with QSv3_find_similar.py and manipulating coefficients... I learned a trick there. THEN, when I eliminate having to factorize that Z ... all we have to do is factorize smooths that are insanely small. Way smaller then SIQS achieves. THAT would be the most ideal way of doing it. Give me tomorrow to add this to the PoC.
