@@ -13,3 +13,5 @@ I just uploaded polarbearalg_v37.py</br>
 To run: python3 polarbearalg_v37.py -keysize 50</br>
 
 UPDATE: I NEED TO FIX ONE MORE IMPORTANT STEP IN THE POC TOMORROW. WE DONT NEED zx^2 TO BE A SQUARE IN THE INTEGERS. WE CAN TAKE A SQUARE ROOT OVER A FINITE FIELD THERE INSTEAD. PPFFFFT... sure took me long enough to connect the dots there. I know how to do it.. just worked out the math. I need some sleep and I'll upload the fixed POC tomorrow.
+
+UPDATE: Wait, a few versions back of the paper I wrote about "decompressing the quadratic coefficient into multiples of N"  ... I can just turn zx^2 into x^2 that way... and then I can check for the different x mod p and -x mod p residues...  or use p-adic lifting. That might work.. my brain is super overactive.. I need some sleep first. If this works tomorrow... lol. 
