@@ -706,7 +706,8 @@ def find_comb(lists,n,procnum,return_dict,hmap,quad_base,hmap2):
             i+=1
         if len(ret_array[0][0])>smooth_len:
             smooth_len=len(ret_array[0][0])
-            print(str(smooth_len)+" / "+str(p_amount*2+4+quad_char_amount))
+            print("", end=f"Smooths: {smooth_len} / {p_amount*2+4+quad_char_amount}\r")
+            #print(str(smooth_len)+" / "+str(p_amount*2+4+quad_char_amount))
         if len(ret_array[0][0])>(p_amount*2+4+quad_char_amount):
             break
         z+=1
