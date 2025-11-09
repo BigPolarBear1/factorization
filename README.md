@@ -9,11 +9,6 @@ To run: python3 run_qs.py -keysize 200 -base 6000 -debug 1 -lin_size 100_000 -qu
 See below for an improved way of performing what this PoC does.. I'll delete this Proof of Concept once the PoC for Improved_QS_Variant matures a little more<br><br>
 #### To run from folder "NFS_Variant" (Sort of a QS/NFS hybrid that improves on Quadratic Sieve using the number theory I developped):</br></br>
 
-I just uploaded polarbearalg_v37.py</br>
-To run: python3 polarbearalg_v37.py -keysize 50</br>
+I just uploaded polarbearalg_v40.py</br>
+To run: python3 polarbearalg_v40.py -keysize 30</br>
 
-I've ran some test. We don't need to find a square for zx^2 in the integers. As long as zx^2-n is square and zx^2 mod m is square.. I'm still working out the details. Will upload more info soon. 
-
-Update: Expanded the paper a little.. let me now get the code working for this.... effectively reducing trail factorization of zx^2 to zx^2 mod m where m is a square modulus.
-
-Update: Oops, what I added to the paper just now is a bit rushed. Not entirely correct. Thinking in the right direction but not entirely correct. Let me correct it somewhere later today.
