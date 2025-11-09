@@ -13,3 +13,5 @@ I just uploaded polarbearalg_v37.py</br>
 To run: python3 polarbearalg_v37.py -keysize 50</br>
 
 I've ran some test. We don't need to find a square for zx^2 in the integers. As long as zx^2-n is square and zx^2 mod m is square.. I'm still working out the details. Will upload more info soon. 
+
+Update: Just had some more sleep. Frigging headache though. Let me begin writing what I've found. 
