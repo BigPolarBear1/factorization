@@ -12,3 +12,4 @@ See below for an improved way of performing what this PoC does.. I'll delete thi
 I just uploaded polarbearalg_v40.py</br>
 To run: python3 polarbearalg_v40.py -keysize 30</br>
 
+UPDATE: I actually managed to replace the trial factorization of zx^2 completely with jacobi symbols. This works, but as the bit size goes up, the amount of required jacobi symbols also goes up. I have some ideas to keep it smaller by just performing trail factorization mod m of zx^2 combined with jacobi symbols.. I will upload soon. 
