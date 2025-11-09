@@ -14,6 +14,6 @@ To run: python3 polarbearalg_v37.py -keysize 50</br>
 
 I've ran some test. We don't need to find a square for zx^2 in the integers. As long as zx^2-n is square and zx^2 mod m is square.. I'm still working out the details. Will upload more info soon. 
 
-Update: Just had some more sleep. Frigging headache though. Let me begin writing what I've found. 
-
 Update: Expanded the paper a little.. let me now get the code working for this.... effectively reducing trail factorization of zx^2 to zx^2 mod m where m is a square modulus.
+
+Update: Oops, what I added to the paper just now is a bit rushed. Not entirely correct. Thinking in the right direction but not entirely correct. Let me correct it somewhere later today.
