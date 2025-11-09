@@ -7,11 +7,9 @@ To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 200 -base 6000 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
 See below for an improved way of performing what this PoC does.. I'll delete this Proof of Concept once the PoC for Improved_QS_Variant matures a little more<br><br>
-#### To run from folder "Improved_QS_Variant" (Sort of a QS/NFS hybrid that improves on Quadratic Sieve using the number theory I developped):</br></br>
+#### To run from folder "NFS_Variant" (Sort of a QS/NFS hybrid that improves on Quadratic Sieve using the number theory I developped):</br></br>
 
 I just uploaded polarbearalg_v37.py</br>
 To run: python3 polarbearalg_v37.py -keysize 50</br>
 
-UPDATE: I NEED TO FIX ONE MORE IMPORTANT STEP IN THE POC TOMORROW. WE DONT NEED zx^2 TO BE A SQUARE IN THE INTEGERS. WE CAN TAKE A SQUARE ROOT OVER A FINITE FIELD THERE INSTEAD. PPFFFFT... sure took me long enough to connect the dots there. I know how to do it.. just worked out the math. I need some sleep and I'll upload the fixed POC tomorrow.
-
-UPDATE: Wait, a few versions back of the paper I wrote about "decompressing the quadratic coefficient into multiples of N"  ... I can just turn zx^2 into x^2 that way... and then I can check for the different x mod p and -x mod p residues...  or use p-adic lifting. That might work.. my brain is super overactive.. I need some sleep first. If this works tomorrow... lol. 
+I've ran some test. We don't need to find a square for zx^2 in the integers. As long as zx^2-n is square and zx^2 mod m is square.. I'm still working out the details. Will upload more info soon. 
