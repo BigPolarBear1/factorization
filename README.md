@@ -18,3 +18,4 @@ If we do regular SIQS and we start with generating x^2-n divisible by the modulu
 
 Like, you know how the sieve interval in standard SIQS, creates a parabole around 0. But using z we can shift where exactly it wraps around 0. We can shift the parabole left or right. That's the secret power of this appraoch. I have to quickly work out the details.. fucking headache all the time. grr. 
 
+Update: Ok I'm going to begin implementing this. First I will take my SIQS variant. Change the discriminant of y0^2-N*4*z to x^2-N ... then after that, we can shift the parabole the sieve interval creates with quadratic coefficients. Yea, that will be FUCKING beautiful. People are so fucked. AND NOBODY BELIEVED IN ME. GO TO HELL. 
