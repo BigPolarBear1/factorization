@@ -20,3 +20,8 @@ First I want to try some heuristic thats going to find an optimal amount to add 
 2. and zx^2-n should also be as small as possible. 
 
 Let me bash my head against that first today... because solving that is the path of least resistance... then later I can explore some more complicated stuff again.
+
+In theory there must exist some formula to generate both a small z and smooth candidate. 
+When using x^2-n, then it is simple, we take the square root of n and use x close to that value.
+However, using z, that should give much more fine grain control. The only limitation being that z should still factorize over the factor base hence cannot be huge.
+I'm sure I can figure something out.
