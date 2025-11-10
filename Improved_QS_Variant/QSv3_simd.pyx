@@ -588,9 +588,9 @@ cdef construct_interval_2(quad_co,lin_co,cmod,unsigned long long [::1] primeslis
         dist2=(res*modi)%prime
         root_dist1b=(-root_dist1)%prime
         root_dist2b=(-root_dist2)%prime
-        root_can2=quad_co*(root-root_dist2b*cmod)**2-n
-        if root_can2%(cmod*prime)  != 0:
-            print("ERROR rootcan prime: "+str(prime)+" root: "+str(root)+" cmod: "+str(cmod)+" n: "+str(n)+" rootcan mod prime: "+str(root_can2%prime))
+      #  root_can2=quad_co*(root-root_dist2b*cmod)**2-n
+      #  if root_can2%(cmod*prime)  != 0:
+          #  print("ERROR rootcan prime: "+str(prime)+" root: "+str(root)+" cmod: "+str(cmod)+" n: "+str(n)+" rootcan mod prime: "+str(root_can2%prime))
         miniloop_non_simd(root_dist1,temp,prime,log,size)  ##Question is it better to do dist1 and dist2 in one function call?
         miniloop_non_simd(root_dist1b,temp_neg,prime,log,size)
         if dist1 != dist2:
@@ -702,7 +702,7 @@ cdef get_lin(hmap,indexmap,cfact,local_mod,indexes,quad_co):
 
 cdef construct_interval(list ret_array,partials,n,primeslist,hmap,gathered_quad_interval,gathered_ql_interval,rstart,rstop,quad_interval,quad_interval_index,threshold_map,indexmap,seen,large_prime_bound,tmul,tnum_list,lprimes_list,tnum_bit_list,logmap):
     grays = get_gray_code(20)
-    target_main = array.array('I', [0]*lin_sieve_size*2)
+    target_main = array.array('I', [0]*lin_sieve_size)
     cdef Py_ssize_t i
     cdef Py_ssize_t j
     close_range = 5
@@ -752,7 +752,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,gathered_quad_
                         if (lin**2-n*4*quad)%local_mod != 0:
                             print("big error")
                             time.sleep(100000)
-                        size=lin_sieve_size*2
+                        size=lin_sieve_size
                         single_interval,single_interval_neg,local_primes=construct_interval_2(quad,lin,local_mod,primeslist,hmap,n,indexmap,target,target_neg,logmap,size,lprimes,cfact)
 
                         mod_found=process_interval(ret_array,single_interval,single_interval_neg,n,quad,lin,partials,large_prime_bound,local_primes,threshold_map[i],local_mod,size,mod_found)
@@ -780,7 +780,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,gathered_quad_
 #@cython.boundscheck(False)
 #@cython.wraparound(False)
 cdef process_interval(ret_array,unsigned int [::1] interval,unsigned int [::1] interval_neg,n,quad_co,lin_co,partials, large_prime_bound,unsigned long long [::1] local_primes,int threshold,cmod,Py_ssize_t size,mod_found):
-    threshold = int(math.log2((lin_sieve_size//2)*math.sqrt(n*4*quad_co)) - thresvar)
+    threshold = int(math.log2((lin_sieve_size)*math.sqrt(n*4*quad_co)) - thresvar)
     cdef Py_ssize_t j=0
     while j < size:
         if interval[j] > threshold:
@@ -965,7 +965,7 @@ def construct_quad_interval(hmap,primeslist1,rstart,rstop,n):
 
         quad_interval[-1][0]=1
         quad_interval_index[-1][0]=1
-        threshold = int(math.log2((lin_sieve_size//2)*math.sqrt(n*4*i)) - thresvar) ###To do: move this into the loop so we can get better estimates
+        threshold = int(math.log2((lin_sieve_size)*math.sqrt(n*4*i)) - thresvar) ###To do: move this into the loop so we can get better estimates
         threshold_map.append(threshold)
         i+=1
     i=0
@@ -1066,7 +1066,7 @@ def find_comb(n,hmap,primeslist1,indexmap):
             g+=1
         lprimes_list.append(primesl)
 
-        tnum = int(((2*n*4*(i+1))**mod_mul) / (lin_sieve_size//2))
+        tnum = int(((2*n*4*(i+1))**mod_mul) / (lin_sieve_size))
         tnum_list.append(tnum)
         tnum_bit_list.append(bitlen(tnum))
         i+=1
