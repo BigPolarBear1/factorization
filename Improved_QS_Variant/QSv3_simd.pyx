@@ -540,7 +540,7 @@ def get_root(n,p,b,a):
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cdef construct_interval_2(quad_co,lin_co,cmod,unsigned long long [::1] primeslist,hmap,n,indexmap,unsigned int [::1] temp,unsigned long long [::1] logmap,size,unsigned long long [::1] lprimes,cfact):
+cdef construct_interval_2(quad_co,lin_co,cmod,unsigned long long [::1] primeslist,hmap,n,indexmap,unsigned int [::1] temp,unsigned int [::1] temp_neg,unsigned long long [::1] logmap,size,unsigned long long [::1] lprimes,cfact):
     ##Still massively bottlenecking. Its often faster to work with a smaller factor base... that doesn't make much sense.
     cdef Py_ssize_t i=1
     cdef Py_ssize_t k
@@ -586,12 +586,16 @@ cdef construct_interval_2(quad_co,lin_co,cmod,unsigned long long [::1] primeslis
         res=(co2-lin_co)%prime
         root_dist2=(root_res2*modi)%prime
         dist2=(res*modi)%prime
-       # root_can2=quad_co*(root+root_dist2*cmod)**2-n
-        #if root_can%(cmod*prime)  != 0:
-          #  print("ERROR rootcan prime: "+str(prime)+" root: "+str(root)+" cmod: "+str(cmod)+" n: "+str(n)+" rootcan mod prime: "+str(root_can%prime))
+        root_dist1b=(-root_dist1)%prime
+        root_dist2b=(-root_dist2)%prime
+        root_can2=quad_co*(root-root_dist2b*cmod)**2-n
+        if root_can2%(cmod*prime)  != 0:
+            print("ERROR rootcan prime: "+str(prime)+" root: "+str(root)+" cmod: "+str(cmod)+" n: "+str(n)+" rootcan mod prime: "+str(root_can2%prime))
         miniloop_non_simd(root_dist1,temp,prime,log,size)  ##Question is it better to do dist1 and dist2 in one function call?
+        miniloop_non_simd(root_dist1b,temp_neg,prime,log,size)
         if dist1 != dist2:
              miniloop_non_simd(root_dist2,temp,prime,log,size)
+             miniloop_non_simd(root_dist2b,temp_neg,prime,log,size)
 
         #CAN=(lin_co+dist1*cmod)**2-n*4*quad_co
         #if CAN % (cmod*prime)  != 0:
@@ -604,7 +608,7 @@ cdef construct_interval_2(quad_co,lin_co,cmod,unsigned long long [::1] primeslis
             #print("cmod: ",cmod)
             #print("dist1: ",dist1)
         i+=1
-    return temp,local_primes
+    return temp,temp_neg,local_primes
 
 
 cdef get_quads(hmap,indexes,cfact):
@@ -741,6 +745,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,gathered_quad_
                     end = 1 << (len(cfact) - 1)
                     while poly_ind < end:
                         target = target_main[:]
+                        target_neg = target_main[:]
                         if poly_ind != 0:
                             v,e=grays[poly_ind] ##Brilliant trick, whoever come up with this.
                             lin=(lin + 2 * e * lin_parts[v])%local_mod
@@ -748,9 +753,9 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,gathered_quad_
                             print("big error")
                             time.sleep(100000)
                         size=lin_sieve_size*2
-                        single_interval,local_primes=construct_interval_2(quad,lin,local_mod,primeslist,hmap,n,indexmap,target,logmap,size,lprimes,cfact)
+                        single_interval,single_interval_neg,local_primes=construct_interval_2(quad,lin,local_mod,primeslist,hmap,n,indexmap,target,target_neg,logmap,size,lprimes,cfact)
 
-                        mod_found=process_interval(ret_array,single_interval,n,quad,lin,partials,large_prime_bound,local_primes,threshold_map[i],local_mod,size,mod_found)
+                        mod_found=process_interval(ret_array,single_interval,single_interval_neg,n,quad,lin,partials,large_prime_bound,local_primes,threshold_map[i],local_mod,size,mod_found)
                         if mod_found+1 > 10:  ##I don't know what the optimal value is here? 
                             print(str(len(ret_array[0])))#+" / "+str(int((base+1)*matrix_mul)))
                             mod2_found+=mod_found
@@ -774,7 +779,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,gathered_quad_
 
 #@cython.boundscheck(False)
 #@cython.wraparound(False)
-cdef process_interval(ret_array,unsigned int [::1] interval,n,quad_co,lin_co,partials, large_prime_bound,unsigned long long [::1] local_primes,int threshold,cmod,Py_ssize_t size,mod_found):
+cdef process_interval(ret_array,unsigned int [::1] interval,unsigned int [::1] interval_neg,n,quad_co,lin_co,partials, large_prime_bound,unsigned long long [::1] local_primes,int threshold,cmod,Py_ssize_t size,mod_found):
     threshold = int(math.log2((lin_sieve_size//2)*math.sqrt(n*4*quad_co)) - thresvar)
     cdef Py_ssize_t j=0
     while j < size:
@@ -810,7 +815,40 @@ cdef process_interval(ret_array,unsigned int [::1] interval,n,quad_co,lin_co,par
                 ret_array[1].append(co)
                 ret_array[2].append(local_factors)
         j+=1
+    j=0
+    while j < size:
+        if interval_neg[j] > threshold:
 
+            root=get_root(n,cmod,lin_co,quad_co)
+            co=abs(root-cmod*j)
+
+
+            poly_val=co**2-n*(quad_co)
+
+            local_factors, value = factorise_fast(poly_val,local_primes)
+            if value != 1:
+                if value < large_prime_bound:
+                    if value in partials:
+                        rel, lf, pv = partials[value]
+                        if rel == co:
+                            j+=1
+                            continue
+                        co *= rel
+                        local_factors ^= lf
+                        poly_val *= pv
+                    else:
+                        partials[value] = (co, local_factors, poly_val)
+                        j+=1
+                        continue
+                else:
+                    j+=1
+                    continue
+            if poly_val not in ret_array[0]:
+                mod_found+=1
+                ret_array[0].append(poly_val)
+                ret_array[1].append(co)
+                ret_array[2].append(local_factors)
+        j+=1
     return mod_found
 
 #@cython.boundscheck(False)
