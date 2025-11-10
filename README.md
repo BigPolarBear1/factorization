@@ -27,3 +27,5 @@ Update: Ok I'm going to begin implementing this. First I will take my SIQS varia
 
 Update: First step complete... it now uses roots instead of linear coefficients. I uploaded that PoC already. Next... we're going to shift parabola with quadratic coefficients :)... this may take a few days.. because it requires quite a bit of code and refactoring..
 
+Update: Ok I'm done uploading for now. It's obvious now. Of 1*x^2-N produces a parabola when iterating x, then zx^2-N produces a shifted parabola. And polarbearalg_v44 shows how that can be made to work. Dude... people are so fucking screwed. I know exactly what this implies. I don't need NFS when I have this lol.
+
