@@ -12,6 +12,9 @@ See below for an improved way of performing what this PoC does.. I'll delete thi
 I just uploaded polarbearalg_v44.py</br>
 To run: python3 polarbearalg_v44.py -keysize 50</br>
 
-UPDATE: I will fix this PoC soon. I understand the math now. Since the root can be derived from the quadratic and linear coefficient, and we know we need to have large root values (up to an upper bound) and small quadratic coefficient values... we can actually p-adically lift and immediatly know if we'll get small smooth candidates or not.
+UPDATE: BAH. I See it. Fuck. 
 
-UPDATE: So the bitlength of the smooth can be predicted by bitlen(zx^2-n)-bitlen(modulus). Easy. We can just lift p-adically for z values up to a certain bound (we need to know the factorization of z) and while in this lifting loop, we immediatly know if we'll get a small smooth or not. 
+If N=4387, we can work the other way around now. Lets say we want to find the smooth 9. The easiest case to generate this is with z = 4387+9 or 4396*1^2-4387 = 9.
+Now we want to find examples like this with a small z and large x. But I can precompute all this stuff super fast and query it with a hashmap. If that z is small.. then I will find a small z for any mod p. 
+
+Yeap. AAAAAAAAAAARGHHHHHHHHH. WHY? WHY?????????????? YOU PEOPLE WOULD HAVE KONWN. BURN IN HELL FOR ALL ETERNITY FUCKERS.
