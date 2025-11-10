@@ -25,3 +25,5 @@ In theory there must exist some formula to generate both a small z and smooth ca
 When using x^2-n, then it is simple, we take the square root of n and use x close to that value.
 However, using z, that should give much more fine grain control. The only limitation being that z should still factorize over the factor base hence cannot be huge.
 I'm sure I can figure something out.
+
+If N=4387   ... then we can just add squares to N and find z and x combinations that generate that square. Hence building smooths from the ground up. Now the trick is to keep that z as minimal as possible. OK OK OK OK. GETTING THERE NOW. 
