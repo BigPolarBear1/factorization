@@ -12,22 +12,4 @@ See below for an improved way of performing what this PoC does.. I'll delete thi
 I just uploaded polarbearalg_v44.py</br>
 To run: python3 polarbearalg_v44.py -keysize 50</br>
 
-I removed the jacobi symbols again. I will experiment with them later. But I need to change some things. I do remember a few days ago, when setting y1 to be the square we found and generating y1^2-N*y1... then then other square mod n would be some multiple of that.. and that multiple.. there was something going on with legendre symbols there... I should dig deeper into that.
-
-First I want to try some heuristic thats going to find an optimal amount to add the modulus to x and z. We need some x and z combination that:
-
-1. Keeps z as small as possible
-2. and zx^2-n should also be as small as possible. 
-
-Let me bash my head against that first today... because solving that is the path of least resistance... then later I can explore some more complicated stuff again.
-
-In theory there must exist some formula to generate both a small z and smooth candidate. 
-When using x^2-n, then it is simple, we take the square root of n and use x close to that value.
-However, using z, that should give much more fine grain control. The only limitation being that z should still factorize over the factor base hence cannot be huge.
-I'm sure I can figure something out.
-
-If N=4387   ... then we can just add squares to N and find z and x combinations that generate that square. Hence building smooths from the ground up. Now the trick is to keep that z as minimal as possible. OK OK OK OK. GETTING THERE NOW. 
-
-For example if N=4387, we can generate the smooth 9 simply by taking 9+4387. Hence 4396*1^2-4387 = 9. However, now our z value is very large. So we need find z values, with a large square factorization. That is in essence the problem we must solve. Buuut, we can look up both z and x residue values in a precomputed hashmap. Comeon comeon... think... I can do this... there's also another way to look at this, if we have a coefficient that stays small while lifting... then that dramatically increases the odds that can generate a small smooth value. I'll figure this out before the end of the day.
-
-Oh wait. WAIT. So we need to maximize the root value while minimizing the z value. However, if I'm calculating my root based on the linear coefficient and z ... then it becomes easy. THERE IS A WAY TO DO THIS! I GOT IT!
+UPDATE: I will fix this PoC soon. I understand the math now. Since the root can be derived from the quadratic and linear coefficient, and we know we need to have large root values (up to an upper bound) and small quadratic coefficient values... we can actually p-adically lift and immediatly know if we'll get small smooth candidates or not.
