@@ -13,3 +13,5 @@ I just uploaded polarbearalg_v44.py</br>
 To run: python3 polarbearalg_v44.py -keysize 50</br>
 
 UPDATE: I will fix this PoC soon. I understand the math now. Since the root can be derived from the quadratic and linear coefficient, and we know we need to have large root values (up to an upper bound) and small quadratic coefficient values... we can actually p-adically lift and immediatly know if we'll get small smooth candidates or not.
+
+UPDATE: So the bitlength of the smooth can be predicted by bitlen(zx^2-n)-bitlen(modulus). Easy. We can just lift p-adically for z values up to a certain bound (we need to know the factorization of z) and while in this lifting loop, we immediatly know if we'll get a small smooth or not. 
