@@ -12,9 +12,9 @@ See below for an improved way of performing what this PoC does.. I'll delete thi
 I just uploaded polarbearalg_v44.py</br>
 To run: python3 polarbearalg_v44.py -keysize 50</br>
 
-UPDATE: BAH. I See it. Fuck. 
+UPDATE: Before I attempt anything complicated. Let me finish a PoC that does the following. 
 
-If N=4387, we can work the other way around now. Lets say we want to find the smooth 9. The easiest case to generate this is with z = 4387+9 or 4396*1^2-4387 = 9.
-Now we want to find examples like this with a small z and large x. But I can precompute all this stuff super fast and query it with a hashmap. If that z is small.. then I will find a small z for any mod p. 
+If we do regular SIQS and we start with generating x^2-n divisible by the modulus. If the smooth is too large. In theory by reducing x and adding some small z, we should be able to reduce the size of the smooth using zx^2-n. 
 
-Yeap. AAAAAAAAAAARGHHHHHHHHH. WHY? WHY?????????????? YOU PEOPLE WOULD HAVE KONWN. BURN IN HELL FOR ALL ETERNITY FUCKERS.
+Like, you know how the sieve interval in standard SIQS, creates a parabole around 0. But using z we can shift where exactly it wraps around 0. We can shift the parabole left or right. That's the secret power of this appraoch. I have to quickly work out the details.. fucking headache all the time. grr. 
+
