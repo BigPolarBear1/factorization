@@ -27,3 +27,5 @@ However, using z, that should give much more fine grain control. The only limita
 I'm sure I can figure something out.
 
 If N=4387   ... then we can just add squares to N and find z and x combinations that generate that square. Hence building smooths from the ground up. Now the trick is to keep that z as minimal as possible. OK OK OK OK. GETTING THERE NOW. 
+
+For example if N=4387, we can generate the smooth 9 simply by taking 9+4387. Hence 4396*1^2-4387 = 9. However, now our z value is very large. So we need find z values, with a large square factorization. That is in essence the problem we must solve. Buuut, we can look up both z and x residue values in a precomputed hashmap. Comeon comeon... think... I can do this... there's also another way to look at this, if we have a coefficient that stays small while lifting... then that dramatically increases the odds that can generate a small smooth value. I'll figure this out before the end of the day.
