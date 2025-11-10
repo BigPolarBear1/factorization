@@ -12,16 +12,4 @@ See below for an improved way of performing what this PoC does.. I'll delete thi
 I just uploaded polarbearalg_v43.py</br>
 To run: python3 polarbearalg_v43.py -keysize 50</br>
 
-UPDATE: I actually managed to replace the trial factorization of zx^2 completely with jacobi symbols. This works, but as the bit size goes up, the amount of required jacobi symbols also goes up. I have some ideas to keep it smaller by just performing trail factorization mod m of zx^2 combined with jacobi symbols.. I will upload soon. 
-
-UPDATE: v41 can do 50 bit using a massive amount of jacobi symbols. On the bright side, this does allow us to generate incredibly small smooth candidates on the right side of the congruence. I will reduce the amount of required jacobi symbols tomorrow... I have an idea how to do it. If we manage to reduce that suffeciently... then we have a superior algorithm which is better then both QS and NFS.
-
-UPDATE: v42 halves the required jacobi symbols amount by also adding as condition that zx^2 mod zx^2-n factors over the factor base. Which is still infinitely better then doing trial factorization over zx^2 in the integers. I will further improve it tomorrow. I have a fairly good idea how to do it. But I need to refactor large portions of the PoC first. Ofcourse everything else about the PoC will need to be rewored eventually also... it being slow is as expected for now.
-
-Update: v43 halves the required jacobi symbols again by also adding the factorization of zx^2 mod zx^2-n to the linear algebra step. This is coming together quickly now. I also know how to dramatically reduce it even more.. but thats going to require a couple hours of work so I'll do it tomorrow. I know this will work.. this is literally the first time in nearly 3 years that I get jacobi symbols working... like actually finding squares in the integers. And not for lack of trying.
-
-Update: For the first time in almost 3 years. I have achieved a setup somewhat analogue to NFS. Where one side of the congruence doesn't require factorization in the integers but can be partially replaced with legendre/jacobi symbols. I do know how to reduce the required amount of legendre/jacobi symbols.. Let me spent a few days on that now... and later I should also check if those non-square results can be salvaged by taking a square root over a finite field somehow.. hope the headache is better tomorrow. Just pounding headache right now.
-
-Update: Depression. People are fools. They either know I'm right and they are trying to patch all their shit, hoping to do it before the Chinese catch on. Or they are violently downplaying me and in total denial. This ends only one of two ways, I kill myself or I succeed. And right now, every day, I inch closer to succeeding. And I won't forget or forgive how I've been treated. You people have taken everything from me that made life worth living.
-
-The entire western intelligence apparatus, defeated by a single polar bear. What a joke the west has become. And to think that for a long time I would have been perfectly willing to sell my work lol. It's better this way. These people don't deserve anything. They all deserve to fail.
+Update: Bah one sec, these jacobi symbols arn't working at all. Let me attempt to fix it.
