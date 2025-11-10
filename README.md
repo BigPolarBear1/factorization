@@ -12,7 +12,7 @@ See below for an improved way of performing what this PoC does.. I'll delete thi
 I just uploaded polarbearalg_v44.py</br>
 To run: python3 polarbearalg_v44.py -keysize 50</br>
 
-Or to run my work in progress which doens't yet demonstrate the new number theory but it swaps coefficients for roots:
+Or to run my work in progress from this folder which doens't yet demonstrate the new number theory but it swaps coefficients for roots:
 
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 200 -base 6000 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
