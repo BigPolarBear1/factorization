@@ -10,6 +10,13 @@ See below for an improved way of performing what this PoC does.. I'll delete thi
 #### To run from folder "Improved_QS_Variant" (Sort of a QS/NFS hybrid that improves on Quadratic Sieve using the number theory I developped):</br></br>
 
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 140 -base 1000 -debug 1 -lin_size 100_000 -quad_size 1000</br></br>
+To run: python3 run_qs.py -keysize 160 -base 2000 -debug 1 -lin_size 100_000 -quad_size 100</br></br>
 
 Update: I very quickly implemented the basic ideas that I developed in recent month using quadratics of the shape zx^2-N. I need to check for bugs still though and that entire code needs to be vastly improved. All of it is less then ideal right now.
+
+
+To do: 
+1. Switch the quadratic coefficient to use primes instead... since square quadratic coefficients will just yield the same parabole as x^2-N
+2. Remove what I'm calling the "quad interval" just rely on jacobi symbols insteads...
+3. When 2 is implemented, building the iN datastructure should also be restricted to primes found at quadratic coefficients 1. That will drastically improve the building time there..
+4. Eventually the big ticket item will be to be "smart" about shifting the parabole, such that we can garantuee smaller smooths. 
