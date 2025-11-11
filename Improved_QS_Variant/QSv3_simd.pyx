@@ -796,7 +796,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,gathered_quad_
 #@cython.boundscheck(False)
 #@cython.wraparound(False)
 cdef process_interval(ret_array,unsigned int [::1] interval,unsigned int [::1] interval_neg,n,quad_co,lin_co,partials, large_prime_bound,unsigned long long [::1] local_primes,int threshold,cmod,Py_ssize_t size,mod_found,quad_local_factors):
-    threshold = int(math.log2((lin_sieve_size)*math.sqrt(n*4*quad_co)) - thresvar)
+    threshold = int(math.log2((lin_sieve_size)*math.sqrt(n*quad_co)) - thresvar)
     cdef Py_ssize_t j=0
     while j < size:
         if interval[j] > threshold:
@@ -805,7 +805,7 @@ cdef process_interval(ret_array,unsigned int [::1] interval,unsigned int [::1] i
             co=abs(root+cmod*j)
 
 
-            poly_val=co**2-n*(quad_co)
+            poly_val=quad_co*co**2-n
 
             local_factors, value = factorise_fast(poly_val,local_primes)
             if value != 1:
@@ -828,7 +828,7 @@ cdef process_interval(ret_array,unsigned int [::1] interval,unsigned int [::1] i
             if poly_val not in ret_array[0]:
                 mod_found+=1
                 ret_array[0].append(poly_val)
-                ret_array[1].append(co)
+                ret_array[1].append(quad_co*co)
                 ret_array[2].append(local_factors)
         j+=1
     j=0
@@ -839,7 +839,7 @@ cdef process_interval(ret_array,unsigned int [::1] interval,unsigned int [::1] i
             co=abs(root-cmod*j)
 
 
-            poly_val=co**2-n*(quad_co)
+            poly_val=quad_co*co**2-n
 
             local_factors, value = factorise_fast(poly_val,local_primes)
             if value != 1:
@@ -862,7 +862,7 @@ cdef process_interval(ret_array,unsigned int [::1] interval,unsigned int [::1] i
             if poly_val not in ret_array[0]:
                 mod_found+=1
                 ret_array[0].append(poly_val)
-                ret_array[1].append(co)
+                ret_array[1].append(quad_co*co)
                 ret_array[2].append(local_factors)
                 ret_array[3].append(quad_local_factors)
         j+=1
