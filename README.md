@@ -20,3 +20,4 @@ To do:
 2. Remove what I'm calling the "quad interval" just rely on jacobi symbols insteads...
 3. When 2 is implemented, building the iN datastructure should also be restricted to primes found at quadratic coefficients 1. That will drastically improve the building time there..
 4. Eventually the big ticket item will be to be "smart" about shifting the parabole, such that we can garantuee smaller smooths. 
+5. Re-implement large-prime variant, since that is broken for now
