@@ -22,3 +22,4 @@ To do:
 4. Eventually the big ticket item will be to be "smart" about shifting the parabole, such that we can garantuee smaller smooths. 
 5. Re-implement large-prime variant, since that is broken for now
 6. We can reduce the required amount of smooth by reducing the size of the factor base used for the quadratic coefficients.. 
+7. We also need to work on the whole "generate modulus" logic. This works fine for standard SIQS, but for us, the smooth size is determined by the root^2 \* quadratic coefficient. So we need to completely rework all of that.
