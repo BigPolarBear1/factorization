@@ -31,3 +31,4 @@ Update: Ok I'm done uploading for now. It's obvious now. If 1*x^2-N produces a p
 
 Update: Alright another day. Lets get some work done. Goal for today is to implement into my SIQS variant the use of quadratic coefficients in the shape of zx^2-N like polarbearalg_v44.py does
 
+Update: Alright, I added the factorization of the quadratic coefficient to the linear algebra step. Now comes the annoying part that will require the most work... for each modulus we should try all valid quadratic coefficient up to a certain bound (since the quadratic coefficient needs to factor over the factor base).
