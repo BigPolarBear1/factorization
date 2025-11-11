@@ -19,7 +19,7 @@ To do:
 1. Switch the quadratic coefficient to use primes instead... since square quadratic coefficients will just yield the same parabole as x^2-N... although I should eventually also experiment with composite non-squares, but I'll do that when I arrive at number 4 on the to do list.
 2. Remove what I'm calling the "quad interval" just rely on jacobi symbols insteads...
 3. When 2 is implemented, building the iN datastructure should also be restricted to primes found at quadratic coefficients 1. That will drastically improve the building time there..
-4. Eventually the big ticket item will be to be "smart" about shifting the parabole, such that we can garantuee smaller smooths. 
+4. The big ticket item will be to be "smart" about shifting the parabole, such that we can garantuee smaller smooths. I should rework that together with number 7. because right now as the quad co goes up, we drift toward bigger smooths.. which is not at all what we want.
 5. Re-implement large-prime variant, since that is broken for now
 6. We can reduce the required amount of smooth by reducing the size of the factor base used for the quadratic coefficients.. 
 7. We also need to work on the whole "generate modulus" logic. This works fine for standard SIQS, but for us, the smooth size is determined by the root^2 \* quadratic coefficient. So we need to completely rework all of that.
