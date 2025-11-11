@@ -217,17 +217,20 @@ def extract_factors(N, relations, roots, null_space):
                 prod_right *= relations[idx]
             idx += 1
         sqrt_right = math.isqrt(prod_right)
+        sqrt_left = math.isqrt(prod_left)
         ###Debug shit, remove for final version
-        sqr1=prod_left**2%N 
+        sqr1=prod_left%N 
         sqr2=prod_right%N
         if sqrt_right**2 != prod_right:
-            print("something fucked up")
+            print("something fucked up1")
+        if sqrt_left**2 != prod_left:
+            print("something fucked up2")
         if sqr1 != sqr2:
             print("ERROR ERROR")
         ###End debug shit#########
-        prod_left = prod_left % N
+        sqrt_left = sqrt_left % N
         sqrt_right = sqrt_right % N
-        factor_candidate = gcd(N, abs(sqrt_right-prod_left))
+        factor_candidate = gcd(N, abs(sqrt_right+sqrt_left))
      #   print(factor_candidate)
         if factor_candidate not in (1, N):
             other_factor = N // factor_candidate
@@ -746,7 +749,6 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,gathered_quad_
             while c < quad_sieve_size+1:
                 check,lprimes=sieve_quads(cfact,n,local_mod,quad_interval,quad_interval_index,c)  
                 if check == 0:
-                    print("error123")
                     c+=2
                     continue
                 lin,lin_parts=get_lin(hmap,indexmap,cfact,local_mod,indexes,c)  
@@ -773,7 +775,8 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,gathered_quad_
 
                     mod_found=process_interval(ret_array,single_interval,single_interval_neg,n,quad,lin,partials,large_prime_bound,local_primes,threshold_map[i],local_mod,size,mod_found,quad_local_factors)
                     if mod_found+1 > 10:  ##I don't know what the optimal value is here? 
-                        print(str(len(ret_array[0])))#+" / "+str(int((base+1)*matrix_mul)))
+                      #  print(str(len(ret_array[0])))#+" / "+str(int((base+1)*matrix_mul)))
+                        print("", end=f"[i]Smooths: {len(ret_array[0])} / {base*2+4}\r")
                         mod2_found+=mod_found
                         mod_found=0
                     if mod2_found+1 > 500:
@@ -806,30 +809,32 @@ cdef process_interval(ret_array,unsigned int [::1] interval,unsigned int [::1] i
 
 
             poly_val=quad_co*co**2-n
-
+            co=quad_co*co**2
             local_factors, value = factorise_fast(poly_val,local_primes)
-            if value != 1:
-                if value < large_prime_bound:
-                    if value in partials:
-                        rel, lf, pv = partials[value]
-                        if rel == co:
-                            j+=1
-                            continue
-                        co *= rel
-                        local_factors ^= lf
-                        poly_val *= pv
-                    else:
-                        partials[value] = (co, local_factors, poly_val)
-                        j+=1
-                        continue
-                else:
-                    j+=1
-                    continue
-            if poly_val not in ret_array[0]:
-                mod_found+=1
-                ret_array[0].append(poly_val)
-                ret_array[1].append(quad_co*co)
-                ret_array[2].append(local_factors)
+            if value == 1:
+                #if value < large_prime_bound:
+                 #   if value in partials:
+                  #      rel, lf, pv, qf = partials[value]
+                   #     if rel == co:
+                    #        j+=1
+                     #       continue
+                      #  co *= rel
+                       # local_factors ^= lf
+             #           quad_local_factors ^= qf
+              #          poly_val *= pv
+               #     else:
+                #        partials[value] = (co, local_factors, poly_val,quad_local_factors)
+                 #       j+=1
+                  #      continue
+        #        else:
+         #           j+=1
+          #          continue
+                if poly_val not in ret_array[0]:
+                    mod_found+=1
+                    ret_array[0].append(poly_val)
+                    ret_array[1].append(co)
+                    ret_array[2].append(local_factors)
+                    ret_array[3].append(quad_local_factors)
         j+=1
     j=0
     while j < size:
@@ -840,31 +845,31 @@ cdef process_interval(ret_array,unsigned int [::1] interval,unsigned int [::1] i
 
 
             poly_val=quad_co*co**2-n
-
+            co=quad_co*co**2
             local_factors, value = factorise_fast(poly_val,local_primes)
-            if value != 1:
-                if value < large_prime_bound:
-                    if value in partials:
-                        rel, lf, pv = partials[value]
-                        if rel == co:
-                            j+=1
-                            continue
-                        co *= rel
-                        local_factors ^= lf
-                        poly_val *= pv
-                    else:
-                        partials[value] = (co, local_factors, poly_val)
-                        j+=1
-                        continue
-                else:
-                    j+=1
-                    continue
-            if poly_val not in ret_array[0]:
-                mod_found+=1
-                ret_array[0].append(poly_val)
-                ret_array[1].append(quad_co*co)
-                ret_array[2].append(local_factors)
-                ret_array[3].append(quad_local_factors)
+            if value == 1:
+               # if value < large_prime_bound:
+                #    if value in partials:
+                 #       rel, lf, pv = partials[value]
+                  #      if rel == co:
+                   #         j+=1
+                    #        continue
+                  #      co *= rel
+                   #     local_factors ^= lf
+                    #    poly_val *= pv
+                  #  else:
+                   #     partials[value] = (co, local_factors, poly_val)
+                    #    j+=1
+                     #   continue
+               # else:
+                #    j+=1
+                 #   continue
+                if poly_val not in ret_array[0]:
+                    mod_found+=1
+                    ret_array[0].append(poly_val)
+                    ret_array[1].append(co)
+                    ret_array[2].append(local_factors)
+                    ret_array[3].append(quad_local_factors)
         j+=1
     return mod_found
 
@@ -982,7 +987,7 @@ def construct_quad_interval(hmap,primeslist1,rstart,rstop,n):
 
         quad_interval[-1][0]=1
         quad_interval_index[-1][0]=1
-        threshold = int(math.log2((lin_sieve_size)*math.sqrt(n*4*i)) - thresvar) ###To do: move this into the loop so we can get better estimates
+        threshold = int(math.log2((lin_sieve_size)*math.sqrt(n*i)) - thresvar) ###To do: move this into the loop so we can get better estimates
         threshold_map.append(threshold)
         i+=1
     i=0
@@ -1083,7 +1088,7 @@ def find_comb(n,hmap,primeslist1,indexmap):
             g+=1
         lprimes_list.append(primesl)
 
-        tnum = int(((2*n*4*(i+1))**mod_mul) / (lin_sieve_size))
+        tnum = int(((2*n*(i+1))**mod_mul) / (lin_sieve_size))
         tnum_list.append(tnum)
         tnum_bit_list.append(bitlen(tnum))
         i+=1
