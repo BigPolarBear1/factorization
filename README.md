@@ -16,7 +16,7 @@ Update: I very quickly implemented the basic ideas that I developed in recent mo
 
 
 To do: 
-1. Switch the quadratic coefficient to use primes instead... since square quadratic coefficients will just yield the same parabole as x^2-N
+1. Switch the quadratic coefficient to use primes instead... since square quadratic coefficients will just yield the same parabole as x^2-N... although I should eventually also experiment with composite non-squares.
 2. Remove what I'm calling the "quad interval" just rely on jacobi symbols insteads...
 3. When 2 is implemented, building the iN datastructure should also be restricted to primes found at quadratic coefficients 1. That will drastically improve the building time there..
 4. Eventually the big ticket item will be to be "smart" about shifting the parabole, such that we can garantuee smaller smooths. 
