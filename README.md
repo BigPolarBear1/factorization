@@ -29,3 +29,5 @@ Update: First step complete... it now uses roots instead of linear coefficients.
 
 Update: Ok I'm done uploading for now. It's obvious now. If 1*x^2-N produces a parabola when iterating x, then zx^2-N produces a shifted parabola. And polarbearalg_v44 shows how that can be made to work. Dude... people are so fucking screwed. I know exactly what this implies. I don't need NFS when I have this lol.
 
+Update: Alright another day. Lets get some work done. Goal for today is to implement into my SIQS variant the use of quadratic coefficients in the shape of zx^2-N like polarbearalg_v44.py does
+
