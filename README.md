@@ -33,3 +33,5 @@ Update: I'm going to take a break for the rest of the day I think. I still got h
 Anyyyywaaaaaayyyyy, sad day for the NSA, FBI, CIA, DIA and all their NATO lapdogs. HAHHAHAHAHAHAHHAHAHAHAHHAHAHAHAHAHA. Destroyed, by a single polar bear. I cannot understate how weak you people are. It's all truely pathetic. Should all quit your jobs. 
 
 Ps: During the weekends I have been working also on an algorithm to attack DLP. I tried to work on it in secret, but now that that algorithm is also reaching maturity, I will drop it soon.
+
+Pps: pete hegseth is a fucking loser and a piece of shit. And I am waging war against america. Don't mistake what I'm doing for anything else. I was a guest you country, and you people insulted me and pointed a gun at me while I was unarmed while your leaders cries about "dudes in dresses". And damn nato to hell for being pathetic lapdogs. Fucking weaklings. Your all fucking pathetic. Fucking losers.
