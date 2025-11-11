@@ -29,4 +29,4 @@ To do:
 
 Update: I'm going to take a break for the rest of the day I think. I still got headache, and tomorrow I have to go to court ordered therapy for sending angry emails to the FBI (fucking losers, just mad because I'm better, smarter and stronger then them, pathetic). Since I'll go run 30k to and back from therapy.. that will take up most of my day tomorrow. But later in the week I'll start working through that to do list. The math is all there now. It all works. But especially number 4 and 7 on the to do list need to be done to gain a performance advantage.. but once implemented that performance advantage should be massive.. as it really allows for great control over the placement of our parabola.
 
-
+Anyyyywaaaaaayyyyy, sad day for the NSA, FBI, CIA, DIA and all their NATO lapdogs. HAHHAHAHAHAHAHHAHAHAHAHHAHAHAHAHAHA. Destroyed, by a single polar bear. I cannot understate how weak you people are. It's all truely pathetic. Should all quit your jobs. 
