@@ -4,14 +4,23 @@
 # cython: overflowcheck=False
 ###Author: Essbee Vanhoutte
 ###WORK IN PROGRESS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-###Factorization_v3 
+###Improved QS Variant 
 
 ##References: I have borrowed many of the optimizations from here: https://stackoverflow.com/questions/79330304/optimizing-sieving-code-in-the-self-initializing-quadratic-sieve-for-pypy
 
 
 ###To build: python3 setup.py build_ext --inplace
-###To run: python3 run_qs.py -base 2000 -keysize 200 -debug 1 -lin_size 100_000 -quad_size 1
+###To run: python3 run_qs.py -base 4000 -keysize 160 -debug 1 -lin_size 100_000 -quad_size 100
 
+#To do:
+
+#1. Switch the quadratic coefficient to use primes instead... since square quadratic coefficients will just yield the same parabole as x^2-N... although I should eventually also experiment with composite non-squares, but I'll do that when I arrive at number 4 on the to do list.
+#2. Remove what I'm calling the "quad interval" just rely on jacobi symbols insteads...
+#3. When 2 is implemented, building the iN datastructure should also be restricted to primes found at quadratic coefficients 1. That will drastically improve the building time there..
+#4. Eventually the big ticket item will be to be "smart" about shifting the parabole, such that we can garantuee smaller smooths.
+#5. Re-implement large-prime variant, since that is broken for now
+#6. We can reduce the required amount of smooth by reducing the size of the factor base used for the quadratic coefficients..
+#7. We also need to work on the whole "generate modulus" logic. This works fine for standard SIQS, but for us, the smooth size is determined by the root^2 * quadratic coefficient. So we need to completely rework all of that.
 
 
 ##WORK IN PROGRESS....
@@ -44,8 +53,7 @@ lin_sieve_size=1
 quad_sieve_size=10
 g_debug=0 #0 = No debug, 1 = Debug, 2 = A lot of debug
 g_lift_lim=0.5
-thresvar=30  ##Log value base 2 for when to check smooths with trial factorization. Eventually when we fix all the bugs we should be able to furhter lower this.
-matrix_mul=1.5 ##1.0 = square.. increase to overshoot min smooths, for this version, gathering double the amount seems best, since we don't concentrate all our smooths at a few quadratic coefficients as other versions do.
+thresvar=20  ##Log value base 2 for when to check smooths with trial factorization. Eventually when we fix all the bugs we should be able to furhter lower this.
 lp_multiplier=2
 min_prime=1
 g_enable_custom_factors=0
@@ -588,8 +596,10 @@ cdef construct_interval_2(quad_co,lin_co,cmod,unsigned long long [::1] primeslis
         res=(co2-lin_co)%prime
         root_res=(root2-root)%prime
         root_dist1=(root_res*modi)%prime
-        #root_can=quad_co*(root+root_dist1*cmod)**2-n
-        #if root_can%(cmod*prime)  != 0:
+       # root_can=quad_co*(root+root_dist1*cmod)**2-n
+      #  if quad_co > 1000:
+      #  print(bitlen(abs(root_can//cmod)))
+     #   if root_can%(cmod*prime)  != 0:
          #   print("ERROR rootcan prime: "+str(prime)+" root: "+str(root)+" cmod: "+str(cmod)+" n: "+str(n)+" rootcan mod prime: "+str(root_can%prime))
         dist1=(res*modi)%prime
         co2=prime-co2
@@ -601,8 +611,8 @@ cdef construct_interval_2(quad_co,lin_co,cmod,unsigned long long [::1] primeslis
         root_dist1b=(-root_dist1)%prime
         root_dist2b=(-root_dist2)%prime
       #  root_can2=quad_co*(root-root_dist2b*cmod)**2-n
-      #  if root_can2%(cmod*prime)  != 0:
-          #  print("ERROR rootcan prime: "+str(prime)+" root: "+str(root)+" cmod: "+str(cmod)+" n: "+str(n)+" rootcan mod prime: "+str(root_can2%prime))
+     #   if root_can2%(cmod*prime)  != 0:
+        #    print("ERROR rootcan prime: "+str(prime)+" root: "+str(root)+" cmod: "+str(cmod)+" n: "+str(n)+" rootcan mod prime: "+str(root_can2%prime))
         miniloop_non_simd(root_dist1,temp,prime,log,size)  ##Question is it better to do dist1 and dist2 in one function call?
         miniloop_non_simd(root_dist1b,temp_neg,prime,log,size)
         if dist1 != dist2:
@@ -739,26 +749,33 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,gathered_quad_
         tnum = tnum_list[i]
         tnum_bit=tnum_bit_list[i]
         primesl=lprimes_list[i]
+        #print("primesl len: ",len(primesl))
         local_mod,cfact,indexes=generate_modulus(n,primesl,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,tnum_bit,quad_interval_index[i])
-           # print("Generating new modulus")
+      #  print("[i]New modulus: ",local_mod)
         if local_mod>1:
             if len(cfact)<2:
                 break
 
             c=1
             while c < quad_sieve_size+1:
+              #  if isPrime(c,5)!=1:
+                  #  c+=2
+                #    continue
                 check,lprimes=sieve_quads(cfact,n,local_mod,quad_interval,quad_interval_index,c)  
                 if check == 0:
                     c+=2
                     continue
-                lin,lin_parts=get_lin(hmap,indexmap,cfact,local_mod,indexes,c)  
-                quad=c
-                if quad == 0 or lin == 0:
-                    continue  
-                quad_local_factors, value = factorise_fast(quad,z_plist)
+                quad_local_factors, value = factorise_fast(c,z_plist)
                 if value != 1:
                     c+=2
                     continue
+
+                lin,lin_parts=get_lin(hmap,indexmap,cfact,local_mod,indexes,c)  
+                quad=c
+                if quad == 0 or lin == 0:
+                    c+=2
+                    continue  
+                #print("[i]Checking Quadratic coefficient: ",quad)
                 poly_ind=0
                 end = 1 << (len(cfact) - 1)
                 while poly_ind < end:
@@ -803,7 +820,7 @@ cdef process_interval(ret_array,unsigned int [::1] interval,unsigned int [::1] i
     cdef Py_ssize_t j=0
     while j < size:
         if interval[j] > threshold:
-
+            
             root=get_root(n,cmod,lin_co,quad_co)
             co=abs(root+cmod*j)
 
@@ -812,6 +829,7 @@ cdef process_interval(ret_array,unsigned int [::1] interval,unsigned int [::1] i
             co=quad_co*co**2
             local_factors, value = factorise_fast(poly_val,local_primes)
             if value == 1:
+               
                 #if value < large_prime_bound:
                  #   if value in partials:
                   #      rel, lf, pv, qf = partials[value]
@@ -839,7 +857,7 @@ cdef process_interval(ret_array,unsigned int [::1] interval,unsigned int [::1] i
     j=0
     while j < size:
         if interval_neg[j] > threshold:
-
+            
             root=get_root(n,cmod,lin_co,quad_co)
             co=abs(root-cmod*j)
 
@@ -848,6 +866,7 @@ cdef process_interval(ret_array,unsigned int [::1] interval,unsigned int [::1] i
             co=quad_co*co**2
             local_factors, value = factorise_fast(poly_val,local_primes)
             if value == 1:
+               
                # if value < large_prime_bound:
                 #    if value in partials:
                  #       rel, lf, pv = partials[value]
@@ -1136,10 +1155,10 @@ def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_
     print("[i]Gathering prime numbers..")
     primeslist.extend(get_primes(3,1000000))
     i=0
-    while i < base:
-        primeslist1.append(primeslist[0])
+    while len(primeslist1) < base:
+        #if jacobi(n*4,primeslist[i]) == 1:
+        primeslist1.append(primeslist[i])
         i+=1
-        primeslist.pop(0)   
     launch(n,primeslist1)     
     duration = default_timer() - start
     print("\nFactorization in total took: "+str(duration))
