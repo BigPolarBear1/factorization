@@ -10,7 +10,7 @@ See below for an improved way of performing what this PoC does.. I'll delete thi
 #### To run from folder "Improved_QS_Variant" (Sort of a QS/NFS hybrid that improves on Quadratic Sieve using the number theory I developped):</br></br>
 
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 160 -base 2000 -debug 1 -lin_size 100_000 -quad_size 100</br></br>
+To run: python3 run_qs.py -keysize 160 -base 4000 -debug 1 -lin_size 100_000 -quad_size 100</br></br>
 
 Update: I very quickly implemented the basic ideas that I developed in recent month using quadratics of the shape zx^2-N. I need to check for bugs still though and that entire code needs to be vastly improved. All of it is less then ideal right now. As I improve it, it should eventually overtake the original QS_Variant in terms of performance. Since we have much more fine grain control over the size of our smooths this way.
 
