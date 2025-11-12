@@ -35,3 +35,5 @@ Anyyyywaaaaaayyyyy, sad day for the NSA, FBI, CIA, DIA and all their NATO lapdog
 Ps: During the weekends I have been working also on an algorithm to attack DLP. I tried to work on it in secret, but now that that algorithm is also reaching maturity, I will drop it soon.
 
 Pps: pete hegseth is a fucking loser and a piece of shit. And I am waging war against america. Don't mistake what I'm doing for anything else. I was a guest you country, and you people insulted me and pointed a gun at me while I was unarmed while your leaders cries about "dudes in dresses". And damn nato to hell for being pathetic lapdogs. Fucking weaklings. Your all fucking pathetic. Fucking losers.
+
+Update: Got back from therapy. Didn't sleep much last night and ran 30k, fucking tired right now. I'll began finishing the math tomorrow. So tomorrow actually, I really want to implement a heuristic so we displace the parabola in the right direction and yield smaller smooths. Proving I can gain an advantage that way is the most important thing.. everything else is just polish. 
