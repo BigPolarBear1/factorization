@@ -1,5 +1,7 @@
 DISCLAIMER: AT NO POINT IN MY 2.5 YEARS OF RESEARCH DID I USE AI OR HAS AI IN ANY WAY HELPED WITH MY RESEARCH. I'M PUTTING THIS HERE BECAUSE I KNOW PEOPLE WILL ACCUSE ME OF IT. 
 
+Note: Remember, as this now comes to completion in the coming days. Both the FBI and Microsoft new I was working on factorization when I had only been working on it for a few months in nobody else in the entire world knew I was working on it. I tried desperately to avoid the path of public disclosure as I would have much rather sold my work. But at every turn people made it impossible. This would not have happened 10 years ago. And oppurtunity presented itself, it was literally handed to you on a silver platter.. and instead you people all treated me like shit and gambled on me failing with my project. I ask you, where has your common sense gone? I hate what this will do to everyone around me, this is never what I wanted.
+
 Note: I am antifa, leader of the cipherpunk, fuck the FBI department. 
 
 #### To run from folder "QS_variant" (Standard SIQS with our number theory as backend):</br></br>
