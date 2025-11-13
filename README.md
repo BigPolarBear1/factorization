@@ -43,3 +43,5 @@ You know, I guess I am kind of worried my therapist thinks I'm completely psycho
 Remember... the FBI and Microsoft knew I was working on factorization long before I mentioned it publically. What happened is not an accident. They made the calculated risk to assume I would fail. I truely tried, but in the end I was left with no other choices. 10 years ago, none of this would have happened.. The world has gone mad and now you pay the price for it. 
 
 Update: Going to sleep. Tomorrow I will solve number 4 and 7 on the to do list. Start the day by debugging exactly how our parabola gets displaced, and then fix it so we drift toward smaller smooths. Should be straight forward math. Once that is done... my PoC should very quickly demonstrate an advantage over any of the other quadratic sieve PoCs in the public domain. I could be finished with the PoC as early as this week. Seeing the end of my research project... that would be quite something.
+
+Update: Alright... lets get started... time to finish this.
