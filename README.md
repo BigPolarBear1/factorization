@@ -24,7 +24,7 @@ Strategy is a follows:
 
 To do:
 
-1. In step two, if the new modulus is too small, we can us p-adic lifting to increase the bit length
+1. In step two, if the new modulus is too small, we can us p-adic lifting to increase the bit length (edit: but this rarely seems to case, usually it is slightly too large... in which case the solution is also simple, we can divide the modulus by a prime... and then rerun again dividing by a different prime.. so all primes end up covered... but I'll do this when my algorithm is complete)
 2. In find_similar, we should use a sieve interval
 3. Once the sieve interval is implemented, we should mark the sieve interval with p^2 for primes that arn't in our modulus, so those end up being ignored in the linear algebra step... this will allow the linear algebra portion to potentially succeed much earlier.
 
