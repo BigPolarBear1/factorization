@@ -12,7 +12,7 @@ See below for an improved way of performing what this PoC does.. I'll delete thi
 #### To run from folder "Improved_QS_Variant" (Implements more of my number theory to also take advantage of quadratic coefficients):</br></br>
 
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 80 -base 100 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
+To run: python3 run_qs.py -keysize 100 -base 1000 -debug 1 -lin_size 10_000 -quad_size 1</br></br>
 
 Update: I have began implementing a strategy that would allow the algorithm to finish much sooner. See the find_similar() function. I need to improve it... just uploading my work in progress for the day before I tae a break now.
 
