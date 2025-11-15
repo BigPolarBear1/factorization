@@ -21,15 +21,19 @@ Strategy is a follows:
 1. Use square moduli to find a smooth at quadratic coefficient  = 1
 2. When we find a smooth, divide by the square modulus and using the factors with negative exponents, construct a new modulus. Because of using square moduli in step 1, the bit size of this one will be relatively low.
 3. Now find smooths with these factors at different quadratic coefficients.
+   
 
 To do:
 
 1. In step two, if the new modulus is too small, we can us p-adic lifting to increase the bit length (edit: but this rarely seems to case, usually it is slightly too large... in which case the solution is also simple, we can divide the modulus by a prime... and then rerun again dividing by a different prime.. so all primes end up covered... but I'll do this when my algorithm is complete)
 2. In find_similar, we should use a sieve interval
 3. Once the sieve interval is implemented, we should mark the sieve interval with p^2 for primes that arn't in our modulus, so those end up being ignored in the linear algebra step... this will allow the linear algebra portion to potentially succeed much earlier.
+4. Also use exponent 2 in the original sieve interval at quadratic coefficient = 1... for the primes outside the modulus we use to fill out the interval... this will help generating smooths with fewer negative exponent factors. Additionally I need to optimize that lifting code... because I'm fairly sure I don't need to brute force it like I'm doing now.. 
 
 I'll begin attacking that to do list tomorrow. But first, I need to clean up all of the code... it's becoming convoluted with a lot of unneeded code. Frankenstein code due to making too many edits.
 
 The code I uploaded today is really bad. I need to change and add a lot of things in the coming days. But I know I'm finally on the right track and that my work's completion is imminent now. 
 
 Update: Also quickly added the trick the generate permutations of linear coefficients in the find_similar() function. Next this needs a sieve interval.. that will be my goal for tomorrow. Then the algorithm should really start to ramp up....
+
+Update: Note-to-self even for the sieve intervals at quadratic coefficient = 1... we should mark p^2 in the sieve interval aswell.... the trick is really to generate reasonably small moduli made up from smooth factors with negative exponents. And seeing as we're going to spent alot of time in that lifting code, I should optimize that as well instead of doing that dumb bruteforcing. 
