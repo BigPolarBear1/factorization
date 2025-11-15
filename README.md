@@ -32,3 +32,4 @@ I'll begin attacking that to do list tomorrow. But first, I need to clean up all
 
 The code I uploaded today is really bad. I need to change and add a lot of things in the coming days. But I know I'm finally on the right track and that my work's completion is imminent now. 
 
+Update: Also quickly added the trick the generate permutations of linear coefficients in the find_similar() function. Next this needs a sieve interval.. that will be my goal for tomorrow. Then the algorithm should really start to ramp up....
