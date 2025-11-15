@@ -12,24 +12,19 @@ See below for an improved way of performing what this PoC does.. I'll delete thi
 #### To run from folder "Improved_QS_Variant" (Implements more of my number theory to also take advantage of quadratic coefficients):</br></br>
 
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 160 -base 4000 -debug 1 -lin_size 1_000_000 -quad_size 1_000</br></br>
+To run: python3 run_qs.py -keysize 80 -base 100 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
-Update: I very quickly implemented the basic ideas that I developed in recent months using quadratics of the shape zx^2-N. I need to check for bugs still though and that entire code needs to be vastly improved. All of it is less then ideal right now. As I improve it, it should eventually overtake the original QS_Variant in terms of performance. Since we have much more fine grain control over the size of our smooths this way as we can now displace the location of our parabola created by the sieve interval with a linear multiplier (aka the quadratic coefficient).
+Update: I have began implementing a strategy that would allow the algorithm to finish much sooner. See the find_similar() function. I need to improve it... just uploading my work in progress for the day before I tae a break now.
 
+Strategy is a follows:
 
-##### #To do: 
-1. Quadratic coefficient should not be squares, since then we generate the same parabola as x^2-N. We should check if restricting to prime quadratic coefficients vs non-square composites makes a difference in terms of smooth diversity (smooths that are not just going to create trivial factorizations).
-2. Remove what I'm calling the "quad interval" just rely on jacobi symbols insteads...
-3. When 2 is implemented, building the iN datastructure should also be restricted to primes found at quadratic coefficients 1. That will drastically improve the building time there..
-4. The big ticket item will be to be "smart" about shifting the parabole, such that we can garantuee smaller smooths. I should rework that together with number 7. because right now as the quad co goes up, we drift toward bigger smooths.. which is not at all what we want.
-5. Re-implement large-prime variant, since that is broken for now
-6. ~~We can reduce the required amount of smooth by reducing the size of the factor base used for the quadratic coefficients..~~
-7. We also need to work on the whole "generate modulus" logic. This works fine for standard SIQS, but for us, the smooth size is determined by the root^2 \* quadratic coefficient. So we need to completely rework all of that.
-8. Coefficient lifting to square moduli! But this will need to tie in with whatever we change in step 7.
+1. Use square moduli to find a smooth at quadratic coefficient  = 1
+2. When we find a smooth, divide by the square modulus and using the factors with negative exponents, construct a new modulus. Because of using square moduli in step 1, the bit size of this one will be relatively low.
+3. Now find smooths with these factors at different quadratic coefficients.
 
-------------------------------------------------------------------------------------------
-##### #random rants below
+To do:
 
-UPDATE: BAH. I should have immediatly seen this. But the way to complete this work now is to just find similar smooths. As long as the product of smooth factors with odd exponents is small enough (we can increase the bit size with p-adic lifting) we can just create sieve intervals at different quadratic coefficients. And now with those multiples of N flattened to just zx^2-N... it's just a matter of getting that bit length right to create a nice parabola. We don't have to worry about the bit length changing as the quadratic coefficient goes up now like we did when using the discriminant formula. Let me get to work on this. Because getting this to work, would still be the most ideal, as we can potentially successfully factor large numbers with much less smooths. If that doesn't work, I'll go back to the other ideas I had (i.e shifting the parabola to reduce the size of a smooth candidate).
+1. In step two, if the new modulus is too small, we can us p-adic lifting to increase the bit length
+2. In find_similar, we should use a sieve interval
+3. Once the sieve interval is implemented, we should mark the sieve interval with primes^2 for primes that arn't in our modulus... so this entire thing, will allow the linear algebra portion to potentially succeed much earlier.
 
-UPDATE: Alright. I modified the PoC to use square moduli. Then when we find a smooth... that reduces the bitlength of odd exponent factors. Now we need to find similar factorizations using the odd exponent factors of a smooth at different quadratic coefficient.. let me get that done today aswell. So tomorrow I just need to worry about optimization.
