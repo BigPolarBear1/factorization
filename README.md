@@ -32,3 +32,5 @@ To do:
 
 Update: I have quickly implemented a sieve interval.
 The next important thing to do is in the construct_interval_similar() function, the primes outside the modulus we should only use even exponents there to mark the interval. This will increase the odds that we end up with smooths having just the factors we want. And if we're going to do a lot of p-adic lifting.. improving that code also becomes vital. In addition... the size of the sieve interval should be fitted properly according to the length of the new modulus. Eventually all that find_similar stuff... it needs to execute fast.. because there we are just interested in smooths that potentially complete the orginal smooth. I don't want to waste too much time in there otherwise.. so I need to think how to improve that.
+
+Anyway.. enough work for today. My head is just not in the right space today to do math or coding. I'll go for a run soon. Next week things should start to happen quickly... there is still a lot of optimization wor to be done, but we'll start seeing the results of this aproach quickly now...
