@@ -30,5 +30,5 @@ To do:
 3. Once the sieve interval is implemented, we should mark the sieve interval with p^2 for primes that arn't in our modulus, so those end up being ignored in the linear algebra step... this will allow the linear algebra portion to potentially succeed much earlier.
 4. Also use exponent 2 in the original sieve interval at quadratic coefficient = 1... for the primes outside the modulus we use to fill out the interval... this will help generating smooths with fewer negative exponent factors. Additionally I need to optimize that lifting code... because I'm fairly sure I don't need to brute force it like I'm doing now.. 
 
-Update: I hae quickly implemented a sieve interval.
+Update: I have quickly implemented a sieve interval.
 The next important thing to do is in the construct_interval_similar() function, the primes outside the modulus we should only use even exponents there to mark the interval. This will increase the odds that we end up with smooths having just the factors we want. And if we're going to do a lot of p-adic lifting.. improving that code also becomes vital.
