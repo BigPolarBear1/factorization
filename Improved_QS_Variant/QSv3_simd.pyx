@@ -429,18 +429,23 @@ cdef tonelli(long long n, long long p):  # tonelli-shanks to solve modular squar
 
 
 def lift(exp,co,r,n,z,z2,prime):
-   # i=0
-    offset=0
+    ##TO DO: NEED TO REWORK THE FUNCTION FLOW TO LIFT ABOVE EXP = 2 IF WE EVER WANT THAT
+    z_inv=inverse(z,prime**exp)
+    c=(z*n)%prime**exp
+    temp_r=r*z
+    zz=2*temp_r
+    zz=pow(zz,-1,prime)
+    x=((c-temp_r**2)//prime)%prime
+    y=(x*zz)%prime
+    new_r=(temp_r+y*prime)%prime**exp
+    new_r=(new_r*z_inv)%prime**exp
+    co2=(formal_deriv(0,new_r,z))%(prime**exp)
     ret=[]
-    while 1:
-        root=r+offset
-        if root > prime**exp:
-            break
-        rem,rem2=equation2(0,root,n,prime**exp,z,z2)
-        if rem ==0:
-            co2=(formal_deriv(0,root,z))%(prime**exp)
-            ret.extend([co2,root])
-        offset+=prime**(exp-1)
+    ret.extend([co2,new_r])
+    new_eq=(z*new_r**2-n)%prime**exp
+    if new_eq !=0:
+        print("Something went wrong while lifting z: "+str(z)+" new_r: "+str(new_r))
+        time.sleep(10000)
     return ret
 
 def lift_b(prime,n,co,z,max_exp):
@@ -462,11 +467,6 @@ def lift_b(prime,n,co,z,max_exp):
         cos=([ret[0],co2])
 
         exp+=1
-  #  exp-=1
-   # total=cos[0]**2-n*4*z
-  #  print("prime: "+str(prime**(exp))+" co: "+str(cos[0])+" total: "+str(total))
-   # if (cos[0]**2-n*4*z)%(prime**exp) !=0:
-       # print("error error")
     return cos[0]
 
 @cython.profile(False)
@@ -493,8 +493,8 @@ def solve_roots(prime,n):
                     root=(prime-root)%prime
                 end=temp_hmap[0]
                 temp_hmap[end]=s
-                if s == 1:
-                    root=lift_b(prime,n,root,s,g_max_exp)
+                #if s == 1:
+                root=lift_b(prime,n,root,s,g_max_exp)
                 temp_hmap[end+1]=root
                 temp_hmap[0]=temp_hmap[0]+2
      
