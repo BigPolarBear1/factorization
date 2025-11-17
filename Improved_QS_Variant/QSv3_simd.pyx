@@ -44,7 +44,7 @@ quad_sieve_size=10
 g_debug=0 #0 = No debug, 1 = Debug, 2 = A lot of debug
 g_lift_lim=0.5
 thresvar=30  ##Log value base 2 for when to check smooths with trial factorization. Eventually when we fix all the bugs we should be able to furhter lower this.
-thresvar_similar=35
+thresvar_similar=40
 lp_multiplier=2
 min_prime=1
 g_enable_custom_factors=0
