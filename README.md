@@ -19,3 +19,5 @@ Update: I GOT IT!!!
 So in the main sieve interval, if we only mark with even exponents and we use square moduli ... then we can generate smooths with incredibly few factors. Then when we use find_similar() this will increase the odds that the linear algebra step can succeed sooner. And the PoC demonstrates this already. I need to optimize everything now. Finally! I did it!
 
 I'll go for a run now and call it a day. it works! It fucking works! Big day tomorrow as we begin optimizing all the code :). 
+
+Update: Actually let me swap tomorrow's rest day with today and run tomorrow instead. Fucking got the flu or something. My entire body is feeling inflammed. I'll just eat a lot of protein today and I'm sure tomorrow I'll be recovered. Hahahaha. I am invincible. I refuse to accept the limits of this mortal body. Anyway, I'll still take a break from work. It works. I had my PoC finish way earlier with way less smooths, at 100 bits (back in september I could only pull this off with very small numbers) .. so it works. It proves my ideas. It proves that I was right. So today I feast and do fuck all for the rest of the day. I think I deserved it.
