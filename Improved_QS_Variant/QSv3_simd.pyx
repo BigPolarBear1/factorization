@@ -1156,6 +1156,8 @@ def find_similar(poly_val,value,seen_primes,cmod,root,n,quad_co,factor_base,qfac
                 else:
                     return 0
         
+    if abs(bitlen(new_mod)-old_bitl) >g_max_diff_similar:
+        return 0
     primes,enum_quad,enum_lin=find_quads(local_factors,hmap,indexmap,quad_interval_index[0],quad_interval[0],n,abs(new_mod))
     new_bitl=bitlen(abs(new_mod))
     
