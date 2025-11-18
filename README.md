@@ -17,3 +17,5 @@ To run: python3 run_qs.py -keysize 100  -base 2000 -debug 1 -lin_size 100_000 -q
 Update: I GOT IT!!!
 
 So in the main sieve interval, if we only mark with even exponents and we use square moduli ... then we can generate smooths with incredibly few factors. Then when we use find_similar() this will increase the odds that the linear algebra step can succeed sooner. And the PoC demonstrates this already. I need to optimize everything now. Finally! I did it!
+
+I'll go for a run now and call it a day. it works! It fucking works! Big day tomorrow as we begin optimizing all the code :). 
