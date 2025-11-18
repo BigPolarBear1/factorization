@@ -10,7 +10,7 @@
 
 
 ###To build: python3 setup.py build_ext --inplace
-###To run: python3 run_qs.py -base 1000 -keysize 100 -debug 1 -lin_size 10_000 -quad_size 1
+###To run: python3 run_qs.py -base 1000 -keysize 120 -debug 1 -lin_size 100_000 -quad_size 1
 
 
 
@@ -45,10 +45,10 @@ quad_sieve_size=10
 g_debug=0 #0 = No debug, 1 = Debug, 2 = A lot of debug
 g_lift_lim=0.5
 thresvar=30  ##Log value base 2 for when to check smooths with trial factorization. Eventually when we fix all the bugs we should be able to furhter lower this.
-thresvar_similar=40
+thresvar_similar=50
 lp_multiplier=2
 min_prime=1
-g_max_diff_similar=10
+g_max_diff_similar=5
 g_enable_custom_factors=0
 g_p=107
 g_q=41
@@ -933,7 +933,7 @@ def find_quads(local_factors,hmap,indexmap,quad_interval_index,quad_interval,n,p
             if local_factors[c]==-1 or local_factors[c] ==2:
                 c+=1
                 continue
-            if quad_interval[i]%local_factors[c] == 0:
+            if quad_interval[i]%local_factors[c] == 0 and poly_val%local_factors[c] == 0:
         
                 #print("HIT")
                 enum_quad.append(local_factors[c])
@@ -1143,15 +1143,24 @@ def find_similar(poly_val,value,seen_primes,cmod,root,n,quad_co,factor_base,qfac
 
     mod_found=0
     new_mod=1
-    for fac in local_factors:
+    old_bitl=bitlen(abs(cmod))
+    local_factors2=list(local_factors)
+    local_factors2.sort()
+    local_factors2=local_factors2[::-1]
+    for fac in local_factors2:
         if fac != 2 and fac != -1:
             new_mod*=fac
+            if bitlen(new_mod) > old_bitl-g_max_diff_similar:
+                if bitlen(new_mod) < old_bitl:
+                    break
+                else:
+                    return 0
+        
     primes,enum_quad,enum_lin=find_quads(local_factors,hmap,indexmap,quad_interval_index[0],quad_interval[0],n,abs(new_mod))
     new_bitl=bitlen(abs(new_mod))
-    old_bitl=bitlen(abs(cmod))
+    
 
-    if abs(new_bitl-old_bitl) > g_max_diff_similar:# >keysize//2: ##TO DO: Got to improve this
-        return 0
+
 
     #print("new_mod bitlen: "+str(bitlen(abs(found)))+" old_mod bitlen: "+str(bitlen(abs(cmod))))
     enum_quad2=[]
@@ -1165,7 +1174,10 @@ def find_similar(poly_val,value,seen_primes,cmod,root,n,quad_co,factor_base,qfac
     
     print("[i]Attempting to find smooths with factors: "+str(local_factors)+" bitlen new modulus: "+str(bitlen(abs(new_mod)))+" bitlen old modulus: "+str(bitlen(abs(cmod))))
     quad=1
-    while quad < 10000:
+    while quad < 1000:
+        if quad != 1 and math.sqrt(quad)%1==0:
+            quad+=1
+            continue
         quad_local_factors, quad_value,seen_primes = factorise_fast(quad,qfactor_base)  ##TO DO: move this way up
         if quad_value != 1:
   
