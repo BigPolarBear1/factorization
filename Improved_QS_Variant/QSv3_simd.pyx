@@ -783,7 +783,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,gathered_quad_
     cdef Py_ssize_t j
     close_range = 10
     too_close = 5
-    LOWER_BOUND_SIQS=100
+    LOWER_BOUND_SIQS=1
     UPPER_BOUND_SIQS=40000000000000
     cdef Py_ssize_t size
     primelist=copy.copy(primeslist)
