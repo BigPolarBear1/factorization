@@ -21,3 +21,5 @@ note to self: I shouldn't restrict myself to p^2. I should keep lifting for as l
 Update.. going to sleep. Tomorrow I may be able to achieve a performance advantage over default SIQS finally.. just a lot of rough edges to fix now. I dont know how I feel about. I dont think I have feelings left after the last 3 years.
 
 The one thing Ill never understand is why my own country is taking part in this obvious deception while there is war in eastern europe. The world is ruled by morrons. I know people must have seen/noticed my work. I know what I got. The only way this can be explained is that people rathee throw away potential advantages of strategic importance then to deal with someone like me. The lunacy of it. Morrons. Im never talking to anyone anymore once this is finished. Want nothing to do anymore with people. Fucking despise you all 
+
+Anyway, doesnt surprise me. Belgium has always been a dead end for me. Its an awful country. There really arnt great countries left in the world. Everything has gone to shit.
