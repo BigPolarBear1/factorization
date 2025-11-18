@@ -12,6 +12,8 @@ See below for an improved way of performing what this PoC does.. I'll delete thi
 #### To run from folder "Improved_QS_Variant" (Implements more of my number theory to also take advantage of quadratic coefficients):</br></br>
 
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 120  -base 1000 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
+To run: python3 run_qs.py -keysize 100  -base 2000 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
-Update: Just run using 120 bit for now. I've preset thresvar_similar to this bitlength. I've also implemented a very simple heuristic to just build a new modulus within range of the bitlength we want for find_similar()... that definitely needs improvement... but its good enough for now. The one big glaring issue now is that I DEFINITELY need to p-adically lift for as long as the roots are within the sieve_interval. Because we really need those outliers with high exponents. Otherwise as the bitlength goes up we have to increase thresvar_similar .. which we need to keep as small as possible... so my next focus will be on this... either today or tomorrow. Lets see.
+Update: I GOT IT!!!
+
+So in the main sieve interval, if we only mark with even exponents and we use square moduli ... then we can generate smooths with incredibly few factors. Then when we use find_similar() this will increase the odds that the linear algebra step can succeed sooner. And the PoC demonstrates this already. I need to optimize everything now. Finally! I did it!
