@@ -10,7 +10,7 @@
 
 
 ###To build: python3 setup.py build_ext --inplace
-###To run: python3 run_qs.py -base 2000 -keysize 100 -debug 1 -lin_size 100_000 -quad_size 1
+###To run: python3 run_qs.py -base 1000 -keysize 120 -debug 1 -lin_size 100_000 -quad_size 1
 
 
 
@@ -32,7 +32,7 @@ cimport cython
 
 
 min_lin_sieve_size=10_000
-max_bound=100_000_000
+max_bound=1_000_000
 key=0                 #Define a custom modulus to factor
 build_workers=8
 keysize=150           #Generate a random modulus of specified bit length
@@ -48,7 +48,7 @@ thresvar=30  ##Log value base 2 for when to check smooths with trial factorizati
 thresvar_similar=30
 lp_multiplier=2
 min_prime=1
-g_max_diff_similar=5
+g_max_diff_similar=10
 g_enable_custom_factors=0
 g_p=107
 g_q=41
@@ -782,7 +782,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,gathered_quad_
     cdef Py_ssize_t i
     cdef Py_ssize_t j
     close_range = 10
-    too_close = 5
+    too_close = 1   ##TO DO: remove this small prime.. better to not have small primes 
     LOWER_BOUND_SIQS=1
     UPPER_BOUND_SIQS=40000000000000
     cdef Py_ssize_t size
@@ -815,8 +815,8 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,gathered_quad_
 
         local_mod,cfact,indexes=generate_modulus(n,primesl,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,tnum_bit,quad_interval_index[i])
         if local_mod == 0:
-            print("fail")
-            sys.exit()
+            print("generate modulus fail")
+            break
        # print(bitlen(local_mod))
        # print("[i]New modulus: ",local_mod)
         if local_mod>1:
@@ -1176,7 +1176,7 @@ def find_similar(poly_val,value,seen_primes,cmod,root,n,quad_co,factor_base,qfac
     
     print("[i]Attempting to find smooths with factors: "+str(local_factors)+" bitlen new modulus: "+str(bitlen(abs(new_mod)))+" bitlen old modulus: "+str(bitlen(abs(cmod))))
     quad=1
-    while quad < 1000:
+    while quad < 10:
         if quad != 1 and math.sqrt(quad)%1==0:
             quad+=1
             continue
@@ -1280,8 +1280,6 @@ cdef process_interval(ret_array,int [::1] interval,int [::1] interval_neg,n,quad
                         ret_array[3].append(quad_local_factors)
                        # if poly_val > 0:
                         mod_found+=find_similar(poly_val, value,seen_primes,cmod,abs(root+cmod*j),n,quad_co,local_primes,z_plist,local_factors,hmap,indexmap,quad_interval_index,quad_interval,ret_array,grays,target_main,logmap,size)
-                        if mod_found > 50: #To do: For testing only, remove later
-                            return mod_found
             j+=1
         j=0
         while j < size:
@@ -1301,8 +1299,7 @@ cdef process_interval(ret_array,int [::1] interval,int [::1] interval_neg,n,quad
                         ret_array[3].append(quad_local_factors)
                       #  if poly_val > 0:
                         mod_found+=find_similar(poly_val, value,seen_primes,cmod,abs(root+cmod*j),n,quad_co,local_primes,z_plist,local_factors,hmap,indexmap,quad_interval_index,quad_interval,ret_array,grays,target_main,logmap,size)
-                        if mod_found > 50: #To do: For testing only, remove later
-                            return mod_found            
+       
             j+=1
         i+=1
     return mod_found
@@ -1316,8 +1313,8 @@ cdef generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_S
     cdef Py_ssize_t counter4
     cdef Py_ssize_t i
     cdef Py_ssize_t j
-    cdef Py_ssize_t const_1=1_000_000
-    cdef Py_ssize_t const_2=100_000_000
+    cdef Py_ssize_t const_1=1_000
+    cdef Py_ssize_t const_2=1_000_000
 
     small_B = len(primeslist)
     lower_polypool_index = 2
@@ -1328,9 +1325,10 @@ cdef generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_S
         if primeslist[i] > LOWER_BOUND_SIQS and not poly_low_found:
             lower_polypool_index = i
             poly_low_found = True
-        if primeslist[i] > UPPER_BOUND_SIQS:
-            upper_polypool_index = i - 1
             break
+     #   if primeslist[i] > UPPER_BOUND_SIQS:
+          #  upper_polypool_index = i - 1
+           # break
     small_B=upper_polypool_index
     counter4=0
     while counter4 < const_1:
@@ -1589,7 +1587,6 @@ def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_
     launch(n,primeslist1,primeslist2)     
     duration = default_timer() - start
     print("\nFactorization in total took: "+str(duration))
-
 
 
 
