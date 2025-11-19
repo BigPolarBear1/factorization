@@ -44,17 +44,17 @@ lin_sieve_size=1
 quad_sieve_size=10
 g_debug=0 #0 = No debug, 1 = Debug, 2 = A lot of debug
 g_lift_lim=0.5
-thresvar=35  ##Log value base 2 for when to check smooths with trial factorization. Eventually when we fix all the bugs we should be able to furhter lower this.
-thresvar_similar=35
+thresvar=30  ##Log value base 2 for when to check smooths with trial factorization. Eventually when we fix all the bugs we should be able to furhter lower this.
+thresvar_similar=30
 lp_multiplier=2
 min_prime=1
-g_max_diff_similar=10
+g_max_diff_similar=5
 g_enable_custom_factors=0
 g_p=107
 g_q=41
 mod_mul=0.5
 g_max_exp=2
-
+g_small_prime_limit=1000
 
 ##Key gen function##
 def power(x, y, p):
@@ -648,6 +648,7 @@ cdef construct_interval_2(quad_co,lin_co,cmod,long long [::1] primeslist,hmap,n,
         root2=get_root(prime,co2,quad_co)
         root3=get_root(prime,co2_b,quad_co)
         while exp < 20:
+
             if exp > 1:
                 root2=lift_root(root2,prime**(exp-1),n,quad_co,exp)
             root_dist1=solve_lin_con(cmod,root2-root,prime**exp)
@@ -658,9 +659,12 @@ cdef construct_interval_2(quad_co,lin_co,cmod,long long [::1] primeslist,hmap,n,
             root_dist1b=(-root_dist1)%prime**exp
             root_dist2b=(-root_dist2)%prime**exp
 
-            if exp%2 !=0:
-                exp+=1
-                continue
+            if prime > g_small_prime_limit:
+
+                if exp%2 !=0:
+                    exp+=1
+                    continue
+                log=log*2
             CAN=quad_co*(root+root_dist1*cmod)**2-n
             if CAN % (cmod*prime**exp)  != 0:
 
@@ -671,14 +675,14 @@ cdef construct_interval_2(quad_co,lin_co,cmod,long long [::1] primeslist,hmap,n,
                 time.sleep(100000)
 
             if root_dist1 < size:
-                miniloop_non_simd(root_dist1,temp,prime**exp,log*2,size)  
+                miniloop_non_simd(root_dist1,temp,prime**exp,log,size)  
             if root_dist1b < size: 
-                miniloop_non_simd(root_dist1b,temp_neg,prime**exp,log*2,size)
+                miniloop_non_simd(root_dist1b,temp_neg,prime**exp,log,size)
             if root_dist1 != root_dist2:
                 if root_dist2 < size:
-                    miniloop_non_simd(root_dist2,temp,prime**exp,log*2,size)
+                    miniloop_non_simd(root_dist2,temp,prime**exp,log,size)
                 if root_dist2b < size:
-                    miniloop_non_simd(root_dist2b,temp_neg,prime**exp,log*2,size)
+                    miniloop_non_simd(root_dist2b,temp_neg,prime**exp,log,size)
             if root_dist1 > size and root_dist1b > size and root_dist2 > size and root_dist2b > size:
                 break
 
@@ -989,18 +993,17 @@ cdef construct_interval_similar(quad_co,lin_co,cmod,long long [::1] primeslist,h
        # eq_test=quad_co*r**2-n
       #  print(eq_test%prime)
         r_b=get_root(prime,co2_b,quad_co)
-        exp=2
+        exp=1
         while exp < 20:
-
-            root2=lift_root(r,prime**(exp-1),n,quad_co,exp)
-
+            if exp > 1:
+                root2=lift_root(r,prime**(exp-1),n,quad_co,exp)
+            else:
+                root2=r
             root_dist1=solve_lin_con(cmod,root2-root,prime**exp)
-          #  eq_test=quad_co*(root2+cmod*root_dist1)**2-n
-          #  eq_test2=quad_co*root**2-n
-           # print(eq_test%prime**exp)
-           # print("eq_test2: ",eq_test2%cmod)
-           # print("root_dist1: ",root_dist1)
-            root3=lift_root(r_b,prime**(exp-1),n,quad_co,exp)
+            if exp > 1:
+                root3=lift_root(r_b,prime**(exp-1),n,quad_co,exp)
+            else:
+                root3=r_b
             root_dist2=solve_lin_con(cmod,root3-root,prime**exp)
         
             root_dist1b=(-root_dist1)%prime**exp
@@ -1008,9 +1011,10 @@ cdef construct_interval_similar(quad_co,lin_co,cmod,long long [::1] primeslist,h
 
             r=root2
             r_b=root3
-            if exp%2 != 0:
-                exp+=1
-                continue
+            if prime>g_small_prime_limit:
+                if exp%2 != 0:
+                    exp+=1
+                    continue
             CAN=quad_co*(root+root_dist1*cmod)**2-n
             if CAN % (cmod*(prime**exp))  != 0:
                 print("jacobi: ",jacobi(n,prime))
@@ -1052,15 +1056,17 @@ cdef construct_interval_similar(quad_co,lin_co,cmod,long long [::1] primeslist,h
              #   print("cmod: ",cmod%prime)
              #   print("cmod: ",cmod)
               #  time.sleep(100000)
+            if prime > g_small_prime_limit:
+                log=log*2
             if root_dist1 < size:
-                miniloop_non_simd(root_dist1,temp,prime**exp,log*2,size)  
+                miniloop_non_simd(root_dist1,temp,prime**exp,log,size)  
             if root_dist1b < size: 
-                miniloop_non_simd(root_dist1b,temp_neg,prime**exp,log*2,size)
+                miniloop_non_simd(root_dist1b,temp_neg,prime**exp,log,size)
             if root_dist1 != root_dist2:
                 if root_dist2 < size:
-                    miniloop_non_simd(root_dist2,temp,prime**exp,log*2,size)
+                    miniloop_non_simd(root_dist2,temp,prime**exp,log,size)
                 if root_dist2b < size:
-                    miniloop_non_simd(root_dist2b,temp_neg,prime**exp,log*2,size)
+                    miniloop_non_simd(root_dist2b,temp_neg,prime**exp,log,size)
             if root_dist1 > size and root_dist1b > size and root_dist2 > size and root_dist2b > size:
                 break
             exp+=1
@@ -1069,6 +1075,7 @@ cdef construct_interval_similar(quad_co,lin_co,cmod,long long [::1] primeslist,h
 
 
 cdef process_interval_similar(ret_array,int [::1] interval,int [::1] interval_neg,n,quad_co2,lin_co,long long [::1] local_primes,cmod,Py_ssize_t size,quad_local_factors):
+    checked=0
     cdef Py_ssize_t j=0
     i=0
     mod_found=0
@@ -1079,6 +1086,7 @@ cdef process_interval_similar(ret_array,int [::1] interval,int [::1] interval_ne
     j=0
     while j < size:
         if interval[j] > threshold:
+            checked+=1
             root=get_root(cmod,lin_co,quad_co)
             co=abs(root+cmod*j)
             poly_val=quad_co*co**2-n
@@ -1086,7 +1094,7 @@ cdef process_interval_similar(ret_array,int [::1] interval,int [::1] interval_ne
             local_factors, value,seen_primes = factorise_fast(poly_val,local_primes)
             if value == 1:
                 if co not in ret_array[1]:
-                    print("Found similar Smooth in pos interval: "+str(len(ret_array[0]))+" / "+str(base+2+qbase+2)+" local_factors with neg exp: "+str(local_factors)+" quad_co: "+str(quad_co)+" interval size: "+str(size)+" assumed log: "+str(interval[j])+" threshold: "+str(threshold))#+" root: "+str(root))
+                    print("Found similar Smooth in pos interval: "+str(len(ret_array[0]))+" / "+str(base+2+qbase+2)+" local_factors with neg exp: "+str(seen_primes)+" quad_co: "+str(quad_co)+" interval size: "+str(size)+" assumed log: "+str(interval[j])+" threshold: "+str(threshold))#+" root: "+str(root))
                     mod_found+=1
                     ret_array[0].append(poly_val)
                     ret_array[1].append(co)
@@ -1097,6 +1105,7 @@ cdef process_interval_similar(ret_array,int [::1] interval,int [::1] interval_ne
     j=0
     while j < size:
         if interval_neg[j] > threshold:
+            checked+=1
             root=get_root(cmod,lin_co,quad_co)
             co=abs(root-cmod*j)
             poly_val=quad_co*co**2-n    
@@ -1106,14 +1115,14 @@ cdef process_interval_similar(ret_array,int [::1] interval,int [::1] interval_ne
             local_factors, value,seen_primes = factorise_fast(poly_val,local_primes)
             if value == 1:
                 if co not in ret_array[1]:
-                    print("Found similar Smooth in neg interval: "+str(len(ret_array[0]))+" / "+str(base+2+qbase+2)+" local_factors with neg exp: "+str(local_factors)+" quad_co: "+str(quad_co)+" interval size: "+str(size)+" assumed log: "+str(interval_neg[j])+" threshold: "+str(threshold))#+" root: "+str(root))
+                    print("Found similar Smooth in neg interval: "+str(len(ret_array[0]))+" / "+str(base+2+qbase+2)+" local_factors with neg exp: "+str(seen_primes)+" quad_co: "+str(quad_co)+" interval size: "+str(size)+" assumed log: "+str(interval_neg[j])+" threshold: "+str(threshold))#+" root: "+str(root))
                     mod_found+=1
                     ret_array[0].append(poly_val)
                     ret_array[1].append(co)
                     ret_array[2].append(local_factors)
                     ret_array[3].append(quad_local_factors)
         j+=1
-
+    #print("checked similar: ",checked)
     return mod_found
 
 
@@ -1136,7 +1145,7 @@ def find_similar(poly_val,value,seen_primes,cmod,root,n,quad_co,factor_base,qfac
 
 
         
-    if old_bitl-bitlen(new_mod) <0 or old_bitl-bitlen(new_mod) > g_max_diff_similar or (bitlen(abs(new_mod_full))-bitlen(abs(new_mod))) > 6:
+    if abs(old_bitl-bitlen(new_mod)) > g_max_diff_similar:# or (bitlen(abs(new_mod_full))-bitlen(abs(new_mod))) > 15:
         return 0
 
     enum_quad,enum_lin=find_quads(local_factors,hmap,indexmap,quad_interval_index[0],quad_interval[0],n,abs(new_mod),factor_base)
@@ -1238,6 +1247,7 @@ def find_similar(poly_val,value,seen_primes,cmod,root,n,quad_co,factor_base,qfac
 #@cython.boundscheck(False)
 #@cython.wraparound(False)
 cdef process_interval(ret_array,int [::1] interval,int [::1] interval_neg,n,quad_co2,lin_co,partials, large_prime_bound,long long [::1] local_primes,int threshold,cmod,Py_ssize_t size,quad_local_factors,z_plist,quad_interval_index,quad_interval,indexmap,hmap,grays,target_main,logmap):
+    checked=0
     cdef Py_ssize_t j=0
     i=0
     mod_found=0
@@ -1248,6 +1258,7 @@ cdef process_interval(ret_array,int [::1] interval,int [::1] interval_neg,n,quad
         j=0
         while j < size:
             if interval[j] > threshold:
+                checked+=1
                 root=get_root(cmod,lin_co,quad_co)
                 co=abs(root+cmod*j)
                 poly_val=quad_co*co**2-n
@@ -1255,6 +1266,7 @@ cdef process_interval(ret_array,int [::1] interval,int [::1] interval_neg,n,quad
                 local_factors, value,seen_primes = factorise_fast(poly_val,local_primes)
                 if value == 1:
                     if co not in ret_array[1]:
+                        
                         print("Found Smooth "+str(len(ret_array[0]))+" / "+str(base+2+qbase+2)+" local_factors: "+str(local_factors))
                         mod_found+=1
                         ret_array[0].append(poly_val)
@@ -1267,6 +1279,7 @@ cdef process_interval(ret_array,int [::1] interval,int [::1] interval_neg,n,quad
         j=0
         while j < size:
             if interval_neg[j] > threshold:
+                checked+=1
                 root=get_root(cmod,lin_co,quad_co)
                 co=abs(root-cmod*j)
                 poly_val=quad_co*co**2-n            
@@ -1274,6 +1287,7 @@ cdef process_interval(ret_array,int [::1] interval,int [::1] interval_neg,n,quad
                 local_factors, value,seen_primes = factorise_fast(poly_val,local_primes)
                 if value == 1:
                     if co not in ret_array[1]:
+
                         print("Found Smooth "+str(len(ret_array[0]))+" / "+str(base+2+qbase+2)+" local_factors: "+str(local_factors))
                         mod_found+=1
                         ret_array[0].append(poly_val)
@@ -1285,6 +1299,7 @@ cdef process_interval(ret_array,int [::1] interval,int [::1] interval_neg,n,quad
        
             j+=1
         i+=1
+      #  print("checked: ",checked)
     return mod_found
 
 #@cython.boundscheck(False)
