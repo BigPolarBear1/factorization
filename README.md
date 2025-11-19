@@ -24,3 +24,5 @@ UPDATE: Just uploaded a slightly less buggy version.. still very buggy.. going f
 Update: Back from running. NOw to get some food quickly and continue working. I WILL FINISH THIS THIS WEEK. I WILL FINISH IT. My savings are running out. I have nothing left. You people even took my friends from me. It's time to pay the price you fucking losers. And fuck all you infosec microsoft simps, retards.
 
 Update: Ok had some food. Time to fix this buggy PoC... its already completing factorization using a fraction of smooths that would otherwise be required... just you people wait... you are all about to have a really bad time.
+
+Update: Oh yea, ofcourse we can mark small primes with odd exponents in the sieve interval. It's just important the that large primes are square.. since those become really rare.
