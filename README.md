@@ -20,3 +20,5 @@ Also moody because I bought new running shoes through amazon, like Hoka trail ru
 UPDATE: FUCK IT. IGNORE  THIS FOR NOW. THIS CODE IS JUST SO FUCKING BUGGY. LET ME FIX IT...
 
 UPDATE: Just uploaded a slightly less buggy version.. still very buggy.. going for a run. I need to rework so much of this code. It's really awful at the moment. Ill go for a run, then do a couple more hours of work after..
+
+Update: Back from running. NOw to get some food quickly and continue working. I WILL FINISH THIS THIS WEEK. I WILL FINISH IT. My savings are running out. I have nothing left. You people even took my friends from me. It's time to pay the price you fucking losers. And fuck all you infosec microsoft simps, retards.
