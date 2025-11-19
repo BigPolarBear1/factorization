@@ -14,5 +14,5 @@ See below for an improved way of performing what this PoC does.. I'll delete thi
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 120  -base 2000 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
-Big speed gains. We can now do 120 bit in a few seconds AAAAAAAAAAAND potentially finish earlier before reaching the amount of smooths normal SIQS would require.
+Big speed gains. We can now do 120 bit in a few seconds AAAAAAAAAAAND potentially finish earlier before reaching the amount of smooths normal SIQS would require (this depends on a few settings, I'll find the optimal settings later once I get above 200-bit.. which is where this approach should start showing its strength).
 Just run with the above command. I will keep tinkering an upload improvements as I go.
