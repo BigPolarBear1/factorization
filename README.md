@@ -12,18 +12,11 @@ See below for an improved way of performing what this PoC does.. I'll delete thi
 #### To run from folder "Improved_QS_Variant" (Implements more of my number theory to also take advantage of quadratic coefficients):</br></br>
 
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 160  -base 4000 -debug 1 -lin_size 1_000_000 -quad_size 1</br></br>
+To run: python3 run_qs.py -keysize 140  -base 4000 -debug 1 -lin_size 1_000_000 -quad_size 1</br></br>
 
-Ok, we can do 160 bit now (use above command). 
-So two variables are responsible to increase the chance it may finish early: 
+Just use the command above on 140-bit semi primes until I optimize the rest of the PoC.
 
-thresvar_similar=30</br>
-g_small_prime_limit=4000</br>
+Today I messed around a bit with the settings and found an ideal combination. So the above command uses a factor base of 4000 primes, yet we consistently finish early with less then 1000 smooths (default SIQS would need on everage as many smooths as the factor base... so this is a big improvement). 
 
-As I optimize the PoC, these can be lowered. But right now the code is horrible and I need to fix a lot in the coming days. Even so, using the above command with the uploaded PoC, it has a chance to finish roughly between 1000 and 2000 smooths on average, while pulling smooths from multiple quadratic coefficients and using a factor base of 4000 primes. If we would do that with standard SIQS, we would need 4000 smooths on average.. so this is a fraction of that... and it can be lowered even more with the above settings. I just need to optimize everything because it's still too slow... its just really poorly written code due to my iterative way of doing research.
+We achieve this with the variable g_small_prime_limit=5000. This will mark the sieve interval with odd and even exponents for primes less then 5000, and only even exponents for those greater then 5000. In addition, if a smooth is found, then we try to find more smooths that contain the largest prime factors. This is a very important step, because this greatly contributes to lowering the required amonut of primes. The reason this works is because we try to limit the amount of large primes with odd exponents... and if we do find large primes with odd exponents, we use find_similar() to find more smooths specifically with those primes. 
 
-It's working. I got proof is working with 160 bit already. Once this code is optimized... and I finish the paper and publish all my work... it will finally be over. This fucking nightmare will finally be over. I don't care what people will say. I'm sure the microsoft PR teams will say a lot of shitty things, completely lacking of any context. Fucking scumbags. And fuck infosec too. Fucking losers who are just non-stop jealous while sitting on their golden thrones made with big tech money. Piss on you all. Non of you are hackers. You are all fucking losers and I hate you all. Don't ever cross my path. I will physically assault you people if you ever come near me. 2018-2019, I could have forgiven those years... but not these last 3 years. I'm done with this shit industry. 
-
-UpDate: Cant sleep. Depressed. Havnt seen any of my friends from the PNW in years now. Dont hear from them either. All that is left now is memories of a better life that wont ever come back. im going to kill myself if this doesnt work.
-
-Update: What a shit day. Having some type of illness as well. Just been going on since april last year and seems to be getting worse. May just be some vitamin deficiency from running so much. I should really see a doctor. Havn't seen a doctor or hell, even dentist since I left the US. But I can't be bothered. Just got to finish my work. Nothing else matters. Might aswell be dead anyway if I don't succeed... there's nothing left in my life worth living for. Alright... lets see today... let me set my PoC settings so we can succeed very early (i.e 100 smooths with a factor base of 4000) ... then go from there and figure out how to have the PoC still work fast.
