@@ -32,7 +32,7 @@ cimport cython
 
 
 min_lin_sieve_size=10_000
-max_bound=1_000_000
+max_bound=100_000
 key=0                 #Define a custom modulus to factor
 build_workers=8
 keysize=150           #Generate a random modulus of specified bit length
@@ -44,8 +44,8 @@ lin_sieve_size=1
 quad_sieve_size=10
 g_debug=0 #0 = No debug, 1 = Debug, 2 = A lot of debug
 g_lift_lim=0.5
-thresvar=30  ##Log value base 2 for when to check smooths with trial factorization. Eventually when we fix all the bugs we should be able to furhter lower this.
-thresvar_similar=20
+thresvar=40  ##Log value base 2 for when to check smooths with trial factorization. Eventually when we fix all the bugs we should be able to furhter lower this.
+thresvar_similar=30
 lp_multiplier=2
 min_prime=1
 g_max_diff_similar=5
@@ -54,7 +54,7 @@ g_p=107
 g_q=41
 mod_mul=0.5
 g_max_exp=2
-g_small_prime_limit=1000
+g_small_prime_limit=4000
 
 ##Key gen function##
 def power(x, y, p):
@@ -597,8 +597,8 @@ def get_root(p,b,a):
 
 def solve_lin_con(a,b,m):
     ##ax=b mod m
-    g=gcd(a,m)
-    a,b,m = a//g,b//g,m//g
+    #g=gcd(a,m)
+    #a,b,m = a//g,b//g,m//g
     return pow(a,-1,m)*b%m  
 
 #@cython.boundscheck(False)
@@ -768,7 +768,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,gathered_quad_
     cdef Py_ssize_t j
     close_range = 10
     too_close = 1   ##TO DO: remove this small prime.. better to not have small primes 
-    LOWER_BOUND_SIQS=1
+    LOWER_BOUND_SIQS=100000
     UPPER_BOUND_SIQS=40000000000000
     cdef Py_ssize_t size
     primelist=copy.copy(primeslist)
@@ -1166,7 +1166,7 @@ def find_similar(poly_val,value,seen_primes,cmod,root,n,quad_co,factor_base,qfac
     
     print("[i]Attempting to find smooths with factors: "+str(local_factors)+" bitlen new modulus: "+str(bitlen(abs(new_mod)))+" bitlen old modulus: "+str(bitlen(abs(cmod))))
     quad=1
-    while quad < 10:
+    while quad < 15:
         if quad != 1 and math.sqrt(quad)%1==0:
             quad+=1
             continue
