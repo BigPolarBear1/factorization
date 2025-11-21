@@ -12,7 +12,7 @@ See below for an improved way of performing what this PoC does.. I'll delete thi
 #### To run from folder "Improved_QS_Variant" (Implements more of my number theory to also take advantage of quadratic coefficients):</br></br>
 
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 140  -base 4000 -debug 1 -lin_size 1_000_000 -quad_size 10</br></br>
+To run: python3 run_qs.py -keysize 140  -base 2000 -debug 1 -lin_size 1_000_000 -quad_size 10</br></br>
 
 If completely reworked create_hashmap() also now.... it wont ever be a bottleneck again. Next I will begin removing all the other bottlenecks..
 I also added that to the normal QS_Variant... although that one needs some better memory management bc it will go OOM with large factor bases... even though we can calculate them instantly.
