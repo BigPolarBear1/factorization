@@ -416,39 +416,32 @@ cdef tonelli(long long n, long long p):  # tonelli-shanks to solve modular squar
     return r
 
 @cython.profile(False)
-def solve_roots(prime,n):
-    iN=1      
+def solve_roots(prime,n):   
     try:
-        #print(prime)
-        size=prime*2
-        if size > (quad_sieve_size*2)+1:
-            size=(quad_sieve_size*2)+1
+        main_root=tonelli(n%prime,prime)
+        size=prime*2+1
+        if size > quad_sieve_size*2:
+            size= quad_sieve_size*2+1
         temp_hmap = array.array('Q',[0]*size) ##Got to make sure the allocation size doesn't overflow.... 
         temp_hmap[0]=1
-        modi=modinv(4*n,prime)
-        
-        while iN < prime:
-            new_square=(iN*4*n)%prime
-            test=jacobi(new_square,prime)
-            if test ==1:
-                root=tonelli(new_square,prime)
-                s=(root**2*modi)%prime
-                if s > quad_sieve_size:
-                    iN+=1
-                    continue
-                if root > prime // 2:
-                    root=(prime-root)%prime
-                end=temp_hmap[0]
-                temp_hmap[end]=s
-                temp_hmap[end+1]=root
-                temp_hmap[0]=temp_hmap[0]+2
-     
-      #  if test == 0: #note: Do we want to use these or not?
-           # end=temp_hmap[0]
-           # temp_hmap[end]=0
-           # temp_hmap[end+1]=0
-          #  temp_hmap[0]=temp_hmap[0]+2
-            iN+=1   
+
+        s=0
+        while s < prime and s < quad_sieve_size+1:
+            s_inv=inverse(s,prime)
+            if s_inv == None or jacobi(s_inv,prime)!=1:
+                s+=1
+                continue
+            root_mult=tonelli(s_inv,prime)
+
+            new_root=((main_root*root_mult))%prime
+            new_co=(2*s*new_root)%prime
+            if new_co > prime // 2:
+                new_co=(prime-new_co)%prime          
+            end=temp_hmap[0]
+            temp_hmap[end]=s
+            temp_hmap[end+1]=new_co
+            temp_hmap[0]+=2
+            s+=1   
     except Exception as e:
         print(e)
     return temp_hmap
