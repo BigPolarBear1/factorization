@@ -54,7 +54,7 @@ g_p=107
 g_q=41
 mod_mul=0.5
 g_max_exp=2
-g_small_prime_limit=6000
+g_small_prime_limit=10000
 
 ##Key gen function##
 def power(x, y, p):
@@ -356,7 +356,10 @@ def launch(n,primeslist1,primeslist2):
     #complete_hmap=create_hashmap(n,primeslist1)
     duration = default_timer() - start
     print("[i]Creating iN datastructure in total took: "+str(duration))
+    start= default_timer()
     indexmap=create_hmap2indexmap(complete_hmap,primeslist1)
+    duration = default_timer() - start
+    print("[i]Creating indexmap in total took: "+str(duration))
    # for mapp in complete_hmap:
     #    print(mapp)
     #time.sleep(1000)
@@ -1541,7 +1544,10 @@ cdef list create_hmap2indexmap(hmap,primeslist1):
     cdef list indexmap=[]
     i=0
     while i < len(hmap):
-        indexmap.append(array.array('i',[-1]*primeslist1[i]))
+        size=primeslist1[i]
+        if size > quad_sieve_size+1:
+            size=quad_sieve_size+1
+        indexmap.append(array.array('i',[-1]*size))
         length=hmap[i][0]
         j=1
         while j < length:
@@ -1563,11 +1569,11 @@ cdef create_logmap(primeslist1):
     return logmap
 
 def find_comb(n,hmap,primeslist1,indexmap,primeslist2):
-   
+    start=default_timer()
     logmap=create_logmap(primeslist1)
     ret_array=[[],[],[],[]]
     seen=[]
-    start=default_timer()
+    
     quad_interval,threshold_map,quad_interval_index,gathered_quad_interval,gathered_ql_interval=construct_quad_interval(hmap,primeslist1,1,(quad_sieve_size)+1,n)
     if g_debug > 0:
         duration = default_timer() - start
