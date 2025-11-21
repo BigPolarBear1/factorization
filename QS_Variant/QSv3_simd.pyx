@@ -1008,12 +1008,14 @@ def construct_quad_interval(hmap,primeslist1,rstart,rstop,n):
     return quad_interval,threshold_map,quad_interval_index,gathered_quad_interval,gathered_ql_interval
 
 
-
 cdef list create_hmap2indexmap(hmap,primeslist1):
     cdef list indexmap=[]
     i=0
     while i < len(hmap):
-        indexmap.append(array.array('I',[0]*primeslist1[i]))
+        size=primeslist1[i]
+        if size > quad_sieve_size+1:
+            size=quad_sieve_size+1
+        indexmap.append(array.array('i',[-1]*size))
         length=hmap[i][0]
         j=1
         while j < length:
@@ -1024,7 +1026,6 @@ cdef list create_hmap2indexmap(hmap,primeslist1):
         i+=1
 
     return indexmap
-
 cdef create_logmap(primeslist1):
     logmap=[]
     i=0
