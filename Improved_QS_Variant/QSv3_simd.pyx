@@ -54,7 +54,7 @@ g_p=107
 g_q=41
 mod_mul=0.5
 g_max_exp=2
-g_small_prime_limit=10000
+g_small_prime_limit=6000
 
 ##Key gen function##
 def power(x, y, p):
@@ -478,27 +478,50 @@ def lift_b(prime,n,co,z,max_exp):
     return cos[0]
 
 @cython.profile(False)
-def solve_roots(prime,n):   
+def solve_roots(prime,n): 
+    s=1  
+    while jacobi((s*n)%prime,prime)!=1:
+        s+=1
+    z_div=inverse(s,prime)
+    main_root=tonelli((n*z_div)%prime,prime)
+    if (s*main_root**2-n)%prime !=0:
+        print("fatal error123: ")
+        time.sleep(10000000)
+
+   # main_root=(main_root*back_mult)%prime
     try:
-        main_root=tonelli(n%prime,prime)
+        
         size=prime*2+1
         if size > quad_sieve_size*2:
             size= quad_sieve_size*2+1
         temp_hmap = array.array('Q',[0]*size) ##Got to make sure the allocation size doesn't overflow.... 
         temp_hmap[0]=1
 
-        s=0
+        
         while s < prime and s < quad_sieve_size+1:
-            s_inv=inverse(s,prime)
+
+
+
+            s_inv=inverse(s*z_div,prime)
+            
             if s_inv == None or jacobi(s_inv,prime)!=1:
                 s+=1
                 continue
+
             root_mult=tonelli(s_inv,prime)
 
             new_root=((main_root*root_mult))%prime
+            if (s*new_root**2-n)%prime !=0:
+
+                print("error2")
+ 
             new_co=(2*s*new_root)%prime
+            if (s*new_root**2-new_co*new_root+n)%prime !=0: ###To do: For debug delete later
+
+                print("error")
             if new_co > prime // 2:
-                new_co=(prime-new_co)%prime          
+                new_co=(prime-new_co)%prime  
+    
             end=temp_hmap[0]
             temp_hmap[end]=s
             temp_hmap[end+1]=new_co
@@ -506,6 +529,7 @@ def solve_roots(prime,n):
             s+=1   
     except Exception as e:
         print(e)
+
     return temp_hmap
 
 
@@ -768,7 +792,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,gathered_quad_
     cdef Py_ssize_t j
     close_range = 10
     too_close = 1   ##TO DO: remove this small prime.. better to not have small primes 
-    LOWER_BOUND_SIQS=1
+    LOWER_BOUND_SIQS=1000
     UPPER_BOUND_SIQS=40000000000000
     cdef Py_ssize_t size
     primelist=copy.copy(primeslist)
@@ -905,17 +929,14 @@ def find_quads(local_factors,hmap,indexmap,quad_interval_index,quad_interval,n,p
             enum_quad.append(local_factors[c])
             enum_lin.append(local_factors[c])
             length=factor_base[0]
-            hit=0
+      
             p=1
             while p < length:
                 if local_factors[c]==factor_base[p]:
-                    #print("local_factors[c]: ",local_factors[c])
-                    hit=1
                     p-=1
                     break
                 p+=1
-            if hit==0:
-                print("fatal error")
+
             enum_quad.append([])
             enum_lin.append([])
             length2=hmap[p][0]
@@ -1652,8 +1673,8 @@ def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_
     primeslist.extend(get_primes(3,1000000))
     i=0
     while len(primeslist1) < base:
-        if jacobi(n*4,primeslist[i]) == 1:
-            primeslist1.append(primeslist[i])
+       # if jacobi(n*4,primeslist[i]) == 1:
+        primeslist1.append(primeslist[i])
         i+=1
     i=0
 #    primeslist2.insert(0,2)
