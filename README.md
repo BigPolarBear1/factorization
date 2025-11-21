@@ -12,7 +12,7 @@ See below for an improved way of performing what this PoC does.. I'll delete thi
 #### To run from folder "Improved_QS_Variant" (Implements more of my number theory to also take advantage of quadratic coefficients):</br></br>
 
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 140  -base 2000 -debug 1 -lin_size 1_000_000 -quad_size 10</br></br>
+To run: python3 run_qs.py -keysize 140  -base 4000 -debug 1 -lin_size 1_000_000 -quad_size 10</br></br>
 
 Ive completely reworked create_hashmap() also now.... it wont ever be a bottleneck again. Next I will begin removing all the other bottlenecks..
 I also added that to the normal QS_Variant... although that one needs some better memory management bc it will go OOM with large factor bases... even though we can calculate them instantly.
@@ -21,3 +21,5 @@ But that isn't high priority for now.... next I will do similar improvements in 
 Update: actually I fixed that memory management issue... now you can use really large factor bases and calculate those roots near instantly....
 
 Update: Tomorrow I will optimise construct_interval_similar(). I only need to do lifting and solve_lin_con() for quadratic coefficient = 1. Getting it for other quadratic coefficient is similar to what I did today to optimize solve_roots().. with construct_interval_similar() optimized like that tomorrow... I know what that means.... I don't want to face the shitstorm that comes after this, but I just want to finish this now, this research project has cost me everything. I started this when I had everything and ever since my entire world has fallen apart and I have nothing left. Anyway... going to be a hell of a day tomorrow....
+
+Update: Just quickly improved solve_roots() for Improved_QS_Variant so we utilize all primes there and not just those for whom N*4 is a quadratic residue. Since it doesn't matter if we use even exponents. 
