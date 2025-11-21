@@ -23,3 +23,5 @@ Update: actually I fixed that memory management issue... now you can use really 
 Update: Tomorrow I will optimise construct_interval_similar(). I only need to do lifting and solve_lin_con() for quadratic coefficient = 1. Getting it for other quadratic coefficient is similar to what I did today to optimize solve_roots().. with construct_interval_similar() optimized like that tomorrow... I know what that means.... I don't want to face the shitstorm that comes after this, but I just want to finish this now, this research project has cost me everything. I started this when I had everything and ever since my entire world has fallen apart and I have nothing left. Anyway... going to be a hell of a day tomorrow....
 
 Update: Just quickly improved solve_roots() for Improved_QS_Variant so we utilize all primes there and not just those for whom N*4 is a quadratic residue. Since it doesn't matter if we use even exponents. 
+
+Update: Suddenly I have fully mastered quadratic congruences. Hahahahaha. Tomorrow. Watch what happens :).
