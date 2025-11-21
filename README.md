@@ -17,3 +17,5 @@ To run: python3 run_qs.py -keysize 140  -base 2000 -debug 1 -lin_size 1_000_000 
 Ive completely reworked create_hashmap() also now.... it wont ever be a bottleneck again. Next I will begin removing all the other bottlenecks..
 I also added that to the normal QS_Variant... although that one needs some better memory management bc it will go OOM with large factor bases... even though we can calculate them instantly.
 But that isn't high priority for now.... next I will do similar improvements in find_similar() because thats a big bottleneck for Improved_QS_Variant. Now that I know the math.. I know how to do it. 
+
+Update: actually I fixed that memory management issue... now you can use really large factor bases and calculate those roots near instantly....
