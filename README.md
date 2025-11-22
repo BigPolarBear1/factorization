@@ -9,7 +9,7 @@ To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 160  -base 4000 -debug 1 -lin_size 100_000 -quad_size 100</br></br>
 
 See below for an improved way of performing what this PoC does.. I'll delete this Proof of Concept once the PoC for Improved_QS_Variant matures a little more<br><br>
-#### To run from folder "Improved_QS_Variant" (Implements more of my number theory to also take advantage of quadratic coefficients):</br></br>
+#### To run from folder "Improved_QS_Variant" (Implements more of my number theory and attempts to succeed with fewer smooths by using p-adic lifting):</br></br>
 
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 140  -base 4000 -debug 1 -lin_size 1_000_000 -quad_size 10</br></br>
