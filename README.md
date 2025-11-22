@@ -14,18 +14,7 @@ See below for an improved way of performing what this PoC does.. I'll delete thi
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 140  -base 4000 -debug 1 -lin_size 1_000_000 -quad_size 10</br></br>
 
-Ive completely reworked create_hashmap() also now.... it wont ever be a bottleneck again. Next I will begin removing all the other bottlenecks..
-I also added that to the normal QS_Variant... although that one needs some better memory management bc it will go OOM with large factor bases... even though we can calculate them instantly.
-But that isn't high priority for now.... next I will do similar improvements in find_similar() because thats a big bottleneck for Improved_QS_Variant. Now that I know the math.. I know how to do it. 
+Update: Alright going to call it a day. Still havn't managed to optimize what I wanted to.
+However, in create_hashmap it only has to calculate linear coefficients for quadratic coefficient = 1 now. In find_similar() we calculate the linear coefficients for different quadratic coefficient on the fly. And in construct_interval_similar() we now do the same, we precalculate those coefficients mod p in gen_co2 now and then derive the linear coefficiens and roots for different quadratic coefficients from that on the fly.
 
-Update: actually I fixed that memory management issue... now you can use really large factor bases and calculate those roots near instantly....
-
-Update: Tomorrow I will optimise construct_interval_similar(). I only need to do lifting and solve_lin_con() for quadratic coefficient = 1. Getting it for other quadratic coefficient is similar to what I did today to optimize solve_roots().. with construct_interval_similar() optimized like that tomorrow... I know what that means.... I don't want to face the shitstorm that comes after this, but I just want to finish this now, this research project has cost me everything. I started this when I had everything and ever since my entire world has fallen apart and I have nothing left. Anyway... going to be a hell of a day tomorrow....
-
-Update: Just quickly improved solve_roots() for Improved_QS_Variant so we utilize all primes there and not just those for whom N*4 is a quadratic residue. Since it doesn't matter if we use even exponents. 
-
-Update: Suddenly I have fully mastered quadratic congruences. Hahahahaha. Tomorrow. Watch what happens :).
-
-Update: Alright lets get started. This will be quite a bit of work. Step by step. First step is to derive the linear coefficient for each quadratic coefficient in find_similar() for new_mod calculating it the same way we did in solve_roots. That's going to reduce a lot of the load in find_similar(). Then after that we slowly start implementing all this stuff in construct_interval_similar()... but thats going to be quite a bit of work.
-
-Update: Alright, I have reworked find_similar ... now I need to address the biggest bottleneck... construct_interval_similar. Once that is done, when precomputing with solve_roots, I should restrict that to just quadratic coefficient = 1, since we can now quickly calculate those other quadratic coefficients on the fly in find_similar... and with construct_interval_similar soon optimized.. thats when performance should really start to pick  up.
+Now tomorrow, to begin seeing the really big boost..I need to move lift_root and solve_lin_con out of construct_interval_similar into gen_co2 .. so its only calculated once, we we derive what that should be on the fly. That should be an enormous speed gain. When that is done, all that is left is just code optimizations. I may precalculate some tonelli stuff aswell if that ends up bottlenecking.
