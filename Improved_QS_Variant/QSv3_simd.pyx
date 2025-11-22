@@ -356,16 +356,9 @@ def launch(n,primeslist1,primeslist2):
     #complete_hmap=create_hashmap(n,primeslist1)
     duration = default_timer() - start
     print("[i]Creating iN datastructure in total took: "+str(duration))
-    start= default_timer()
-    indexmap=create_hmap2indexmap(complete_hmap,primeslist1)
-    duration = default_timer() - start
-    print("[i]Creating indexmap in total took: "+str(duration))
-   # for mapp in complete_hmap:
-    #    print(mapp)
-    #time.sleep(1000)
-    z=0
+
     print("[*]Launching attack with "+str(workers)+" workers\n")
-    find_comb(n,complete_hmap,primeslist1,indexmap,primeslist2)
+    find_comb(n,complete_hmap,primeslist1,primeslist2)
 
     return 
 
@@ -378,7 +371,7 @@ def equation(y,x,n,mod,z,z2):
 def squareRootExists(n,p,b,a):
     b=b%p
     c=n%p
-    bdiv = (b*inverse(2,p))%p
+    bdiv = (b*modinv(2,p))%p
     alpha = (pow_mod(bdiv,2,p)-c)%p
     if alpha == 0:
         return 1
@@ -386,16 +379,6 @@ def squareRootExists(n,p,b,a):
     if jacobi(alpha,p)==1:
         return 1
     return 0
-
-def inverse(a, m):
-    if gcd(a, m) != 1:
-        return None
-    u1,u2,u3 = 1,0,a
-    v1,v2,v3 = 0,1,m
-    while v3 != 0:
-        q = u3//v3
-        v1,v2,v3,u1,u2,u3=(u1-q*v1),(u2-q*v2),(u3-q*v3),v1,v2,v3
-    return u1%m
 
 def pow_mod(base, exponent, modulus):
     return pow(base,exponent,modulus)  
@@ -439,7 +422,7 @@ cdef tonelli(long long n, long long p):  # tonelli-shanks to solve modular squar
 
 def lift(exp,co,r,n,z,z2,prime):
     ##TO DO: Code duplication with lift_root()
-    z_inv=inverse(z,prime**exp)
+    z_inv=modinv(z,prime**exp)
     temp_r=r*z
     zz=2*temp_r
     zz=pow(zz,-1,prime)
@@ -482,7 +465,7 @@ def solve_roots(prime,n):
     s=1  
     while jacobi((s*n)%prime,prime)!=1:
         s+=1
-    z_div=inverse(s,prime)  ##To do: Dont need this if we restrict to z=1
+    z_div=modinv(s,prime)  ##To do: Dont need this if we restrict to z=1
     main_root=tonelli((n*z_div)%prime,prime)
     if (s*main_root**2-n)%prime !=0:
         print("fatal error123: ")
@@ -493,25 +476,25 @@ def solve_roots(prime,n):
             size= quad_sieve_size*2+1
         temp_hmap = array.array('Q',[0]*size) ##Got to make sure the allocation size doesn't overflow.... 
         temp_hmap[0]=1
-        while s < prime and s < quad_sieve_size+1:#2: ##To do: Dont need this if we restrict to z=1
-            s_inv=inverse(s*z_div,prime)
-            if s_inv == None or jacobi(s_inv,prime)!=1:
-                s+=1
-                continue
-            root_mult=tonelli(s_inv,prime)
-            new_root=((main_root*root_mult))%prime
-            if (s*new_root**2-n)%prime !=0:
-                print("error2")
-            new_co=(2*s*new_root)%prime
-            if (s*new_root**2-new_co*new_root+n)%prime !=0: ###To do: For debug delete later
-                print("error")
-            if new_co > prime // 2:
-                new_co=(prime-new_co)%prime  
-            end=temp_hmap[0]
-            temp_hmap[end]=s
-            temp_hmap[end+1]=new_co
-            temp_hmap[0]+=2
-            s+=1   
+      #  while s < prime and s < quad_sieve_size+1:#2: ##To do: Dont need this if we restrict to z=1
+        s_inv=modinv(s*z_div,prime)
+        if s_inv == None or jacobi(s_inv,prime)!=1:
+            print("should this ever happen?")
+            return temp_hmap
+        root_mult=tonelli(s_inv,prime)
+        new_root=((main_root*root_mult))%prime
+        if (s*new_root**2-n)%prime !=0:
+            print("error2")
+        new_co=(2*s*new_root)%prime
+        if (s*new_root**2-new_co*new_root+n)%prime !=0: ###To do: For debug delete later
+            print("error")
+        if new_co > prime // 2:
+            new_co=(prime-new_co)%prime  
+        end=temp_hmap[0]
+        temp_hmap[end]=s
+        temp_hmap[end+1]=new_co
+        temp_hmap[0]+=2
+        s+=1   
     except Exception as e:
         print(e)
     return temp_hmap
@@ -593,11 +576,11 @@ cdef void miniloop_non_simd(unsigned long long dist1,int [::1] temp,unsigned lon
 
 
 def get_root(p,b,a):
-    a_inv=inverse((a%p),p)
+    a_inv=modinv((a%p),p)
     if a_inv == None:
         return -1
     ba=(b*a_inv)%p 
-    bdiv = (ba*inverse(2,p))%p
+    bdiv = (ba*modinv(2,p))%p
     return bdiv%p
 
 
@@ -609,7 +592,7 @@ def solve_lin_con(a,b,m):
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cdef construct_interval_2(quad_co,lin_co,cmod,long long [::1] primeslist,hmap,n,indexmap,int [::1] temp, int [::1] temp_neg,int [::1] logmap,size,cfact):
+cdef construct_interval_2(quad_co,lin_co,cmod,long long [::1] primeslist,hmap,n,int [::1] temp, int [::1] temp_neg,int [::1] logmap,size,cfact):
     ##Still massively bottlenecking. Its often faster to work with a smaller factor base... that doesn't make much sense.
     cdef Py_ssize_t i=1
     cdef Py_ssize_t k
@@ -642,12 +625,10 @@ cdef construct_interval_2(quad_co,lin_co,cmod,long long [::1] primeslist,hmap,n,
         log=logmap[prime_index]
         modi=modinv(lcmod,prime)
 
-        k=indexmap[prime_index][quad_co%prime]+1
-        if k == 0:
+        if jacobi((quad_co*n)%prime,prime)!=1:
             i+=1
             continue
-       # print("BUILDING")
-        co2=hmap[prime_index][k]%prime
+        co2=hmap[prime_index][2]%prime
         co2_b=(prime-co2)%prime
 
         exp=1
@@ -744,7 +725,7 @@ cdef create_quad_cos(quads,lin_lists,cfact,local_mod):
 
 
 
-cdef get_lin(hmap,indexmap,cfact,local_mod,indexes,quad_co,n):
+cdef get_lin(hmap,cfact,local_mod,indexes,quad_co,n):
     
     all_lin_parts=[]
     j=0
@@ -752,9 +733,9 @@ cdef get_lin(hmap,indexmap,cfact,local_mod,indexes,quad_co,n):
     while j < len(indexes):
         ind=indexes[j]
         prime=math.isqrt(cfact[j])
-        ind2=indexmap[ind][quad_co%prime]
+ 
 
-        r1=hmap[ind][ind2+1]
+        r1=hmap[ind][2]
 
         r1=lift_b(prime,n,r1,quad_co,2)
         prime=prime**2
@@ -767,7 +748,7 @@ cdef get_lin(hmap,indexmap,cfact,local_mod,indexes,quad_co,n):
     lin%=local_mod
     return lin,all_lin_parts
 
-cdef construct_interval(list ret_array,partials,n,primeslist,hmap,gathered_quad_interval,gathered_ql_interval,rstart,rstop,quad_interval,quad_interval_index,threshold_map,indexmap,seen,large_prime_bound,tnum_list,lprimes_list,tnum_bit_list,logmap,primeslist2):
+cdef construct_interval(list ret_array,partials,n,primeslist,hmap,gathered_quad_interval,gathered_ql_interval,rstart,rstop,quad_interval,quad_interval_index,threshold_map,seen,large_prime_bound,tnum_list,lprimes_list,tnum_bit_list,logmap,primeslist2):
     grays = get_gray_code(20)
     target_main = array.array('i', [0]*lin_sieve_size)
     cdef Py_ssize_t i
@@ -825,7 +806,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,gathered_quad_
             if value != 1:
                 continue
 
-            lin,lin_parts=get_lin(hmap,indexmap,cfact,local_mod,indexes,quad,n)  
+            lin,lin_parts=get_lin(hmap,cfact,local_mod,indexes,quad,n)  
         
             if quad == 0 or lin == 0:
                 continue
@@ -844,8 +825,8 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,gathered_quad_
                     time.sleep(100000)
                 size=bound_estimated
                   #  print("lin: "+str(lin)+" quad: "+str(quad))
-                single_interval,single_interval_neg=construct_interval_2(quad,lin,local_mod,primelist_f,hmap,n,indexmap,target,target_neg,logmap,size,cfact)
-                mod_found+=process_interval(ret_array,single_interval,single_interval_neg,n,quad,lin,partials,large_prime_bound,primelist_f,threshold_map[i],local_mod,size,quad_local_factors,z_plist,quad_interval_index,quad_interval,indexmap,hmap,grays,target_main,logmap)
+                single_interval,single_interval_neg=construct_interval_2(quad,lin,local_mod,primelist_f,hmap,n,target,target_neg,logmap,size,cfact)
+                mod_found+=process_interval(ret_array,single_interval,single_interval_neg,n,quad,lin,partials,large_prime_bound,primelist_f,threshold_map[i],local_mod,size,quad_local_factors,z_plist,quad_interval_index,quad_interval,hmap,grays,target_main,logmap)
                 if mod_found+1 > 10:  
                        # print("", end=f"[i]Smooths: {len(ret_array[0])} / {base*1+2+qbase}\r")
                     mod2_found+=mod_found
@@ -890,7 +871,7 @@ def get_partials(mod,list1):
     
 
     return new_list
-def find_quads(local_factors,hmap,indexmap,quad_interval_index,quad_interval,n,poly_val,factor_base):
+def find_quads(local_factors,hmap,quad_interval_index,quad_interval,n,poly_val,factor_base):
     local_factors=list(local_factors)
    # print(local_factors)
     length=quad_interval[0]
@@ -944,7 +925,7 @@ def enumerated_product(*args):
 
 
 cdef lift_root(r,prime,n,quad_co,exp):
-    z_inv=inverse(quad_co,prime**exp)
+    z_inv=modinv(quad_co,prime**exp)
     c=(quad_co*n)%prime**exp
     temp_r=r*quad_co
     zz=2*temp_r
@@ -957,7 +938,7 @@ cdef lift_root(r,prime,n,quad_co,exp):
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cdef construct_interval_similar(quad_co,lin_co,cmod,long long [::1] primeslist,hmap,n,indexmap,int [::1] temp, int [::1] temp_neg,int [::1] logmap,size):
+cdef construct_interval_similar(quad_co,lin_co,cmod,long long [::1] primeslist,hmap,n,int [::1] temp, int [::1] temp_neg,int [::1] logmap,size,co2_list):
     ##Still massively bottlenecking. Its often faster to work with a smaller factor base... that doesn't make much sense.
 
     cdef Py_ssize_t i=1
@@ -969,34 +950,32 @@ cdef construct_interval_similar(quad_co,lin_co,cmod,long long [::1] primeslist,h
     cdef unsigned long long  dist1,dist2
     cdef unsigned long long log
     root=get_root(cmod,lin_co,quad_co)
-   # eq_test3=lin_co**2-n*4*quad_co
-   # print("eq_test3: ",eq_test3%cmod)
-
     i=1
+
     while i < length:
         prime=primeslist[i]
         prime_index=i-1
-       # prime=primeslist[prime_index]
-         #   print("prime: ",prime)
-        if prime<min_prime or cmod%prime == 0: 
-            i+=1
-            continue
-           
-
-        k=indexmap[prime_index][quad_co%prime]+1
-        if k == 0:
+        if prime<min_prime or cmod%prime == 0:
             i+=1
             continue
         lcmod=cmod%prime
         log=logmap[prime_index]
         modi=modinv(lcmod,prime)
-        co2=hmap[prime_index][k]%prime
+        temp_quad=co2_list[prime_index][1]
+        z_div=modinv(temp_quad,prime)
+        z_inv=modinv(quad_co*z_div,prime)
+        if z_inv == None or jacobi(z_inv,prime)!=1:
+            i+=1
+            continue
+        root_mult=tonelli(z_inv,prime)
+        temp_co=co2_list[prime_index][0]
+        r=get_root(prime,temp_co,temp_quad)
+        r=(r*root_mult)%prime
+        r_b=(prime-r)%prime  
+        co2=(2*quad_co*r)%prime   
+        if co2 > prime // 2:
+            co2=(prime-co2)%prime  
         co2_b=(prime-co2)%prime
-        #print("co2: "+str(co2)+" co2**2-N*quad: "+str(co2**2-n*4*quad_co)+" modulo prime: "+str((co2**2-n*4*quad_co)%prime))
-        r=get_root(prime,co2,quad_co)
-       # eq_test=quad_co*r**2-n
-      #  print(eq_test%prime)
-        r_b=get_root(prime,co2_b,quad_co)
         exp=1
         while exp < 20:
             if exp > 1:
@@ -1004,8 +983,6 @@ cdef construct_interval_similar(quad_co,lin_co,cmod,long long [::1] primeslist,h
             else:
                 root2=r
             root_dist1=solve_lin_con(cmod,root2-root,prime**exp)
-          #  if prime == 11 and exp ==1:
-             #   print("cmod: "+str(cmod)+" quad: "+str(quad_co)+" root: "+str(root)+" root2: "+str(root2)+" root_dist1: "+str(root_dist1))
             if exp > 1:
                 root3=lift_root(r_b,prime**(exp-1),n,quad_co,exp)
             else:
@@ -1021,15 +998,15 @@ cdef construct_interval_similar(quad_co,lin_co,cmod,long long [::1] primeslist,h
                 if exp%2 != 0:
                     exp+=1
                     continue
-          #  CAN=quad_co*(root+root_dist1*cmod)**2-n
-          #  if CAN % (cmod*(prime**exp))  != 0:
-           #     print("jacobi: ",jacobi(n,prime))
-            #    print("EROROREROR",prime)
-             #   print("root: ",CAN%cmod)
-             #   print("quad_co: ",quad_co)
-             #   print("cmod: ",cmod%prime)
-             #   print("cmod: ",cmod)
-             #   time.sleep(100000)
+           # CAN=quad_co*(root+root_dist1*cmod)**2-n
+           # if CAN % (cmod*(prime**exp))  != 0:
+              #  print("jacobi: ",jacobi(n,prime))
+              #  print("EROROREROR",prime)
+            #    print("root: ",CAN%cmod)
+            #    print("quad_co: ",quad_co)
+            #    print("cmod: ",cmod%prime)
+            #    print("cmod: ",cmod)
+            #    time.sleep(100000)
 
            # CAN=quad_co*(root+root_dist2*cmod)**2-n
            # if CAN % (cmod*(prime**exp))  != 0:
@@ -1167,13 +1144,8 @@ cdef process_interval_similar(ret_array,int [::1] interval,int [::1] interval_ne
     #print("checked similar: ",checked)
     return mod_found
 
-cdef enum_stuff(enum_quad,enum_lin2,quad,new_mod,enum_quad2,qfactor_base):
-    if quad != 1 and math.sqrt(quad)%1==0:
-        return 0,0
-    quad_local_factors, quad_value,seen_primes = factorise_fast(quad,qfactor_base)  ##TO DO: move this way up
-    if quad_value != 1:
-  
-        return 0,0
+cdef enum_stuff(enum_quad,enum_lin2,quad,new_mod,enum_quad2):
+
     indexes=[]
     lin_parts=[]
     i=0
@@ -1191,15 +1163,37 @@ cdef enum_stuff(enum_quad,enum_lin2,quad,new_mod,enum_quad2,qfactor_base):
         i+=1
     if len(indexes)!=len(enum_quad2):
         return 0,0
-
     l=0
     while l < len(enum_quad2):
         lin_parts.append(enum_lin2[l][indexes[l]])
         l+=1
+    return lin_parts
 
-    return lin_parts,quad_local_factors
-cdef find_similar(poly_val,value,seen_primes,cmod,root,n,quad_co,factor_base,qfactor_base,local_factors,hmap,indexmap,quad_interval_index,quad_interval,ret_array,grays,target_main,logmap,size,partials,large_prime_bound):
+def gen_co2(factor_base,hmap,cmod,n):
 
+    length=factor_base[0]
+    co2_list=[]
+    i=1
+    while i < length:
+        prime=factor_base[i]
+
+        
+        prime_index=i-1
+        z=1
+
+
+        s=1  
+        while jacobi((s*n)%prime,prime)!=1:
+            s+=1
+ 
+
+        co2=hmap[prime_index][2]%prime
+        co2_list.append([co2,s])
+     
+        i+=1
+    return co2_list
+
+cdef find_similar(poly_val,value,seen_primes,cmod,root,n,quad_co,factor_base,qfactor_base,local_factors,hmap,quad_interval_index,quad_interval,ret_array,grays,target_main,logmap,size,partials,large_prime_bound):
     mod_found=0
     new_mod=1
     new_mod_full=1
@@ -1207,27 +1201,17 @@ cdef find_similar(poly_val,value,seen_primes,cmod,root,n,quad_co,factor_base,qfa
     local_factors2=list(local_factors)
     local_factors2.sort()
     local_factors2=local_factors2[::-1]
-   # print("local_factors2: ",local_factors2)
-
     for fac in local_factors2:
         if fac != 2 and fac != -1:
             if bitlen(new_mod) < old_bitl-g_max_diff_similar:
                 new_mod*=fac
-
             new_mod_full*=fac
 
-
-        
     if abs(old_bitl-bitlen(new_mod)) > g_max_diff_similar:# or (bitlen(abs(new_mod_full))-bitlen(abs(new_mod))) > 15:
         return 0
 
-    enum_quad,enum_lin=find_quads(local_factors,hmap,indexmap,quad_interval_index[0],quad_interval[0],n,abs(new_mod),factor_base)
+    enum_quad,enum_lin=find_quads(local_factors,hmap,quad_interval_index[0],quad_interval[0],n,abs(new_mod),factor_base)
     new_bitl=bitlen(abs(new_mod))
-    print("new_mod: ",new_mod)
-
-
-
-    #print("new_mod bitlen: "+str(bitlen(abs(found)))+" old_mod bitlen: "+str(bitlen(abs(cmod))))
     enum_quad2=[]
     enum_lin2=[]
     i=0
@@ -1236,11 +1220,18 @@ cdef find_similar(poly_val,value,seen_primes,cmod,root,n,quad_co,factor_base,qfa
         enum_lin2.append(enum_lin[i+1])
  
         i+=2
-    orig_lin_parts,quad_local_factors=enum_stuff(enum_quad,enum_lin2,1,new_mod,enum_quad2,qfactor_base)
+    orig_lin_parts=enum_stuff(enum_quad,enum_lin2,1,new_mod,enum_quad2)
     print("[i]Attempting to find smooths with factors: "+str(local_factors)+" bitlen new modulus: "+str(bitlen(abs(new_mod)))+" bitlen old modulus: "+str(bitlen(abs(cmod))))
-
+    co2_list=gen_co2(factor_base,hmap,new_mod,n)
     quad=1
     while quad < quad_sieve_size+1:
+        if quad != 1 and math.sqrt(quad)%1==0:
+            quad+=1
+            continue
+        quad_local_factors, quad_value,seen_primes = factorise_fast(quad,qfactor_base)  ##TO DO: move this way up
+        if quad_value != 1:
+            quad+=1
+            continue
         bound_estimated=math.floor(math.sqrt(2*n)/math.sqrt(quad))
         bound_estimated=math.floor(bound_estimated/new_mod)
         if bound_estimated < min_lin_sieve_size:
@@ -1254,7 +1245,7 @@ cdef find_similar(poly_val,value,seen_primes,cmod,root,n,quad_co,factor_base,qfa
         while q < len(orig_lin_parts):
             prime=enum_quad[q*2]
             orig_lin_temp=orig_lin_parts[q]
-            z_inv=inverse(quad,prime)
+            z_inv=modinv(quad,prime)
             if z_inv == None or jacobi(z_inv,prime)!=1:
                 skip=1
                 break
@@ -1294,8 +1285,6 @@ cdef find_similar(poly_val,value,seen_primes,cmod,root,n,quad_co,factor_base,qfa
         q=0
         while q < len(lin_co_array):
             lin=lin_co_array[q]
-
-            
             if bound_estimated < max_bound:
                 temp=target_main[:bound_estimated]
                 temp_neg=target_main[:bound_estimated]
@@ -1305,7 +1294,7 @@ cdef find_similar(poly_val,value,seen_primes,cmod,root,n,quad_co,factor_base,qfa
                 temp=array.array('i', [0]*bound_estimated)
                 temp_neg=array.array('i', [0]*bound_estimated)  
             size=bound_estimated       
-            temp,temp_neg =construct_interval_similar(quad,lin,new_mod,factor_base,hmap,n,indexmap,temp,temp_neg,logmap,size)
+            temp,temp_neg =construct_interval_similar(quad,lin,new_mod,factor_base,hmap,n,temp,temp_neg,logmap,size,co2_list)
 
             mod_found+=process_interval_similar(ret_array,temp,temp_neg,n,quad,lin,factor_base,new_mod,size,quad_local_factors,partials,large_prime_bound)
             q+=1
@@ -1319,7 +1308,7 @@ cdef find_similar(poly_val,value,seen_primes,cmod,root,n,quad_co,factor_base,qfa
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cdef process_interval(ret_array,int [::1] interval,int [::1] interval_neg,n,quad_co2,lin_co,partials, large_prime_bound,long long [::1] local_primes,int threshold,cmod,Py_ssize_t size,quad_local_factors,z_plist,quad_interval_index,quad_interval,indexmap,hmap,grays,target_main,logmap):
+cdef process_interval(ret_array,int [::1] interval,int [::1] interval_neg,n,quad_co2,lin_co,partials, large_prime_bound,long long [::1] local_primes,int threshold,cmod,Py_ssize_t size,quad_local_factors,z_plist,quad_interval_index,quad_interval,hmap,grays,target_main,logmap):
     checked=0
     cdef Py_ssize_t j=0
     i=0
@@ -1365,7 +1354,7 @@ cdef process_interval(ret_array,int [::1] interval,int [::1] interval_neg,n,quad
                     ret_array[2].append(local_factors)
                     ret_array[3].append(quad_local_factors)
                        # if poly_val > 0:
-                    mod_found+=find_similar(poly_val, value,seen_primes,cmod,abs(root+cmod*j),n,quad_co,local_primes,z_plist,local_factors,hmap,indexmap,quad_interval_index,quad_interval,ret_array,grays,target_main,logmap,size,partials,large_prime_bound)
+                    mod_found+=find_similar(poly_val, value,seen_primes,cmod,abs(root+cmod*j),n,quad_co,local_primes,z_plist,local_factors,hmap,quad_interval_index,quad_interval,ret_array,grays,target_main,logmap,size,partials,large_prime_bound)
                     if mod_found > 50:
                         return mod_found
             j+=1
@@ -1405,7 +1394,7 @@ cdef process_interval(ret_array,int [::1] interval,int [::1] interval_neg,n,quad
                     ret_array[2].append(local_factors)
                     ret_array[3].append(quad_local_factors)
                       #  if poly_val > 0:
-                    mod_found+=find_similar(poly_val, value,seen_primes,cmod,abs(root+cmod*j),n,quad_co,local_primes,z_plist,local_factors,hmap,indexmap,quad_interval_index,quad_interval,ret_array,grays,target_main,logmap,size,partials,large_prime_bound)
+                    mod_found+=find_similar(poly_val, value,seen_primes,cmod,abs(root+cmod*j),n,quad_co,local_primes,z_plist,local_factors,hmap,quad_interval_index,quad_interval,ret_array,grays,target_main,logmap,size,partials,large_prime_bound)
                     if mod_found > 50:
                         return mod_found
             j+=1
@@ -1574,24 +1563,7 @@ def construct_quad_interval(hmap,primeslist1,rstart,rstop,n):
 
 
 
-cdef list create_hmap2indexmap(hmap,primeslist1):
-    cdef list indexmap=[]
-    i=0
-    while i < len(hmap):
-        size=primeslist1[i]
-        if size > quad_sieve_size+1:
-            size=quad_sieve_size+1
-        indexmap.append(array.array('i',[-1]*size))
-        length=hmap[i][0]
-        j=1
-        while j < length:
- 
-            indexmap[-1][hmap[i][j]]=j
 
-            j+=2
-        i+=1
-
-    return indexmap
 
 cdef create_logmap(primeslist1):
     logmap=[]
@@ -1602,7 +1574,7 @@ cdef create_logmap(primeslist1):
     logmap=array.array('i',logmap)
     return logmap
 
-def find_comb(n,hmap,primeslist1,indexmap,primeslist2):
+def find_comb(n,hmap,primeslist1,primeslist2):
     start=default_timer()
     logmap=create_logmap(primeslist1)
     ret_array=[[],[],[],[]]
@@ -1641,7 +1613,7 @@ def find_comb(n,hmap,primeslist1,indexmap,primeslist2):
     if g_debug > 0:
         duration = default_timer() - start
         print("Processing quad interval took: "+str(duration))
-    construct_interval(ret_array,partials,n,primeslist1,hmap,gathered_quad_interval,gathered_ql_interval,1,quad_sieve_size+1,quad_interval,quad_interval_index,threshold_map,indexmap,seen,large_prime_bound,tnum_list,lprimes_list,tnum_bit_list,logmap,primeslist2)
+    construct_interval(ret_array,partials,n,primeslist1,hmap,gathered_quad_interval,gathered_ql_interval,1,quad_sieve_size+1,quad_interval,quad_interval_index,threshold_map,seen,large_prime_bound,tnum_list,lprimes_list,tnum_bit_list,logmap,primeslist2)
 
     return 0
 
