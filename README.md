@@ -27,3 +27,5 @@ Update: Just quickly improved solve_roots() for Improved_QS_Variant so we utiliz
 Update: Suddenly I have fully mastered quadratic congruences. Hahahahaha. Tomorrow. Watch what happens :).
 
 Update: Alright lets get started. This will be quite a bit of work. Step by step. First step is to derive the linear coefficient for each quadratic coefficient in find_similar() for new_mod calculating it the same way we did in solve_roots. That's going to reduce a lot of the load in find_similar(). Then after that we slowly start implementing all this stuff in construct_interval_similar()... but thats going to be quite a bit of work.
+
+Update: Alright, I have reworked find_similar ... now I need to address the biggest bottleneck... construct_interval_similar. Once that is done, when precomputing with solve_roots, I should restrict that to just quadratic coefficient = 1, since we can now quickly calculate those other quadratic coefficients on the fly in find_similar... and with construct_interval_similar soon optimized.. thats when performance should really start to pick  up.
