@@ -24,3 +24,5 @@ So the whole gist of this vs default SIQS is that we can finish much earlier, an
 Update: I just did some thinking. What I should do first thing tomorrow is in QS_Variant (not the improved one) ... just have it very quickly build sieve intervals for different quadratic coefficients. Because not having to deal with lifting, these calculations can all be done instantly to derive roots and coefficients for different quadratic coefficients, lifting is kind of a pain I guess...and its going to be easier to work out of I fully implement a non-lifting PoC first. Then once that is done, that should already see a big speed boost, I can continue what I was doing in Improved_QS_Variant.
 
 Update: I'll port these findings over to QS_Variant.. so it checks the quadratic coefficients too. I'll get that done tonight. Then tomorrow I'll do the remainder of the optimizations in QS_Variant first, since it wont have p-adic lifting.. and once that is done I finalize Improved_QS_Variant aswell.
+
+Update: Ok, i've ported my worked to the QS_Variant aswell. It did slightly slow things down... but tomorrow when I do those optimizations it should gain a performance advantage.
