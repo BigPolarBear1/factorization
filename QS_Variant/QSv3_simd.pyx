@@ -1,6 +1,6 @@
 #!python
 #cython: language_level=3
-# cython: profile=False
+# cython: profile=True
 # cython: overflowcheck=False
 ###Author: Essbee Vanhoutte
 ###WORK IN PROGRESS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -32,7 +32,7 @@ cimport cython
 
 
 min_lin_sieve_size=10_000
-max_bound=1_000_000
+max_bound=10_000_000
 key=0                 #Define a custom modulus to factor
 build_workers=8
 keysize=150           #Generate a random modulus of specified bit length
@@ -385,8 +385,6 @@ def pow_mod(base, exponent, modulus):
     return pow(base,exponent,modulus)  
 
 
-
-@cython.profile(False)
 cdef tonelli(long long n, long long p):  # tonelli-shanks to solve modular square root: x^2 = n (mod p)
     cdef long long q = p - 1
     cdef long long s = 0
@@ -1012,8 +1010,8 @@ cdef process_interval(ret_array,int [::1] interval,int [::1] interval_neg,n,quad
             poly_val=quad_co*co**2-n
             co=quad_co*co**2
             local_factors, value,seen_primes = factorise_fast(poly_val,local_primes)
-
-            if value != 1 and quad_co==1:
+            quad_local_factors2=copy.deepcopy(quad_local_factors)
+            if value != 1:
                 if value < large_prime_bound:
                     if value in partials:
                         rel, lf, pv,ql = partials[value]
@@ -1023,24 +1021,23 @@ cdef process_interval(ret_array,int [::1] interval,int [::1] interval_neg,n,quad
                         co *= rel
                         local_factors ^= lf
                         poly_val *= pv
-                        quad_local_factors ^=ql
+                        quad_local_factors2 ^=ql
                     else:
-                        partials[value] = (co, local_factors, poly_val,quad_local_factors)
+                        partials[value] = (co, local_factors, poly_val,quad_local_factors2)
                         j+=1
                         continue
                 else:
                     j+=1
                     continue
-            else:
-                j+=1
-                continue
+
             if co not in ret_array[1]:
-                    #print("Found similar Smooth in pos interval: "+str(len(ret_array[0]))+" / "+str(base+2+qbase+2)+" local_factors with neg exp: "+str(local_factors)+" quad_co: "+str(quad_co)+" interval size: "+str(size)+" assumed log: "+str(interval[j])+" threshold: "+str(threshold))#+" root: "+str(root))
+              #  if quad_co !=1:
+                  #  print("Found similar Smooth in pos interval: "+str(len(ret_array[0]))+" / "+str(base+2+qbase+2)+" local_factors with neg exp: "+str(local_factors)+" quad_co: "+str(quad_co)+" interval size: "+str(size)+" assumed log: "+str(interval[j])+" threshold: "+str(threshold))#+" root: "+str(root))
                 mod_found+=1
                 ret_array[0].append(poly_val)
                 ret_array[1].append(co)
                 ret_array[2].append(local_factors)
-                ret_array[3].append(quad_local_factors)
+                ret_array[3].append(quad_local_factors2)
                         ###TO DO: Should we recurse again into find_similar?
         j+=1
     j=0
@@ -1053,8 +1050,9 @@ cdef process_interval(ret_array,int [::1] interval,int [::1] interval_neg,n,quad
             if abs(poly_val)>n:
                 break        
             co=quad_co*co**2
+            quad_local_factors2=copy.deepcopy(quad_local_factors)
             local_factors, value,seen_primes = factorise_fast(poly_val,local_primes)
-            if value != 1 and quad_co==1:
+            if value != 1:
                 if value < large_prime_bound:
                     if value in partials:
                         rel, lf, pv,ql = partials[value]
@@ -1064,24 +1062,22 @@ cdef process_interval(ret_array,int [::1] interval,int [::1] interval_neg,n,quad
                         co *= rel
                         local_factors ^= lf
                         poly_val *= pv
-                        quad_local_factors ^=ql
+                        quad_local_factors2 ^=ql
                     else:
-                        partials[value] = (co, local_factors, poly_val,quad_local_factors)
+                        partials[value] = (co, local_factors, poly_val,quad_local_factors2)
                         j+=1
                         continue
                 else:
                     j+=1
                     continue
-            else:
-                j+=1
-                continue
+
             if co not in ret_array[1]:
                   #  print("Found similar Smooth in neg interval: "+str(len(ret_array[0]))+" / "+str(base+2+qbase+2)+" local_factors with neg exp: "+str(local_factors)+" quad_co: "+str(quad_co)+" interval size: "+str(size)+" assumed log: "+str(interval_neg[j])+" threshold: "+str(threshold))#+" root: "+str(root))
                 mod_found+=1
                 ret_array[0].append(poly_val)
                 ret_array[1].append(co)
                 ret_array[2].append(local_factors)
-                ret_array[3].append(quad_local_factors)
+                ret_array[3].append(quad_local_factors2)
         j+=1
     #print("checked similar: ",checked)
     return mod_found
