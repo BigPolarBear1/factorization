@@ -26,3 +26,5 @@ Update: I just did some thinking. What I should do first thing tomorrow is in QS
 Update: I'll port these findings over to QS_Variant.. so it checks the quadratic coefficients too. I'll get that done tonight. Then tomorrow I'll do the remainder of the optimizations in QS_Variant first, since it wont have p-adic lifting.. and once that is done I finalize Improved_QS_Variant aswell.
 
 Update: Ok, i've ported my worked to the QS_Variant aswell. It did slightly slow things down... but tomorrow when I do those optimizations it should gain a performance advantage.
+
+Update: I quickly fixed the large prime variation in both PoCs. I did notice that when using multiple quadratic coefficients with QS_Variant, it is barely pulling smooths from quadractic coefficients other then 1. Which doesn't make sense... so I will need to investigate tomorrow what is going on there.
