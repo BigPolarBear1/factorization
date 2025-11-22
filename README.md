@@ -25,3 +25,5 @@ Update: Tomorrow I will optimise construct_interval_similar(). I only need to do
 Update: Just quickly improved solve_roots() for Improved_QS_Variant so we utilize all primes there and not just those for whom N*4 is a quadratic residue. Since it doesn't matter if we use even exponents. 
 
 Update: Suddenly I have fully mastered quadratic congruences. Hahahahaha. Tomorrow. Watch what happens :).
+
+Update: Alright lets get started. This will be quite a bit of work. Step by step. First step is to derive the linear coefficient for each quadratic coefficient in find_similar() for new_mod calculating it the same way we did in solve_roots. That's going to reduce a lot of the load in find_similar(). Then after that we slowly start implementing all this stuff in construct_interval_similar()... but thats going to be quite a bit of work.
