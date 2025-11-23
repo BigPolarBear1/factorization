@@ -10,7 +10,7 @@
 
 
 ###To build: python3 setup.py build_ext --inplace
-###To run: python3 run_qs.py -keysize 140 -base 10_000 -sbase 5000 -debug 1 -lin_size 1_000_000 -quad_size 10
+###To run: python3 run_qs.py -base 4000 -keysize 140 -debug 1 -lin_size 1_000_000 -quad_size 1
 
 
 
@@ -793,7 +793,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,gathered_quad_
                 i+=2
                 break
 
-            print("[i]New modulus: ",local_mod)
+           # print("[i]New modulus: ",local_mod)
 
 
             quad=i+1
@@ -829,7 +829,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,gathered_quad_
                 single_interval,single_interval_neg=construct_interval_2(quad,lin,local_mod,primelist_f,hmap,n,target,target_neg,logmap,size,cfact)
                 mod_found+=process_interval(ret_array,single_interval,single_interval_neg,n,quad,lin,partials,large_prime_bound,primelist_f,threshold_map[i],local_mod,size,quad_local_factors,z_plist,quad_interval_index,quad_interval,hmap,grays,target_main,logmap)
                 if mod_found+1 > 10:  
-                       # print("", end=f"[i]Smooths: {len(ret_array[0])} / {base*1+2+qbase}\r")
+                    print("", end=f"[i]Smooths: {len(ret_array[0])} / {base*1+2+qbase}\r")
                     mod2_found+=mod_found
                     mod_found=0
                 if mod2_found+1 > 100:
@@ -1078,31 +1078,31 @@ cdef process_interval_similar(ret_array,int [::1] interval,int [::1] interval_ne
             co=quad_co*co**2
             local_factors, value,seen_primes = factorise_fast(poly_val,local_primes)
             quad_local_factors2=copy.deepcopy(quad_local_factors)
-            if value == 1:
-                #if value < large_prime_bound:
-                 #   if value in partials:
-                  #      rel, lf, pv,ql = partials[value]
-                   #     if rel == co:
-                    #        j+=1
-                     #       continue
-            #            co *= rel
-             #           local_factors ^= lf
-              #          poly_val *= pv
-               #         quad_local_factors2 ^=ql
-           #         else:
-            #            partials[value] = (co, local_factors, poly_val,quad_local_factors2)
-             #           j+=1
-              #          continue
-    #            else:
-     #               j+=1
-      #              continue
-                if co not in ret_array[1]:
-                    print("Found similar Smooth in pos interval: "+str(len(ret_array[0]))+" / "+str(base+2+qbase+2)+" local_factors: "+str(seen_primes)+" quad_co: "+str(quad_co)+" interval size: "+str(size)+" assumed log: "+str(interval[j])+" threshold: "+str(threshold))#+" root: "+str(root))
-                    mod_found+=1
-                    ret_array[0].append(poly_val)
-                    ret_array[1].append(co)
-                    ret_array[2].append(local_factors)
-                    ret_array[3].append(quad_local_factors2)
+            if value != 1:
+                if value < large_prime_bound:
+                    if value in partials:
+                        rel, lf, pv,ql = partials[value]
+                        if rel == co:
+                            j+=1
+                            continue
+                        co *= rel
+                        local_factors ^= lf
+                        poly_val *= pv
+                        quad_local_factors2 ^=ql
+                    else:
+                        partials[value] = (co, local_factors, poly_val,quad_local_factors2)
+                        j+=1
+                        continue
+                else:
+                    j+=1
+                    continue
+            if co not in ret_array[1]:
+                  #  print("Found similar Smooth in pos interval: "+str(len(ret_array[0]))+" / "+str(base+2+qbase+2)+" local_factors: "+str(seen_primes)+" quad_co: "+str(quad_co)+" interval size: "+str(size)+" assumed log: "+str(interval[j])+" threshold: "+str(threshold))#+" root: "+str(root))
+                mod_found+=1
+                ret_array[0].append(poly_val)
+                ret_array[1].append(co)
+                ret_array[2].append(local_factors)
+                ret_array[3].append(quad_local_factors2)
                         ###TO DO: Should we recurse again into find_similar?
         j+=1
     j=0
@@ -1117,31 +1117,31 @@ cdef process_interval_similar(ret_array,int [::1] interval,int [::1] interval_ne
             co=quad_co*co**2
             quad_local_factors2=copy.deepcopy(quad_local_factors)
             local_factors, value,seen_primes = factorise_fast(poly_val,local_primes)
-            if value == 1:
-                #if value < large_prime_bound:
-           #         if value in partials:
-            #            rel, lf, pv,ql = partials[value]
-             #           if rel == co:
-              #              j+=1
-               #             continue
-                #        co *= rel
-                 #       local_factors ^= lf
-                  #      poly_val *= pv
-                   #     quad_local_factors2 ^=ql
- #                   else:
-  #                      partials[value] = (co, local_factors, poly_val,quad_local_factors2)
-   #                     j+=1
-    #                    continue
-     #           else:
-      #              j+=1
-       #             continue
-                if co not in ret_array[1]:
-                    print("Found similar Smooth in neg interval: "+str(len(ret_array[0]))+" / "+str(base+2+qbase+2)+" local_factors: "+str(seen_primes)+" quad_co: "+str(quad_co)+" interval size: "+str(size)+" assumed log: "+str(interval_neg[j])+" threshold: "+str(threshold))#+" root: "+str(root))
-                    mod_found+=1
-                    ret_array[0].append(poly_val)
-                    ret_array[1].append(co)
-                    ret_array[2].append(local_factors)
-                    ret_array[3].append(quad_local_factors2)
+            if value != 1:
+                if value < large_prime_bound:
+                    if value in partials:
+                        rel, lf, pv,ql = partials[value]
+                        if rel == co:
+                            j+=1
+                            continue
+                        co *= rel
+                        local_factors ^= lf
+                        poly_val *= pv
+                        quad_local_factors2 ^=ql
+                    else:
+                        partials[value] = (co, local_factors, poly_val,quad_local_factors2)
+                        j+=1
+                        continue
+                else:
+                    j+=1
+                    continue
+            if co not in ret_array[1]:
+                   # print("Found similar Smooth in neg interval: "+str(len(ret_array[0]))+" / "+str(base+2+qbase+2)+" local_factors: "+str(seen_primes)+" quad_co: "+str(quad_co)+" interval size: "+str(size)+" assumed log: "+str(interval_neg[j])+" threshold: "+str(threshold))#+" root: "+str(root))
+                mod_found+=1
+                ret_array[0].append(poly_val)
+                ret_array[1].append(co)
+                ret_array[2].append(local_factors)
+                ret_array[3].append(quad_local_factors2)
         j+=1
     #print("checked similar: ",checked)
     return mod_found
@@ -1223,7 +1223,7 @@ cdef find_similar(poly_val,value,seen_primes,cmod,root,n,quad_co,factor_base,qfa
  
         i+=2
     orig_lin_parts=enum_stuff(enum_quad,enum_lin2,1,new_mod,enum_quad2)
-    print("[i]Attempting to find smooths with factors: "+str(local_factors)+" bitlen new modulus: "+str(bitlen(abs(new_mod)))+" bitlen old modulus: "+str(bitlen(abs(cmod))))
+    #print("[i]Attempting to find smooths with factors: "+str(local_factors)+" bitlen new modulus: "+str(bitlen(abs(new_mod)))+" bitlen old modulus: "+str(bitlen(abs(cmod))))
     co2_list=gen_co2(factor_base,hmap,new_mod,n)
     quad=1
     while quad < quad_sieve_size+1:
@@ -1352,7 +1352,7 @@ cdef process_interval(ret_array,int [::1] interval,int [::1] interval_neg,n,quad
            
                 if co not in ret_array[1]:
                         
-                    print("Found Smooth "+str(len(ret_array[0]))+" / "+str(base+2+qbase+2)+" local_factors: "+str(seen_primes))
+                   # print("Found Smooth "+str(len(ret_array[0]))+" / "+str(base+2+qbase+2)+" local_factors: "+str(seen_primes))
                     mod_found+=1
                     ret_array[0].append(poly_val)
                     ret_array[1].append(co)
@@ -1392,7 +1392,7 @@ cdef process_interval(ret_array,int [::1] interval,int [::1] interval_neg,n,quad
                         continue
                 if co not in ret_array[1]:
 
-                    print("Found Smooth "+str(len(ret_array[0]))+" / "+str(base+2+qbase+2)+" local_factors: "+str(seen_primes))
+                #    print("Found Smooth "+str(len(ret_array[0]))+" / "+str(base+2+qbase+2)+" local_factors: "+str(seen_primes))
                     mod_found+=1
                     ret_array[0].append(poly_val)
                     ret_array[1].append(co)
@@ -1671,7 +1671,6 @@ def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_
     launch(n,primeslist1,primeslist2)     
     duration = default_timer() - start
     print("\nFactorization in total took: "+str(duration))
-
 
 
 
