@@ -19,7 +19,7 @@ UPDATE: I'm going to quit doing optimizations for now and focus on the high leve
 To do:
 1. First we need to create a sieve interval for the quadratic coefficienets. And save all the quadratic coefficients that factor over the quadratic factor base (qbase in PoC). This can be done at the very start of the code outside of all the inner loops and logic.
 2. We need to create a proper split between factor basis. One large factor base, where we use only even exponents, and one small where we use both odd and even exponents. This way we can size the matrix in the linear algebra step ot the small factor base.. and we won't have a limit on how large the large factor base can be.
-3. In find_similar, we don't want to blindly try out quadratic coefficients and build sieve intervals for each. We want to check all even exponent primes, and see at what quadratic coefficient they occur with a max bound for the root value... then we can use that info to quickly find smooths. And THAT will be much better then what I'm doing now.
+3. In find_similar, we don't want to blindly try out quadratic coefficients and build sieve intervals for each. We want to check all even exponent primes, and see at what quadratic coefficient they occur with a max bound for the root value... then we can use that info to quickly find smooths. And THAT will be much better then what I'm doing now. As it will allows us to actually utilize very large prime squares. This will be the only way to actually attack very large numbers. If this is going to work at all, then this is how it must be done.
 
 I think I need about a way to get it all finished and implemented. But then it should be really good.
 
