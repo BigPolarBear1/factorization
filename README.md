@@ -12,7 +12,7 @@ See below for an improved way of performing what this PoC does.. I'll delete thi
 #### To run from folder "Improved_QS_Variant" (Implements more of my number theory and attempts to succeed with fewer smooths by using p-adic lifting):</br></br>
 
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 140  -base 10_000 -sbase 5000 -debug 1 -lin_size 1_000_000 -quad_size 10</br></br>
+To run: python3 run_qs.py -keysize 140  -base 5_000 -sbase 5000 -debug 1 -lin_size 1_000_000 -quad_size 10</br></br>
 
 UPDATE: I'm going to quit doing optimizations for now and focus on the high level strategy of Improved_QS_Variant. That needs some reworking.
 
@@ -23,4 +23,6 @@ To do:
 4. (edit) And thinking a little more about the structure. I should get rid of find_similar(), construct_interval_similar() and process_interval_similar() and just apply the things described above for the loop in construct_interval(). Because otherwise finding that initial smooth will become a pain. We really want to center the core of the algorithm around finding large squares to reduce the size of smooth candidates and using multiple quadratic coefficients.
 
 I think I need about a way to get it all finished and implemented. But then it should be really good.
+
+Anyway.. I'll take a break for the rest of the day and go running and think a little about the exact implementation details.
 
