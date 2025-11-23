@@ -1387,7 +1387,7 @@ def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_
         count+=1
     print("[i]Number of digits: ",count)
     print("[i]Gathering prime numbers..")
-    primeslist.extend(get_primes(3,1000000))
+    primeslist.extend(get_primes(3,10000000))
     i=0
     while len(primeslist1) < base:
         primeslist1.append(primeslist[i])
@@ -1399,6 +1399,7 @@ def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_
     launch(n,primeslist1,primeslist2)     
     duration = default_timer() - start
     print("\nFactorization in total took: "+str(duration))
+
 
 
 
