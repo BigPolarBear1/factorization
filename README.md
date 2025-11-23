@@ -15,3 +15,5 @@ To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 140  -base 4000 -debug 1 -lin_size 1_000_000 -quad_size 10</br></br>
 
 UPDATE: Reworking some of the high level logic in Improved_QS_Variant today..
+
+UPDATE: AAAAAAAAAAAAARGH. So the way you do this is you have to figure out at what quadratic coefficients these large squares (even exponents) cluster together. I'll have to do a bunch of refactoring bleh.
