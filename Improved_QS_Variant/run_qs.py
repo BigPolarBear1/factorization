@@ -7,8 +7,8 @@ keysize=100
 key=0
 workers=1
 debug=0
-base=10000
-sbase=2000
+base=5000
+sbase=5000
 lin_size=100_000
 quad_size=100
 def print_banner():
@@ -56,7 +56,7 @@ def parse_args():
     if args.base != None:
         base=args.base  
     if args.sbase != None:
-        sbase=args.sbase 
+        sbase=args.sbase  
     if args.lin_size != None:
         lin_size=args.lin_size  
     if args.quad_size != None:
@@ -66,8 +66,8 @@ def parse_args():
 if __name__ == "__main__":
     parse_args()
     print_banner()
-   # cProfile.runctx("QSv3_simd.main(keysize,workers,debug,base,key,lin_size,quad_size)", globals(), locals(), "Profile.prof")
+    #cProfile.runctx("QSv3_simd.main(keysize,workers,debug,base,key,lin_size,quad_size)", globals(), locals(), "Profile.prof")
 
-   # s = pstats.Stats("Profile.prof")
-   # s.strip_dirs().sort_stats("time").print_stats()
+    #s = pstats.Stats("Profile.prof")
+    #s.strip_dirs().sort_stats("time").print_stats()
     QSv3_simd.main(keysize,workers,debug,base,key,lin_size,quad_size,sbase)
