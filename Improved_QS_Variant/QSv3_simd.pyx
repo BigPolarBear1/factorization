@@ -690,6 +690,25 @@ def gen_co2(factor_base,hmap,cmod,n):
         i+=1
     return co2_list
 
+
+def filter_quads(qbase):
+    valid_quads=[]
+    valid_quads_factors=[]
+    i=1
+    while i < quad_sieve_size+1:
+        if i != 1 and math.sqrt(i)%1==0:
+            i+=1
+            continue
+        quad_local_factors, quad_value,seen_primes = factorise_fast(i,qbase)  ##TO DO: move this way up
+
+        if quad_value != 1:
+            i+=1
+            continue
+        valid_quads.append(i)
+        valid_quads_factors.append(quad_local_factors)
+        i+=1
+    return valid_quads,valid_quads_factors
+
 cdef construct_interval(list ret_array,partials,n,primeslist,hmap,gathered_quad_interval,gathered_ql_interval,rstart,rstop,quad_interval,quad_interval_index,threshold_map,seen,large_prime_bound,tnum_list,lprimes_list,tnum_bit_list,logmap,primeslist2):
     grays = get_gray_code(20)
     target_main = array.array('i', [0]*lin_sieve_size)
@@ -706,7 +725,8 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,gathered_quad_
     z_plist=copy.copy(primeslist2)
     z_plist.insert(0,len(primeslist2)+1)
     z_plist=array.array('q',z_plist)
-
+    valid_quads,valid_quads_factors=filter_quads(z_plist)
+    print("valid_quads: "+str(valid_quads))
     primeslist2.insert(0,2)
     primeslist2.insert(0,-1)
 
@@ -741,16 +761,14 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,gathered_quad_
          
             quad=1
             new_mod=local_mod
-            while quad < quad_sieve_size+1:
-                if (quad != 1 and math.sqrt(quad)%1==0) or gcd(new_mod,quad)!=1:
-                    quad+=1
+            r=0
+            while r < len(valid_quads):
+                quad=valid_quads[r]
+                if gcd(new_mod,quad)!=1:
+                    r+=1
                     continue
  
-                quad_local_factors, quad_value,seen_primes = factorise_fast(quad,z_plist)  ##TO DO: move this way up
-                if quad_value != 1:
-                    quad+=1
-                    continue
-               
+                quad_local_factors=valid_quads_factors[r]               
               #  bound_estimated=math.floor(math.sqrt(2*n)/math.sqrt(quad))
               #  bound_estimated=math.floor(bound_estimated/new_mod)
               #  if bound_estimated < min_lin_sieve_size:
@@ -808,7 +826,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,gathered_quad_
                     q+=1
      
                 if skip == 1:
-                    quad+=1
+                    r+=1
                     continue
                 lin2=lin3%new_mod
                 poly_ind=0
@@ -859,7 +877,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,gathered_quad_
                     q+=1
 
 
-                quad+=1
+                r+=1
 
         
         i+=2
@@ -1448,8 +1466,7 @@ def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_
     primeslist.extend(get_primes(3,20000000))
     i=0
     while len(primeslist1) < base:
-        if jacobi(4*n,primeslist[i])==1:
-            primeslist1.append(primeslist[i])
+        primeslist1.append(primeslist[i])
         i+=1
     i=0
     while len(primeslist2) < qbase:
