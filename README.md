@@ -15,7 +15,7 @@ Note: With a large enough -base and lin_size this PoC will find smooths for 110 
 #### To run from folder "Improved_QS_Variant" (Implements more of my number theory and attempts to succeed with fewer smooths by using p-adic lifting):</br></br>
 
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 140 -base 10_000 -sbase 5000 -debug 1 -lin_size 1_000_000 -quad_size 1_000</br></br>
+To run: python3 run_qs.py -keysize 140 -base 10_000 -sbase 5000 -debug 1 -lin_size 1_000_000 -quad_size 100</br></br>
 
 Alright, doing some big reductions in complexity and in the process of rewriting the high level approach of Improved_QS_Variant.
 If you run the above command, it should finish somewhere between 300-500 smooths. This is because we only mark the sieve interval with odd exponents if the prime is less then the -sbase value.
