@@ -17,7 +17,7 @@ To run: python3 run_qs.py -keysize 140 -base 10_000 -sbase 4000 -debug 1 -lin_si
 Alright, doing some big reductions in complexity and in the process of rewriting the high level approach of Improved_QS_Variant.
 If you run the above command, it should finish somewhere between 300-500 smooths. This is because we only mark the sieve interval with odd exponents if the prime is less then the -sbase value.
 
-The code is also already in place to check multiple quadratic coefficients, but it wont find much smooths on those with resizing the modulus. Which I dont want to waste time on as I'm going to rework all that code next.
+The code is also already in place to check multiple quadratic coefficients, but it wont find much smooths on those without resizing the modulus. Which I dont want to waste time on as I'm going to rework all that code next.
 
 So to factor really large numbers (400-bit+) .... what we need to do is reduce the smooth candidates with very large squares. And we can go looking for these very large squares at different quadrati coefficients. So this week, this is what I will start implementing. All the math is there already. It all works. I just need to rewrite some portions now and we're done....
 
