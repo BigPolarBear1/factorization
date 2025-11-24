@@ -12,22 +12,13 @@ See below for an improved way of performing what this PoC does.. I'll delete thi
 #### To run from folder "Improved_QS_Variant" (Implements more of my number theory and attempts to succeed with fewer smooths by using p-adic lifting):</br></br>
 
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 140  -base 5_000 -sbase 5000 -debug 1 -lin_size 1_000_000 -quad_size 10</br></br>
+To run: python3 run_qs.py -keysize 140 -base 10_000 -sbase 4000 -debug 1 -lin_size 1_000_000 -quad_size 1</br></br>
 
-UPDATE: I'm going to quit doing optimizations for now and focus on the high level strategy of Improved_QS_Variant. That needs some reworking.
+Alright, doing some big reductions in complexity and in the process of rewriting the high level appraoch of Improed_QS_Variant.
+If you run the above command, it should finish somewhere between 300-500 smooths. This is because we only mark the sieve interval with odd exponents i the prime is less then the -sbase value.
 
-To do:
-1. First we need to create a sieve interval for the quadratic coefficienets. And save all the quadratic coefficients that factor over the quadratic factor base (qbase in PoC). This can be done at the very start of the code outside of all the inner loops and logic.
-2. We need to create a proper split between factor basis. One large factor base, where we use only even exponents, and one small where we use both odd and even exponents. This way we can size the matrix in the linear algebra step ot the small factor base.. and we won't have a limit on how large the large factor base can be.
-3. In find_similar, we don't want to blindly try out quadratic coefficients and build sieve intervals for each. We want to check all even exponent primes, and see at what quadratic coefficient they occur with a max bound for the root value... then we can use that info to quickly find smooths. And THAT will be much better then what I'm doing now. As it will allows us to actually utilize very large prime squares. This will be the only way to actually attack very large numbers. If this is going to work at all, then this is how it must be done.
-4. (edit) And thinking a little more about the structure. I should get rid of find_similar(), construct_interval_similar() and process_interval_similar() and just apply the things described above for the loop in construct_interval(). Because otherwise finding that initial smooth will become a pain. We really want to center the core of the algorithm around finding large squares to reduce the size of smooth candidates and using multiple quadratic coefficients.
+The code is also already in place to check multiple quadratic coefficients, but it wont find much smooths on those with resizing the modulus. Which I dont want to waste time on as I'm going to rework all that code next.
 
-I think I need about a way to get it all finished and implemented. But then it should be really good.
+So to factor really large numbers (400-bit+) .... what we need to do is reduce the smooth candidates with very large squares. And we can go looking for these very large squares at different quadrati coefficients. So this week, this is what I will start implementing. All the math is there already. It all works. I just need to rewrite some portions now and we're done....
 
-Anyway.. I'll take a break for the rest of the day and go running and think a little about the exact implementation details.
-
-Update: I'll start tomorrow... we really need to rely on large squares to reduce smooth candidates. The way its implemented is not good because we only hit large squares if they happen to be within range of our sieve interval and within range of our quadratic coefficients. We need to proactively look for them and center the algorithm around them. 
-
-Update: Couldn't sleep so did a little more work. May have a first prototype tomorrow. It's funny because this is all stuff I tried in some fashion in the last few months... I guess it just took a little more experience to implent it the correct way. Next week I finish this.... 
-
-Update: Alright lets get to work. Goal for today is to atleast have a rough outline.
+Sad day for the NSA cryptologists. Not that I feel bad for them, because they are probably a bunch of nazi pricks who hate people like me.
