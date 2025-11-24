@@ -807,7 +807,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,gathered_quad_
                     temp,temp_neg =construct_interval_2(quad,lin,new_mod,primelist_f,hmap,n,temp,temp_neg,logmap,size,co2_list)
 
                     mod_found+=process_interval(ret_array,temp,temp_neg,n,quad,lin,primelist_f  ,new_mod,size,quad_local_factors,partials,large_prime_bound)
-                    if mod_found+1 > 10:  
+                    if mod_found+1 > 1:  
                         print("", end=f"[i]Smooths: {len(ret_array[0])} / {base*1+2+qbase}\r")
                         mod2_found+=mod_found
                         mod_found=0
@@ -931,7 +931,7 @@ cdef construct_interval_2(quad_co,lin_co,cmod,long long [::1] primeslist,hmap,n,
     cdef unsigned long long log
     root=get_root(cmod,lin_co,quad_co)
     i=1
-
+    added=0
     while i < length:
         prime=primeslist[i]
         prime_index=i-1
@@ -947,6 +947,7 @@ cdef construct_interval_2(quad_co,lin_co,cmod,long long [::1] primeslist,hmap,n,
         if z_inv == None or jacobi(z_inv,prime)!=1:
             i+=1
             continue
+        added+=1
         root_mult=tonelli(z_inv,prime)
         temp_co=co2_list[prime_index][0]
         r=get_root(prime,temp_co,temp_quad)
@@ -1031,8 +1032,6 @@ cdef process_interval(ret_array,int [::1] interval,int [::1] interval_neg,n,quad
                     continue
 
             if co not in ret_array[1]:
-              #  if quad_co !=1:
-                  #  print("Found similar Smooth in pos interval: "+str(len(ret_array[0]))+" / "+str(base+2+qbase+2)+" local_factors with neg exp: "+str(local_factors)+" quad_co: "+str(quad_co)+" interval size: "+str(size)+" assumed log: "+str(interval[j])+" threshold: "+str(threshold))#+" root: "+str(root))
                 mod_found+=1
                 ret_array[0].append(poly_val)
                 ret_array[1].append(co)
@@ -1072,7 +1071,6 @@ cdef process_interval(ret_array,int [::1] interval,int [::1] interval_neg,n,quad
                     continue
 
             if co not in ret_array[1]:
-                  #  print("Found similar Smooth in neg interval: "+str(len(ret_array[0]))+" / "+str(base+2+qbase+2)+" local_factors with neg exp: "+str(local_factors)+" quad_co: "+str(quad_co)+" interval size: "+str(size)+" assumed log: "+str(interval_neg[j])+" threshold: "+str(threshold))#+" root: "+str(root))
                 mod_found+=1
                 ret_array[0].append(poly_val)
                 ret_array[1].append(co)
@@ -1387,10 +1385,14 @@ def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_
         count+=1
     print("[i]Number of digits: ",count)
     print("[i]Gathering prime numbers..")
-    primeslist.extend(get_primes(3,10000000))
+    primeslist.extend(get_primes(3,20000000))
     i=0
     while len(primeslist1) < base:
-        primeslist1.append(primeslist[i])
+        if quad_sieve_size==1:
+            if jacobi(4*n,primeslist[i])==1:
+                primeslist1.append(primeslist[i])
+        else:
+            primeslist1.append(primeslist[i])
         i+=1
     i=0
     while len(primeslist2) < qbase:
@@ -1399,7 +1401,6 @@ def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_
     launch(n,primeslist1,primeslist2)     
     duration = default_timer() - start
     print("\nFactorization in total took: "+str(duration))
-
 
 
 
