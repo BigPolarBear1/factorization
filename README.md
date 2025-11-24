@@ -29,3 +29,5 @@ Anyway.. I'll take a break for the rest of the day and go running and think a li
 Update: I'll start tomorrow... we really need to rely on large squares to reduce smooth candidates. The way its implemented is not good because we only hit large squares if they happen to be within range of our sieve interval and within range of our quadratic coefficients. We need to proactively look for them and center the algorithm around them. 
 
 Update: Couldn't sleep so did a little more work. May have a first prototype tomorrow. It's funny because this is all stuff I tried in some fashion in the last few months... I guess it just took a little more experience to implent it the correct way. Next week I finish this.... 
+
+Update: Alright lets get to work. Goal for today is to atleast have a rough outline.
