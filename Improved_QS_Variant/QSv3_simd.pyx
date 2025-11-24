@@ -31,7 +31,7 @@ import array
 cimport cython
 
 
-min_lin_sieve_size=10_000
+min_lin_sieve_size=100_000
 max_bound=10_000_000
 key=0                 #Define a custom modulus to factor
 build_workers=8
@@ -47,7 +47,6 @@ g_lift_lim=0.5
 thresvar=10  ##Log value base 2 for when to check smooths with trial factorization. Eventually when we fix all the bugs we should be able to furhter lower this.
 lp_multiplier=2
 min_prime=1
-g_max_diff_similar=5
 g_enable_custom_factors=0
 g_p=107
 g_q=41
@@ -726,7 +725,6 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,gathered_quad_
     z_plist.insert(0,len(primeslist2)+1)
     z_plist=array.array('q',z_plist)
     valid_quads,valid_quads_factors=filter_quads(z_plist)
-    print("valid_quads: "+str(valid_quads))
     primeslist2.insert(0,2)
     primeslist2.insert(0,-1)
 
@@ -769,11 +767,11 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,gathered_quad_
                     continue
  
                 quad_local_factors=valid_quads_factors[r]               
-              #  bound_estimated=math.floor(math.sqrt(2*n)/math.sqrt(quad))
-              #  bound_estimated=math.floor(bound_estimated/new_mod)
-              #  if bound_estimated < min_lin_sieve_size:
-                  #  break
-                bound_estimated=lin_sieve_size
+                bound_estimated=math.floor(math.sqrt(2*n)/math.sqrt(quad))
+                bound_estimated=math.floor(bound_estimated/new_mod)
+                if bound_estimated < min_lin_sieve_size:
+                    break
+                #bound_estimated=lin_sieve_size
                 lin_co_array=[]
                 lin_parts=[]
                 q=0
@@ -848,14 +846,14 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,gathered_quad_
                 q=0
                 while q < len(lin_co_array):
                     lin=lin_co_array[q]
-                    #if bound_estimated < max_bound:
-                    temp=target_main[:bound_estimated]
-                    temp_neg=target_main[:bound_estimated]
-                    #else:
+                    if bound_estimated < max_bound:
+                        temp=target_main[:bound_estimated]
+                        temp_neg=target_main[:bound_estimated]
+                    else:
 
-                        #bound_estimated=max_bound
-                        #temp=array.array('i', [0]*bound_estimated)
-                        #temp_neg=array.array('i', [0]*bound_estimated)  
+                        bound_estimated=max_bound
+                        temp=array.array('i', [0]*bound_estimated)
+                        temp_neg=array.array('i', [0]*bound_estimated)  
                     size=bound_estimated      
          
                     temp,temp_neg =construct_interval_2(quad,lin,new_mod,primelist_f,hmap,n,temp,temp_neg,logmap,size,co2_list)
@@ -1069,7 +1067,7 @@ cdef process_interval(ret_array,int [::1] interval,int [::1] interval_neg,n,quad
 
     seen=0
     quad_co=quad_co2
-    threshold = int(math.log2((lin_sieve_size//2)*math.sqrt(n*4*quad_co)) - thresvar)
+    threshold = int(math.log2(n)-math.log2(cmod))-thresvar
     j=0
     while j < size:
         if interval[j] > threshold:
@@ -1094,6 +1092,7 @@ cdef process_interval(ret_array,int [::1] interval,int [::1] interval_neg,n,quad
                         local_factors ^= lf
                         poly_val *= pv
                         quad_local_factors2 ^=ql
+                        print("hit")
                     else:
                         partials[value] = (co, local_factors, poly_val,quad_local_factors2)
                         j+=1
@@ -1103,7 +1102,7 @@ cdef process_interval(ret_array,int [::1] interval,int [::1] interval_neg,n,quad
                     continue
 
             if co not in ret_array[1]:
-                print("Found: "+str(seen_primes)+" cmod: "+str(cmod)+" pos "+str(j)+" quad: "+str(quad_co)+" Smooth#: "+str(len(ret_array[0])+1))
+                print("Found: "+str(seen_primes)+" cmod: "+str(cmod)+" pos "+str(j)+" quad: "+str(quad_co)+" Smooth#: "+str(len(ret_array[0])+1)+" interval size: "+str(size))
                 mod_found+=1
                 ret_array[0].append(poly_val)
                 ret_array[1].append(co)
@@ -1146,7 +1145,7 @@ cdef process_interval(ret_array,int [::1] interval,int [::1] interval_neg,n,quad
                     continue
 
             if co not in ret_array[1]:
-                print("Found: "+str(seen_primes)+" cmod: "+str(cmod)+" neg "+str(j)+" quad: "+str(quad_co)+" Smooth#: "+str(len(ret_array[0])+1))
+                print("Found: "+str(seen_primes)+" cmod: "+str(cmod)+" neg "+str(j)+" quad: "+str(quad_co)+" Smooth#: "+str(len(ret_array[0])+1)+" interval size: "+str(size))
                 mod_found+=1
                 ret_array[0].append(poly_val)
                 ret_array[1].append(co)
