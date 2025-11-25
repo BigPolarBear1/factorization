@@ -6,6 +6,8 @@ Note2: I am antifa, leader of the cipherpunk, fuck the FBI department.
 
 Note3: Once Improved_QS_Variant is finished, I will rewrite most portions of the paper completely from start. I keep finding myself "maturing" out of these papers.. because I keep learning and advancing with my math skills. There's so much stuff in that paper that I just want to completely rewrite because even to me it looks way too amateuristic now.
 
+Note4: I am utterly broke so if anyone wants to make donations to keep this research going a little longer: big_polar_bear1@proton.me email me... thanks.
+
 #### To run from folder "QS_variant" (Standard SIQS with our number theory as backend):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 220 -base 20_000 -debug 1 -lin_size 10_000_000 -quad_size 1</br></br>
