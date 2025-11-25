@@ -17,21 +17,13 @@ Note: With a large enough -base and lin_size this PoC will find smooths for 110 
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 140 -base 10_000 -sbase 5000 -debug 1 -lin_size 1_000_000 -quad_size 100</br></br>
 
-Alright, doing some big reductions in complexity and in the process of rewriting the high level approach of Improved_QS_Variant.
-If you run the above command, it should finish somewhere between 300-500 smooths. This is because we only mark the sieve interval with odd exponents if the prime is less then the -sbase value.
+UPDATE: Today I did some testing, to figure out the absolute best way to finish this PoC. 
 
-The code is also already in place to check multiple quadratic coefficients, but we need to rework all of that to not waste time unless we have a large square to reduce the bit length of smooth candidates.
+What we need to do is this:
 
-So to factor really large numbers (400-bit+) .... what we need to do is reduce the smooth candidates with very large squares. And we can go looking for these very large squares at different quadrati coefficients. So this week, this is what I will start implementing. All the math is there already. It all works. I just need to rewrite some portions now and we're done....
+1. Generate a square modulus with generate_modulus()
+2. Have a small factor base and a large factor base. The small factor base we use for trial factorization of smooth candidates and the large one we use to find large squares to reduce the bit size of smooth candidates.
+3. This will be the most intensive loop of the algorithm and needs to be hyper optimized, but just keep calculating the root of the modulus*(prime^even_exp) for different quadratic coefficients up to a very large bound (as long as these quadratic coefficients factor over the quadratic factor base.. which is a third factor base outside of the small and large factor base from step 2). If the root becomes small enough we save it.... and repeat for all primes. And we will need to optimize this loop so that going from quadratic coefficient to quadratic coefficient becomes as simply as one multiplication (which I think is possible or close to).
+4. Then we feed that into process_interval... and if the smooth candidates is reduced enough in bitsize we do trial factorization using the small factor base.
 
-Sad day for the NSA cryptologists. Not that I feel bad for them, because they are probably a bunch of nazi pricks who hate people like me.
-
-Update: Alrighter I've added filter_quads() ... which is going to check which quadratic coefficients factor over the factor base. Tomorrow I need to add another functions, that will iterate this list and mark which primes with even exponents occure there and their root value (with a max_bound for the root value). This will actually end up replacing all our sieve interval logic... because when we factor 400-bit we need to reduce the smooth candidate bit size using even exponents... without that reduction, we don't even need to bother because there is no chance in hell otherwise we'll find a smooth there (and we don't want huge factor bases.. atleast not for the primes used for odd exponents.. for even exponents.. it doesn't matter).
-
-Bit of a slow day today I guess. I'm still thinking how to best finish it now. A quick heuristic could be to just check which quadratic coefficients have a high concentration of large squares with small-ish roots (roots smaller then a certain bound) ... and then go ahead and do the whole creating an interval thing. I'll try some things tomorrow.
-
-Update: yea I think I know how I will do it tomorrow..  shouldn't be too much work. 
-
-Update: Alright... doing some more work today. I did some test, and if you only mark a sieve interval using very large primes with even exponents.. the odds of them ever landing on the same interval index are very low, and you would need enormous sieve intervals to increase those odds (not feasible for me). Hence, we cannot use sieve intervals for this. So what we need to do is use a fairly large quadratic coefficient range... and just do quick calculations without sieve intervals to find places where those do cluster together on the same root (within certain bounds). For small numbers, this will likely factor slower then SIQS... however, it does give us a fighting chance against very large bitsizes. Let me begin working out a first draft.
-
-Update: I guess we could have like say 100_000 quadratic coefficients, and have a sieve interval of size 10 (something really small) and then just go over each prime and lifting to even exponents and keep recalculating that root for each quadratic coefficient and if it is small enough mark it in the sieve interval of size 10. And then just make that go really fast.
+The only thing that matters is finding very large squares quickly to reduce the bitlength of smooth candidates... this is the ONLY way a quadratic sieve type algorithm can punch past that 110 digit ceiling. I'm going to make it happen. Watch as I perform cyber magic now, hahaha. Give me a few days. Nearly there now.... so close.
