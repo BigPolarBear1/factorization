@@ -34,7 +34,7 @@ def print_banner():
     return
 
 def parse_args():
-    global keysize,key,workers,debug,base,lin_size,quad_size,sbase
+    global keysize,key,workers,debug,base,quad_size,sbase
     parser = argparse.ArgumentParser(description='Factor stuff')
     parser.add_argument('-key',type=int,help='Provide a key instead of generating one') 
     parser.add_argument('-keysize',type=int,help='Generate a key of input size')    
@@ -42,7 +42,6 @@ def parse_args():
     parser.add_argument('-debug',type=int,help='1 to enable more verbose output')
     parser.add_argument('-base',type=int,help='Size of the factor base')
     parser.add_argument('-sbase',type=int,help='Size of the small factor base')
-    parser.add_argument('-lin_size',type=int,help='Size of the factor base')
     parser.add_argument('-quad_size',type=int,help='Size of the factor base')
     args = parser.parse_args()
     if args.keysize != None:    
@@ -57,8 +56,7 @@ def parse_args():
         base=args.base  
     if args.sbase != None:
         sbase=args.sbase  
-    if args.lin_size != None:
-        lin_size=args.lin_size  
+ 
     if args.quad_size != None:
         quad_size=args.quad_size   
     return
@@ -66,8 +64,8 @@ def parse_args():
 if __name__ == "__main__":
     parse_args()
     print_banner()
-    #cProfile.runctx("QSv3_simd.main(keysize,workers,debug,base,key,lin_size,quad_size)", globals(), locals(), "Profile.prof")
+    cProfile.runctx("QSv3_simd.main(keysize,workers,debug,base,key,quad_size,sbase)", globals(), locals(), "Profile.prof")
 
-    #s = pstats.Stats("Profile.prof")
-    #s.strip_dirs().sort_stats("time").print_stats()
-    QSv3_simd.main(keysize,workers,debug,base,key,lin_size,quad_size,sbase)
+    s = pstats.Stats("Profile.prof")
+    s.strip_dirs().sort_stats("time").print_stats()
+   # QSv3_simd.main(keysize,workers,debug,base,key,quad_size,sbase)
