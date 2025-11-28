@@ -19,12 +19,6 @@ Note: With a large enough -base and lin_size this PoC will find smooths for 110 
 #### To run from folder "Improved_QS_Variant" (Implements more of my number theory and attempts to succeed with fewer smooths by using p-adic lifting):</br></br>
 
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 80 -base 10_000 -sbase 2_000 -debug 1 -quad_size 100_000</br></br>
+To run: python3 run_qs.py -keysize 80 -base 10_000 -sbase 1_000 -debug 1 -quad_size 100_000</br></br>
 
-Just use the above command on 80 bit. It is super slow I know. I have removed most of the code. Now in generate_modulus it generates a modulus AND root. There is only one thing missing. A heuristic for the size of the root. Once that is implemented.. I can finally punch past 110 digits. It will be slower then SIQS for smaller numbers.. but that isn't the point. We want to use large squares to reduce the bitlength of smooth candidates. I'll begin work on this heuristic for the size of the root tomorrow. Once that is done... that's it, it is finally finished. The uploaded PoC that I uploaded just now, is basically just the same PoC I uploaded back in March of 2025. Maybe a little fancier due to progressing in my skills. Back then I had considered a heuristic like this... but I just wasn't at that point yet where my skills were good enough. But they are now... so watch what happens... we're about to perform real cyber magic.
-
-
-----------------------------------------------------------------------------------------
-####Random ramblings
-
-Update: Alright another day to get some work done. I really hate how my work has arrived back to where I was in march. I could have finished my work so much earlier. But then again... I did learn so many news things. Perhaps my work wasn't supposed to come to completion until now. Perhaps the dominos are falling just the way they are supposd to. Anyway, time to get to work. Time to make the future gay. Come fight me fucking losers. hahahahaha.
+Update: Modified some things in generate_modulus. So right now it's just generating a modulus within a certain size range... and then tries to find one last square to multiply it that gets both root and modulus within a certain range... very bruteforce.. but this is the right approach. Next I need to figure out how to make this better and less bruteforce. For that I need to actually do pen and paper and dive into the math. There's also stuff I can always do with the quadratic coefficient to resize roots. Or hashmaps to lookup similar roots... just stuff like that.. but yea.. I need to work out the details... let me get focused for a few days... this is the final missing piece of the algorithm. I have already deduced that this is the only way to punch past 110 digits. There just isn't any other way that this can be done.  
