@@ -22,3 +22,9 @@ To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 80 -base 10_000 -sbase 2_000 -debug 1 -quad_size 100_000</br></br>
 
 Just use the above command on 80 bit. It is super slow I know. I have removed most of the code. Now in generate_modulus it generates a modulus AND root. There is only one thing missing. A heuristic for the size of the root. Once that is implemented.. I can finally punch past 110 digits. It will be slower then SIQS for smaller numbers.. but that isn't the point. We want to use large squares to reduce the bitlength of smooth candidates. I'll begin work on this heuristic for the size of the root tomorrow. Once that is done... that's it, it is finally finished. The uploaded PoC that I uploaded just now, is basically just the same PoC I uploaded back in March of 2025. Maybe a little fancier due to progressing in my skills. Back then I had considered a heuristic like this... but I just wasn't at that point yet where my skills were good enough. But they are now... so watch what happens... we're about to perform real cyber magic.
+
+
+----------------------------------------------------------------------------------------
+####Random ramblings
+
+Update: Alright another day to get some work done. I really hate how my work has arrived back to where I was in march. I could have finished my work so much earlier. But then again... I did learn so many news things. Perhaps my work wasn't supposed to come to completion until now. Perhaps the dominos are falling just the way they are supposd to. Anyway, time to get to work. Time to make the future gay. Come fight me fucking losers. hahahahaha.
