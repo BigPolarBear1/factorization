@@ -16,15 +16,9 @@ import math
 import array
 
 
-g_z=1
-key=0                 #Define a custom modulus to factor
+
 keysize=12            #Generate a random modulus of specified bit length
-workers=1    #max amount of parallel processes to use
-p_amount=7 #amount of primes in factor base
-sieve_interval=10000000
-g_enable_custom_factors=0
-g_p=107
-g_q=41
+
 
 
 
