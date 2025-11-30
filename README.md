@@ -12,7 +12,7 @@ Note4: If what I'm trying to do currently doesn't work, I will completely abando
 
 To run: python3 debug.py -keysize 12
 
-This basically creates a system of quadratics. Solving them mod p is easy. But there is only one root solution (the factor of N) which solves the system for 0 for any mod p (aka solves it in the integers). Figuring out how to exactly do this quickly is still an ongoing area of research for me.
+This basically creates a system of quadratics. Solving them mod p is easy. But there is only one root solution (the factor of N) which solves the system for 0 for any mod p (aka solves it in the integers). Figuring out how to exactly do this quickly is still an ongoing area of research for me. And if a polynomial time algorithm for factorization exists, it is likely done by solving this system of quadratics. Finding a polyomial time algorithm is my ultimate goal, as this would make progress toward solving p = np as well. 
 
 #### To run from folder "QS_variant" (Standard SIQS with our number theory as backend):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
@@ -27,4 +27,4 @@ Note: With a large enough -base and lin_size this PoC will find smooths for 110 
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 80 -base 10_000 -sbase 1_000 -debug 1 -quad_size 100_000</br></br>
 
-Update: Before I finish this PoC, let me do something different today ... let me write a script that is going to show the number theory of the paper. I suddenly have this nagging feeling I may have overlooked a much easier approach to solve this rather then trying to ram my work into a quadratic sieve type of algorithm. 
+Update: I've uploaded debug.py ... let me finish Improved_QS_Variant now... I'll worry about finding a much better algorithm later. I should not get distracted for now.
