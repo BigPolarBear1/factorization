@@ -44,7 +44,7 @@ Hence we can change it to: 1097\*2^2-4387 = 1
 1097 is a prime number. So we can't further divide it. Now we need to increase or decrease the quadratic coefficient until we find a square again.
 The next square we find needs to be as close as possible to 1097 as with each increasement or decrement the polynomial value/smooth candidate changes by 4.
 We notice that 1098 has 9 as factor hence we can divide and multiply the root:
-122\*6^2-4387 = 4
+122\*6^2-4387 = 5.
 
 Just keep repeating this procedure until we meet the conditions to add it as a valid smooth (if both polynomial value and quadratic coefficient factor over the factor base).
 Then I'll also need some way to prevent the algorithm from just hitting the same smooth over and over again. 
