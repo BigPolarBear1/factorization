@@ -28,7 +28,7 @@ To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 80 -base 10_000 -sbase 1_000 -debug 1 -quad_size 10_000</br></br>
 
 
-Update: Actually, the uploaded PoC isnt a good approach. I need to build smooths. I.e if N = 4387  just start like this 4388*1^2-4387 = 1 ... and then we use all our number theory to reduce the size of that quadratic coefficient until it factors of the quadratic factor base by adding factors on the right side. This approach will be the only elegant solution. Nothing else is going to work. I build smooths, I succeed...if I cant build smooths... I cant punch past 110 digits. Until the end of the year I will attempt to build smooths. I know all the math now. I know all the mechanims. All the calculations. I know everything there is to know now. Now I make this work or I fail. One more month to succeed. I know I can do this, watch me perform real magic fuckers. Watch in awe as I destroy this fucking world! hahahahahaha.
+Update: Actually, the uploaded PoC isnt a good approach. I need to build smooths. I.e if N = 4387  just start like this 4388\*1^2-4387 = 1 ... and then we use all our number theory to reduce the size of that quadratic coefficient until it factors of the quadratic factor base by adding factors on the right side. This approach will be the only elegant solution. Nothing else is going to work. I build smooths, I succeed...if I cant build smooths... I cant punch past 110 digits. Until the end of the year I will attempt to build smooths. I know all the math now. I know all the mechanims. All the calculations. I know everything there is to know now. Now I make this work or I fail. One more month to succeed. I know I can do this, watch me perform real magic fuckers. Watch in awe as I destroy this fucking world! hahahahahaha.
 
 Update: Feeling weak today. Ran 15k today, but felt like I had no energy in my legs at all. Also been struggling with severe bloating for nearly a year now (something I never struggled with in my entire life up until now). Maybe CIA fuckers tried to poison me. I guess I probably have some vitamin deficiency .. I should really see a doctor.. I just cant be bothered. Tomorrow.. let me work out the math to build smooths. Its much easier to just add smooth factors and resize the quadratic coefficient that way...that way we dont need to perform trial factorization on the smooths and just need to worry about the quadratic coefficient. Shouldn't be too difficult to work out... probably should have done it this way some time ago instead of wasting time with whatever the fuck I was doing these last few weeks.
 
@@ -38,13 +38,13 @@ Trying to come up with a procedure to construct smooths:
 
 So let us say N = 4387.
 
-We start the algorithm with this: 4388*1^2-4387 = 1
+We start the algorithm with this: 4388\*1^2-4387 = 1
 Next we perform trail factorization onf 4388. We notice it has 2^2 as factors.
-Hence we can change it to: 1097*2^2-4387 = 1
+Hence we can change it to: 1097\*2^2-4387 = 1
 1097 is a prime number. So we can't further divide it. Now we need to increase or decrease the quadratic coefficient until we find a square again.
 The next square we find needs to be as close as possible to 1097 as with each increasement or decrement the polynomial value/smooth candidate changes by 4.
 We notice that 1098 has 9 as factor hence we can divide and multiply the root:
-122*6^2-4387 = 4
+122\*6^2-4387 = 4
 
 Just keep repeating this procedure until we meet the conditions to add it as a valid smooth (if both polynomial value and quadratic coefficient factor over the factor base).
 Then I'll also need some way to prevent the algorithm from just hitting the same smooth over and over again. 
