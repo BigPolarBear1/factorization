@@ -52,3 +52,5 @@ Then I'll also need some way to prevent the algorithm from just hitting the same
 Anyway... it would be very similar to the uploaded PoC I guess. So I guess it wasn't too far off. Just need to improve some things.
 
 God damnit man. This bloating, its like for months now. And I feel like its getting worse. Maybe I got like heavy metal poisoning or something. Maybe some fucking transphobe put mercury in my food or some shit. There's a lot of sick people in this world who would do that type of stuff. 
+
+Whatever, even if people try to attack my health, because obviously ruining the rest of my life hasn't stopped me, I'll find a way. I will succeed through determination alone. I am a polar bear. The hunt never stops for as long as my heart beats. You'll have to kill me to stop me. But ofcourse, you're all weaklings and you stand no chance against me.
