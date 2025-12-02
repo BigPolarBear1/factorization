@@ -50,3 +50,5 @@ Just keep repeating this procedure until we meet the conditions to add it as a v
 Then I'll also need some way to prevent the algorithm from just hitting the same smooth over and over again. 
 
 Anyway... it would be very similar to the uploaded PoC I guess. So I guess it wasn't too far off. Just need to improve some things.
+
+God damnit man. This bloating, its like for months now. And I feel like its getting worse. Maybe I got like heavy metal poisoning or something. Maybe some fucking transphobe put mercury in my food or some shit. There's a lot of sick people in this world who would do that type of stuff. 
