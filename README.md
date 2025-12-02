@@ -33,3 +33,20 @@ Update: Actually, the uploaded PoC isnt a good approach. I need to build smooths
 Update: Feeling weak today. Ran 15k today, but felt like I had no energy in my legs at all. Also been struggling with severe bloating for nearly a year now (something I never struggled with in my entire life up until now). Maybe CIA fuckers tried to poison me. I guess I probably have some vitamin deficiency .. I should really see a doctor.. I just cant be bothered. Tomorrow.. let me work out the math to build smooths. Its much easier to just add smooth factors and resize the quadratic coefficient that way...that way we dont need to perform trial factorization on the smooths and just need to worry about the quadratic coefficient. Shouldn't be too difficult to work out... probably should have done it this way some time ago instead of wasting time with whatever the fuck I was doing these last few weeks.
 
 Woudlnt even surprise me if these coward americans tried to poison me. For the same reason I was threatened with a gun in america while I was unarmed. All spineless fuckers. It doesn't even matter. My body is temporary anyway. Time to finish this math. Try harder to kill me fuckers. Losers all of you.
+
+Trying to come up with a procedure to construct smooths:
+
+So let us say N = 4387.
+
+We start the algorithm with this: 4388*1^2-4387 = 1
+Next we perform trail factorization onf 4388. We notice it has 2^2 as factors.
+Hence we can change it to: 1097*2^2-4387 = 1
+1097 is a prime number. So we can't further divide it. Now we need to increase or decrease the quadratic coefficient until we find a square again.
+The next square we find needs to be as close as possible to 1097 as with each increasement or decrement the polynomial value/smooth candidate changes by 4.
+We notice that 1098 has 9 as factor hence we can divide and multiply the root:
+122*6^2-4387 = 4
+
+Just keep repeating this procedure until we meet the conditions to add it as a valid smooth (if both polynomial value and quadratic coefficient factor over the factor base).
+Then I'll also need some way to prevent the algorithm from just hitting the same smooth over and over again. 
+
+Anyway... it would be very similar to the uploaded PoC I guess. So I guess it wasn't too far off. Just need to improve some things.
