@@ -1,3 +1,5 @@
+Update: It would appear the americans are continueing to legally harass me because pete hegseth is a fucking loser and coward who has to hide behind the law. If anyone wants to help cover legal costs email: big_polar_bear1@proton.me  ... I am also considering fleeing europe, if anyone can grant me asylum also reach out, thanks.
+
 DISCLAIMER: AT NO POINT IN MY 2.5 YEARS OF RESEARCH DID I USE AI OR HAS AI IN ANY WAY HELPED WITH MY RESEARCH. I'M PUTTING THIS HERE BECAUSE I KNOW PEOPLE WILL ACCUSE ME OF IT. 
 
 Note: I am antifa, leader of the cipherpunk, fuck the FBI department. 
