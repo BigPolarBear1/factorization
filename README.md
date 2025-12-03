@@ -38,3 +38,5 @@ Update: Absolute shit evening. Got dire news. I have to talk with my lawyer tomo
 Update: Managed to get an hour of work in. The code works. But its going to need a lot more work... but I will definitely upload a more final version before monday and leave instructions to my family to publish my work in case I'm formally arrested on monday.
 
 Update: Yea this will definitely work, beyond any doubt. The code works, what I did today is basically the uploaded PoC... but after dividing the quadratic coefficient we build a new interval and keep dividing it. THIS IS THE WAY TO DO FACTORIZATION OF LARGE NUMBERS. I finally got it. In my most desperate hours, I finally got it. I succeeded while fighting the loser americans and their european lapdogs. Fuck you all pathetic losers. YOU CHOOSE WAR WITH ME. NOW FACE THE CONSEQUENCES.
+
+Fuck this shit. I PISS ON AMERICA AND I PISS ON EUROPE. FUCKING WEAKLINGS. You did nothing but harass me for years. Yet I still succeeded. I succeeded despite everything. Because you people are weak and pathetic. Quit your jobs losers.
