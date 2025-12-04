@@ -35,7 +35,7 @@ workers=1 #max amount of parallel processes to use
 quad_co_per_worker=1 #Amount of quadratic coefficients to check. Keep as small as possible.
 base=1_000
 small_base=1000
-qbase=2000
+qbase=1_000
 quad_sieve_size=10
 g_debug=0 #0 = No debug, 1 = Debug, 2 = A lot of debug
 g_lift_lim=0.5
@@ -45,7 +45,7 @@ min_prime=1
 g_enable_custom_factors=0
 g_p=107
 g_q=41
-mod_mul=0.1
+mod_mul=0.05
 g_max_exp=2
 
 
@@ -873,7 +873,15 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
 
     many_primes=[]    
     print("[i]Finding many primes")
-    many_primes.extend(get_primes(3,100_000_000))
+    many_primes.extend(get_primes(3,10_000_000))
+    start=int(n**0.8)
+    end=start+100_000
+    print("len: ",len(many_primes))
+    while start < end:
+        p=sympy.nextprime(start)
+        start=p
+        many_primes.append(p)
+    print("len: ",len(many_primes))
     print("[i]Done")
 
     tnum = int(((2*n)**mod_mul))
@@ -1059,7 +1067,7 @@ cdef process_interval(ret_array,n,quad_co2,root,long long [::1] local_primes,cmo
 
     if co not in ret_array[1]:
 
-       # print("Found: "+str(poly_val)+" "+str(seen_primes)+" cmod bitlen: "+str(bitlen(cmod))+" bitlen root: "+str(bitlen(root))+" quad bitlen: "+str(bitlen(quad_co))+" Smooth#: "+str(len(ret_array[0])+1)+" bitlen poly_val/cmod: "+str(bitlen(abs(poly_val//cmod)))+" remaining square: "+str(test)+" root: "+str(root)+" mod: "+str(cmod))
+        print("Found: "+str(poly_val)+" "+str(seen_primes)+" cmod bitlen: "+str(bitlen(cmod))+" bitlen root: "+str(bitlen(root))+" quad bitlen: "+str(bitlen(quad_co))+" Smooth#: "+str(len(ret_array[0])+1)+" bitlen poly_val/cmod: "+str(bitlen(abs(poly_val//cmod)))+" remaining square: "+str(test)+" root: "+str(root)+" mod: "+str(cmod))
         mod_found+=1
         ret_array[0].append(poly_val)
         ret_array[1].append(co)
@@ -1190,8 +1198,68 @@ cdef void miniloop_non_simd(dist1,temp,prime,log,size):
         dist1+=prime
     return
 
-@cython.boundscheck(False)
-@cython.wraparound(False)
+def mark_interval(interval,qbase,sieve_size,new_quad,cmod_temp,many_primes,total_root,cfact,n,depth):
+    if (new_quad*total_root**2-n)%cmod_temp !=0:
+        print("fail")
+    qbase_len=qbase[0]
+    last_qbase=qbase[qbase_len-1]
+    i=0#qbase_len-1
+    while i < len(many_primes):
+        if many_primes[i]**2 in cfact:#many_primes[i] < last_qbase or 
+            i+=1
+            continue
+        exp=2
+        while exp < 10:
+            total_root_temp=total_root
+            dist=solve_lin_con(cmod_temp,-new_quad,many_primes[i]**exp)#increase_quad_coefficient(primeslist[i],hmap[primeslist_indexes[i]][2],hmap[primeslist_indexes[i]][1],cmod,quad,n,total_root)
+          #  if depth>1:
+             #   print(dist)
+            if dist > sieve_size :
+                exp+=2
+                continue
+            log=int(math.log2(many_primes[i]))
+            log=log*2
+           # if depth>1:
+             #   print("marking")
+            miniloop_non_simd(dist,interval,many_primes[i]**exp,log,sieve_size)
+            exp+=2
+        i+=1
+    return    
+
+cdef factorise_squares(value,factor_base):
+    seen_primes=[]
+    total_square=1
+    exp=0
+    seenp=1
+    while value % 2 == 0:
+        seenp*=2
+        value //= 2
+        exp+=1
+    if exp>1:
+        if exp%2==1:
+            exp-=1
+        total_square*=2**exp
+        seen_primes.append(2**exp)
+    #cdef int factor 
+    i=0
+    while i < len(factor_base):
+        factor=factor_base[i]
+        exp=0
+        seenp=1
+        while value % factor == 0:
+            seenp*=factor
+            value //= factor
+            exp+=1
+
+        if exp>1:
+            if exp%2==1:
+                exp-=1
+            seen_primes.append(factor**exp)
+            total_square*=factor**exp
+        i+=1
+    return value,seen_primes,total_square
+
+
 cdef generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,tnum_bit,hmap,primeslist_indexes,quad,qbase,many_primes):
 
     cdef Py_ssize_t counter 
@@ -1287,86 +1355,98 @@ cdef generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_S
         new_quad=quad#increase_quad_coefficient(primeslist[i],hmap[primeslist_indexes[i]][2],hmap[primeslist_indexes[i]][1],cmod,quad,n,total_root)
         cmod_temp = cmod
         init_poly_val=(new_quad*total_root**2-n)//cmod_temp
-        sieve_size=10_000_0000
-        dist=((cmod_temp-(sieve_size//2)*(total_root**2))-init_poly_val)//(total_root**2)
+        sieve_size=100#_0000
+        ssize=10_000_000
+        dist=((cmod_temp-(ssize//2)*(total_root**2))-init_poly_val)//(total_root**2)
        # dist=solve_lin_con(total_root_temp**2,cmod_temp-init_poly_val,cmod_temp)
         new_quad=new_quad+dist*cmod_temp
         #print("dist: "+str(dist))
         # * primeslist[i]**2
+        center_poly_val=new_quad*total_root**2-n
         if cmod_temp in seen:
             continue
         seen.append(cmod_temp) 
-        print("[i]Building interval of size: "+str(sieve_size)+" ... this can take some time")
-        qbase_len=qbase[0]
-        last_qbase=qbase[qbase_len-1]
-        interval=[0]*sieve_size
-        i=qbase_len-1
-        while i < len(many_primes):
+        print("[i]Building interval of size: "+str(ssize)+" ... this can take some time, center: "+str(center_poly_val)+" mod: "+str(cmod_temp)+" bits start quad: "+str(bitlen(new_quad)))
+
+        
+
+        i=0
+        depth=1
+        state=[]
+        stop=0
+        interval=0
+        max_depth=7
+        while 1:
+            if interval==0:
+                interval=[0]*ssize
+                mark_interval(interval,qbase,ssize,new_quad,cmod_temp,many_primes,total_root,cfact,n,depth)
+            hit=0
             
-            if many_primes[i] < last_qbase or many_primes[i]**2 in cfact:
-                i+=1
-                continue
-            exp=2
-            while exp < 5:
-                total_root_temp=total_root
-            #to do: Dont need to know when polyval is divisible but when quad co is divisible
-                dist=solve_lin_con(cmod_temp,-new_quad,many_primes[i]**exp)#increase_quad_coefficient(primeslist[i],hmap[primeslist_indexes[i]][2],hmap[primeslist_indexes[i]][1],cmod,quad,n,total_root)
-                if dist > sieve_size :
-                    exp+=2
+           # to do: Add sieve interval again... we really just need those large squares.
+            while i < ssize:
+                if interval[i]<30:
+                    i+=1
                     continue
-                log=int(math.log2(many_primes[i]))
-                log=log*2
-                miniloop_non_simd(dist,interval,many_primes[i]**exp,log,sieve_size)
-                exp+=2
-            i+=1
-        i=0
-       # length=qbase[0]
-        i=1
-        while i < qbase_len:
-            exp=1
-            if qbase[i]**2 in cfact:
-                i+=1
-                continue
-            while exp < 5:
-                total_root_temp=total_root
-            #to do: Dont need to know when polyval is divisible but when quad co is divisible
-                dist=solve_lin_con(cmod_temp,-new_quad,qbase[i]**exp)#increase_quad_coefficient(primeslist[i],hmap[primeslist_indexes[i]][2],hmap[primeslist_indexes[i]][1],cmod,quad,n,total_root)
-                if dist > sieve_size :
-                    exp+=1
-                    continue
-                log=int(math.log2(qbase[i]))
-                miniloop_non_simd(dist,interval,qbase[i]**exp,log,sieve_size)
-                exp+=1
-            i+=1
-        i=0
-        while i < len(interval):
-            if interval[i]>40:
-
                 new_quad2=new_quad+i*cmod_temp
-                quad_local_factors, quad_value,seen_primes = factorise_fast(new_quad2,qbase)
-               # print("quad_value",quad_value)
-                test=math.isqrt(quad_value)
-                if test**2 == quad_value:
+                val,seenprimes,total_square=factorise_squares(new_quad2,many_primes)
+              #  print(len(seenprimes))
+                if len(seenprimes)>0:
+                   # print("seen_primes: "+str(seenprimes)+" quad val: "+str(new_quad2)+" total square bits: "+str(total_square)+" depth: "+str(depth))
+                    if new_quad2%total_square!=0:
+                            print("fatal error")
+                    
+                    state.append([new_quad,total_root,i+1,interval])
+                    total_root*=math.isqrt(total_square)
+                    new_quad=new_quad2//total_square
+                    poly_val=(new_quad*total_root**2-n)
+                    
+                   # print("poly_val bits: "+str(bitlen(poly_val//cmod_temp))+" new_quad bits: "+str(bitlen(new_quad))+" depth: "+str(depth)+" poly_val: "+str(poly_val)+" quad: "+str(new_quad)+" i: "+str(i)+" interval bits: "+str(interval[i]))
+                    depth+=1
+                    if bitlen(poly_val//cmod_temp) < keysize//2 and bitlen(new_quad) < keysize//2:
+                        print("Poly_val bits: "+str(bitlen(poly_val//cmod_temp))+" new_quad bits: "+str(bitlen(new_quad))+" depth: "+str(depth-1)+" poly_val: "+str(poly_val)+" quad: "+str(new_quad)+" i: "+str(i))
 
-                    total_root_temp=total_root
-                    total_root_temp*=test#primeslist[i]**(exp//2)
-                    new_quad3=new_quad2//quad_value
 
+                        if total_root not in root_list:
+                       # print("poly_val: "+str(bitlen(poly_val))+" new_quad: "+str(bitlen(new_quad)))
+                            quad_local_factors, quad_value,seen_primes = factorise_fast(new_quad,qbase)
+                            test=math.isqrt(quad_value)
+                            if test**2 == quad_value:
+                                cfact_temp=copy.copy(cfact)
+                                print("ADDING poly_val bits: "+str(bitlen(poly_val//cmod_temp))+" new_quad bits: "+str(bitlen(new_quad))+" depth: "+str(depth-1)+" poly_val: "+str(poly_val)+" quad: "+str(new_quad)+" i: "+str(i))#+" state: "+str(state))
+                                root_list.append(total_root)
+                                cmod_list.append(cmod_temp)
+                                cfact_list.append(cfact_temp)
+                                quad_list.append(new_quad)
+                                quad_factors_list.append(quad_local_factors)
+                    if bitlen(poly_val//cmod_temp)  > keysize//2 or depth == max_depth:
+                        depth-=1
+                        state.pop(-1)
+                        stop=1
+                        break
+                    interval=0
+                    i=0
+                    hit=1
 
-                    poly_val=new_quad3*total_root_temp**2-n
-                  #  if quad_value != 1:
-                     #   print("quad_value: "+str(quad_value)+" bit size of new quad : "+str(bitlen(new_quad3))+" bitlen poly_val: "+str(bitlen(poly_val)))
+                    break
+                i+=1
+            if (i==ssize and hit==0) or stop ==1:
+               # if i==ssize:
+                   # print("hit the end at depth: ",depth)
+               # print("reset: ",depth)
+                if depth==1:
+                    break
 
-                   # print("foud one: "+str(poly_val)+" poly bits: "+str(bitlen(poly_val))+" quad bts: "+str(bitlen(new_quad3))+" quad before bits: "+str(bitlen(new_quad2)))
-                    cfact_temp=copy.copy(cfact)
-
-                    root_list.append(total_root_temp)
-                    cmod_list.append(cmod_temp)
-                    cfact_list.append(cfact_temp)
-                    quad_list.append(new_quad3)
-                    quad_factors_list.append(quad_local_factors)
-            i+=1
-
+               # for stat in state:
+                  #  print("state: ",stat[0])
+                depth-=1
+                new_quad=state[-1][0]
+                total_root=state[-1][1]
+                i=state[-1][2]
+                interval=state[-1][3]
+                state.pop(-1)
+                stop=0
+       # print("finished: ",len(root_list)) 
+       # time.sleep(10000)
     
         if len(root_list)!=0:
             return root_list,cmod_list,cfact_list,quad_list,quad_factors_list
