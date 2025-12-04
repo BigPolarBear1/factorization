@@ -1375,7 +1375,7 @@ cdef generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_S
         state=[]
         stop=0
         interval=0
-        max_depth=7
+        max_depth=6
         while 1:
             if interval==0:
                 interval=[0]*ssize
