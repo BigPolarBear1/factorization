@@ -34,4 +34,10 @@ Update: Alright. I added some interval code.
 To do:
 
 1. The calculations in sieve() need to be speed up many many times more so that we can us a much bigger quad_size parameter.
-2. Currently it only uses -sbase... which is the small factor base.. but we should also use -base, the large factor base to saturate the intervals with large squares. 
+2. Currently it only uses -sbase... which is the small factor base.. but we should also use -base, the large factor base to saturate the intervals with large squares.
+
+What this code does:
+
+It will roughly generate smooths that are of keysize/2. Normally with normal SIQS you cannot do this (unless you use a very small sieve interval). We achieve this by using multiple quadratic coefficients.
+You want to keep -lin_size relatively small and really increase quad_size, but I will need to optimize the calculations in sieve() first. 
+Additionally, we really really need to saturate our sieve intervals with large squares. Since they wont increase the required amount of smooths and they will help to chip away at the bit length.
