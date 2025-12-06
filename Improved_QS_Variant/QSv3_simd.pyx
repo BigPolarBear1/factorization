@@ -673,9 +673,11 @@ def gen_co2(factor_base,hmap,cmod,n):
     return co2_list
 
 
-def filter_quads(qbase):
+def filter_quads(qbase,n):
     valid_quads=[]
     valid_quads_factors=[]
+    interval_list=[]
+    roots=[]
     i=1
     while i < quad_sieve_size+1:
         if i != 1 and math.sqrt(i)%1==0:
@@ -688,10 +690,12 @@ def filter_quads(qbase):
         if quad_value != 1:
             i+=1
             continue
+        interval_list.append([0]*100)
+        roots.append(math.isqrt(n//i))
         valid_quads.append(i)
         valid_quads_factors.append(quad_local_factors)
         i+=1
-    return valid_quads,valid_quads_factors
+    return valid_quads,valid_quads_factors,interval_list,roots
 
 
 def iterate_mod_co(orig_lin_parts,cfact,grays,new_mod,n,quad):
@@ -854,7 +858,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
     z_plist=copy.copy(primeslist2)
     z_plist.insert(0,len(primeslist2)+1)
     z_plist=array.array('q',z_plist)
-    valid_quads,valid_quads_factors=filter_quads(z_plist)
+    valid_quads,valid_quads_factors,interval_list,roots=filter_quads(z_plist,n)
 
     primeslist2.insert(0,2)
     primeslist2.insert(0,-1)
@@ -892,7 +896,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
 
     tnum = int(((2*n)**mod_mul))
     tnum_bit=int(bitlen(tnum)*1)
-    rootlist,polylist,flist,quadflist=generate_large_square(n,many_primes,valid_quads,valid_quads_factors,sprimelist_f)
+    rootlist,polylist,flist,quadflist=generate_large_square(n,many_primes,valid_quads,valid_quads_factors,sprimelist_f,interval_list,roots)
     print("Smooths found: "+str(len(rootlist)))
     test=QS(n,sprimelist,polylist,rootlist,flist,quadflist,primeslist2)  
     return
@@ -1271,11 +1275,7 @@ cdef factorise_squares(value,factor_base):
     return value,seen_primes,total_square
 
 
-def generate_large_square(n,many_primes,valid_quads,valid_quads_factors,sprimelist_f):
-    quad=1
-    root=int(math.sqrt(n))
-    Start_poly_val=quad*root**2-n
-    print("Start_poly_val: "+str(Start_poly_val)+" bits: "+str(bitlen(Start_poly_val)))
+def generate_large_square(n,many_primes,valid_quads,valid_quads_factors,sprimelist_f,interval_list,roots):
     root_list=[]
     poly_list=[]
     flist=[]
@@ -1283,46 +1283,48 @@ def generate_large_square(n,many_primes,valid_quads,valid_quads_factors,sprimeli
     i=0
     while i <len(valid_quads):
         quad=valid_quads[i]
-        root=math.isqrt(n//quad)
+        root=roots[i]
 
         j=0
-        while j < 100:
-            poly_val=quad*(root-j)**2-n
+        while j < len(interval_list[i]):
+            if interval_list[i][j]>-1:
+                poly_val=quad*(root-j)**2-n
         
-            if bitlen(poly_val)<(keysize):
-                if poly_val ==0:
-                    print("fatal error")
-                local_factors, value,seen_primes = factorise_fast(poly_val,sprimelist_f)
-                if value ==1:
-                    tot=quad*(root-j)**2
-                    if tot not in root_list:
-                        root_list.append(tot)
-                        poly_list.append(poly_val)
-                        flist.append(local_factors)
-                        quadf_list.append(valid_quads_factors[i])
-                        print("", end=f"[i]Smooths: {len(root_list)} / {small_base*1+2+qbase}\r")
-                        if len(root_list)>small_base+2+qbase+2:
-                            return root_list,poly_list,flist,quadf_list  
+                if bitlen(poly_val)<(keysize):
+                    if poly_val ==0:
+                        print("fatal error")
+                    local_factors, value,seen_primes = factorise_fast(poly_val,sprimelist_f)
+                    if value ==1:
+                        tot=quad*(root-j)**2
+                        if tot not in root_list:
+                            root_list.append(tot)
+                            poly_list.append(poly_val)
+                            flist.append(local_factors)
+                            quadf_list.append(valid_quads_factors[i])
+                            print("", end=f"[i]Smooths: {len(root_list)} / {small_base*1+2+qbase}\r")
+                            if len(root_list)>small_base+2+qbase+2:
+                                return root_list,poly_list,flist,quadf_list  
             j+=1
 
         j=1
-        while j < 100:
-            poly_val2=quad*(root+j)**2-n
+        while j < len(interval_list[i]):
+            if interval_list[i][j]>-1:
+                poly_val2=quad*(root+j)**2-n
             #print(bitlen(poly_val2))
-            if bitlen(poly_val2)<(keysize):
-                if poly_val ==0:
-                    print("fatal error")
-                local_factors, value,seen_primes = factorise_fast(poly_val2,sprimelist_f)
-                if value == 1:
-                    tot=quad*(root+j)**2
-                    if tot not in root_list:
-                        root_list.append(tot)
-                        poly_list.append(poly_val2)
-                        flist.append(local_factors)
-                        quadf_list.append(valid_quads_factors[i])
-                        print("", end=f"[i]Smooths: {len(root_list)} / {small_base*1+2+qbase}\r")
-                        if len(root_list)>small_base+2+qbase+2:
-                            return root_list,poly_list,flist,quadf_list  
+                if bitlen(poly_val2)<(keysize):
+                    if poly_val ==0:
+                        print("fatal error")
+                    local_factors, value,seen_primes = factorise_fast(poly_val2,sprimelist_f)
+                    if value == 1:
+                        tot=quad*(root+j)**2
+                        if tot not in root_list:
+                            root_list.append(tot)
+                            poly_list.append(poly_val2)
+                            flist.append(local_factors)
+                            quadf_list.append(valid_quads_factors[i])
+                            print("", end=f"[i]Smooths: {len(root_list)} / {small_base*1+2+qbase}\r")
+                            if len(root_list)>small_base+2+qbase+2:
+                                return root_list,poly_list,flist,quadf_list  
             j+=1
             #print("Smooth candidate #1: "+str(poly_val)+" Smooth candidate #2: "+str(poly_val2)+" quad: "+str(quad+i)+" bitlength smooth can #1: "+str(bitlen(poly_val))+" bitlength smooth can #2: "+str(bitlen(poly_val2)))
         i+=1
