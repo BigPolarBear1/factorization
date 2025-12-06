@@ -41,3 +41,5 @@ What this code does:
 It will roughly generate smooths that are of keysize/2. Normally with normal SIQS you cannot do this (unless you use a very small sieve interval). We achieve this by using multiple quadratic coefficients.
 You want to keep -lin_size relatively small and really increase quad_size, but I will need to optimize the calculations in sieve() first. 
 Additionally, we really really need to saturate our sieve intervals with large squares. Since they wont increase the required amount of smooths and they will help to chip away at the bit length.
+
+NOTE: The americans are using the courts to move against me. I may get formally arrested on Monday. If this happens and my github repo dissappears.. then you can put 2 and 2 together...  my situation is very dire here in Europe. I've faced persistent unemployment and legal harassment under pressure of the americans. They know I will succeed one day and that I am getting closer as time passes. They are trying everything they can to break me mentally. 
