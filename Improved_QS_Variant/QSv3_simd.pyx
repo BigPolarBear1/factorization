@@ -130,22 +130,7 @@ def generateKey(keySize):
     return (publicKey, privateKey,phi,p,q)
 ##END KEY GEN##
 
-cdef get_gray_code(n):
-    gray = [0] * (1 << (n - 1))
-    gray[0] = (0, 0)
-    for i in range(1, 1 << (n - 1)):
-        v = 1
-        j = i
-        while (j & 1) == 0:
-            v += 1
-            j >>= 1
-        tmp = i + ((1 << v) - 1)
-        tmp >>= v
-        if (tmp & 1) == 1:
-            gray[i] = (v - 1, -1)
-        else:
-            gray[i] = (v - 1, 1)
-    return gray
+
 
 
 cdef modinv(n,p):
@@ -173,17 +158,6 @@ def gcd(a,b): # Euclid's algorithm ##To do: Use a version without recursion?
         return gcd(b,a % b)
     else:
         return gcd(b,a)
-
-def formal_deriv(y,x,z):
-    result=(z*2*x)-(y)
-    return result
-
-def find_r(mod,total):
-    mo,i=mod,0
-    while (total%mod)==0:
-        mod=mod*mo
-        i+=1
-    return i
         
 def QS(n,factor_list,sm,xlist,flist,quad_flist,z_plist):
     g_max_smooths=small_base*1+2+qbase+2
@@ -356,30 +330,6 @@ def launch(n,primeslist1,primeslist2,small_primeslist):
 
     return 
 
-
-def equation(y,x,n,mod,z,z2):
-    rem=z*(x**2)-y*x+n*z2
-    rem2=rem%mod
-    return rem2,rem 
-
-def squareRootExists(n,p,b,a):
-    b=b%p
-    c=n%p
-    bdiv = (b*modinv(2,p))%p
-    alpha = (pow_mod(bdiv,2,p)-c)%p
-    if alpha == 0:
-        return 1
-    
-    if jacobi(alpha,p)==1:
-        return 1
-    return 0
-
-
-
-def pow_mod(base, exponent, modulus):
-    return pow(base,exponent,modulus)  
-
-
 cdef tonelli(long long n, long long p):  # tonelli-shanks to solve modular square root: x^2 = n (mod p)
     if jacobi(n,p)!=1:
         print("error jacobi")
@@ -415,49 +365,6 @@ cdef tonelli(long long n, long long p):  # tonelli-shanks to solve modular squar
         m = i
 
     return r
-
-
-def lift(exp,co,r,n,z,z2,prime):
-   # print("r: "+str(r)+" co: "+str(co)+" z: "+str(z))
-    ##TO DO: Code duplication with lift_root()
-    z_inv=modinv(z,prime**exp)
-    temp_r=r*z
-    zz=(2*temp_r)%prime
-    zz=pow(zz,-1,prime)
-    x=(((z*n)-temp_r**2)//prime)%prime
-    y=(x*zz)%prime
-    new_r=(z_inv*(temp_r+y*prime))%prime**exp
-    co2=(formal_deriv(0,new_r,z))%(prime**exp) 
-    ret=[]
-    ret.extend([co2,new_r])
-    new_eq=(z*new_r**2-n)%prime**exp
-    if new_eq !=0:
-        print("Something went wrong while lifting z: "+str(z)+" new_r: "+str(new_r))
-        time.sleep(10000)
-    return ret
-
-def lift_b(prime,n,co,z,max_exp):
-    z2=1
-    k=0
-    ret=[]
-    cos=[]
-    step_size=[]
-    new=[]
-    r=get_root(prime,co%prime,z) 
-   # print("r: "+str(r)+" prime: "+str(prime)+" z: "+str(z))
-    if r==-1:
-        return 0
-    exp=2
-    ret=[co,r]
-    cos.append([co,(prime-co)%prime])
-    while exp < max_exp+1:
-
-        ret=lift(exp,ret[0],ret[1],n,z,z2,prime)
-        co2=(prime**exp)-ret[0]
-        cos=([ret[0],co2])
-
-        exp+=1
-    return cos[0]
 
 @cython.profile(False)
 def solve_roots(prime,n): 
@@ -531,13 +438,6 @@ def jacobi(a, n):
     else:
         return 0    
 
-def equation2(y,x,n,mod,z,z2):
-    rem=z*(x**2)+y*x-n*z2
-    rem2=rem%mod
-    return rem2,rem
-
-
-
 @cython.boundscheck(False)
 @cython.wraparound(False)
 cdef factorise_fast(value,long long [::1] factor_base):
@@ -574,106 +474,6 @@ def get_root(p,b,a):
     bdiv = (ba*modinv(2,p))%p
     return bdiv%p
 
-
-def solve_lin_con(a,b,m):
-    ##ax=b mod m
-    #g=gcd(a,m)
-    #a,b,m = a//g,b//g,m//g
-    return pow(a,-1,m)*b%m  
-
-
-
-
-cdef get_quads(hmap,indexes,cfact):
-    quads=[]
-    lin_lists=[]
-    i=0
-    while i < len(indexes):
-        lin_lists.append([])
-        index=indexes[i]
-        quads.append([])
-        length=hmap[index][0]
-        j=1
-        while j < length:
-            lin_lists[-1].append(hmap[index][j+1])
-            quads[-1].append(hmap[index][j])
-            j+=2
-        i+=1
-    return quads,lin_lists
-
-cdef create_quad_cos(quads,lin_lists,cfact,local_mod):
-    i=0
-    parts=[]
-    parts2=[]
-    length=len(cfact)
-    while i < length:
-        parts.append([])
-        parts2.append([])
-        p=cfact[i]
-        j=0
-        while j < len(quads[i-1]):
-            r1 = quads[i-1][j]
-            aq = local_mod // p
-            invaq = modinv(aq%p, p)
-            gamma = r1 * invaq % p
-            parts[-1].append(aq*gamma)
-
-
-            r1 = lin_lists[i-1][j]
-            gamma = r1 * invaq % p
-            parts2[-1].append(aq*gamma)
-            j+=1
-        i+=1
-    return parts,parts2
-
-
-
-
-
-cdef get_lin(hmap,cfact,local_mod,indexes,quad_co,n):
-    
-    all_lin_parts=[]
-    j=0
-    lin=0
-    while j < len(indexes):
-        ind=indexes[j]
-        prime=math.isqrt(cfact[j])
- 
-
-        r1=hmap[ind][2]
-
-        r1=lift_b(prime,n,r1,quad_co,2)
-        prime=prime**2
-        aq = local_mod // prime
-        invaq = modinv(aq%prime, prime)
-        gamma = r1 * invaq % prime
-        lin+=aq*gamma
-        all_lin_parts.append(aq*gamma)
-        j+=1
-    lin%=local_mod
-    return lin,all_lin_parts
-
-def gen_co2(factor_base,hmap,cmod,n):
-
-    length=factor_base[0]
-    co2_list=[]
-    i=1
-    while i < length:
-        prime=factor_base[i]
-
-        
-        prime_index=i-1
-   
- 
-
-        co2=hmap[prime_index][2]%prime
-        s=hmap[prime_index][1]%prime
-        co2_list.append([co2,s])
-     
-        i+=1
-    return co2_list
-
-
 cdef filter_quads(qbase,n):
     valid_quads=[]
     valid_quads_factors=[]
@@ -703,145 +503,9 @@ cdef filter_quads(qbase,n):
     return valid_quads,valid_quads_factors,interval_list,roots,interval_list_pos
 
 
-def iterate_mod_co(orig_lin_parts,cfact,grays,new_mod,n,quad):
-    lin_co_array=[]
-    lin_parts=[]
-    q=0
-    prev_co=1
-    lin3=0
-    skip=0
-    while q < len(orig_lin_parts):
-        prime=cfact[q]
-        orig_lin_temp=orig_lin_parts[q]
-        z_inv=modinv(quad,prime)
-        prime_sqrt=math.isqrt(prime)
-        if z_inv == None or jacobi(z_inv,prime_sqrt)!=1:
-            skip=1
-            break
-                    
-        root_mult=tonelli(z_inv%prime_sqrt,prime_sqrt)##to do: fix this
-        if root_mult**2%prime_sqrt != z_inv%prime_sqrt:
-            print("what the fuuk11111111111111111111111111")  
 
 
-        new_root=((orig_lin_temp*root_mult))%prime
-        new_co=(quad*new_root)%prime
-        if (new_co**2-n*4*quad)%prime_sqrt !=0:
-            print("catastrophic error")
-        if new_co > prime // 2:
-            new_co=(prime-new_co)%prime  
-        new_co=lift_b(prime_sqrt,n,new_co,quad,2)
-        aq = new_mod // prime
-        invaq = modinv(aq%prime, prime)
-        gamma = new_co * invaq % prime
-        lin3+=(aq*gamma)
-        if (aq*gamma)%prime !=new_co:
-            print("something went wrong")
-        lin_parts.append(aq*gamma)
-        q+=1
-     
-    if skip == 1:
-        return 0
-    lin2=lin3%new_mod
-    poly_ind=0
-    end = 1 << (len(cfact) - 1)
-    lin=0
-    while poly_ind < end:
-        if poly_ind != 0:
-            v,e=grays[poly_ind] ##Brilliant trick, whoever come up with this.
-            lin=(lin + 2 * e * lin_parts[v])%new_mod
 
-        else:
-            lin=lin2
-        if (lin**2-n*4*quad)%new_mod !=0:
-            print("super big error")
-            time.sleep(1000)
-        lin_co_array.append(lin)
-        poly_ind+=1
-
-    return lin_co_array   
-
-def iterate2(co2_item,prime,valid_quads,orig_lin_parts,cfact,grays,n,new_mod,res):
-    i=0
-    while i < len(valid_quads):
-        quad_co=valid_quads[i]
-        if gcd(new_mod,quad_co)!=1:
-            i+=1
-            continue
-        lin_co_array=iterate_mod_co(orig_lin_parts,cfact,grays,new_mod,n,quad_co)
-        if lin_co_array == 0:
-            i+=1
-            continue
-        root=get_root(new_mod,lin_co_array[0],quad_co)
-        temp_quad=co2_item[1]
-        z_div=modinv(temp_quad,prime)
-        z_inv=modinv(quad_co*z_div,prime)
-        if z_inv == None or jacobi(z_inv,prime)!=1:
-            i+=1
-            continue
-        
-        root_mult=tonelli(z_inv,prime)
-        temp_co=co2_item[0]
-        r=get_root(prime,temp_co,temp_quad)
-        r=(r*root_mult)%prime
-        r_b=(prime-r)%prime  
-        co2=(2*quad_co*r)%prime   
-        if co2 > prime // 2:
-            co2=(prime-co2)%prime  
-        co2_b=(prime-co2)%prime
-        root2=r 
-        root3=r_b
-        #lcmod=new_mod%prime
-        exp=1
-        while exp < 20:
-
-            if exp > 1:
-                root2=lift_root(r,prime**(exp-1),n,quad_co,exp)
-            root_dist1=solve_lin_con(new_mod,r-root,prime**exp)
-            if root_dist1 > 1000:
-                break
-            if exp%2 == 0:
-                res[i]+=1
-      #  modi=modinv(lcmod,prime)
-       # root_res=(r-root)%prime
-        #root_dist1=(root_res*modi)%prime
-       # if root_dist1 < 10:
-          #  res[i]+=1
-       # root2=lift_root(r,prime,n,quad_co)
-       # root_dist1=solve_lin_con(new_mod,r-root,prime)
-       # if prime ==f:
-                print("r: "+str(r)+" prime: "+str(prime)+" root_dist1: "+str(root_dist1)+" quad_co: "+str(quad_co)+" root_mult: "+str(root_mult)+" lin: "+str(lin_co_array[0])+" mod: "+str(new_mod))
-            exp+=1
-      #  print("r_b: ",r_b)
-#To do: using just one cmod co, loop and see if we can spot a shortcut for root_dist1.
-#To do: Can potentially simplify calculations by only using primes at n*4
-        i+=1
-    return
-
-def iterate(co2_list,valid_quads,new_mod,primelist_f,orig_lin_parts,cfact,grays,n):
-    length=primelist_f
-    res=[0]*len(valid_quads)
-    r=1+small_base
-    while r < len(length):
-       # if primelist_f[r] ==primelist_f[-1]:
-        iterate2(co2_list[r-1],primelist_f[r],valid_quads,orig_lin_parts,cfact,grays,n,new_mod,res)
-  
-
-
-        r+=1
-    print("res: ",res)
-  #  return
-
-def grab_primes_for_quad(primeslist,quad,n):
-    lprimes=[]
-    lprimes_indexes=[]
-    i=0
-    while i < len(primeslist):
-        if jacobi(quad*n,primeslist[i])==1:
-            lprimes.append(primeslist[i])
-            lprimes_indexes.append(i)
-        i+=1
-    return lprimes,lprimes_indexes
 
 
 cdef sieve(interval_list,valid_quads,roots,n,sprimelist_f,hmap,interval_list_pos):
@@ -930,7 +594,6 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
 
 
 
-    grays = get_gray_code(20)
 
     cdef Py_ssize_t i
     cdef Py_ssize_t j
@@ -976,85 +639,10 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
 
     tnum = int(((2*n)**mod_mul))
     tnum_bit=int(bitlen(tnum)*1)
-    rootlist,polylist,flist,quadflist=generate_large_square(n,many_primes,valid_quads,valid_quads_factors,sprimelist_f,interval_list,roots,interval_list_pos)
+    rootlist,polylist,flist,quadflist=generate_large_square(n,many_primes,valid_quads,valid_quads_factors,sprimelist_f,interval_list,roots,interval_list_pos,partials,large_prime_bound)
     print("\nSmooths found: "+str(len(rootlist)))#+" rootlist: "+str(rootlist))
     test=QS(n,sprimelist,polylist,rootlist,flist,quadflist,primeslist2)  
     return
-
-
-def get_partials(mod,list1):
-    i=0
-    new_list=[]
-    while i < len(list1):
-        prime=list1[i]
-        new_list.append(prime)
-        new_list.append([])
-        k=0
-        while k < len(list1[i+1]):
-            r1=list1[i+1][k]
-            aq = mod // prime
-            invaq = modinv(aq%prime, prime)
-            gamma = r1 * invaq % prime
-            new_list[-1].append(aq*gamma)
-           # lin+=aq*gamma
-           # all_lin_parts.append(aq*gamma)
-            k+=1
-        i+=2
-    
-
-    return new_list
-def find_quads(local_factors,hmap,quad_interval_index,quad_interval,n,poly_val,factor_base):
-    local_factors=list(local_factors)
-   # print(local_factors)
-    length=quad_interval[0]
-    primes=[]
-    enum_quad=[]
-    enum_lin=[]
-
-
-   
-    c=0
-    while c < len(local_factors): ###TO DO: THIS SUCKS, USE AN INDEX MAPPING FOR FUCK SAKE
-        if local_factors[c]==-1 or local_factors[c] ==2:
-            c+=1
-            continue
-        if poly_val%local_factors[c] == 0:
-        
-                #print("HIT")
-            enum_quad.append(local_factors[c])
-            enum_lin.append(local_factors[c])
-            length=factor_base[0]
-      
-            p=1
-            while p < length:
-                if local_factors[c]==factor_base[p]:
-                    p-=1
-                    break
-                p+=1
-
-            enum_quad.append([])
-            enum_lin.append([])
-            length2=hmap[p][0]
-            j=1
-            while j < length2:
-  
-                enum_quad[-1].append(hmap[p][j]%local_factors[c])
-                enum_quad[-1].append(hmap[p][j]%local_factors[c])
-                enum_lin[-1].append(hmap[p][j+1]%local_factors[c])
-                enum_lin[-1].append(hmap[p][j+1]%local_factors[c])
-
-                j+=2
-    
-        c+=1
-
-
-    enum_quad=get_partials(poly_val,enum_quad)
-    enum_lin=get_partials(poly_val,enum_lin)
-
-    return enum_quad,enum_lin
-def enumerated_product(*args):
-    yield from itertools.product(*(range(len(x)) for x in args))
-
 
 cdef lift_root(r,prime,n,quad_co,exp):
     z_inv=modinv(quad_co,prime**exp)
@@ -1071,172 +659,10 @@ cdef lift_root(r,prime,n,quad_co,exp):
 
 
 
-#@cython.boundscheck(False)
-#@cython.wraparound(False)
-cdef process_interval(ret_array,n,quad_co2,root,long long [::1] local_primes,cmod,quad_local_factors,partials,large_prime_bound,primelist_f):
-    
 
 
-    mod_found=0
 
-    
-    quad_co=quad_co2
  
-
-  
-    poly_val=quad_co*root**2-n
-            
-    if poly_val%cmod!=0:
-        print("very fatal error")
-    poly_val2 =poly_val//cmod
-   # print("(pos) bitlen polyval/mod: "+str(bitlen(abs(poly_val2)))+" j: "+str(j)+" quad_co: "+str(quad_co))
-    co=quad_co*root**2
-    if poly_val2 == 0:
-        print("wtf")
-    local_factors, value,seen_primes = factorise_fast(poly_val2,local_primes)
-    quad_local_factors2=copy.deepcopy(quad_local_factors)
-    test=math.isqrt(value)
-    if test**2 != value:
-        if value < large_prime_bound:
-            if value in partials:
-                rel, lf, pv,ql = partials[value]
-                if rel == co:
-                    return 0
-                co *= rel
-                local_factors ^= lf
-                poly_val *= pv
-                quad_local_factors2 ^=ql
-            else:
-                partials[value] = (co, local_factors, poly_val,quad_local_factors2)
-                return 0
-        else:
-            return 0
-
-    if co not in ret_array[1]:
-
-        print("Found: "+str(poly_val)+" "+str(seen_primes)+" cmod bitlen: "+str(bitlen(cmod))+" bitlen root: "+str(bitlen(root))+" quad bitlen: "+str(bitlen(quad_co))+" Smooth#: "+str(len(ret_array[0])+1)+" bitlen poly_val/cmod: "+str(bitlen(abs(poly_val//cmod)))+" remaining square: "+str(test)+" root: "+str(root)+" mod: "+str(cmod))
-        mod_found+=1
-        ret_array[0].append(poly_val)
-        ret_array[1].append(co)
-        ret_array[2].append(local_factors)
-        ret_array[3].append(quad_local_factors2)
- 
-    return mod_found
-
-cdef enum_stuff(enum_quad,enum_lin2,quad,new_mod,enum_quad2):
-
-    indexes=[]
-    lin_parts=[]
-    i=0
-    while i < len(enum_quad2):
-        j=0
-        index=-1
-        while j < len(enum_quad2[i]):
-            if enum_quad2[i][j]%enum_quad[i*2]==quad%enum_quad[i*2]:
-                index=j
-                break
-            j+=1
-        if index == -1:
-            break
-        indexes.append(index)
-        i+=1
-    if len(indexes)!=len(enum_quad2):
-        return 0,0
-    l=0
-    while l < len(enum_quad2):
-        lin_parts.append(enum_lin2[l][indexes[l]])
-        l+=1
-    return lin_parts
-
-def gen_co2(factor_base,hmap,cmod,n):
-
-    length=factor_base[0]
-    co2_list=[]
-    i=1
-    while i < length:
-        prime=factor_base[i]
-
-        
-        prime_index=i-1
-        z=1
-
-
-        s=1  
-        while jacobi((s*n)%prime,prime)!=1:
-            s+=1
- 
-
-        co2=hmap[prime_index][2]%prime
-        co2_list.append([co2,s])
-     
-        i+=1
-    return co2_list
-
-def increase_quad_coefficient(prime,co,temp_quad,cmod,quad,n,total_root):
-    target=(cmod*prime**2)
-    z_div=modinv(temp_quad,prime)
-    z_inv=modinv(quad*z_div,prime)
-    if z_inv == None or jacobi(z_inv,prime)!=1:
-        return 0
- 
-    root_mult=tonelli(z_inv,prime)
-
-    root=get_root(prime,co,temp_quad)
-    root=(root*root_mult)%prime
-    root=lift_root(root,prime,n,quad,2)
-    if (quad*root**2-n)%(prime**2)!=0:
-        print("er")
-
-
-    test_dist=solve_lin_con(root,total_root,prime**2)
-    tets_dist_inv=modinv(test_dist,prime**2)
-  #  print(tets_dist_inv)
-    tets_dist_inv=tets_dist_inv**2%prime**2
-    if ((quad*tets_dist_inv)*total_root**2-n)%prime**2 !=0:
-     #   print("fatal") ## to do: fix me
-        return 0
-    test_quad_dist=solve_lin_con(cmod,(quad*tets_dist_inv)-quad,prime**2)
-    test_new_quad=quad+cmod*test_quad_dist
-  #  print("cmod: "+str(cmod)+" prime: "+str(prime)+" total_root: "+str(total_root)+" root: "+str(root)+" quad: "+str(quad)+" new_quad: "+str(test_new_quad)+" test_dist: "+str(test_dist)+" new_q: "+str(tets_dist_inv))
-    if (test_new_quad*total_root**2-n)%target!=0:
-        print("big fail: ",quad)
-    #print("quad: "+str(quad)+" modulus: "+str(cmod)+" mod root:  "+str(total_root)+" adding: "+str(prime**2)+" adding root: "+str(root)+" dist: "+str(dist)+" dist2: "+str(dist2)+" test_dist: "+str(test_dist)+" test_dist_inv: "+str(tets_dist_inv)+" test_quad_dist: "+str(test_quad_dist)+" test_new_quad: "+str(test_new_quad))
-
-    return test_new_quad
-
-def increase_coefficient(prime,co,temp_quad,cmod,quad,n,total_root):
-    target=(cmod*prime**2)
-    z_div=modinv(temp_quad,prime)
-    z_inv=modinv(quad*z_div,prime)
-    if z_inv == None or jacobi(z_inv,prime)!=1:
-        return 0
-    root_mult=tonelli(z_inv,prime)
-    root=get_root(prime,co,temp_quad)
-    root=(root*root_mult)%prime
-    root=lift_root(root,prime,n,quad,2)
-    if (quad*root**2-n)%(prime**2)!=0:
-        print("er")
-    if cmod !=1:
-
-        root2=(-root)%prime**2
-        #print("cmod: "+str(cmod)+" total_root: "+str(total_root)+" prime: "+str(prime))#+" new prime: "+str(potential_a_factor))
-        dist=solve_lin_con(cmod,root-total_root,prime**2)
-        
-
-        dist2=solve_lin_con(cmod,root2-total_root,prime**2)
-      #  test_dist=solve_lin_con(root,total_root,prime**2)
-       # tets_dist_inv=modinv(test_dist,prime**2)
-       # test_quad_dist=solve_lin_con(cmod,tets_dist_inv**2-quad,prime**2)
-       # test_new_quad=quad+cmod*test_quad_dist
-      #  print("quad: "+str(quad)+" modulus: "+str(cmod)+" mod root:  "+str(total_root)+" adding: "+str(prime**2)+" adding root: "+str(root)+" dist: "+str(dist)+" dist2: "+str(dist2)+" test_dist: "+str(test_dist)+" test_dist_inv: "+str(tets_dist_inv)+" test_quad_dist: "+str(test_quad_dist)+" test_new_quad: "+str(test_new_quad))
-        if dist2 < dist:
-            total_root=total_root+cmod*dist2
-        else:
-            total_root=total_root+cmod*dist
-    else:
-        total_root=root
-    return total_root
-
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -1281,7 +707,7 @@ cdef factorise_squares(value,factor_base):
     return value,seen_primes,total_square
 
 
-def generate_large_square(n,many_primes,valid_quads,valid_quads_factors,sprimelist_f,interval_list,roots,interval_list_pos):
+def generate_large_square(n,many_primes,valid_quads,valid_quads_factors,sprimelist_f,interval_list,roots,interval_list_pos,partials,large_prime_bound):
     root_list=[]
     poly_list=[]
     flist=[]
@@ -1296,54 +722,88 @@ def generate_large_square(n,many_primes,valid_quads,valid_quads_factors,sprimeli
             if interval_list[i][j]>thresvar:
                 
                 poly_val=quad*(root-j)**2-n
-        
-                if bitlen(poly_val)<(keysize):
-                    if poly_val ==0:
-                        print("fatal error")
-                    local_factors, value,seen_primes = factorise_fast(poly_val,sprimelist_f)
+                tot=quad*(root-j)**2
+
+                local_factors, value,seen_primes = factorise_fast(poly_val,sprimelist_f)
+                quad_local_factors2=copy.copy(valid_quads_factors[i])
                   #  logged=0
                   #  for p in seen_primes:
                   #      if p != -1 and p != 2:
                   #          logged+=int(math.log2(p))
                  #   print("interval_list[i][j]: "+str(interval_list[i][j])+" seen_primes: "+str(seen_primes)+" logged: "+str(logged)+" quad: "+str(quad))
-                    if value ==1:
-                        tot=quad*(root-j)**2
-                        if tot not in root_list:
+                if value != 1:
+                    if value < large_prime_bound:
+                        if value in partials:
+                            rel, lf, pv,ql = partials[value]
+                            if rel == tot:
+                                j+=1
+                                continue
+                            tot *= rel
+                            local_factors ^= lf
+                            poly_val *= pv
+                            quad_local_factors2 ^=ql
+                        else:
+                            partials[value] = (tot, local_factors, poly_val,quad_local_factors2)
+                            j+=1
+                            continue
+                    else:
+                        j+=1 
+                        continue
+
+
+              
+                        
+                if tot not in root_list:
                            # print("adding")
-                            root_list.append(tot)
-                            poly_list.append(poly_val)
-                            flist.append(local_factors)
-                            quadf_list.append(valid_quads_factors[i])
-                            print("", end=f"[i]Smooths: {len(root_list)} / {small_base*1+2+qbase}\r")
-                            if len(root_list)>small_base+2+qbase+2:
-                                return root_list,poly_list,flist,quadf_list  
+                    root_list.append(tot)
+                    poly_list.append(poly_val)
+                    flist.append(local_factors)
+                    quadf_list.append(quad_local_factors2)
+                    print("", end=f"[i]Smooths: {len(root_list)} / {small_base*1+2+qbase}\r")
+                    if len(root_list)>small_base+2+qbase+2:
+                        return root_list,poly_list,flist,quadf_list  
             j+=1
 
         j=1
         while j < lin_sieve_size:
             if interval_list_pos[i][j]>thresvar:
                 poly_val2=quad*(root+j)**2-n
-            #print(bitlen(poly_val2))
-                if bitlen(poly_val2)<(keysize):
-                    if poly_val ==0:
-                        print("fatal error")
-                    local_factors, value,seen_primes = factorise_fast(poly_val2,sprimelist_f)
+                tot=quad*(root+j)**2
+                quad_local_factors2=copy.copy(valid_quads_factors[i])
+                local_factors, value,seen_primes = factorise_fast(poly_val2,sprimelist_f)
                    # logged=0
                    # for p in seen_primes:
                     #    if p != -1 and p != 2:
                     #        logged+=int(math.log2(p))
                    # print("interval_list[i][j]: "+str(interval_list_pos[i][j])+" seen_primes: "+str(seen_primes)+" logged: "+str(logged)+" quad: "+str(quad))
 
-                    if value == 1:
-                        tot=quad*(root+j)**2
-                        if tot not in root_list:
-                            root_list.append(tot)
-                            poly_list.append(poly_val2)
-                            flist.append(local_factors)
-                            quadf_list.append(valid_quads_factors[i])
-                            print("", end=f"[i]Smooths: {len(root_list)} / {small_base*1+2+qbase}\r")
-                            if len(root_list)>small_base+2+qbase+2:
-                                return root_list,poly_list,flist,quadf_list  
+                if value != 1:
+                    if value < large_prime_bound:
+                        if value in partials:
+                            rel, lf, pv,ql = partials[value]
+                            if rel == tot:
+                                j+=1
+                                continue
+                            tot *= rel
+                            local_factors ^= lf
+                            poly_val2 *= pv
+                            quad_local_factors2 ^=ql
+                        else:
+                            partials[value] = (tot, local_factors, poly_val2,quad_local_factors2)
+                            j+=1
+                            continue
+                    else:
+                        j+=1 
+                        continue
+                        
+                if tot not in root_list:
+                    root_list.append(tot)
+                    poly_list.append(poly_val2)
+                    flist.append(local_factors)
+                    quadf_list.append(quad_local_factors2)
+                    print("", end=f"[i]Smooths: {len(root_list)} / {small_base*1+2+qbase}\r")
+                    if len(root_list)>small_base+2+qbase+2:
+                        return root_list,poly_list,flist,quadf_list  
             j+=1
             #print("Smooth candidate #1: "+str(poly_val)+" Smooth candidate #2: "+str(poly_val2)+" quad: "+str(quad+i)+" bitlength smooth can #1: "+str(bitlen(poly_val))+" bitlength smooth can #2: "+str(bitlen(poly_val2)))
         i+=1
