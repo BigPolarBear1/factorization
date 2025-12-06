@@ -1260,8 +1260,25 @@ cdef factorise_squares(value,factor_base):
     return value,seen_primes,total_square
 
 
-cdef generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,tnum_bit,hmap,primeslist_indexes,quad,qbase,many_primes):
+def generate_large_square(n,many_primes):
+    quad=1
+    root=int(math.sqrt(n))
+    Start_poly_val=quad*root**2-n
+    print("Start_poly_val: "+str(Start_poly_val)+" bits: "+str(bitlen(Start_poly_val)))
+    i=0
+    while i <100_000_000:
+        root=math.isqrt(n//(quad+i))
+        poly_val=(quad+i)*root**2-n
+        poly_val2=(quad+i)*(root+1)**2-n
+        if bitlen(poly_val)<(keysize//2)-5 or  bitlen(poly_val2)<(keysize//2)-5:
+            print("Smooth candidate #1: "+str(poly_val)+" Smooth candidate #2: "+str(poly_val2)+" quad: "+str(quad+i)+" bitlength smooth can #1: "+str(bitlen(poly_val))+" bitlength smooth can #2: "+str(bitlen(poly_val2)))
+        i+=1
+    
 
+cdef generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,tnum_bit,hmap,primeslist_indexes,quad,qbase,many_primes):
+    generate_large_square(n,many_primes)
+    print("done: ",n)
+    time.sleep(100000)
     cdef Py_ssize_t counter 
     cdef Py_ssize_t counter2
     cdef Py_ssize_t counter3
@@ -1356,7 +1373,7 @@ cdef generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_S
         cmod_temp = cmod
         init_poly_val=(new_quad*total_root**2-n)//cmod_temp
         sieve_size=100#_0000
-        ssize=10_000_000
+        ssize=1_000_000_000
         dist=((cmod_temp-(ssize//2)*(total_root**2))-init_poly_val)//(total_root**2)
        # dist=solve_lin_con(total_root_temp**2,cmod_temp-init_poly_val,cmod_temp)
         new_quad=new_quad+dist*cmod_temp
@@ -1377,6 +1394,10 @@ cdef generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_S
         interval=0
         max_depth=6
         while 1:
+            if depth ==1:
+                ssize=1_000_000_000
+            else:
+                ssize=100_000
             if interval==0:
                 interval=[0]*ssize
                 mark_interval(interval,qbase,ssize,new_quad,cmod_temp,many_primes,total_root,cfact,n,depth)
@@ -1384,7 +1405,7 @@ cdef generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_S
             
            # to do: Add sieve interval again... we really just need those large squares.
             while i < ssize:
-                if interval[i]<30:
+                if interval[i]<40:
                     i+=1
                     continue
                 new_quad2=new_quad+i*cmod_temp
@@ -1412,7 +1433,7 @@ cdef generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_S
                             test=math.isqrt(quad_value)
                             if test**2 == quad_value:
                                 cfact_temp=copy.copy(cfact)
-                                print("ADDING poly_val bits: "+str(bitlen(poly_val//cmod_temp))+" new_quad bits: "+str(bitlen(new_quad))+" depth: "+str(depth-1)+" poly_val: "+str(poly_val)+" quad: "+str(new_quad)+" i: "+str(i))#+" state: "+str(state))
+                                print("ADDING poly_val bits: "+str(bitlen(poly_val//cmod_temp))+" new_quad bits: "+str(bitlen(new_quad))+" depth: "+str(depth-1)+" poly_val: "+str(poly_val)+" quad: "+str(new_quad)+" i: "+str(i)+" bitlen: "+str(bitlen(new_quad)))#+" state: "+str(state))
                                 root_list.append(total_root)
                                 cmod_list.append(cmod_temp)
                                 cfact_list.append(cfact_temp)
