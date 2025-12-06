@@ -29,20 +29,20 @@ Note: With a large enough -base and lin_size this PoC will find smooths for 110 
 To build: python3 setup.py build_ext --inplace</br>
 To run:python3 run_qs.py -keysize 100 -base 500 -sbase 500 -debug 1 -lin_size 10_000 -quad_size 10_000</br></br>
 
-Update: Alright. I added some interval code. 
+Update: Alright. I added some interval code. </br></br>
 
-To do:
+To do:</br></br>
 
-1. The calculations in sieve() need to be sped up many many times more so that we can us a much bigger quad_size parameter.
-2. Currently it only uses -sbase... which is the small factor base.. but we should also use -base, the large factor base to saturate the intervals with large squares.
+1. The calculations in sieve() need to be sped up many many times more so that we can us a much bigger quad_size parameter.</br>
+2. Currently it only uses -sbase... which is the small factor base.. but we should also use -base, the large factor base to saturate the intervals with large squares.</br></br>
 
-What this code does:
+What this code does:</br></br>
 
-It will roughly generate smooths that are of keysize/2. Normally with normal SIQS you cannot do this (unless you use a very small sieve interval). We achieve this by using multiple quadratic coefficients.
-You want to keep -lin_size relatively small and really increase quad_size, but I will need to optimize the calculations in sieve() first. 
-Additionally, we really really need to saturate our sieve intervals with large squares. Since they wont increase the required amount of smooths and they will help to chip away at the bit length.
+It will roughly generate smooths that are of keysize/2. Normally with normal SIQS you cannot do this (unless you use a very small sieve interval). We achieve this by using multiple quadratic coefficients.</br>
+You want to keep -lin_size relatively small and really increase quad_size, but I will need to optimize the calculations in sieve() first. </br>
+Additionally, we really really need to saturate our sieve intervals with large squares. Since they wont increase the required amount of smooths and they will help to chip away at the bit length.</br></br>
 
-Update: I've also quickly added lifting for the primes in the -sbase
-Update: Added large prime variation and cleaned up dead code
+Update: I've also quickly added lifting for the primes in the -sbase</br>
+Update: Added large prime variation and cleaned up dead code</br>
 
 NOTE: The americans are using the courts to move against me. I may get formally arrested on Monday. If this happens and my github repo dissappears.. then you can put 2 and 2 together...  my situation is very dire here in Europe. I've faced persistent unemployment and legal harassment under pressure of the americans. They know I will succeed one day and that I am getting closer as time passes. They are trying everything they can to break me mentally. 
