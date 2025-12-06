@@ -34,4 +34,4 @@ Update: Alright. I added some interval code.
 To do:
 
 1. The calculations in sieve() need to be speed up many many times more so that we can us a much bigger quad_size parameter.
-2. Currently it only uses -sbase... which is the small factor base.. but we should also use -base, the large factor base to saturate the interval with large squares. 
+2. Currently it only uses -sbase... which is the small factor base.. but we should also use -base, the large factor base to saturate the intervals with large squares. 
