@@ -27,7 +27,7 @@ Note: With a large enough -base and lin_size this PoC will find smooths for 110 
 #### To run from folder "Improved_QS_Variant" (Implements more of my number theory and attempts to succeed with fewer smooths by using p-adic lifting):</br></br>
 
 To build: python3 setup.py build_ext --inplace</br>
-To run:python3 run_qs.py -keysize 100 -base 500 -sbase 500 -debug 1 -lin_size 10_000 -quad_size 5_000</br></br>
+To run: python3 run_qs.py -keysize 100 -base 500 -sbase 500 -debug 1 -lin_size 10_000 -quad_size 5_000</br></br>
 
 Update: Alright. I added some interval code. </br></br>
 
