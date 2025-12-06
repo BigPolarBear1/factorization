@@ -43,5 +43,6 @@ You want to keep -lin_size relatively small and really increase quad_size, but I
 Additionally, we really really need to saturate our sieve intervals with large squares. Since they wont increase the required amount of smooths and they will help to chip away at the bit length.
 
 Update: I've also quickly added lifting for the primes in the -sbase
+Update: Added large prime variation and cleaned up dead code
 
 NOTE: The americans are using the courts to move against me. I may get formally arrested on Monday. If this happens and my github repo dissappears.. then you can put 2 and 2 together...  my situation is very dire here in Europe. I've faced persistent unemployment and legal harassment under pressure of the americans. They know I will succeed one day and that I am getting closer as time passes. They are trying everything they can to break me mentally. 
