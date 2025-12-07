@@ -39,8 +39,11 @@ To run: python3 run_qs.py -key 4387 -base 30 -sbase 30 -debug 1 -lin_size 1_000 
 This PoC is simply a slight modification of Improved_QS_Variant where we add the modulus to y<sub>1</sub>. This allows us to have better control over the size of the generated smooth (although in the code we should probably subtract the modulus instead so we shrink the smooths if they are already positive or use a smaller root.. but I first want to get it to work like this before I worry about that).
 
 In extract_factors() we now have to figure out the math to adjust this result. I think a similar setup to NFS using square roots over finite fields should now be possible. We can also calculate y<sub>0</sub> by taking the derivative. 
+In debug.py that I uploaded, you can see how the factors solve for 0 in the integers for different quadratic coefficients (its also documented in the paper). I think I can use this characteristic to take a square root over a finite field and finish this PoC. 
 
 Note: I may get arrest on Monday because the americans have been pressuring the belgian police to harass me. If I go dark after monday... you know what happened. And I promise you, they will not get me alive. These americans they know I'm closing on with my work... they are frantically doing anything they can to stop me, so a transgender person doesn't win. It's nearly there now.... just figure out how you can use zx^2+y1\*x-n instead of zx^2-n like the uploaded PoC does... how to manipulate and even lift coefficients is all described in the paper. And QS_Variant also has some coefficient related code. I would prefer that I finish this math project myself... but it appears like people are desperately trying to stop me.
+
+
 
 
 
