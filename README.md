@@ -36,7 +36,7 @@ Note: I will remove this folder eventually.. I used this code as a start to cons
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -key 4387 -base 30 -sbase 30 -debug 1 -lin_size 1_000 -quad_size 1_000   
 
-This PoC is simply a slight modification of Improved_QS_Variant where we add the modulus to y<sub>1</sub>. This allows us to have better control over the size of the generated smooth (although in the code we should probably subtract the modulus instead so we shrink the smooths if they are already positive.. but I first want to get it to work like this before I worry about that).
+This PoC is simply a slight modification of Improved_QS_Variant where we add the modulus to y<sub>1</sub>. This allows us to have better control over the size of the generated smooth (although in the code we should probably subtract the modulus instead so we shrink the smooths if they are already positive or use a smaller root.. but I first want to get it to work like this before I worry about that).
 
 In extract_factors() we now have to figure out the math to adjust this result. I think a similar setup to NFS using square roots over finite fields should now be possible. We can also calculate y<sub>0</sub> by taking the derivative. 
 
