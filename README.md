@@ -31,7 +31,7 @@ To run:python3 run_qs.py -keysize 120 -base 1000 -sbase 500 -debug 1 -lin_size 1
 
 To do:</br></br>
 
-1. The calculations in sieve() need to be sped up many many times more so that we can us a much bigger quad_size parameter and in addition also use a much much larger -base size... that one should be close to a million or whatever since it doesn't increase the required smooth amount.. I need a way to mutate dist,dist2,dist3,dist4 for different quadratic coefficients without doing tonelli.. I'll figure something out.</br>
+1. The calculations in sieve() need to be sped up many many times more so that we can us a much bigger quad_size parameter and in addition also use a much much larger -base size... that one should be close to a million or whatever since it doesn't increase the required smooth amount (only -sbase does).. I need a way to mutate dist,dist2,dist3,dist4 for different quadratic coefficients without doing tonelli.. I'll figure something out.</br>
 
 What this code does:</br></br>
 
