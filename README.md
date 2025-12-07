@@ -33,3 +33,4 @@ UPDATE!!!!!!!!!!!!!!!!!!!!!: Wait a minute, ignore this uploaded PoC for now. I 
 
 Note: I may get arrest on Monday because the americans have been pressuring the belgian police to harass me. If I go dark after monday... you know what happened. And I promise you, they will not get me alive. These americans they know I'm closing on with my work... they are frantically doing anything they can to stop me, so a transgender person doesn't win. It's nearly there now.... just figure out how you can use zx^2+y1\*x-n instead of zx^2-n like the uploaded PoC does... how to manipulate and even lift coefficients is all described in the paper. And QS_Variant also has a coefficient related code. I would prefer that I finish this math project myself... but it appears like people are desperately trying to stop me.
 
+I also added it to the paper. I would recommend anyone who stumbles on this to clone it. Because they may take my work offline after they arrest me.
