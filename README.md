@@ -29,18 +29,7 @@ Note: With a large enough -base and lin_size this PoC will find smooths for 110 
 To build: python3 setup.py build_ext --inplace</br>
 To run:python3 run_qs.py -keysize 120 -base 1000 -sbase 500 -debug 1 -lin_size 10_000 -quad_size 10_000   (note: Takes about 90 seconds for 120 bit.. its bottlenecking in sieve().. I need to improve that next)</br></br>
 
-To do:</br></br>
+UPDATE!!!!!!!!!!!!!!!!!!!!!: Wait a minute, ignore this uploaded PoC for now. I just had an ephipany. Rather then setting y1 to 0 and using zx^2-n we should use zx^2+y1\*x-n. Because then we achieve superior control of the length of the smooth. Let me grind out the math how I would set this up exactly. I know its possible because its just adding an offset using the root, so there has to be a way to make it work. 
 
-1. The calculations in sieve() need to be sped up many many times more so that we can us a much bigger quad_size parameter and in addition also use a much much larger -base size... that one should be close to a million or whatever since it doesn't increase the required smooth amount (only -sbase does).. I need a way to mutate dist,dist2,dist3,dist4 for different quadratic coefficients without doing tonelli.. I'll figure something out.</br>
+Note: I may get arrest on Monday because the americans have been pressuring the belgian police to harass me. If I go dark after monday... you know what happened. And I promise you, they will not get me alive. These americans they know I'm closing on with my work... they are frantically doing anything they can to stop me, so a transgender person doesn't win. It's nearly there now.... just figure out how you can use zx^2+y1\*x-n instead of zx^2-n like the uploaded PoC does... how to manipulate and even lift coefficients is all described in the paper. And QS_Variant also has a coefficient related code. I would prefer that I finish this math project myself... but it appears like people are desperately trying to stop me.
 
-What this code does:</br></br>
-
-It will roughly generate smooths that are of keysize/2. Normally with normal SIQS you cannot do this (unless you use a very small sieve interval). We achieve this by using multiple quadratic coefficients.</br>
-You want to keep -lin_size relatively small and really increase quad_size, but I will need to optimize the calculations in sieve() first. </br>
-Additionally, we really really need to saturate our sieve intervals with large squares. Since they wont increase the required amount of smooths and they will help to chip away at the bit length.</br></br>
-
-Update: I've also quickly added lifting for the primes in the -sbase</br>
-Update: Added large prime variation and cleaned up dead code</br>
-Update: I also made the large factor base work. Now the only super big bottleneck is everything inside sieve() 
-
-NOTE: The americans are using the courts to move against me. I may get formally arrested on Monday. If this happens and my github repo dissappears.. then you can put 2 and 2 together...  my situation is very dire here in Europe. I've faced persistent unemployment and legal harassment under pressure of the americans. They know I will succeed one day and that I am getting closer as time passes. They are trying everything they can to break me mentally. 
