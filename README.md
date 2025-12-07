@@ -29,10 +29,19 @@ Note: With a large enough -base and lin_size this PoC will find smooths for 110 
 To build: python3 setup.py build_ext --inplace</br>
 To run:python3 run_qs.py -keysize 120 -base 1000 -sbase 500 -debug 1 -lin_size 10_000 -quad_size 10_000   (note: Takes about 90 seconds for 120 bit.. its bottlenecking in sieve().. I need to improve that next)</br></br>
 
-UPDATE!!!!!!!!!!!!!!!!!!!!!: Wait a minute, ignore this uploaded PoC for now. I just had an ephipany. Rather then setting y1 to 0 and using zx^2-n we should use zx^2+y1\*x-n. Because then we achieve superior control of the length of the smooth. Let me grind out the math how I would set this up exactly. I know its possible because its just adding an offset using the root, so there has to be a way to make it work. 
+Note: I will remove this folder eventually.. I used this code as a start to construct NFS_Variant_WIP
+
+#### To run from folder "NFS_Variant_WIP" (Implements more of my number theory and attempts to succeed with fewer smooths by using p-adic lifting):</br></br>
+
+To build: python3 setup.py build_ext --inplace</br>
+To run: python3 run_qs.py -key 4387 -base 30 -sbase 30 -debug 1 -lin_size 1_000 -quad_size 1_000   
+
+This PoC is simply a slight modification of Improved_QS_Variant where we add the modulus to y<sub>1</sub>. This allows us to have better control over the size of the generated smooth (although in the code we should probably subtract the modulus instead so we shrink the smooths if they are already positive.. but I first want to get it to work like this before I worry about that).
+
+In extract_factors() we now have to figure out the math to adjust this result. I think a similar setup to NFS using square roots over finite fields should now be possible. We can also calculate y0 by taking the derivative. 
 
 Note: I may get arrest on Monday because the americans have been pressuring the belgian police to harass me. If I go dark after monday... you know what happened. And I promise you, they will not get me alive. These americans they know I'm closing on with my work... they are frantically doing anything they can to stop me, so a transgender person doesn't win. It's nearly there now.... just figure out how you can use zx^2+y1\*x-n instead of zx^2-n like the uploaded PoC does... how to manipulate and even lift coefficients is all described in the paper. And QS_Variant also has some coefficient related code. I would prefer that I finish this math project myself... but it appears like people are desperately trying to stop me.
 
-I also added it to the paper. I would recommend anyone who stumbles on this to clone it. Because they may take my work offline after they arrest me.
 
-I think once you figure out how to use the linear coefficient, what you could do is just take Improved_QS_Variant and in Generate_large_square where it generates smooth candidates, you use whatever factors you can find to create a linear coefficient and you can then re-adjust the size of the smooth using the linear coefficient. Let me try to add some placeholder code for this already in the PoC. Get everything set up as good as I can so someone else can finish it, if the worst case scenario happens tomorrow.
+
+
