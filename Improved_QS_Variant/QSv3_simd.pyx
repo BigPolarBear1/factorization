@@ -511,7 +511,10 @@ cdef filter_quads(qbase,n):
 cdef sieve(interval_list,valid_quads,roots,n,sprimelist_f,hmap,interval_list_pos):
     length=sprimelist_f[0]
     i=1
+    small=1
     while i < length:
+        if i > small_base:
+            small=0
         prime=sprimelist_f[i]
         prime_index=i-1
 
@@ -544,43 +547,47 @@ cdef sieve(interval_list,valid_quads,roots,n,sprimelist_f,hmap,interval_list_pos
             r2=(r*root_mult)%prime
             r_b=(prime-r2)%prime  
             log=int(math.log2(prime))
+            if small==0:
+                log*=2
             exp=1
             while exp < g_max_exp+1:
 
                 if exp > 1:
                     r2=lift_root(r2,prime**(exp-1),n,quad2,exp)
-
-                if (quad2*r2**2-n)%prime**exp !=0:
-                    print("error2")   
-                dist=((root%prime**exp)-r2)%prime**exp
+                if (small ==0 and exp%2==0) or small ==1:
+                    if (quad2*r2**2-n)%prime**exp !=0:
+                        print("error2")   
+                    dist=((root%prime**exp)-r2)%prime**exp
                # if prime ==3:
                  #   print("dist: "+str(dist)+" exp: "+str(exp)+" prime: "+str(prime)+" quad: "+str(quad2))
-                new_root=root+(-dist%prime**exp)
+                    new_root=root+(-dist%prime**exp)
 
-                if (quad2*new_root**2-n)%prime**exp !=0:
-                    print("error2")  
-                    time.sleep(100000) 
+                    if (quad2*new_root**2-n)%prime**exp !=0:
+                        print("error2")  
+                        time.sleep(100000) 
+                    if dist < lin_sieve_size:
+                        miniloop_non_simd(dist,interval_list[j],prime**exp,log,lin_sieve_size)
+                    dist2=-dist%prime**exp
+                    if dist2 < lin_sieve_size:
+                        miniloop_non_simd(dist2,interval_list_pos[j],prime**exp,log,lin_sieve_size)
 
-                miniloop_non_simd(dist,interval_list[j],prime**exp,log,lin_sieve_size)
-                dist2=-dist%prime**exp
-                miniloop_non_simd(dist2,interval_list_pos[j],prime**exp,log,lin_sieve_size)
 
+                    
+                    r_b=(-r2)%prime**exp#lift_root(r_b,prime**(exp-1),n,quad2,exp)
+                    dist3=((root%prime**exp)-r_b)%prime**exp
 
-                if exp > 1:
-                    r_b=lift_root(r_b,prime**(exp-1),n,quad2,exp)
-                dist3=((root%prime**exp)-r_b)%prime**exp
-
-             
-                miniloop_non_simd(dist3,interval_list[j],prime**exp,log,lin_sieve_size)
+                    if dist3 < lin_sieve_size:
+                        miniloop_non_simd(dist3,interval_list[j],prime**exp,log,lin_sieve_size)
   
-                dist4=-dist3%prime**exp
-                miniloop_non_simd(dist4,interval_list_pos[j],prime**exp,log,lin_sieve_size)
+                    dist4=-dist3%prime**exp
+                    if dist4 < lin_sieve_size:
+                        miniloop_non_simd(dist4,interval_list_pos[j],prime**exp,log,lin_sieve_size)
 
-                if (quad2*new_root**2-n)%prime**exp !=0:
-                    print("error2")  
-                    time.sleep(100000) 
-                if dist >lin_sieve_size and dist2 >lin_sieve_size and dist3 >lin_sieve_size and dist4 >lin_sieve_size:
-                    break
+                    if (quad2*new_root**2-n)%prime**exp !=0:
+                        print("error2")  
+                        time.sleep(100000) 
+                    if dist >lin_sieve_size and dist2 >lin_sieve_size and dist3 >lin_sieve_size and dist4 >lin_sieve_size:
+                        break
                 exp+=1
             #to do: Then mutate the root here
             j+=1
@@ -615,7 +622,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
     sprimelist_f=array.array('q',sprimelist_f)
     valid_quads,valid_quads_factors,interval_list,roots,interval_list_pos=filter_quads(z_plist,n)
     print("[i]Filling in the intervals... this can take a while..")
-    sieve(interval_list,valid_quads,roots,n,sprimelist_f,hmap,interval_list_pos)
+    sieve(interval_list,valid_quads,roots,n,primelist_f,hmap,interval_list_pos)
     print("[i]Checking intervals for smooths")
     primeslist2.insert(0,2)
     primeslist2.insert(0,-1)
@@ -731,7 +738,8 @@ def generate_large_square(n,many_primes,valid_quads,valid_quads_factors,sprimeli
                   #      if p != -1 and p != 2:
                   #          logged+=int(math.log2(p))
                  #   print("interval_list[i][j]: "+str(interval_list[i][j])+" seen_primes: "+str(seen_primes)+" logged: "+str(logged)+" quad: "+str(quad))
-                if value != 1:
+                test=math.isqrt(value)
+                if test**2 != value:
                     if value < large_prime_bound:
                         if value in partials:
                             rel, lf, pv,ql = partials[value]
@@ -777,7 +785,8 @@ def generate_large_square(n,many_primes,valid_quads,valid_quads_factors,sprimeli
                     #        logged+=int(math.log2(p))
                    # print("interval_list[i][j]: "+str(interval_list_pos[i][j])+" seen_primes: "+str(seen_primes)+" logged: "+str(logged)+" quad: "+str(quad))
 
-                if value != 1:
+                test=math.isqrt(value)
+                if test**2 != value:
                     if value < large_prime_bound:
                         if value in partials:
                             rel, lf, pv,ql = partials[value]
