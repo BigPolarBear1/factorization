@@ -792,11 +792,11 @@ def generate_large_square(n,many_primes,valid_quads,valid_quads_factors,sprimeli
                     mod=1
                     for p in local_factors:
                         mod*=p
-                    y=2*quad*(root+j)
+                    y0=2*quad*(root+j)
                    # print("\nmod: "+str(mod)+" local: "+str(local_factors))
                     k=0
                     while k < 1:
-                        y+=mod*k
+                        y=y0+mod*k
                         poly_val2=quad*(root+j)**2-y*(root+j)+n
                         tot=quad*(root+j)**2
                         quad_local_factors2=copy.copy(valid_quads_factors[i])
