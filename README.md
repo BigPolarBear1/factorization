@@ -24,13 +24,6 @@ See below for an improved way of performing what this PoC does.. I'll delete thi
 
 Note: With a large enough -base and lin_size this PoC will find smooths for 110 digits. Albeit very slowly, but this is a highly unoptimized cython PoC. However, to push beyond that into novel terroritory for Quadratic Sieve-based algorithms we need to use quadratic coefficients and p-adic lifting, and that is what the PoC below (Improved_QS_Variant) will be for. 
 
-#### To run from folder "Improved_QS_Variant" (Implements more of my number theory and attempts to succeed with fewer smooths by using p-adic lifting):</br></br>
-
-To build: python3 setup.py build_ext --inplace</br>
-To run:python3 run_qs.py -keysize 120 -base 1000 -sbase 500 -debug 1 -lin_size 10_000 -quad_size 10_000   (note: Takes about 90 seconds for 120 bit.. its bottlenecking in sieve().. I need to improve that next)</br></br>
-
-Note: I will remove this folder eventually.. I used this code as a start to construct NFS_Variant_WIP
-
 #### To run from folder "NFS_Variant_WIP" (Implements more of my number theory and attempts to succeed with fewer smooths by using p-adic lifting):</br></br>
 
 To build: python3 setup.py build_ext --inplace</br>
