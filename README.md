@@ -38,3 +38,5 @@ UPDATE: YES. EUREKA! THIS IS 100% IT! I KNOW IT! If we add the modulus to y0, th
 UPDATE: I expanded the paper a little more. Now only one final thing is missing in the paper. Showing how to reconstruct the root if the derivative of the polynomials we multiply together is non-zero. And that's it.. after that I added a few lines of code to the PoC and we're done (atleast all the math will be done.. after that its just optimizing the PoC).
 
 Update: I guess the very first step after multiplying polynomials together of the y0 side, is use chinese remainder to figure out the correct y0 value for the product. Because then we know the derivative of the y1 side must generate y0 and hence we can deduce y1. Something like that. Ok... so first things first... figuring out y0 after multiplying in the linear algebra step.
+
+Update: oops, bad typo in the paper. Ergh thats all wrong. One sec
