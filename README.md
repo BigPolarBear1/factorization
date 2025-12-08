@@ -35,8 +35,4 @@ Update: Oh yea. It is possible! If we add the modulus to the linear coefficient 
 
 UPDATE: YES. EUREKA! THIS IS 100% IT! I KNOW IT! If we add the modulus to y0, then this means the derivate (aka y1) will be non-zero. But in order to take a derivative, we need to find the correct root, since we only know zx^2 is square after the linear algebra step, but we dont know the root... which we need if we have non-zero linear coefficient. And ofcourse, this root isnt garantueed to simply be the square root of zx^2. But with everything I got, NOW I CAN TAKE THE SQUARE ROOT OVER A FINITE FIELD! I GOT IT! HAH! If I ever find out the belgian government knew I was on the right track with my math and yet still kept harassing me with the police, I garantuee you, I will flee this shit country. They'll have to kill me to prevent that from happening. I'm not a fucking dog. Fucking nazis. I'm a polar bear, and this week, I'm going to devour this shit world.
 
-UPDATE: I expanded the paper a little more. Now only one final thing is missing in the paper. Showing how to reconstruct the root if the derivative of the polynomials we multiply together is non-zero. And that's it.. after that I added a few lines of code to the PoC and we're done (atleast all the math will be done.. after that its just optimizing the PoC).
-
-Update: I guess the very first step after multiplying polynomials together of the y0 side, is use chinese remainder to figure out the correct y0 value for the product. Because then we know the derivative of the y1 side must generate y0 and hence we can deduce y1. Something like that. Ok... so first things first... figuring out y0 after multiplying in the linear algebra step.
-
-Update: oops, bad typo in the paper. Ergh thats all wrong. One sec
+Update: Fixed an ugly error in example 2 in chapter 8. Accidently forget to add the exponent sign when I copy pasted over to notepad. Bleh. Anyway... let me figure out how this works with non-zero derivatives now.
