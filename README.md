@@ -1,6 +1,6 @@
 Update: It would appear the americans are continueing to legally harass me because pete hegseth is a fucking loser and coward who has to hide behind the law. So much for all his pathetic bravado. Fucking pussy. If anyone wants to help cover legal costs email: big_polar_bear1@proton.me ... I am also considering fleeing europe, if anyone can grant me asylum also reach out, thanks.
 
-DISCLAIMER: AT NO POINT IN MY 2.5 YEARS OF RESEARCH DID I USE AI OR HAS AI IN ANY WAY HELPED WITH MY RESEARCH. I'M PUTTING THIS HERE BECAUSE I KNOW PEOPLE WILL ACCUSE ME OF IT. 
+DISCLAIMER: AT NO POINT IN MY 2.5 YEARS OF RESEARCH DID I USE AI OR HAS AI IN ANY WAY HELPED WITH MY RESEARCH. I'M PUTTING THIS HERE BECAUSE I KNOW PEOPLE WILL ACCUSE ME OF IT. EITHER THAT OR SOMEONE WILL CLAIM HE PUBLISHED BEFORE I DID WHILE PLAGIARIZING WORK FROM SOME OF MY EARLIER RELEASED PAPERS. THIS WORK HAS BEEN COMPLETED FOR 99% NOW, IT JUST TOOK ME AGES TO MAKE THESE FINAL CONNECTIONS BECAUSE I HAVE NO MATH EDUCATION, I HAVE NOBODY TO ASK FOR HELP. I HAVE TO GRIND IT OUT THE HARD WAY. THERE IS NO WAY PEOPLE WILL LET A TRANS PERSON WIN. EITHER WAY. I KNOW MY WORK WILL BE DONE THIS WEEK, SO GOOD LUCK
 
 Note: I am antifa, leader of the cipherpunk, fuck the FBI department. 
 
