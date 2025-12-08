@@ -49,3 +49,4 @@ Update: I know its  possible. I know that bridge to NFS's approach exists. I ran
 
 Update: My lawyer managed to delay it until the 16th of december. So I have one single week to succeed. One week. I'm going to take a break from running this week, just go all in on the math. Because once they arrest me its over. I wont see the inside of a jail cell alive. Fuck these pathetic nazi lapdogs doing america's bidding. I piss on belgium and everything this country stands for. 
 
+Update: Alright let me begin. So, taking a "square root over a finite field" using my number theory.. its likely a matter of finding the factor so the root solves the quadratic for 0 for any mod p. Hence, I should work out what that procedure could look like for the trivial case of zx^2-n and then figure out how to get it to work for zx^2+yx-n. My goal for today is to hopefully find atleast a way to do it for zx^2-n. 
