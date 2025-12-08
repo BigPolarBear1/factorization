@@ -188,7 +188,7 @@ def extract_factors(N, relations, roots, null_space,modk):
                 print("adding left (zx^2): "+str(roots[idx]))
                 prod_right *= relations[idx]
                 print("adding right (zx^2+yx-n): "+str(relations[idx]))
-                print("adding poly: "+str(modk[idx][3])+"*"+str(modk[idx][2])+"^2+"+str(modk[idx][0])+"*"+str(modk[idx][1])+"*"+str(modk[idx][2])+"-"+str(N)+" = "+str(relations[idx]))#str(modk[idx]))
+                print("adding poly: "+str(modk[idx][3])+"*"+str(modk[idx][2])+"^2-"+str(modk[idx][4])+"*"+str(modk[idx][2])+"+"+str(N)+" = "+str(relations[idx]))#str(modk[idx]))
             idx += 1
         sqrt_right = math.isqrt(prod_right)
         sqrt_left = math.isqrt(prod_left)
@@ -717,19 +717,7 @@ cdef factorise_squares(value,factor_base):
         i+=1
     return value,seen_primes,total_square
 
-def reduce_smooth_size(seen_primes,quad,root,n):
-    print("seen_primes: ",seen_primes)
-    mod=1
-    for p in seen_primes:
-        mod*=1
-    print("mod: ",mod)
-    poly_val=quad*root**2-n
-    i=0
-    while i < 1000:
-        y=mod*i
-        poly_val=quad*root**2+y*root-n
-        print("poly_val:",poly_val)
-        i+=1
+
 
 def generate_large_square(n,many_primes,valid_quads,valid_quads_factors,sprimelist_f,interval_list,roots,interval_list_pos,partials,large_prime_bound):
     root_list=[]
@@ -804,18 +792,18 @@ def generate_large_square(n,many_primes,valid_quads,valid_quads_factors,sprimeli
                     mod=1
                     for p in local_factors:
                         mod*=p
+                    y=2*quad*(root+j)
                    # print("\nmod: "+str(mod)+" local: "+str(local_factors))
-                    k=1
-                    while k < 1000:
-                        y=mod*k
-                        poly_val2=quad*(root+j)**2+y*(root+j)-n
+                    k=0
+                    while k < 1:
+                        y+=mod*k
+                        poly_val2=quad*(root+j)**2-y*(root+j)+n
                         tot=quad*(root+j)**2
                         quad_local_factors2=copy.copy(valid_quads_factors[i])
                         local_factors, value,seen_primes = factorise_fast(poly_val2,sprimelist_f)
                        # print("poly_val:",poly_val)
                        
-                   # reduce_smooth_size(local_factors,quad,root+j,n)
-                  #  time.sleep(10000)
+
                    # logged=0
                    # for p in seen_primes:
                     #    if p != -1 and p != 2:
@@ -846,7 +834,7 @@ def generate_large_square(n,many_primes,valid_quads,valid_quads_factors,sprimeli
                                 root_list.append(tot)
                                 poly_list.append(poly_val2)
                                 flist.append(local_factors)
-                                modk.append([mod,k,root+j,quad])
+                                modk.append([mod,k,root+j,quad,y])
                                 quadf_list.append(quad_local_factors2)
                                 print("", end=f"[i]Smooths: {len(root_list)} / {small_base*1+2+qbase}\r")
                                 if len(root_list)>small_base+2+qbase+2:
