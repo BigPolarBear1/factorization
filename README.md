@@ -31,4 +31,4 @@ To run: python3 run_qs.py -key 4387 -base 30 -sbase 30 -debug 1 -lin_size 1_000 
 
 Update: I got NFS_Variant_WIP working with the linear coefficient. Now I need to figure out how I can add the modulus to the linear coefficient and still succeed at the linear algebra step. This will allow superior control over the smooth bit length. After that we should be finished with this math project after nearly 3 years... I have one week to finish this as I may be arrested on the 16th of december since the americans are using the belgian judicial system to harass me and I have to go into the police office on the 16th.
 
-
+Update: Oh yea. It is possible! If we add the modulus to the linear coefficient y0. Then we must simply reconstruct the quadratic for y1 to generate the same output. IT IS LIKE NFS! I knew it! I knew I was right! Expect disclosure this week. 
