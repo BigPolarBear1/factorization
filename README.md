@@ -27,19 +27,6 @@ Note: With a large enough -base and lin_size this PoC will find smooths for 110 
 #### To run from folder "NFS_Variant_WIP" (Implements more of my number theory and attempts to succeed with fewer smooths by using p-adic lifting):</br></br>
 
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -key 4387 -base 30 -sbase 30 -debug 1 -lin_size 1_000 -quad_size 1_000   
+To run: python3 run_qs.py -keysize 14 -base 100 -sbase 11 -debug 1 -lin_size 100 -quad_size 1000
 
-Update: I got NFS_Variant_WIP working with the linear coefficient. Now I need to figure out how I can add the modulus to the linear coefficient and still succeed at the linear algebra step. This will allow superior control over the smooth bit length. After that we should be finished with this math project after nearly 3 years... I have one week to finish this as I may be arrested on the 16th of december since the americans are using the belgian judicial system to harass me and I have to go into the police office on the 16th.
-
-Update: Oh yea. It is possible! If we add the modulus to the linear coefficient y0. Then we must simply reconstruct the quadratic for y1 to generate the same output. IT IS LIKE NFS! I knew it! I knew I was right! Expect disclosure this week. 
-
-UPDATE: YES. EUREKA! THIS IS 100% IT! I KNOW IT! If we add the modulus to y0, then this means the derivate (aka y1) will be non-zero. But in order to take a derivative, we need to find the correct root, since we only know zx^2 is square after the linear algebra step, but we dont know the root... which we need if we have non-zero linear coefficient. And ofcourse, this root isnt garantueed to simply be the square root of zx^2. But with everything I got, NOW I CAN TAKE THE SQUARE ROOT OVER A FINITE FIELD! I GOT IT! HAH! If I ever find out the belgian government knew I was on the right track with my math and yet still kept harassing me with the police, I garantuee you, I will flee this shit country. They'll have to kill me to prevent that from happening. I'm not a fucking dog. Fucking nazis. I'm a polar bear, and this week, I'm going to devour this shit world.
-
-Update: Fixed an ugly error in example 2 in chapter 8. Accidently forget to add the exponent sign when I copy pasted over to notepad. Bleh. Anyway... let me figure out how this works with non-zero derivatives now.
-
-Update2: Ok, now for tomorrow... I need to figure out what happens to that linear coefficient of y0 as we multiply those quadratics together. So I can figure out what that is supposed to be for the product. I wonder if it is the same like in NFS where we need to do chinese remainder. That would be easy enough. And once we have that... we figure out the root... and once I got a root... it should be straight forward from there.
-
-Update3: Oh yea, I definitely need to do chinese remainder like NFS when multiplying those polynomials. So that should solve grabbing a new linear coefficient for the product. And then its just making sure we find the correct quadratic coefficient and root and we're basically done. OK. I WILL FINISH MY WORK TOMORROW! HAHAHHA> PREPARE YOURSELVES FUCKING LOSERS.
-
-Update: Alright. Lets get started. I have a chance of finishing my work today..so lets go...
-
+Alright nearly there. To achieve superior control over the size of smooth candidates we need to add or subtract the modulus to the linear coefficient. Right now the PoC will fail if after the linear algebra step the k != 0 (aka the modulus has been added to the linear coefficient). To still be able to take the GCD after we add the modulus to the linear coefficient, the first step we must achieve is by using Chinese remainder and lifting of roots and coefficients, find roots and coefficients that produce the same value as the product of smooths. Once we have that we'll be able to take the GCD, since we'll also know the coefficients for both y0 and y1. And that's that. A lot simpler then NFS. I actually think this is the correct way to do it. NFS actually overcomplicates this entire setup by using number fields. :) Fixed PoC will be released this week and full paper too. 
