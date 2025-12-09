@@ -30,3 +30,5 @@ To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 14 -base 100 -sbase 11 -debug 1 -lin_size 100 -quad_size 1000
 
 Update: I did some deep late night thinking. And you know, that shit with the quadratic coefficient, thats the modulus in SIQS. Thats exactly it. I dont know why I didnt see it earlier lol. However.. the moduli we are using are completely different. I wonder if I can combine both to make extreme bit reductions of smooth candidates... holy shit, I'm such a morron. AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH. People will think I'm a morron lol. 
+
+GOD DAMNIT THATS IT. FUCK. Ok, tomorrow. I need one day to fix this mistake. ONE DAY. PREPARES YOURSELVES NAZI FUCKERS!!!!!!!!!!!!!!!! 
