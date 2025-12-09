@@ -39,4 +39,7 @@ Update: Fixed an ugly error in example 2 in chapter 8. Accidently forget to add 
 
 Update2: Ok, now for tomorrow... I need to figure out what happens to that linear coefficient of y0 as we multiply those quadratics together. So I can figure out what that is supposed to be for the product. I wonder if it is the same like in NFS where we need to do chinese remainder. That would be easy enough. And once we have that... we figure out the root... and once I got a root... it should be straight forward from there.
 
-Update3: Oh yea, I definitely need to do chinese remainder like NFS when multiplying those polynomials. So that should solve grabbing a new linear coefficient for the product. And then its just making sure we find the correct quadratic coefficient and root and we're basically done. OK. I WILL FINISH MY WORK TOMORROW! HAHAHHA> PREPARE YOURSELVES FUCKING LOSERS. 
+Update3: Oh yea, I definitely need to do chinese remainder like NFS when multiplying those polynomials. So that should solve grabbing a new linear coefficient for the product. And then its just making sure we find the correct quadratic coefficient and root and we're basically done. OK. I WILL FINISH MY WORK TOMORROW! HAHAHHA> PREPARE YOURSELVES FUCKING LOSERS.
+
+Update: Alright. Lets get started. I have a chance of finishing my work today..so lets go...
+
