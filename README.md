@@ -24,10 +24,10 @@ See below for an improved way of performing what this PoC does.. I'll delete thi
 
 Note: With a large enough -base and lin_size this PoC will find smooths for 110 digits. Albeit very slowly, but this is a highly unoptimized cython PoC. However, to push beyond that into novel terroritory for Quadratic Sieve-based algorithms we need to use quadratic coefficients and p-adic lifting, and that is what the PoC below (Improved_QS_Variant) will be for. 
 
-#### To run from folder "NFS_Variant_WIP" (Implements more of my number theory and attempts to succeed with fewer smooths by using p-adic lifting):</br></br>
+#### To run from folder "Improved_QS_Variant" (Tries to fruther reduce the bitlength of smooths by combining SIQS's approach of reducing bitlengths with our method of calculating moduli):</br></br>
 
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 14 -base 100 -sbase 11 -debug 1 -lin_size 100 -quad_size 1000
+To run: python3 run_qs.py -keysize 120 -base 1000 -sbase 500 -debug 1 -lin_size 10_000 -quad_size 10_000
 
 Update: I did some deep late night thinking. And you know, that shit with the quadratic coefficient, thats the modulus in SIQS. Thats exactly it. I dont know why I didnt see it earlier lol. However.. the moduli we are using are completely different. I wonder if I can combine both to make extreme bit reductions of smooth candidates... holy shit, I'm such a morron. AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH. People will think I'm a morron lol. 
 
