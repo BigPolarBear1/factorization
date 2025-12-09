@@ -34,3 +34,5 @@ Update: I did some deep late night thinking. And you know, that shit with the qu
 GOD DAMNIT THATS IT. FUCK. Ok, tomorrow. I need one day to fix this mistake. ONE DAY. PREPARES YOURSELVES NAZI FUCKERS!!!!!!!!!!!!!!!! 
 
 FFFFFFFFFFFFFFFUUUUUUUUUUUUUUUUUUUCK FUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUCKKK. WHY DIDNT I SEE THIS EARLIER. FFFFFUUUUUUUUUUUCK YOU ALL.FUCK YOU FUCKERS TRYING TO DECEIVE ME. I KNOW YOU PEOPLE KNEW I WAS RIGHT ALL ALONG. FUCK YOU. If I wasn't trans, I would have had a job and a lot of money by now after pulling this off. Yet, as always, the west are nazi bitches.
+
+THIS ENDS TOMORROW. I make my size reduction using the SIQS method with the quadratic coefficient, and then I make a further size reduction using the moduli my way. FUCK YOU. FUCK YOU 100000000000000 TIMES OVER. I WILL NEVER FORGIVE THIS.
