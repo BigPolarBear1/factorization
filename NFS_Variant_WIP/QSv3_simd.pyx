@@ -174,24 +174,73 @@ def QS(n,factor_list,sm,xlist,flist,quad_flist,z_plist,modk):
     print("[FAILURE]No factors found")
     return 0
 
+def get_partials(mod,list1):
+    i=0
+    new_list=[]
+    while i < len(list1):
+        prime=list1[i]
+        new_list.append(prime)
+        new_list.append([])
+        k=0
+        while k < len(list1[i+1]):
+            r1=list1[i+1][k]
+            aq = mod // prime
+            invaq = modinv(aq%prime, prime)
+            gamma = r1 * invaq % prime
+            new_list[-1].append(aq*gamma)
+           # lin+=aq*gamma
+           # all_lin_parts.append(aq*gamma)
+            k+=1
+        i+=2
+
+def solve_lin_con(a,b,m):
+    #ax=b mod m
+    g=gcd(a,m)
+    a,b,m = a//g,b//g,m//g
+    return pow(a,-1,m)*b%m  
+
 def extract_factors(N, relations, roots, null_space,modk):
     n = len(relations)
     for vector in null_space:
         prod_left = 1
         prod_right = 1
-        print("Checking")
+        partials=[]
+        total_mod=1
+        lin=0
+        root=0
+        quad=0
         for idx in range(len(relations)):
             bit = vector & 1
             vector = vector >> 1
             if bit == 1:
                 prod_left *= roots[idx]
-                print("adding left (zx^2): "+str(roots[idx]))
                 prod_right *= relations[idx]
-                print("adding right (zx^2+yx-n): "+str(relations[idx]))
-                print("adding poly: "+str(modk[idx][3])+"*"+str(modk[idx][2])+"^2-"+str(modk[idx][4])+"*"+str(modk[idx][2])+"+"+str(N)+" = "+str(relations[idx]))#str(modk[idx]))
+                print("adding poly: "+str(modk[idx][3])+"*"+str(modk[idx][2])+"^2-"+str(modk[idx][4])+"*"+str(modk[idx][2])+"+"+str(N)+" = "+str(relations[idx])+" mod: "+str(modk[idx][0])+" k: "+str(modk[idx][1]))#str(modk[idx]))
+                if lin ==0:
+                    lin=modk[idx][4]
+                    root=modk[idx][2]
+                    quad=modk[idx][3]
+                else:
+                    dist=solve_lin_con(total_mod,modk[idx][4]-lin,modk[idx][0])
+         
+                    lin+=total_mod*dist
+                    dist=solve_lin_con(total_mod,modk[idx][2]-root,modk[idx][0])
+                    root+=total_mod*dist
+                    dist=solve_lin_con(total_mod,modk[idx][3]-quad,modk[idx][0])
+                    quad+=total_mod*dist        
+    
+                total_mod*=modk[idx][0]
+
             idx += 1
+
         sqrt_right = math.isqrt(prod_right)
         sqrt_left = math.isqrt(prod_left)
+        print("Total (zx^2+yx-n): "+str(sqrt_right))
+        print("Total (zx^2): "+str(sqrt_left))
+        print("Total root: "+str(root)+" quadratic coefficient: "+str(quad)+" linear coefficient: "+str(lin)+" total modulus: "+str(total_mod))
+        test_poly_val=quad*root**2-lin*root+N
+        if test_poly_val != sqrt_right:
+            print("FIXME: Need to implement lifting so we can find the correct root and coefficients for the product of polynomials. We need this to be able to take the GCD if the modulus was added to the linear coefficient while sieving (if k !=0)\n")
         ###Debug shit, remove for final version
         sqr1=prod_left%N 
         sqr2=prod_right%N
@@ -202,8 +251,8 @@ def extract_factors(N, relations, roots, null_space,modk):
             print("something fucked up2")
             time.sleep(10000)
         if sqr1 != sqr2:
-            print("ERROR: FIXME... we need to adjust the result... perhaps some type of squar root over a finite field like NFS")
-            time.sleep(10000)
+            print("ERROR")
+           # time.sleep(10000)
         ###End debug shit#########
         sqrt_left = sqrt_left % N
         sqrt_right = sqrt_right % N
@@ -795,12 +844,12 @@ def generate_large_square(n,many_primes,valid_quads,valid_quads_factors,sprimeli
                     y0=2*quad*(root+j)
                    # print("\nmod: "+str(mod)+" local: "+str(local_factors))
                     k=0
-                    while k < 1:
-                        y=y0+mod*k
+                    while k < 1000:
+                        y=y0+(mod)*k
                         poly_val2=quad*(root+j)**2-y*(root+j)+n
                         tot=quad*(root+j)**2
                         quad_local_factors2=copy.copy(valid_quads_factors[i])
-                        local_factors, value,seen_primes = factorise_fast(poly_val2,sprimelist_f)
+                        local_factors, value,seen_primes = factorise_fast(abs(poly_val2),sprimelist_f)
                        # print("poly_val:",poly_val)
                        
 
@@ -832,7 +881,7 @@ def generate_large_square(n,many_primes,valid_quads,valid_quads_factors,sprimeli
                         
                             if tot not in root_list:
                                 root_list.append(tot)
-                                poly_list.append(poly_val2)
+                                poly_list.append(abs(poly_val2))
                                 flist.append(local_factors)
                                 modk.append([mod,k,root+j,quad,y])
                                 quadf_list.append(quad_local_factors2)
