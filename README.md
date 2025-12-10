@@ -40,3 +40,5 @@ To do:
 Update: hastily re-addd the intervals
 
 Update: Alright, it is now using my way of reducing smooth bitlengths with the modulus and in addition it is now also using SIQS's way of reducing it with the quadratic coefficient. Let me take a break now. I'll begin to figure out how to setup it up now to get really small smooth candidates consistently.
+
+ps: The code I added today was a bit of a copy-paste rush job. I'll address everything in the coming days. If it is possible to achieve very small smooth candidates with my work, then I will find out very soon...
