@@ -31,16 +31,12 @@ To run: python3 run_qs.py -keysize 100 -base 1000 -debug 1 -lin_size 100_000 -qu
 
 I've started refactoring. Still lots of work to be done.
 
-To do:
+There is a bunch of bugs in the uploaded PoC due to quickly putting it together copy pasting from some of my olds PoCs.
+What this PoC does:
 
-1. [DONE ]Add sieving intervals again
-2. [DONE ]For each quadratic coefficient now also generate moduli to mark the sieving interval with...
-3. Figure out the best way to setup up the bitlengths of the quadratic coefficient and mouli
+1. First it generates a large quadratic coefficient made up from factors of the factor base (this is basically what SIQS does).
+2. We generate moduli for the sieve interval step size, such that the smooth candidate is divisible by the modulus.
 
-Update: hastily re-addd the intervals
+All still very easy and basic. However, remember when I was earlier experimenting with large squares to reduce the size of smooth candidates? So since the quadratic coefficient adds an offset to the parabola and I now actually understand the mechanics at play here now... I'm feeling confident I can figure it out now. We must use the quadratic coefficient to shift a very large square into our sieve_interval range. I know this is do-able. 
 
-Update: Alright, it is now using my way of reducing smooth bitlengths with the modulus and in addition it is now also using SIQS's way of reducing it with the quadratic coefficient. Let me take a break now. I'll begin to figure out how to setup it up now to get really small smooth candidates consistently.
-
-ps: The code I added today was a bit of a copy-paste rush job. I'll address everything in the coming days. If it is possible to achieve very small smooth candidates with my work, then I will find out very soon...
-
-Pps: I think I can d o it now, we'll see tomorrow. Even if I fail, I'll simply go back to 0days, and keep grinding in my spare time. Learn about number fields next so I can properly understand NFS. After spending so much time on QS type algorithms, I'm pretty sure I now have a much deeper understanding of it then probably most people in the world. Yes, 3 years gone by. But I started 3 years ago as a highschool dropout and I couldn't even do basic algebra. I'll keep improving. I will have my breakthrough eventually.. but I'm still hoping I can make it happen this week with the way I'm setting everything up now.
+Tomorrow I will thus also add p-adic lifting again, and then I will begin working out the math to use this quadratic coefficient to get a large square in range of the sieve_interval (with large square I mean, a square almost as big as N so the smooth_candidate is extremely small.. a technique like that would the only way to actually beat existing factorization methods)
