@@ -45,7 +45,7 @@ min_prime=1
 g_enable_custom_factors=0
 g_p=107
 g_q=41
-mod_mul=0.05
+mod_mul=0.25
 g_max_exp=10
 lin_sieve_size=1000
 
@@ -159,13 +159,13 @@ def gcd(a,b): # Euclid's algorithm ##To do: Use a version without recursion?
     else:
         return gcd(b,a)
         
-def QS(n,factor_list,sm,xlist,flist,quad_flist,z_plist):
-    g_max_smooths=small_base*1+2+qbase+2
+def QS(n,factor_list,sm,xlist,flist):
+    g_max_smooths=small_base*1+2
     if len(sm) > g_max_smooths: 
         del sm[g_max_smooths:]
         del xlist[g_max_smooths:]
         del flist[g_max_smooths:]  
-    M2 = build_matrix(factor_list, sm, flist,quad_flist,z_plist)
+    M2 = build_matrix(factor_list, sm, flist)
     null_space=solve_bits(M2)
     f1,f2=extract_factors(n, sm, xlist, null_space)
     if f1 != 0:
@@ -187,16 +187,14 @@ def extract_factors(N, relations, roots, null_space):
                 prod_right *= relations[idx]
             idx += 1
         sqrt_right = math.isqrt(prod_right)
-        sqrt_left = math.isqrt(prod_left)
+        sqrt_left = prod_left# math.isqrt(prod_left)
         ###Debug shit, remove for final version
-        sqr1=prod_left%N 
+        sqr1=prod_left**2%N 
         sqr2=prod_right%N
         if sqrt_right**2 != prod_right:
             print("something fucked up1")
             time.sleep(10000)
-        if sqrt_left**2 != prod_left:
-            print("something fucked up2")
-            time.sleep(10000)
+
         if sqr1 != sqr2:
             print("ERROR ERROR")
             time.sleep(10000)
@@ -212,7 +210,7 @@ def extract_factors(N, relations, roots, null_space):
     return 0, 0
 
 def solve_bits(matrix):
-    n=small_base+2+qbase+2
+    n=small_base+2
     lsmap = {lsb: 1 << lsb for lsb in range(n+10000)}
     m = len(matrix)
     marks = []
@@ -248,12 +246,12 @@ def solve_bits(matrix):
             break
     return nulls
 
-def build_matrix(factor_base, smooth_nums, factors,quad_flist,z_plist):
+def build_matrix(factor_base, smooth_nums, factors):
     fb_map = {val: i for i, val in enumerate(factor_base)}
-    fb_map2 = {val: i for i, val in enumerate(z_plist)}
+
     ind=1
 
-    M2=[0]*(small_base*1+2+qbase+2)
+    M2=[0]*(small_base*1+2)
     for i in range(len(smooth_nums)):
         for fac in factors[i]:
             idx = fb_map[fac]
@@ -261,13 +259,13 @@ def build_matrix(factor_base, smooth_nums, factors,quad_flist,z_plist):
         ind = ind + ind
 
 
-    offset=(small_base+2)-1
-    ind=1
-    for i in range(len(quad_flist)):
-        for fac in quad_flist[i]:
-            idx = fb_map2[fac]
-            M2[idx+offset] |= ind
-        ind = ind + ind
+  #  offset=(small_base+2)-1
+  #  ind=1
+ #  for i in range(len(quad_flist)):
+  #      for fac in quad_flist[i]:
+   #         idx = fb_map2[fac]
+   #         M2[idx+offset] |= ind
+   #     ind = ind + ind
     return M2
 
 @cython.profile(False)
@@ -595,6 +593,108 @@ cdef sieve(interval_list,valid_quads,roots,n,sprimelist_f,hmap,interval_list_pos
     print("done")
     return
 
+#@cython.boundscheck(False)
+#@cython.wraparound(False)
+cdef generate_quadratic_coefficient(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,tnum_bit):
+    cdef Py_ssize_t counter 
+    cdef Py_ssize_t counter2
+    cdef Py_ssize_t counter3
+    cdef Py_ssize_t counter4
+    cdef Py_ssize_t i
+    cdef Py_ssize_t j
+    cdef Py_ssize_t const_1=1_000
+    cdef Py_ssize_t const_2=1_000_000
+
+    small_B = len(primeslist)
+    lower_polypool_index = 2
+    upper_polypool_index = small_B - 1
+    poly_low_found = False
+    
+    for i in range(small_B):  ##To do: Can be moved outside mainloop
+        if primeslist[i] > LOWER_BOUND_SIQS and not poly_low_found:
+            lower_polypool_index = i
+            poly_low_found = True
+            break
+     #   if primeslist[i] > UPPER_BOUND_SIQS:
+          #  upper_polypool_index = i - 1
+           # break
+    small_B=upper_polypool_index
+    counter4=0
+    while counter4 < const_1:
+        counter4+=1
+        cmod = 1
+        cfact = []#[0]*base
+        indexes=[]
+        counter2=0
+        while counter2 < const_2:
+            found_a_factor = False
+            counter=0
+            while(found_a_factor == False) and counter < const_2:
+                randindex = random.randint(lower_polypool_index, upper_polypool_index)
+                potential_a_factor = primeslist[randindex]
+                found_a_factor = True
+                it=0
+                length=len(cfact)
+                while it < length:
+                    if potential_a_factor ==cfact[it]:
+                        found_a_factor = False
+                        break
+                    it+=1
+                counter+=1
+
+            cmod = cmod * potential_a_factor
+            cfact.append(potential_a_factor)
+            indexes.append(randindex)
+            j = tnum_bit - cmod.bit_length()
+            counter2+=1
+            if j < too_close or counter == const_2:
+                cmod = 1
+                s = 0
+                cfact = []#[0]*base
+                indexes=[]
+                continue
+            elif j < (too_close + close_range):
+                break
+        a1 = tnum // cmod
+        mindiff = 100000000000000000
+        randindex = 0
+        for i in range(small_B):
+            if abs(a1 - primeslist[i]) < mindiff:
+                mindiff = abs(a1 - primeslist[i])
+                randindex = i
+
+        found_a_factor = False
+        counter3=0
+        while not found_a_factor and counter3< const_2:
+            potential_a_factor = primeslist[randindex]
+            found_a_factor = True
+            it=0
+            length=len(cfact)
+            while it < length:
+                if potential_a_factor ==cfact[it]:
+                    found_a_factor = False
+                    break
+                it+=1
+            if not found_a_factor:
+                randindex += 1
+            counter3+=1
+        if randindex > small_B:
+            continue
+
+        cmod = cmod * potential_a_factor
+
+        cfact.append(potential_a_factor)
+        indexes.append(randindex)
+
+        diff_bits = (tnum - cmod).bit_length()
+        if diff_bits < tnum_bit:
+            if cmod in seen:
+                continue
+            else:
+                seen.append(cmod)
+                return cmod,cfact,indexes
+    return 0,0,0
+
 cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bound,primeslist2,small_primeslist):
     
 
@@ -604,9 +704,9 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
 
     cdef Py_ssize_t i
     cdef Py_ssize_t j
-    close_range =5
-    too_close = 1   ##TO DO: remove this small prime.. better to not have small primes 
+
     LOWER_BOUND_SIQS=1
+    UPPER_BOUND_SIQS=4000
     primelist_f=copy.copy(primeslist)
     primelist_f.insert(0,len(primelist_f)+1)
     primelist_f=array.array('q',primelist_f)
@@ -621,14 +721,14 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
     sprimelist_f.insert(0,len(sprimelist_f)+1)
     sprimelist_f=array.array('q',sprimelist_f)
     valid_quads,valid_quads_factors,interval_list,roots,interval_list_pos=filter_quads(z_plist,n)
-    print("[i]Filling in the intervals... this can take a while..")
-    sieve(interval_list,valid_quads,roots,n,primelist_f,hmap,interval_list_pos)
-    print("[i]Checking intervals for smooths")
+  #  print("[i]Filling in the intervals... this can take a while..")
+   # sieve(interval_list,valid_quads,roots,n,primelist_f,hmap,interval_list_pos)
+  #  print("[i]Checking intervals for smooths")
     primeslist2.insert(0,2)
     primeslist2.insert(0,-1)
 
 
-    primeslist=array.array('q',primeslist)
+    
 
 
 
@@ -643,12 +743,106 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
 
     many_primes=[]    
 
-
-    tnum = int(((2*n)**mod_mul))
+    seen=[]
+    M=lin_sieve_size
+  #  tnum = int(math.sqrt(2*n) / M)
+    tnum = int(((2*n)**mod_mul) / 1)#M)
     tnum_bit=int(bitlen(tnum)*1)
-    rootlist,polylist,flist,quadflist=generate_large_square(n,many_primes,valid_quads,valid_quads_factors,sprimelist_f,interval_list,roots,interval_list_pos,partials,large_prime_bound)
-    print("\nSmooths found: "+str(len(rootlist)))#+" rootlist: "+str(rootlist))
-    test=QS(n,sprimelist,polylist,rootlist,flist,quadflist,primeslist2)  
+    close_range =10
+    too_close = 1 
+    root_list=[]
+    poly_list=[]
+    flist=[]
+    while 1: 
+        quad,cfact,indexes=generate_quadratic_coefficient(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,tnum_bit)
+       # print("quad: ",quad)
+        if quad == 0:
+            break
+
+        i=0
+        while i < M:
+            start_root=math.isqrt(n//quad)
+            new_root=quad*(start_root+i)
+            poly_val=new_root**2-n*quad
+            if poly_val%quad !=0:
+                print("super fatal error")
+           # print("poly_val: "+str(poly_val)+" poly_val bits: "+str(bitlen(poly_val))+" quad: "+str(quad)+" quad bits: "+str(bitlen(quad)))
+            local_factors, value,seen_primes = factorise_fast(poly_val,primelist_f)
+            if value != 1:
+                if value < large_prime_bound:
+                    if value in partials:
+                        rel, lf, pv = partials[value]
+                        if rel == new_root:
+                            i+=1
+                            continue
+                        new_root *= rel
+                        local_factors ^= lf
+                        poly_val *= pv
+                    else:
+                        partials[value] = (new_root, local_factors, poly_val)
+                        i+=1
+                        continue
+                else:
+                    i+=1 
+                    continue
+
+
+              
+                        
+            if new_root not in root_list:
+                           # print("adding")
+                root_list.append(new_root)
+                poly_list.append(poly_val)
+                flist.append(local_factors)
+
+                print("", end=f"[i]Smooths: {len(root_list)} / {base*1+2}\r")
+                if len(root_list)>base+2:
+                    test=QS(n,primelist,poly_list,root_list,flist)  
+                    return
+          #  j+=1
+            i+=1
+        i=0
+        while i < M:
+            start_root=math.isqrt(n//quad)
+            new_root=quad*(start_root-i)
+            poly_val=new_root**2-n*quad
+            if poly_val%quad !=0:
+                print("super fatal error")
+           # print("poly_val: "+str(poly_val)+" poly_val bits: "+str(bitlen(poly_val))+" quad: "+str(quad)+" quad bits: "+str(bitlen(quad)))
+            local_factors, value,seen_primes = factorise_fast(poly_val,primelist_f)
+            if value != 1:
+                if value < large_prime_bound:
+                    if value in partials:
+                        rel, lf, pv = partials[value]
+                        if rel == new_root:
+                            i+=1
+                            continue
+                        new_root *= rel
+                        local_factors ^= lf
+                        poly_val *= pv
+                    else:
+                        partials[value] = (new_root, local_factors, poly_val)
+                        i+=1
+                        continue
+                else:
+                    i+=1 
+                    continue
+
+
+              
+                        
+            if new_root not in root_list:
+                           # print("adding")
+                root_list.append(new_root)
+                poly_list.append(poly_val)
+                flist.append(local_factors)
+
+                print("", end=f"[i]Smooths: {len(root_list)} / {base*1+2}\r")
+                if len(root_list)>base+2:
+                    test=QS(n,primelist,poly_list,root_list,flist)  
+                    return
+          #  j+=1
+            i+=1
     return
 
 cdef lift_root(r,prime,n,quad_co,exp):
