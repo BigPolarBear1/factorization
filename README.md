@@ -50,4 +50,4 @@ Update: I'll figure it out tomorrow. This setup makes it a lot easier... now we 
 
 I know this is possible. It cant be so hard. I'm sure equipped with everything I figured out today, I can finally figure out this final step tomorrow.
 
-UPDATE: WAIT. FIGURING OUT HOW TO REDUCE A ROOT IN SIZE IS EASY. IF THE INVERSE OF A FACTOR OF THE ROOT (WE DONT NEED TO FACTORIZE THE ENTIRE ROOT BTW) ALSO FACTORS OVER THE FACTOR BASE, THEN WE CAN REDUCE THE ROOT IN SIZE AND MULTIPLY THE QUADRATIC COEFFICIENT. 
+UPDATE: WAIT. FIGURING OUT HOW TO REDUCE A ROOT IN SIZE IS EASY. IF THE INVERSE OF A FACTOR OF THE ROOT (WE DONT NEED TO FACTORIZE THE ENTIRE ROOT BTW) ALSO FACTORS OVER THE FACTOR BASE, THEN WE CAN REDUCE THE ROOT IN SIZE AND MULTIPLY THE QUADRATIC COEFFICIENT. HENCE A WAY DOES EXIST TO PREDICTABLY CHANGE THE SIZE OF THE ROOT. Let me construct a proof of concept tomorrow. You know, a lot of these algorithms would be much better if we had made more progress with additative number theory. But things become wildly more complicated with addition. It's an interesting field though.
