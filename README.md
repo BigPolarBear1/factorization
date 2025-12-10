@@ -27,13 +27,14 @@ Note: With a large enough -base and lin_size this PoC will find smooths for 110 
 #### To run from folder "Improved_QS_Variant" (Tries to fruther reduce the bitlength of smooths by combining SIQS's approach of reducing bitlengths with our method of calculating moduli):</br></br>
 
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 80 -base 1000 -debug 1 -lin_size 10_000 -quad_size 10_000</br></br>
+To run:python3 run_qs.py -keysize 120 -base 1000 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
 I've started refactoring. Still lots of work to be done.
 
 To do:
 
-1. Add sieving intervals again
+1. [DONE ]Add sieving intervals again
 2. For each quadratic coefficient now also generate moduli to mark the sieving interval with...
 3. Figure out the best way to setup up the bitlengths of the quadratic coefficient and mouli
 
+Update: hastily re-addd the intervals
