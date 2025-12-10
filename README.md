@@ -40,3 +40,12 @@ What this PoC does:
 All still very easy and basic. However, remember when I was earlier experimenting with large squares to reduce the size of smooth candidates? So since the quadratic coefficient adds an offset to the parabola and I now actually understand the mechanics at play here now... I'm feeling confident I can figure it out now. We must use the quadratic coefficient to shift a very large square into our sieve_interval range. I know this is do-able. 
 
 Tomorrow I will thus also add p-adic lifting again, and then I will begin working out the math to use this quadratic coefficient to get a large square in range of the sieve_interval (with large square I mean, a square almost as big as N so the smooth_candidate is extremely small.. a technique like that would the only way to actually beat existing factorization methods)
+
+Update: I'll figure it out tomorrow. This setup makes it a lot easier... now we dont need to worry about that quadratic coefficient like we had to before. So tomorrow I need to re-order some things. The outline would look like this:
+
+1. Generate a large square modulus. Close to the size of N
+2. Generate the root for this modulus for quadratic coefficient = 1
+3. Multiply the quadratic coefficient with factors from the factor base (we know the mechanics of this now, easy)
+4. Figure out how to gain fine grain control over the size of the root so we can get it setup to generate very small smooth candidates when divided by the very large square.
+
+I know this is possible. It cant be so hard. I'm sure equipped with everything I figured out today, I can finally figure out this final step tomorrow.
