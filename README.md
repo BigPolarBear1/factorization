@@ -49,3 +49,5 @@ Update: I'll figure it out tomorrow. This setup makes it a lot easier... now we 
 4. Figure out how to gain fine grain control over the size of the root so we can get it setup to generate very small smooth candidates when divided by the very large square.
 
 I know this is possible. It cant be so hard. I'm sure equipped with everything I figured out today, I can finally figure out this final step tomorrow.
+
+UPDATE: NO NO NO. WE DONT GENERATE A SINGLE LARGE SQUARE. WE GENERATE SMALL SQUARES!!!!! THEN WE DO TRIAL FACTORIZATION ON THE ROOT, IF THE INVERSE OF A FACTOR ALSO FACTORS OUT OF THE FACTOR BASE, WE CAN MULTIPLY THE QUADRATIC COEFFICIENT AND BE GARANTUEED A SIZE REDUCTION OF THE ROOT. THEN WE JUST NEED TO SUCCEED AT THIS FOR A COUPLE OF SQUARES, MULTIPLY THEM TOGETHER AND BOOM BADABOOM DONE. LOL! EZ!! This ends tomorrow assholes. Prepares yourselves (good luck patching in a single day, guess you cant really prepare yourselves, hahaha, fuck you losers).
