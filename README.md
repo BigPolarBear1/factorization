@@ -34,7 +34,9 @@ I've started refactoring. Still lots of work to be done.
 To do:
 
 1. [DONE ]Add sieving intervals again
-2. For each quadratic coefficient now also generate moduli to mark the sieving interval with...
+2. [DONE ]For each quadratic coefficient now also generate moduli to mark the sieving interval with...
 3. Figure out the best way to setup up the bitlengths of the quadratic coefficient and mouli
 
 Update: hastily re-addd the intervals
+
+Update: Alright, it is now using my way of reducing smooth bitlengths with the modulus and in addition it is now also using SIQS's way of reducing it with the quadratic coefficient. Let me take a break now. I'll begin to figure out how to setup it up now to get really small smooth candidates consistently.
