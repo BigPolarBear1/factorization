@@ -590,7 +590,7 @@ cdef sieve(interval_list,valid_quads,roots,n,sprimelist_f,hmap,interval_list_pos
             #to do: Then mutate the root here
             j+=1
         i+=1
-    print("done")
+    #print("done")
     return
 
 #@cython.boundscheck(False)
@@ -720,10 +720,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
     sprimelist_f=copy.copy(small_primeslist)
     sprimelist_f.insert(0,len(sprimelist_f)+1)
     sprimelist_f=array.array('q',sprimelist_f)
-    valid_quads,valid_quads_factors,interval_list,roots,interval_list_pos=filter_quads(z_plist,n)
-  #  print("[i]Filling in the intervals... this can take a while..")
-   # sieve(interval_list,valid_quads,roots,n,primelist_f,hmap,interval_list_pos)
-  #  print("[i]Checking intervals for smooths")
+
     primeslist2.insert(0,2)
     primeslist2.insert(0,-1)
 
@@ -746,7 +743,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
     seen=[]
     M=lin_sieve_size
   #  tnum = int(math.sqrt(2*n) / M)
-    tnum = int(((2*n)**mod_mul) / 1)#M)
+    tnum = int(((2*n)**mod_mul) / M)
     tnum_bit=int(bitlen(tnum)*1)
     close_range =10
     too_close = 1 
@@ -758,9 +755,22 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
        # print("quad: ",quad)
         if quad == 0:
             break
+        interval_list=[]
+        interval_list_pos=[]
+        interval_list.append(array.array('i', [0]*lin_sieve_size))
+        interval_list_pos.append(array.array('i', [0]*lin_sieve_size))
+        roots=[]
+        roots.append(math.isqrt(n//quad))
+        valid_quads=[]
+        valid_quads.append(quad)
+        sieve(interval_list,valid_quads,roots,n,primelist_f,hmap,interval_list_pos)
 
         i=0
         while i < M:
+            threshold = int(math.log2((lin_sieve_size)*math.sqrt(abs(n))) - thresvar)
+            if interval_list_pos[0][i]<threshold:
+                i+=1
+                continue
             start_root=math.isqrt(n//quad)
             new_root=quad*(start_root+i)
             poly_val=new_root**2-n*quad
@@ -803,6 +813,10 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
             i+=1
         i=0
         while i < M:
+
+            if interval_list[0][i]<threshold:
+                i+=1
+                continue
             start_root=math.isqrt(n//quad)
             new_root=quad*(start_root-i)
             poly_val=new_root**2-n*quad
