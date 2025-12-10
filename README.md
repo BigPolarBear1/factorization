@@ -27,16 +27,13 @@ Note: With a large enough -base and lin_size this PoC will find smooths for 110 
 #### To run from folder "Improved_QS_Variant" (Tries to fruther reduce the bitlength of smooths by combining SIQS's approach of reducing bitlengths with our method of calculating moduli):</br></br>
 
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 120 -base 1000 -sbase 500 -debug 1 -lin_size 10_000 -quad_size 10_000
+To run: python3 run_qs.py -keysize 80 -base 1000 -debug 1 -lin_size 10_000 -quad_size 10_000</br></br>
 
-Update: I did some deep late night thinking. And you know, that shit with the quadratic coefficient, thats the modulus in SIQS. Thats exactly it. I dont know why I didnt see it earlier lol. However.. the moduli we are using are completely different. I wonder if I can combine both to make extreme bit reductions of smooth candidates... holy shit, I'm such a morron. AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH. People will think I'm a morron lol. 
+I've started refactoring. Still lots of work to be done.
 
-GOD DAMNIT THATS IT. FUCK. Ok, tomorrow. I need one day to fix this mistake. ONE DAY. PREPARES YOURSELVES NAZI FUCKERS!!!!!!!!!!!!!!!! 
+To do:
 
-FFFFFFFFFFFFFFFUUUUUUUUUUUUUUUUUUUCK FUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUCKKK. WHY DIDNT I SEE THIS EARLIER. FFFFFUUUUUUUUUUUCK YOU ALL.FUCK YOU FUCKERS TRYING TO DECEIVE ME. I KNOW YOU PEOPLE KNEW I WAS RIGHT ALL ALONG. FUCK YOU. If I wasn't trans, I would have had a job and a lot of money by now after pulling this off. Yet, as always, the west are nazi bitches.
+1. Add sieving intervals again
+2. For each quadratic coefficient now also generate moduli to mark the sieving interval with...
+3. Figure out the best way to setup up the bitlengths of the quadratic coefficient and mouli
 
-THIS ENDS TOMORROW. I make my size reduction using the SIQS method with the quadratic coefficient, and then I make a further size reduction using the moduli my way. FUCK YOU. FUCK YOU 100000000000000 TIMES OVER. I WILL NEVER FORGIVE THIS.
-
-YOU KNOW THE REAL KICKER? YOU FUCKERS HARASSING ME WITH THE POLICE DESPITE KNOWING WHAT I DID. HAHAHAHA. I WILL ASK ASYLUM IN ASIA. FUCK YOU LOSERS.
-
-UPDATE: Alright, I have begun. My goal for today is to atleast release a rough PoC that uses both SIQS's method of bit reduction and my own.
