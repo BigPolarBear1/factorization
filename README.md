@@ -38,3 +38,5 @@ If I can do this well enough...  then I can find small smooth candidates for eve
 Update: Let me do some thinking now. I dont want to have to sieve quadratic coefficients. That is a wrong approach. I need to multiply factors together and get something close to a "center". Let me begin prototyping a function for this.
 
 I need to do pen and paper now and figure out a good algorithm to find quadratic coefficients that are close to N//x**2. Let me update the paper now. If a superior algorithm exists it is going to do exactly this. I am certain of it. There is no other way to get it to work. I have tried everything. Anyway.. I may get arrested next week bc the americans keep harassing me. I'll try and get as much work done before that. I even stopped running this week so I can pick up my work pace. 
+
+Factorization or suicide. Haha, fuck you cunts.
