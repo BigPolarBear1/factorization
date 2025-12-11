@@ -29,27 +29,4 @@ Note: With a large enough -base and lin_size this PoC will find smooths for 110 
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 100 -base 1000 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
-I've started refactoring. Still lots of work to be done.
-
-There is a bunch of bugs in the uploaded PoC due to quickly putting it together copy pasting from some of my olds PoCs.
-What this PoC does:
-
-1. First it generates a large quadratic coefficient made up from factors of the factor base (this is basically what SIQS does).
-2. We generate moduli for the sieve interval step size, such that the smooth candidate is divisible by the modulus.
-
-All still very easy and basic. However, remember when I was earlier experimenting with large squares to reduce the size of smooth candidates? So since the quadratic coefficient adds an offset to the parabola and I now actually understand the mechanics at play here now... I'm feeling confident I can figure it out now. We must use the quadratic coefficient to shift a very large square into our sieve_interval range. I know this is do-able. 
-
-Tomorrow I will thus also add p-adic lifting again, and then I will begin working out the math to use this quadratic coefficient to get a large square in range of the sieve_interval (with large square I mean, a square almost as big as N so the smooth_candidate is extremely small.. a technique like that would the only way to actually beat existing factorization methods)
-
-Update: I'll figure it out tomorrow. This setup makes it a lot easier... now we dont need to worry about that quadratic coefficient like we had to before. So tomorrow I need to re-order some things. The outline would look like this:
-
-1. Generate a large square modulus. Close to the size of N
-2. Generate the root for this modulus for quadratic coefficient = 1
-3. Multiply the quadratic coefficient with factors from the factor base (we know the mechanics of this now, easy)
-4. Figure out how to gain fine grain control over the size of the root so we can get it setup to generate very small smooth candidates when divided by the very large square.
-
-I know this is possible. It cant be so hard. I'm sure equipped with everything I figured out today, I can finally figure out this final step tomorrow.
-
-UPDATE: WAIT. FIGURING OUT HOW TO REDUCE A ROOT IN SIZE IS EASY. IF THE INVERSE OF A FACTOR OF THE ROOT (WE DONT NEED TO FACTORIZE THE ENTIRE ROOT BTW) ALSO FACTORS OVER THE FACTOR BASE, THEN WE CAN REDUCE THE ROOT IN SIZE AND MULTIPLY THE QUADRATIC COEFFICIENT. HENCE A WAY DOES EXIST TO PREDICTABLY CHANGE THE SIZE OF THE ROOT. Let me construct a proof of concept tomorrow. You know, a lot of these algorithms would be much better if we had made more progress with additative number theory. But things become wildly more complicated with addition. It's an interesting field though. Let me just get a proof of concept working first.. if that works.. then I can keep hammering on this to improve it. Maybe there is even some way to sieve this appraoch. And we dont need to generate a modulus if at first it doesn't work... we can just do change the quadratic coefficient and do modular division to refresh to root to a new one with different factors. 
-
-UPDATE: Actually I have a much beter idea. So what I said above is right. But we just use small roots and small primes and we manipulate them so we can Chinese remainder them together in a way we achieve the ratio between modulus and zx^2 that we want. Thats going to be a much more feasible approach them performing trail factorization on modular inverses of large squares. Just working with small numbers to achieve the residues we want is much better. Let me try something tomorrow.
+Update: Tomorrow let me use zx^2+n instead of zx^2-n. Because zx^2+n transforms the problem into minimizing the root and maximizing the modulus. Which is much easier to reason about. I can swap it again later if I must. I have a couple of ideas how I can attack it now.. I need some sleep first though.
