@@ -33,3 +33,5 @@ I quickly hacked something together. Yes this will generate very small smooth ca
 
 Aka, the problem can be restated as "given a bunch of factors" how can I multiply a subset of them together so that we get a product as close as possible to some number (the center in my PoC).
 
+If I can do this well enough...  then I can find small smooth candidates for even very large numbers.
+
