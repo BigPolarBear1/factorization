@@ -29,3 +29,7 @@ Note: With a large enough -base and lin_size this PoC will find smooths for 110 
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 60 -base 1000 -debug 1 -lin_size 1_000_000 -quad_size 1</br></br>
 
+I quickly hacked something together. Yes this will generate very small smooth candidates. The issue now is quickly finding quadratic coefficients near the "center" which factor over the factor base. 
+
+Aka, the problem can be restated as "given a bunch of factors" how can I multiply a subset of them together so that we get a product as close as possible to some number (the center in my PoC).
+
