@@ -38,4 +38,4 @@ Algorithm looks like this:
 2. Create a center with N//x
 3. Sieve near the center.. if it factorizes, then we can use this as quadratic coefficient. The closer near the center, the smaller the smooth will be.
 
-Its actually very simple. I was always doing it the other way around, iterating the quadratic coefficient and sieving the root. How, its better the iterate the root and sieve the quadratic coefficient.
+Its actually very simple. I was always doing it the other way around, iterating the quadratic coefficient and sieving the root. However, its better the iterate the root and sieve the quadratic coefficient.
