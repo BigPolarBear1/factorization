@@ -27,15 +27,5 @@ Note: With a large enough -base and lin_size this PoC will find smooths for 110 
 #### To run from folder "Improved_QS_Variant" (Tries to fruther reduce the bitlength of smooths by combining SIQS's approach of reducing bitlengths with our method of calculating moduli):</br></br>
 
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 100 -base 1000 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
+To run: python3 run_qs.py -keysize 60 -base 1000 -debug 1 -lin_size 1_000_000 -quad_size 1</br></br>
 
-Update: Ok. I have arrived at the essence of smooth finding now. Let me quickly create a PoC. 
-I finally understand it lol.
-
-Algorithm looks like this:
-
-1. Iterate the root x from 1 to some limit
-2. Create a center with N//x
-3. Sieve near the center.. if it factorizes, then we can use this as quadratic coefficient. The closer near the center, the smaller the smooth will be.
-
-Its actually very simple. I was always doing it the other way around, iterating the quadratic coefficient and sieving the root. However, its better the iterate the root and sieve the quadratic coefficient.
