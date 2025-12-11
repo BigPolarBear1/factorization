@@ -29,4 +29,4 @@ Note: With a large enough -base and lin_size this PoC will find smooths for 110 
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 100 -base 1000 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
-Update: Tomorrow let me use zx^2+n instead of zx^2-n. Because zx^2+n transforms the problem into minimizing the root and maximizing the modulus. Which is much easier to reason about. I can swap it again later if I must. I have a couple of ideas how I can attack it now.. I need some sleep first though.
+Update: Its 4 am. I am an idiot. It just hit me. generate_quadratic_coefficient()  I can literally just use the function alone to generate smooths... lol its so extremely simply I didnt even consider it. I am a morron lol. I need some sleep.. I'll fix that PoC tomorrow... its weird how I missed this. This solution is so ridiciously simple and it was right infront of me for so long. Ergh. Oh well... atleast the day has finally arrived I guess. But first some sleep...
