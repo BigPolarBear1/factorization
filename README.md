@@ -35,3 +35,4 @@ Aka, the problem can be restated as "given a bunch of factors" how can I multipl
 
 If I can do this well enough...  then I can find small smooth candidates for even very large numbers.
 
+Update: Let me do some thinking now. I dont want to have to sieve quadratic coefficients. That is a wrong approach. I need to multiply factors together and get something close to a "center". Let me begin prototyping a function for this.
