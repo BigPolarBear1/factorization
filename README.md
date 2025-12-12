@@ -32,3 +32,5 @@ To run: python3 run_qs.py -keysize 80 -base 1000 -debug 1 -lin_size 100_000 -qua
 UPDATE: ALRIGHT. I HAVE WORKED OUT HOW TO BUILD SMOOTH CANDIDATES. POC WILL BE RELEASED TOMORROW. 
 
 Update: Its so easy. Like.... the solution is so ridiciously easy. If I die during the night, it was the americans. If I die during the night the americans killed me. It wasn't an accident. It wasn't suicide. Because tomorrow I am breaking factorization. Building smooths is as easy as using inverses and linear congruences... its actually really easy with everything I figured out.  I AM BREAKING FRACTORIZATION ON THE 13TH OF DECEMBER 2025. Prepare yourselves for the future............................................. THE GAY FUTURE. HAHAHAHAHAHAHHAHAHAHHAHAHA.
+
+13th OF December 2025. Take note of that day. Because it will be the day this world changes forever. And I made it happen through blood, sweat, tears and sacrifices. Against all odds. Fuck you all.
