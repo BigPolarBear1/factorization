@@ -36,3 +36,5 @@ Update: Its so easy. Like.... the solution is so ridiciously easy. If I die duri
 13th OF December 2025. Take note of that day. Because it will be the day this world changes forever. And I made it happen through blood, sweat, tears and sacrifices. Against all odds. Fuck you all.
 
 I guess I could rush out a PoC right now.. but let me mentally relax for one more night... because tomorrow is about to become the longest day in my life... the day the world changed forever.
+
+Update: Ok i'm closing my work laptop for the night. Either tomorrow or sunday factorization falls. I'll definitely upload a PoC already tomorrow though. Good luck tomorrow and may your holidays be as ruined as you have ruined my life.
