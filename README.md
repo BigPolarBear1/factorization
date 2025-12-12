@@ -29,16 +29,4 @@ Note: With a large enough -base and lin_size this PoC will find smooths for 110 
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 80 -base 1000 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
-I quickly hacked something together. Yes this will generate very small smooth candidates. The issue now is quickly finding quadratic coefficients near the "center" which factor over the factor base. 
-
-Aka, the problem can be restated as "given a bunch of factors" how can I multiply a subset of them together so that we get a product as close as possible to some number (the center in my PoC).
-
-If I can do this well enough...  then I can find small smooth candidates for even very large numbers.
-
-Update: Let me do some thinking now. I dont want to have to sieve quadratic coefficients. That is a wrong approach. I need to multiply factors together and get something close to a "center". Let me begin prototyping a function for this.
-
-I need to do pen and paper now and figure out a good algorithm to find quadratic coefficients that are close to N//x**2. Let me update the paper now. If a superior algorithm exists it is going to do exactly this. I am certain of it. There is no other way to get it to work. I have tried everything. Anyway.. I may get arrested next week bc the americans keep harassing me. I'll try and get as much work done before that. I even stopped running this week so I can pick up my work pace. 
-
-Factorization or suicide. Haha, fuck you cunts.
-
-Update: I spent the evening just contemplating a possible algorithm. I think I have somewhat of an idea using hashmaps and residues. Now that I completely understand these quadratics, I think I can BUILD SMOOTHS. HAHAHAHA. Prepare yourselves, factorization is coming. 
+UPDATE: Aaaaactually... we can build smooths easily now. Holy fuck how easy is factorization. Let me add some things to the paper
