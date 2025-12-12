@@ -39,4 +39,4 @@ I guess I could rush out a PoC right now.. but let me mentally relax for one mor
 
 Update: Ok i'm closing my work laptop for the night. Either tomorrow or sunday factorization falls. I'll definitely upload a PoC already tomorrow though. Good luck tomorrow and may your holidays be as ruined as you have ruined my life.
 
-Update: I keep forgetting that solving linear congruences is possible, as long as the moduli are coprime. So thats makes building smooths very easy now...  holy shit... this is going to be a truely elegant factorization algorithm. Ok ok.. seriously need some sleep. Tomorrow is going to be one hell of a long day... remember the 13 december 2025! Its going to be glorious. Nothing can stop me now.
+Update: I keep forgetting that solving linear congruences is possible, as long as the moduli are coprime. So thats makes building smooths very easy now...  holy shit... this is going to be a truely elegant factorization algorithm. Ok ok.. seriously need some sleep. Tomorrow is going to be one hell of a long day... remember the 13th of december 2025! Its going to be glorious. Nothing can stop me now.
