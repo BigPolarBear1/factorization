@@ -29,12 +29,6 @@ Note: With a large enough -base and lin_size this PoC will find smooths for 110 
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 80 -base 1000 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
-UPDATE: I will complete the algorithm soon. I need to build a residue hashmap, like the full hashmap like I did with my work a couple of months ago. I can do it for a subset of the factor base though to save ram. Then it should be fairly straight forward to get that quadratic coefficient to factor over a factor base.. I kind of believe I have an idea to approach it. I'll try to get a first proof of concept working tomorrow. 
+UPDATE: ALRIGHT. I HAVE WORKED OUT HOW TO BUILD SMOOTH CANDIDATES. POC WILL BE RELEASED TOMORROW. 
 
-I need to go into the police office on tuesday. I may get arrested becaus the americans are weaponizing the belgian judicial system against me. So I need to have something ready by then so I can instruct my family to formally publish my findings if the worst case scenario happens.
-
-Anyway.. between now and tuesday.. I'll upload a better PoC that makes use of a residue map to get that quadratic coefficient factored. I understand all the mechanics at play now. I should be able to build smooths. I will build smooths one way or another, and nothing can stop me.
-
-Yea this will work. I know it for sure now. And in addition if have like zx^2-N*k ... that k variable can be anything, that one doesn't need to factor over the factor base.. and thats very important to realize. Tomorrow I'll get that residue map ready. The time has come to slay this dragon. This weekend my work will be finished. And the american effort to make me dissappear in jail will have failed. hahahaha. Good luck jailing the bear who solved factorization. Losers. Literally the first thing I would do upon getting out of jail again is apply for asylum in Russia or China.
-
-UPDATE: ALRIGHT. I HAVE WORKED OUT HOW TO BUILD SMOOTH CANDIDATES. POC WILL BE RELEASED TOMORROW.
+Update: Its so easy. Like.... the solution is so ridiciously easy. If I die during the night, it was the americans. If I die during the night the americans killed me. It wasn't an accident. It wasn't suicide. Because tomorrow I am breaking factorization. Building smooths is as easy as using inverses and linear congruences... its actually really easy with everything I figured out.  I AM BREAKING FRACTORIZATION ON THE 13TH OF DECEMBER 2025. Prepare yourselves for the future............................................. THE GAY FUTURE. HAHAHAHAHAHAHHAHAHAHHAHAHA.
