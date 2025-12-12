@@ -29,4 +29,4 @@ Note: With a large enough -base and lin_size this PoC will find smooths for 110 
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 80 -base 1000 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
-UPDATE: Aaaaactually... we can build smooths easily now. Holy fuck how easy is factorization. Let me add some things to the paper
+UPDATE: I will complete the algorithm soon. I need to build a residue hashmap, like the full hashmap like I did with my work a couple of months ago. I can do it for a subset of the factor base though to save ram. Then it should be fairly straight forward to get that quadratic coefficient to factor over a factor base.. I kind of believe I have an idea to approach it. I'll try to get a first proof of concept working tomorrow. 
