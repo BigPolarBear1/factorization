@@ -36,3 +36,5 @@ I need to go into the police office on tuesday. I may get arrested becaus the am
 Anyway.. between now and tuesday.. I'll upload a better PoC that makes use of a residue map to get that quadratic coefficient factored. I understand all the mechanics at play now. I should be able to build smooths. I will build smooths one way or another, and nothing can stop me.
 
 Yea this will work. I know it for sure now. And in addition if have like zx^2-N*k ... that k variable can be anything, that one doesn't need to factor over the factor base.. and thats very important to realize. Tomorrow I'll get that residue map ready. The time has come to slay this dragon. This weekend my work will be finished. And the american effort to make me dissappear in jail will have failed. hahahaha. Good luck jailing the bear who solved factorization. Losers. Literally the first thing I would do upon getting out of jail again is apply for asylum in Russia or China.
+
+UPDATE: ALRIGHT. I HAVE WORKED OUT HOW TO BUILD SMOOTH CANDIDATES. POC WILL BE RELEASED TOMORROW.
