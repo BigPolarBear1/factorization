@@ -683,7 +683,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
         i=0
         acc=1
         k=1
-        while i <100_000:
+        while i <100:
         
             
         
@@ -703,7 +703,10 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
             local_factors, value,seen_primes = factorise_fast(quad_can,primelist_f)
             if value == 1:
                 new_root=quad_can*x
-                poly_val=new_root**2-n*(x+diff)*quad_can
+                poly_val=new_root**2-n*(k)*quad_can
+                if poly_val % (quad_can*mult)!=0:
+                    print("fatal error")
+                    time.sleep(10000)
                 local_factors, value,seen_primes = factorise_fast(poly_val,primelist_f)
                 if value != 1:
                     if value < large_prime_bound:
