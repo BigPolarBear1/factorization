@@ -27,16 +27,6 @@ Note: With a large enough -base and lin_size this PoC will find smooths for 110 
 #### To run from folder "Improved_QS_Variant" (Tries to fruther reduce the bitlength of smooths by combining SIQS's approach of reducing bitlengths with our method of calculating moduli):</br></br>
 
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 80 -base 1000 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
+To run: python3 run_qs.py -keysize 50 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
-UPDATE: ALRIGHT. I HAVE WORKED OUT HOW TO BUILD SMOOTH CANDIDATES. POC WILL BE RELEASED TOMORROW. 
-
-Update: Its so easy. Like.... the solution is so ridiciously easy. If I die during the night, it was the americans. If I die during the night the americans killed me. It wasn't an accident. It wasn't suicide. Because tomorrow I am breaking factorization. Building smooths is as easy as using inverses and linear congruences... its actually really easy with everything I figured out.  I AM BREAKING FRACTORIZATION ON THE 13TH OF DECEMBER 2025. Prepare yourselves for the future............................................. THE GAY FUTURE. HAHAHAHAHAHAHHAHAHAHHAHAHA.
-
-13th OF December 2025. Take note of that day. Because it will be the day this world changes forever. And I made it happen through blood, sweat, tears and sacrifices. Against all odds. Fuck you all.
-
-I guess I could rush out a PoC right now.. but let me mentally relax for one more night... because tomorrow is about to become the longest day in my life... the day the world changed forever.
-
-Update: Ok i'm closing my work laptop for the night. Either tomorrow or sunday factorization falls. I'll definitely upload a PoC already tomorrow though. Good luck tomorrow and may your holidays be as ruined as you have ruined my life.
-
-Update: I keep forgetting that solving linear congruences is possible, as long as the moduli are coprime. So thats makes building smooths very easy now...  holy shit... this is going to be a truely elegant factorization algorithm. Ok ok.. seriously need some sleep. Tomorrow is going to be one hell of a long day... remember the 13th of december 2025! Its going to be glorious. Nothing can stop me now.
+Alright: This shows the math. One last key ingredient is missing. Making sure the quadratic coefficient is small so it factors over the factor base. I had an idea to do that with linear congruences, let me see if it works. Either way, the poly_val is always smooth now since we control exactly which factors get added there.
