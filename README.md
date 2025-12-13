@@ -41,3 +41,5 @@ Update: I'll add the exact math of how k in zx^2-n*k changes as we perform modul
 Update: added the math for that to the PoC... now let me add it to the paper aswell.
 
 Update: And added it to the paper on chapter 8 aswell...  now tomorrow... the final step... pulling small quadratic coefficients from the hashmap.
+
+Update: So basically the last step in the algorithm, you use that hashmap to find a small quadratic coefficient that appears in a lot of primes, then figure out how to get there using calculations mod m rather then mod n. I'll show tomorrow... it shouldn't be too difficult.
