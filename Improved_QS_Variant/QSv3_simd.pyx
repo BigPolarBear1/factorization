@@ -683,7 +683,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
         i=0
         acc=1
         k=1
-        while i <100:
+        while i <100_000:
         
             
         
