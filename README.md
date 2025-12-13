@@ -39,3 +39,5 @@ Note: To finish this, you use the residue map to figure out how often you need t
 Update: I'll add the exact math of how k in zx^2-n*k changes as we perform modular division and we end up with a wrap around due to z not being divisible in the integers, to the PoC and paper tonight. I already worked out the math, its not difficult. Then tomorrow I'll write the code to use that hashmap... and monday I'll prepare everything should I get arrested on tuesday. Its hilarious, these fucking americans know I'm going to win, so this is their only way to try and stop me. Desperate fuckers. On monday, I will send my work to every non-western contact I have with instructions on how to finish my work. Good luck with that. I know what you people are doing. Go to hell. Fuck belgium most of all. I disown my own country. Do not ever refer to me as belgian. I am not belgian. Being called belgian is a fucking insult. I despise my own country.
 
 Update: added the math for that to the PoC... now let me add it to the paper aswell.
+
+Update: And added it to the paper on chapter 8 aswell...  now tomorrow... the final step... pulling small quadratic coefficients from the hashmap.
