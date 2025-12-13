@@ -673,36 +673,38 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
 
   
   
-    l=0
+    l=1
     while l < len(loop_list):
         mult=loop_list[l]
-        #print("[i]Trying prime: ",mult)
+       # print("[i]Trying prime: ",mult)
         z=n+1
         x=1
         div=modinv(mult,n)
         i=0
-        while i <10_000:
+        acc=1
+        k=1
+        while i <100_000:
         
-        
+            
         
             poly_val=z*x**2-n*x
             if (poly_val-x)%n!=0:
                 print("error")
             diff=(poly_val-x)//n
-          #  print("poly_val: "+str(poly_val-n*diff)+" diff: "+str(diff)+" z: "+str(z)+" x: "+str(x))
+            if diff != (k-x):
+                print("fatal error")
+                time.sleep(1000)
+          #  print("poly_val: "+str(poly_val-n*(k-x))+" diff: "+str(diff)+" z: "+str(z)+" x: "+str(x)+" k: "+str(k))
+
             if diff%1 !=0:
                 print("error")
             quad_can=z
 
             local_factors, value,seen_primes = factorise_fast(quad_can,primelist_f)
             if value == 1:
-           # print("hit")
                 new_root=quad_can*x
                 poly_val=new_root**2-n*(x+diff)*quad_can
-          #  print(str(poly_val)+" new_root: "+str(new_root))
                 local_factors, value,seen_primes = factorise_fast(poly_val,primelist_f)
-                       # if value ==1:
-                           # print("poly_val: "+str(bitlen(poly_val//quad_can))+" center: "+str(center)+" root: "+str(x)+" quad: "+str(bitlen(quad_can))+" dist: "+str(i)+" modulus: "+str(modulus))
                 if value != 1:
                     if value < large_prime_bound:
                         if value in partials:
@@ -734,13 +736,20 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
                     if len(root_list)>base+2:
                         test=QS(n,primelist,poly_list,root_list,flist)  
                         return
-
-
-            z=(z*div)%n
             x*=mult
-      
+            if z%mult !=0: #Secret math
+                s=solve_lin_con(n,-z,mult)
+                acc+=(x*s)//mult
+                k=x*acc
+            else:
+                k*=mult
+ 
+            z=(z*div)%n
+            
+
 
             i+=1
+       # time.sleep(10000)
         l+=1
     return
 
