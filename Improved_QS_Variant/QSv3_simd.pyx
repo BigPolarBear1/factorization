@@ -364,49 +364,57 @@ cdef tonelli(long long n, long long p):  # tonelli-shanks to solve modular squar
 
     return r
 
-@cython.profile(False)
-def solve_roots(prime,n): 
-    s=1  
-    while jacobi((s*n)%prime,prime)!=1:
-        s+=1
-    if s > 100:
-        print("big s")
-    z_div=modinv(s,prime)  ##To do: Dont need this if we restrict to z=1
-    main_root=tonelli((n*z_div)%prime,prime)
-    if (s*main_root**2-n)%prime !=0:
-        print("fatal error123: ")
-        time.sleep(10000000)
-    try:
-        size=prime*2+1
-        if size > 100:#quad_sieve_size*2:
-            size= 100#quad_sieve_size*2+1
-        temp_hmap = array.array('Q',[0]*size) ##Got to make sure the allocation size doesn't overflow.... 
-        temp_hmap[0]=1
-      #  while s < prime and s < quad_sieve_size+1:#2: ##To do: Dont need this if we restrict to z=1
-        s_inv=modinv(s*z_div,prime)
-        if s_inv == None or jacobi(s_inv,prime)!=1:
-            print("should this ever happen?")
-            return temp_hmap
-        root_mult=tonelli(s_inv,prime)
-        new_root=((main_root*root_mult))%prime
-        if (s*new_root**2-n)%prime !=0:
-            print("error2")
-        new_co=(2*s*new_root)%prime
-        if (s*new_root**2-new_co*new_root+n)%prime !=0: ###To do: For debug delete later
-            print("error")
-        if new_co > prime // 2:
-            new_co=(prime-new_co)%prime  
-        end=temp_hmap[0]
-        temp_hmap[end]=s
-        temp_hmap[end+1]=new_co
-        temp_hmap[0]+=2
-        s+=1   
-    except Exception as e:
-        print(e)
-    return temp_hmap
 
 
-@cython.profile(False)
+def solve_roots(prime,n):
+    hmap_p={}
+    iN=0
+    while iN < prime:
+        ja= jacobi(iN,prime )
+        if ja ==1:
+            root=tonelli(iN,prime)
+            if root > prime // 2:
+                root=-root%prime
+            roots=[root]#,(-root)%prime]
+            z=1
+            while z < prime:
+                for root in roots:
+                    res=(root**2-n*4*z)%prime
+                    if jacobi(res,prime) != -1:
+                        if jacobi(res,prime) == 1:
+                            y1=tonelli(res,prime)
+                            if y1 > prime // 2:
+                                y1=-y1%prime
+                        else:
+                            y1 =0
+                        try:
+                            c=hmap_p[str(z)]
+                            c.append([root,y1])
+                        except Exception as e:
+                            c=hmap_p[str(z)]=[[root,y1]]
+                z+=1
+        if ja ==0:  
+            roots=[0]
+            z=1
+            while z < prime:
+                for root in roots:
+                    res=(root**2-n*4*z)%prime
+                    if jacobi(res,prime) != -1:
+                        if jacobi(res,prime) == 1:
+                            y1=tonelli(res,prime)
+                            if y1 > prime // 2:
+                                y1=-y1%prime
+                        else:
+                            y1 =0
+                        try:
+                            c=hmap_p[str(z)]
+                            c.append([root,y1])
+                        except Exception as e:
+                            c=hmap_p[str(z)]=[[root,y1]]
+                z+=1
+        iN+=1  
+    return hmap_p
+
 def create_hashmap(n,procnum,return_dict,primeslist):
     i=0
     hmap=[]
@@ -599,254 +607,15 @@ def solve_lin_con(a,b,m):
     #a,b,m = a//g,b//g,m//g
     return pow(a,-1,m)*b%m  
 
-cdef sieve_quadratic(interval_list,interval_list_pos,center,root,sprimelist_f,modulus):
 
-    length=sprimelist_f[0]
-    i=1
-    while i < length:
-        prime=sprimelist_f[i]
-        prime_index=i-1
-        if gcd(modulus,prime)!=1:
-            i+=1
-            continue
-        dist=solve_lin_con(modulus,-center,prime)#center%prime
-        #dist=-dist%prime
-        quad_can=center+dist*modulus
-        if quad_can%(prime*modulus) !=0:
-            print("center: "+str(center)+" prime: "+str(prime)+" dist: "+str(dist))
-            print("FATAL")
-            time.sleep(1000)
-        log=int(math.log2(prime))
-        if dist < lin_sieve_size:
-            miniloop_non_simd(dist,interval_list_pos,prime,log,lin_sieve_size)
-        dist=(-dist)%prime
-        quad_can=center-dist*modulus
-        if quad_can%prime !=0:
-            print("center: "+str(center)+" prime: "+str(prime)+" dist: "+str(dist))
-            print("FATAL")
-            time.sleep(1000)
-        if dist < lin_sieve_size:
-            miniloop_non_simd(dist,interval_list,prime,log,lin_sieve_size)
-        i+=1
-    #print("done") 
-    return
 
-#@cython.boundscheck(False)
-#@cython.wraparound(False)
-cdef generate_quadratic_coefficient(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,tnum_bit):
-    cdef Py_ssize_t counter 
-    cdef Py_ssize_t counter2
-    cdef Py_ssize_t counter3
-    cdef Py_ssize_t counter4
-    cdef Py_ssize_t i
-    cdef Py_ssize_t j
-    cdef Py_ssize_t const_1=1_000
-    cdef Py_ssize_t const_2=1_000_000
 
-    small_B = len(primeslist)
-    lower_polypool_index = 2
-    upper_polypool_index = small_B - 1
-    poly_low_found = False
-    
-    for i in range(small_B):  ##To do: Can be moved outside mainloop
-        if primeslist[i] > LOWER_BOUND_SIQS and not poly_low_found:
-            lower_polypool_index = i
-            poly_low_found = True
-            break
-     #   if primeslist[i] > UPPER_BOUND_SIQS:
-          #  upper_polypool_index = i - 1
-           # break
-    small_B=upper_polypool_index
-    counter4=0
-    while counter4 < const_1:
-        counter4+=1
-        cmod = 1
-        cfact = []#[0]*base
-        indexes=[]
-        counter2=0
-        while counter2 < const_2:
-            found_a_factor = False
-            counter=0
-            while(found_a_factor == False) and counter < const_2:
-                randindex = random.randint(lower_polypool_index, upper_polypool_index)
-                potential_a_factor = primeslist[randindex]
-                found_a_factor = True
-                it=0
-                length=len(cfact)
-                while it < length:
-                    if potential_a_factor ==cfact[it]:
-                        found_a_factor = False
-                        break
-                    it+=1
-                counter+=1
-
-            cmod = cmod * potential_a_factor
-            cfact.append(potential_a_factor)
-            indexes.append(randindex)
-            j = tnum_bit - cmod.bit_length()
-            counter2+=1
-            if j < too_close or counter == const_2:
-                cmod = 1
-                s = 0
-                cfact = []#[0]*base
-                indexes=[]
-                continue
-            elif j < (too_close + close_range):
-                break
-        a1 = tnum // cmod
-        mindiff = 100000000000000000
-        randindex = 0
-        for i in range(small_B):
-            if abs(a1 - primeslist[i]) < mindiff:
-                mindiff = abs(a1 - primeslist[i])
-                randindex = i
-
-        found_a_factor = False
-        counter3=0
-        while not found_a_factor and counter3< const_2:
-            potential_a_factor = primeslist[randindex]
-            found_a_factor = True
-            it=0
-            length=len(cfact)
-            while it < length:
-                if potential_a_factor ==cfact[it]:
-                    found_a_factor = False
-                    break
-                it+=1
-            if not found_a_factor:
-                randindex += 1
-            counter3+=1
-        if randindex > small_B:
-            continue
-
-        cmod = cmod * potential_a_factor
-
-        cfact.append(potential_a_factor)
-        indexes.append(randindex)
-
-        diff_bits = (tnum - cmod).bit_length()
-        if diff_bits < tnum_bit:
-            if cmod in seen:
-                continue
-            else:
-                seen.append(cmod)
-                return cmod,cfact,indexes
-    return 0,0,0
-
-cdef generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,tnum_bit,root):
-    ##Note: Cod duplication with generate_quadratic_coefficient
-    cdef Py_ssize_t counter 
-    cdef Py_ssize_t counter2
-    cdef Py_ssize_t counter3
-    cdef Py_ssize_t counter4
-    cdef Py_ssize_t i
-    cdef Py_ssize_t j
-    cdef Py_ssize_t const_1=1_000
-    cdef Py_ssize_t const_2=1_000_000
-
-    small_B = len(primeslist)
-    lower_polypool_index = 2
-    upper_polypool_index = small_B - 1
-    poly_low_found = False
-    
-    for i in range(small_B):  ##To do: Can be moved outside mainloop
-        if primeslist[i] > LOWER_BOUND_SIQS and not poly_low_found:
-            lower_polypool_index = i
-            poly_low_found = True
-            break
-     #   if primeslist[i] > UPPER_BOUND_SIQS:
-          #  upper_polypool_index = i - 1
-           # break
-    small_B=upper_polypool_index
-    counter4=0
-    while counter4 < const_1:
-        counter4+=1
-        cmod = 1
-        cfact = []#[0]*base
-        indexes=[]
-        counter2=0
-        while counter2 < const_2:
-            found_a_factor = False
-            counter=0
-            while(found_a_factor == False) and counter < const_2:
-                randindex = random.randint(lower_polypool_index, upper_polypool_index)
-                if jacobi(4*n,primeslist[randindex])!=1:
-                    continue
-                potential_a_factor = primeslist[randindex]
-
-                found_a_factor = True
-                it=0
-                length=len(cfact)
-                while it < length:
-                    if potential_a_factor ==cfact[it]:
-                        found_a_factor = False
-                        break
-                    it+=1
-                counter+=1
-
-            cmod = cmod * potential_a_factor
-            cfact.append(potential_a_factor)
-            indexes.append(randindex)
-            j = tnum_bit - cmod.bit_length()
-            counter2+=1
-            if j < too_close or counter == const_2:
-                cmod = 1
-                s = 0
-                cfact = []#[0]*base
-                indexes=[]
-                continue
-            elif j < (too_close + close_range):
-                break
-      #  print("got this far")
-        a1 = tnum // cmod
-        mindiff = 100000000000000000
-        randindex = 0
-        for i in range(small_B):
-            if jacobi(4*n,primeslist[i])!=1:
-                continue
-            if abs(a1 - primeslist[i]) < mindiff:
-                mindiff = abs(a1 - primeslist[i])
-                randindex = i
-
-        found_a_factor = False
-        counter3=0
-        while not found_a_factor and counter3< const_2:
-            potential_a_factor = primeslist[randindex]
-            found_a_factor = True
-            it=0
-            length=len(cfact)
-            while it < length:
-                if potential_a_factor ==cfact[it]:
-                    found_a_factor = False
-                    break
-                it+=1
-            if not found_a_factor:
-                randindex += 1
-            counter3+=1
-        if randindex > small_B:
-            continue
-        #print("got this far")
-        cmod = cmod * potential_a_factor
-
-        cfact.append(potential_a_factor)
-        indexes.append(randindex)
-
-        diff_bits =(tnum - cmod)#cmod*root**2-n #(tnum - cmod)#.bit_length()
-      #  print("diff_bits: "+str(diff_bits)+" tnum_bits: "+str(tnum_bit))
-        if abs(diff_bits) < max_diff:#tnum_bit:
-            print("tnum: "+str(tnum)+" cmod: "+str(cmod))
-            if cmod in seen:
-             #   print("fail seen")
-                continue
-            else:
-                seen.append(cmod)
-                return cmod,cfact,indexes
-    return 0,0,0
 
 cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bound,primeslist2,small_primeslist):
-    
-
-
+    p=0
+    while p < len(hmap):
+        print("Prime: "+str(primeslist[p])+" hmap: "+str(hmap[p]))
+        p+=1
 
 
 
@@ -920,8 +689,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
             if (poly_val-x)%n!=0:
                 print("error")
             diff=(poly_val-x)//n
-    #    print("poly_val: "+str(poly_val-n*diff)+" diff: "+str(diff)+" z: "+str(z)+" x: "+str(x))
-
+          #  print("poly_val: "+str(poly_val-n*diff)+" diff: "+str(diff)+" z: "+str(z)+" x: "+str(x))
             if diff%1 !=0:
                 print("error")
             quad_can=z
