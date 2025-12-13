@@ -30,3 +30,11 @@ To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 50 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
 Alright: This shows the math. One last key ingredient is missing. Making sure the quadratic coefficient is small so it factors over the factor base. I had an idea to do that with linear congruences, let me see if it works. Either way, the poly_val is always smooth now since we control exactly which factors get added there.
+
+TO FINISH MY WORK:
+
+I have just uploaded the core of the algorithm. This always produces smooths. poly_val will always be smooth. The only thing that needs to get factored is the quadratic coefficient. Right now it just does repeated modular division on the quadratic coefficient.
+
+However, we know the residues mod p of quadratic coefficients for different multiples of N. So it can be done. It absolutely can be done. I'm still trying to work out the details for this very last step, but expect it in the coming days.
+
+I will definitely upload everything I have with instructions on how to finish (if not finished yet) before tuesday. As I have to walk into the police office with my lawyer on tuesday since the americans have been pressuring the belgian gov to relentlessly harass me. This will be over soon :). We're going to change the world with math. And losers cant stop me, no matter how hard they cry about people like me. Fucking losers. I piss on you all losers.
