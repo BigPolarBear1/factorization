@@ -27,12 +27,9 @@ Note: With a large enough -base and lin_size this PoC will find smooths for 110 
 #### To run from folder "Improved_QS_Variant" (Tries to fruther reduce the bitlength of smooths by combining SIQS's approach of reducing bitlengths with our method of calculating moduli):</br></br>
 
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 50 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
+To run: python3 run_qs.py -key 4387 -base 6 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
-TO FINISH MY WORK:
+If you use the above command you can generate exactly what I'm describing in chapter 8 of my paper.
+If is now also generating the hashmap with quadratic coefficient to y0/y1 mappings.
 
-I have just uploaded the core of the algorithm. This always produces smooths. poly_val will always be smooth. The only thing that needs to get factored is the quadratic coefficient. Right now it just does repeated modular division on the quadratic coefficient.
-
-However, we know the residues mod p of quadratic coefficients for different multiples of N. So with that info we should be able to figure out when the quadratic coefficient will be small, or atleast small mod some large modulus, and if the modulus is large enough then this garantuees it to be small mod N aswell. So it can be done. It absolutely can be done. I'm still trying to work out the details for this very last step, but expect it in the coming days.
-
-I will definitely upload everything I have with instructions on how to finish (if not finished yet) before tuesday. As I have to walk into the police office with my lawyer on tuesday since the americans have been pressuring the belgian gov to relentlessly harass me. This will be over soon :). We're going to change the world with math. And losers cant stop me, no matter how hard they cry about people like me. Fucking losers. I piss on you all losers.
+Next I will show you how to pull small quadratic coefficients from this. This is the only thing missing in my code. Since it already generates values that are always smooth as long as we do modular division using factors from the factor base. I will make sure my work is finished before tuesday or atleast leave detailed instructions before tuesday as I'm expected to go into the police office with my lawyer on tuesday. And I may end up in jail, since the Americans have been weaponizing the Belgian judicial system against me relentlessly.
