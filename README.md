@@ -35,6 +35,6 @@ TO FINISH MY WORK:
 
 I have just uploaded the core of the algorithm. This always produces smooths. poly_val will always be smooth. The only thing that needs to get factored is the quadratic coefficient. Right now it just does repeated modular division on the quadratic coefficient.
 
-However, we know the residues mod p of quadratic coefficients for different multiples of N. So it can be done. It absolutely can be done. I'm still trying to work out the details for this very last step, but expect it in the coming days.
+However, we know the residues mod p of quadratic coefficients for different multiples of N. So with that info we should be able to figure out when the quadratic coefficient will be small, or atleast small mod some large modulus, and if the modulus is large enough then this garantuees it to be small mod N aswell. So it can be done. It absolutely can be done. I'm still trying to work out the details for this very last step, but expect it in the coming days.
 
 I will definitely upload everything I have with instructions on how to finish (if not finished yet) before tuesday. As I have to walk into the police office with my lawyer on tuesday since the americans have been pressuring the belgian gov to relentlessly harass me. This will be over soon :). We're going to change the world with math. And losers cant stop me, no matter how hard they cry about people like me. Fucking losers. I piss on you all losers.
