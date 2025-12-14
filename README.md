@@ -45,3 +45,5 @@ Update: added the math for that to the PoC... now let me add it to the paper asw
 Update: And added it to the paper on chapter 8 aswell...  now tomorrow... the final step... pulling small quadratic coefficients from the hashmap.
 
 Update: So basically the last step in the algorithm, you use that hashmap to find a small quadratic coefficient that appears in a lot of primes, then figure out how to get there using calculations mod m rather then mod n. I'll show tomorrow... it shouldn't be too difficult.
+
+Update: Absolute shit day. I'm very stressed. Couldn't focus at all. I did manage to do atleast a little bit of thinking about this problem... I guess if finding a small quadratic coefficient basically comes down to solving something like this: 1 * (2^e)^2 - 4387 \* 1 = 2^e .. I can do that with p-adic lifting easily. It better not be that simple.. lol... I should try and implement something in code tomorrow and send it to "my friends" (my non-nato friends that is) ... since on tuesday I'll likely dissappear into a jail cell bc belgium is a country of spineless fuckers and nazis.
