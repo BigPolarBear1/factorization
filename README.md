@@ -27,4 +27,4 @@ The paper shows how this k variable changes. Hence you can calculate this modulo
 
 Update: finished a PoC. What happens next will be decided by what happens tomorrow. I too can play chess. Fucking western nazi losers.
 
-Update: Great, someone got shot next to my running route for the second time in 2 years. Good thing I skipped running today from the stress of having to go into the police station tomorrow. Belgium is a fucking narco state. Fucking wannabe loser gangsters. I hate gansters as much as I hate nazis. I hope the day someone threatens me with a gun again never happens, because someone will die that day.. I know I wont walk away when it happens again. The last time I walked away when someone pointed a gun at me, my life completely fell apart, lost everything that made life worth living. The next time someone points a gun at me, someone will die. Fucking pussies. Its funny people only have the balls to confront me with weapons or from a vehicle. I have so much rage in me after everything that happened, I think I could legit kill someone if I was threatened again. 
+
