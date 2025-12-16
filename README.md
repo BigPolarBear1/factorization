@@ -21,8 +21,5 @@ To do: All that is left to be implemented in this code is finding a small quadra
 
 1 * (2^e)^2 - N \* k = 2^e
 
-The paper shows how this k variable changes. Hence you can calculate this modulo some finite field. All the math required to pull this off is in the paper. If you stumble upon this, I recommend you clone it as people are desperately trying to see me dissappear into a jail cell. 
-
-Update: finished a PoC. What happens next will be decided by what happens tomorrow. I too can play chess. Fucking western nazi losers.
-
+The paper shows how this k variable changes. Hence you can calculate this modulo some finite field. All the math required to pull this off is in the paper.
 
