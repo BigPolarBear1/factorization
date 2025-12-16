@@ -1,5 +1,3 @@
-Update: I am expected to walk into the police station with my lawyer on tuesday. I will not cooperate with these losers. Nor will I explain myself. I despise belgium and everything this country stands for. Everyone who stayed silent is complicit for what is about to happen. Bye assholes.
-
 #### To run debug.py" (Prints the linear and quadratic coefficients to solve for 0 in the integers, for use with my paper):</br></br>
 
 To run: python3 debug.py -keysize 12
