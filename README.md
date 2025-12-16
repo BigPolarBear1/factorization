@@ -23,3 +23,4 @@ To do: All that is left to be implemented in this code is finding a small quadra
 
 The paper shows how this k variable changes. Hence you can calculate this modulo some finite field. All the math required to pull this off is in the paper.
 
+Update: Still have my freedom. Which means that the road to finish my work is now open. One final mad dash across the finish line now..  and if I succeed, I don't care anymore about the consequences. These have been the hardest years of my life.  Lost it all in the pursuit of this. I have nothing left to lose now. All that is left now is factorization.
