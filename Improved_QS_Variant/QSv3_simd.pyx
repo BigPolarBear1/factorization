@@ -729,159 +729,78 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
     z=1
     x1=1
     y0=1
-    o=0
-    while o < n:
-        i=0
-        y=y0+o
-        while i < n:
-            fail=0
+
+    while z < 100:
+        o=0
+        while o < 100:
+            i=0
+            y0=math.isqrt(n*4*z)
+            y=y0+o
+            while i < n:
+                fail=0
             
-            x=x1+i
-            poly_val=z*x**2-y*x+n
-            if poly_val ==0:
-                i+=1
-                continue
-            local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(poly_val,primelist_f)
+                x=x1+i
+                poly_val=z*x**2-y*x+n
+                if poly_val ==0:
+                    i+=1
+                    continue
+                local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(poly_val,primelist_f)
         
-            if value == 1:
+                if value == 1:
             
-                j=0
-                total_mod=1
-                while j < len(seen_primes_indexes):
-                    pindex=seen_primes_indexes[j]
-                    prime=seen_primes[j]
-                    if pindex != -1:
-                        try:
-                            co=hmap[pindex][str(z)]
+                    j=0
+                    total_mod=1
+                    while j < len(seen_primes_indexes):
+                        pindex=seen_primes_indexes[j]
+                        prime=seen_primes[j]
+                        if pindex != -1:
+                            try:
+                                co=hmap[pindex][str(z)]
                         #print("co: "+str(co))
-                        except Exception as e:
-                            fail=1
-                            break
+                            except Exception as e:
+                                fail=1
+                                break
 
                # print("prime: "+str(seen_primes[j])+" prime check: "+str(primeslist[pindex])+" hmap: "+str(hmap[pindex]))
-                        if co[0]**2%prime == y**2%prime:
-                            total_mod*=prime
-                        else:
-                            fail=1
-                            break
-                    j+=1
-                if fail ==0:
+                            if co[0]**2%prime == y**2%prime:
+                                total_mod*=prime
+                            else:
+                                fail=1
+                                break
+                        j+=1
+                    if fail ==0:
                     #print("poly_val: "+str(poly_val)+" y: "+str(y)+" seen_primes: "+str(seen_primes))
-                    r=get_root(n,y,z) 
-                    r2=get_root(total_mod,y,z) 
-                    if r == r2:
-                        new=z*r**2-y*r+n
-                        disc=y**2-n*4*z
-                        if disc ==0:
-                            print("FATAL ERROR DISC")
-                        local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(disc,primelist_f)
-                      #  print("val: "+str(value)+" y: "+str(y)+" seen_primes: "+str(seen_primes)+" root: "+str(r)+" modulus: "+str(total_mod))
-                      #  print("total_mod: "+str(total_mod))
-                        if value == 1:
-                            if y not in root_list:
-                                root_list.append(y)
-                                poly_list.append(disc)
-                                flist.append(local_factors)
-                                ylist.append(y)
-                                total_mod_list.append(total_mod)
-                                print("", end=f"[i]Smooths: {len(root_list)} / {base*1+2}\r")
-                                if len(root_list)>base+2:
-                                    test=QS(n,primelist,poly_list,root_list,flist,ylist,total_mod_list)  
-                                    return                
-
-            i+=1
-        o+=1
-    
-
-    print("done")
-    time.sleep(1000)
-
-    #print(lift_b(3,n,0,325,3**20))
-    #sys.exit()
-  
-    l=4
-    while l < len(loop_list):
-        mult=loop_list[l]
-        print("[i]Trying prime: ",mult)
-        z=n+1
-        x=1
-        div=modinv(mult,n)
-        i=0
-        acc=1
-        k=1
-        while i <100_000:
-        
-            
-        
-            poly_val=z*x**2-n*x
-            if (poly_val-x)%n!=0:
-                print("error")
-            diff=(poly_val-x)//n
-            if diff != (k-x):
-                print("fatal error")
-                time.sleep(1000)
-            if mult == 11:
-                print("poly_val: "+str(poly_val-n*(k-x))+" diff: "+str(diff)+" z: "+str(z)+" x: "+str(x)+" k: "+str(k))
-
-            if diff%1 !=0:
-                print("error")
-            quad_can=z
-
-            local_factors, value,seen_primes = factorise_fast(quad_can,primelist_f)
-            if value == 1:
-                new_root=quad_can*x
-                poly_val=new_root**2-n*(k)*quad_can
-                if poly_val % (quad_can*mult)!=0:
-                    print("fatal error")
-                    time.sleep(10000)
-                local_factors, value,seen_primes = factorise_fast(poly_val,primelist_f)
-                if value != 1:
-                    if value < large_prime_bound:
-                        if value in partials:
-                            rel, lf, pv = partials[value]
-                            if rel == new_root:
-                                i+=1
-                                continue
-                            new_root *= rel
-                            local_factors ^= lf
-                            poly_val *= pv
-                        else:
-                            partials[value] = (new_root, local_factors, poly_val)
-                            i+=1
-                            continue
-                    else:
-                        i+=1 
-                        continue
-
-
-              
+                        r=get_root(n,y,z) 
+                        r2=get_root(total_mod,y,z) 
+                        if r == r2:
+                            new=z*r**2-y*r+n
+                            disc=y**2-n*4*z
+                            if disc ==0:
+                                print("FATAL ERROR DISC")
+                           # print("poly_val: "+str(poly_val)+" y: "+str(y)+" seen_primes: "+str(seen_primes))
+                            local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(disc,primelist_f)
                         
-                if new_root not in root_list:
-                #print("adding")
-                    root_list.append(new_root)
-                    poly_list.append(poly_val)
-                    flist.append(local_factors)
+                          #  print("z: "+str(z)+" val: "+str(value)+" y: "+str(y)+" seen_primes: "+str(seen_primes)+" root: "+str(r)+" modulus: "+str(total_mod))
+                      #  print("total_mod: "+str(total_mod))
+                            if value == 1:
+                                if y not in root_list:
+                                    root_list.append(y)
+                                    poly_list.append(disc)
+                                    flist.append(local_factors)
+                                    ylist.append(y)
+                                    total_mod_list.append(total_mod)
+                                    print("", end=f"[i]Smooths: {len(root_list)} / {base*1+2}\r")
+                                    if len(root_list)>base+2:
+                                        test=QS(n,primelist,poly_list,root_list,flist,ylist,total_mod_list)  
+                                        return                
 
-                    print("", end=f"[i]Smooths: {len(root_list)} / {base*1+2}\r")
-                    if len(root_list)>base+2:
-                        test=QS(n,primelist,poly_list,root_list,flist)  
-                        return
-            x*=mult
-            if z%mult !=0: #Secret math
-                s=solve_lin_con(n,-z,mult)
-                acc+=(x*s)//mult
-                k=x*acc
-            else:
-                k*=mult
- 
-            z=(z*div)%n
-            
+                i+=1
+            o+=1
+        z+=1
+    test=QS(n,primelist,poly_list,root_list,flist,ylist,total_mod_list)  
+    return      
 
 
-            i+=1
-        time.sleep(10000)
-        l+=1
-    return
 
 cdef lift_root(r,prime,n,quad_co,exp):
     z_inv=modinv(quad_co,prime**exp)
