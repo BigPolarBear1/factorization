@@ -21,14 +21,4 @@ To run: python3 run_qs.py -key 4387 -base 6 -debug 1 -lin_size 100_000 -quad_siz
 
 To do: All that is left to be implemented in this code is finding a small quadratic coefficient. Since the quadratic output itself is always garantueed to be smooth. For example if you want to find when a quadratic coefficient = 1 you would solve something like this:
 
-1 * (2^e)^2 - N \* k = 2^e
-
-The paper shows how this k variable changes. Hence you can calculate this modulo some finite field. All the math required to pull this off is in the paper.
-
-Update: Still have my freedom. Which means that the road to finish my work is now open. One final mad dash across the finish line now..  and if I succeed, I don't care anymore about the consequences. These have been the hardest years of my life.  Lost it all in the pursuit of this. I have nothing left to lose now. All that is left now is factorization.
-
-Update: I started taking this apart today. I actually noticed something. You can actually derive p+q from a single smooth number. I know I explored this earlier in september. But I actually see how it works now. Just one smooth number, and boom, you have factorization due to the fact we can use that to immediatly find p+q. Atleast I have gotten these calculations to work already with something of the form: z * (prime^e)^2 - N \* k = prime^e   ... let me begin generalizing these findings and I'll upload them soon....
-
-Update: God damnit, there is something here that I missed for nearly 3 years. Finding stuff like this z * (prime^e)^2 - N \* k = prime^e can actually yield the factorization very quickly. Atleast when z = 1.. but I suspect I can generalize it to any z. Damnit. Give me a few days to figure this out. 
-
-Update: let me close my laptop for today and start generalizing this tomorrow. Some very interesting patterns emerge with numbers of this form z * (prime^e)^2 - N \* k = prime^e .... there is a bunch of cases that result in knowledge of p+q ... if I can generalize this a little more.. then I could probably dramatically reduce to amount of required smooth numbers and maybe even eliminate the need for sieving completely.
+Update: Bah, I see something. Let me fix the code and paper today. The goal really is just to find a small quadratic coefficient while keeping everything else smooth. Keeping everything smooth is trivial, the code shows how to do that. Whats left now is getting that quadratic coefficient small. I'm fairly sure I know how to approach this problem. I'll upload soon.
