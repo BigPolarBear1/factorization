@@ -22,3 +22,5 @@ To run: python3 run_qs.py -key 4387 -base 6 -debug 1 -lin_size 100_000 -quad_siz
 To do: All that is left to be implemented in this code is finding a small quadratic coefficient. Since the quadratic output itself is always garantueed to be smooth. For example if you want to find when a quadratic coefficient = 1 you would solve something like this:
 
 Update: Bah, I see something. Let me fix the code and paper today. The goal really is just to find a small quadratic coefficient while keeping everything else smooth. Keeping everything smooth is trivial, the code shows how to do that. Whats left now is getting that quadratic coefficient small. I'm fairly sure I know how to approach this problem. I'll upload soon.
+
+Update: The thing is, by multiplying the root and quadratic coefficient to add a factor to the quadratic output.. that is basically adding y1 = 0 and z = 0. The real question then becomes if something similar can be done when y1 and z are non-zero ... while keeping everything smooth (thats the important part, because otherwise you can just use chinese remainder).
