@@ -20,4 +20,4 @@ To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 14 -base 20 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
 Update: Just uploaded a quick PoC ... it just shows the condition that must be met to take the discrimimant when sieving the root and linear coefficient.
-The pieces of the puzzle are starting to fall into place. Let me fix chapter 8 in the paper and start working toward an actual algorithm now...
+The pieces of the puzzle are starting to fall into place. Let me fix chapter 8 in the paper and start working toward an actual algorithm now... you really just want to combine stuff so that the condition is met where you are garantueed a smooth when taking the discriminant... which also means we dont need to worry about that damned factorization of the quadratic coefficient.
