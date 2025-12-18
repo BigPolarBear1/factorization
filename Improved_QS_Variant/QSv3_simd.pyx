@@ -159,7 +159,7 @@ def gcd(a,b): # Euclid's algorithm ##To do: Use a version without recursion?
     else:
         return gcd(b,a)
         
-def QS(n,factor_list,sm,xlist,flist):
+def QS(n,factor_list,sm,xlist,flist,ylist,total_mod_list):
     g_max_smooths=small_base*1+2
     if len(sm) > g_max_smooths: 
         del sm[g_max_smooths:]
@@ -167,16 +167,17 @@ def QS(n,factor_list,sm,xlist,flist):
         del flist[g_max_smooths:]  
     M2 = build_matrix(factor_list, sm, flist)
     null_space=solve_bits(M2)
-    f1,f2=extract_factors(n, sm, xlist, null_space)
+    f1,f2=extract_factors(n, sm, xlist, null_space,ylist,total_mod_list)
     if f1 != 0:
         print("[SUCCESS]Factors are: "+str(f1)+" and "+str(f2))
         return f1,f2   
     print("[FAILURE]No factors found")
     return 0
 
-def extract_factors(N, relations, roots, null_space):
+def extract_factors(N, relations, roots, null_space,ylist,total_mod_list):
     n = len(relations)
     for vector in null_space:
+       # print("checking")
         prod_left = 1
         prod_right = 1
         for idx in range(len(relations)):
@@ -185,6 +186,10 @@ def extract_factors(N, relations, roots, null_space):
             if bit == 1:
                 prod_left *= roots[idx]
                 prod_right *= relations[idx]
+               # print("adding_left: "+str(roots[idx]))
+               # print("adding_right: "+str(relations[idx]))
+               # print("adding co: "+str(ylist[idx]))
+               # print("total_mod: "+str(total_mod_list[idx]))
             idx += 1
         sqrt_right = math.isqrt(prod_right)
         sqrt_left = prod_left# math.isqrt(prod_left)
@@ -364,15 +369,54 @@ cdef tonelli(long long n, long long p):  # tonelli-shanks to solve modular squar
 
     return r
 
-
-
 def solve_roots(prime,n):
     hmap_p={}
     iN=0
+    modi=modinv(4*n,prime)
     while iN < prime:
         ja= jacobi(iN,prime )
         if ja ==1:
             root=tonelli(iN,prime)
+            
+            if root > prime // 2:
+                root=(prime-root)%prime
+
+            s=(root**2*modi)%prime
+
+
+
+            try:
+                c=hmap_p[str(s)]
+                c.append(root)
+            except Exception as e:
+                    c=hmap_p[str(s)]=[root]
+              #  z+=1
+     #   if ja ==0:  
+      #      roots=[0]
+      #      z=0
+       #     while z < prime:
+           #     for root in roots:
+              #      res=(root**2-n*4*z)%prime
+                #    if res==0:
+                    #    try:
+                      #      c=hmap_p[str(z)]
+                       #     c.append(root)
+                      #  except Exception as e:
+                         #   c=hmap_p[str(z)]=[root]
+               # z+=1
+        iN+=1  
+    return hmap_p
+
+def solve_roots2(prime,n):
+    hmap_p={}
+    iN=0
+    while iN < prime:
+        ja= jacobi(iN,prime )
+
+        if ja ==1:
+            root=tonelli(iN,prime)
+
+              #  time.sleep(10000)
             if root > prime // 2:
                 root=-root%prime
             roots=[root]#,(-root)%prime]
@@ -380,6 +424,8 @@ def solve_roots(prime,n):
             while z < prime:
                 for root in roots:
                     res=(root**2-n*4*z)%prime
+                    if prime == 11 and z == 8 and roots == [2]:
+                        print("hit: "+str(roots)+" res: "+str(res)+" jac: "+str(jacobi(res,prime)))
                     if jacobi(res,prime) != -1:
                         if jacobi(res,prime) == 1:
                             y1=tonelli(res,prime)
@@ -387,10 +433,15 @@ def solve_roots(prime,n):
                                 y1=-y1%prime
                         else:
                             y1 =0
+
                         try:
                             c=hmap_p[str(z)]
+                            if (root**2-n*4*z)%prime != y1**2%prime:
+                                print("fatal error: ")
                             c.append([root,y1])
                         except Exception as e:
+                            if (root**2-n*4*z)%prime != y1**2%prime:
+                                print("fatal error: ")
                             c=hmap_p[str(z)]=[[root,y1]]
                 z+=1
         if ja ==0:  
@@ -448,13 +499,16 @@ def jacobi(a, n):
 @cython.wraparound(False)
 cdef factorise_fast(value,long long [::1] factor_base):
     seen_primes=[]
+    seen_primes_indexes=[]
     factors = set()
     if value < 0:
         seen_primes.append(-1)
+        seen_primes_indexes.append(-1)
         factors ^= {-1}
         value = -value
     while value % 2 == 0:
         seen_primes.append(2)
+        seen_primes_indexes.append(-1)
         factors ^= {2}
         value //= 2
     #cdef int factor 
@@ -465,10 +519,11 @@ cdef factorise_fast(value,long long [::1] factor_base):
        # print(factor)
         while value % factor == 0:
             seen_primes.append(factor)
+            seen_primes_indexes.append(i-1)
             factors ^= {factor}
             value //= factor
         i+=1
-    return factors, value,seen_primes
+    return factors, value,seen_primes,seen_primes_indexes
 
 
 
@@ -607,18 +662,17 @@ def solve_lin_con(a,b,m):
     #a,b,m = a//g,b//g,m//g
     return pow(a,-1,m)*b%m  
 
-
-
-
-
 cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bound,primeslist2,small_primeslist):
-    p=0
-    while p < len(hmap):
-        print("Prime: "+str(primeslist[p])+" hmap: "+str(hmap[p]))
-        p+=1
+   # p=0
+  # # while p < len(hmap):
+    #    print("Prime: "+str(primeslist[p])+" hmap: "+str(hmap[p]))
+    #    p+=1
 
 
-
+    #print("done")
+    #time.sleep(100000)
+    ylist=[]
+    total_mod_list=[]
     cdef Py_ssize_t i
     cdef Py_ssize_t j
 
@@ -671,12 +725,84 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
     poly_list=[]
     flist=[]
 
+
+    z=1
+    x1=1
+    y0=1
+    o=0
+    while o < n:
+        i=0
+        y=y0+o
+        while i < n:
+            fail=0
+            
+            x=x1+i
+            poly_val=z*x**2-y*x+n
+            if poly_val ==0:
+                i+=1
+                continue
+            local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(poly_val,primelist_f)
+        
+            if value == 1:
+            
+                j=0
+                total_mod=1
+                while j < len(seen_primes_indexes):
+                    pindex=seen_primes_indexes[j]
+                    prime=seen_primes[j]
+                    if pindex != -1:
+                        try:
+                            co=hmap[pindex][str(z)]
+                        #print("co: "+str(co))
+                        except Exception as e:
+                            fail=1
+                            break
+
+               # print("prime: "+str(seen_primes[j])+" prime check: "+str(primeslist[pindex])+" hmap: "+str(hmap[pindex]))
+                        if co[0]**2%prime == y**2%prime:
+                            total_mod*=prime
+                        else:
+                            fail=1
+                            break
+                    j+=1
+                if fail ==0:
+                    #print("poly_val: "+str(poly_val)+" y: "+str(y)+" seen_primes: "+str(seen_primes))
+                    r=get_root(n,y,z) 
+                    r2=get_root(total_mod,y,z) 
+                    if r == r2:
+                        new=z*r**2-y*r+n
+                        disc=y**2-n*4*z
+                        if disc ==0:
+                            print("FATAL ERROR DISC")
+                        local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(disc,primelist_f)
+                      #  print("val: "+str(value)+" y: "+str(y)+" seen_primes: "+str(seen_primes)+" root: "+str(r)+" modulus: "+str(total_mod))
+                      #  print("total_mod: "+str(total_mod))
+                        if value == 1:
+                            if y not in root_list:
+                                root_list.append(y)
+                                poly_list.append(disc)
+                                flist.append(local_factors)
+                                ylist.append(y)
+                                total_mod_list.append(total_mod)
+                                print("", end=f"[i]Smooths: {len(root_list)} / {base*1+2}\r")
+                                if len(root_list)>base+2:
+                                    test=QS(n,primelist,poly_list,root_list,flist,ylist,total_mod_list)  
+                                    return                
+
+            i+=1
+        o+=1
+    
+
+    print("done")
+    time.sleep(1000)
+
+    #print(lift_b(3,n,0,325,3**20))
+    #sys.exit()
   
-  
-    l=1
+    l=4
     while l < len(loop_list):
         mult=loop_list[l]
-       # print("[i]Trying prime: ",mult)
+        print("[i]Trying prime: ",mult)
         z=n+1
         x=1
         div=modinv(mult,n)
@@ -694,7 +820,8 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
             if diff != (k-x):
                 print("fatal error")
                 time.sleep(1000)
-          #  print("poly_val: "+str(poly_val-n*(k-x))+" diff: "+str(diff)+" z: "+str(z)+" x: "+str(x)+" k: "+str(k))
+            if mult == 11:
+                print("poly_val: "+str(poly_val-n*(k-x))+" diff: "+str(diff)+" z: "+str(z)+" x: "+str(x)+" k: "+str(k))
 
             if diff%1 !=0:
                 print("error")
@@ -752,7 +879,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
 
 
             i+=1
-       # time.sleep(10000)
+        time.sleep(10000)
         l+=1
     return
 
@@ -818,8 +945,91 @@ cdef factorise_squares(value,factor_base):
         i+=1
     return value,seen_primes,total_square
 
+def equation2(y,x,n,mod,z,z2):
+    rem=z*(x**2)+y*x-n*z2
+    rem2=rem%mod
+    return rem2,rem
+
+def formal_deriv(y,x,z):
+    result=(z*2*x)-(y)
+    return result
+
+def lift(exp,co,r,n,z,z2,prime):
+   # i=0
+    offset=0
+    ret=[]
+    while 1:
+        root=r+offset
+        if root > prime**exp:
+            break
+
+        rem,rem2=equation2(0,root,n,prime**exp,z,z2)
+        #if rem!=0:
+          #  print("error erorr")
+       # if g_debug > 1:
+           # print("[Debug 2]Prime**exp: "+str(prime**exp)+" root: "+str(root)+" rem2: "+str(rem2)+" rem: "+str(rem))
+        if rem ==0:
+            co2=(formal_deriv(0,root,z))%(prime**exp)
+           # print("co2: "+str(co2)+" orig co: "+str(co)+" prime: "+str(prime)+" z: "+str(z))
+           # rem,rem2=equation(co2,root,n,prime**exp,z,z2) 
+          #  print("rem: ",rem)
+           # if rem == 0:
+            ret.extend([co2,root])
+                #TO DO: Can we just break here?
+          #  else:
+              #  print("error error error")
+        offset+=prime**(exp-1)
+    return ret
+
+def lift_b(prime,n,co,z,max_prime):
+
+
+
+
+
+
+    z2=1
+    k=0
+    ret=[]
+    cos=[]
+    step_size=[]
+    new=[]
+    r=get_root(prime,co%prime,z) 
+  #  print("prime: "+str(prime)+" co: "+str(co)+" z: "+str(z)+" r: "+str(r))
+    if r==-1:
+        return 0
+
+
+
+    rem,rem2=equation2(0,r,n,prime,z,z2)
+    if rem != 0:
+        print("error") ##If this never triggers we can delete this
+
+    exp=2
+    ret=[co,r]
+   # print("ret: ",ret)
+    cos.append([co,(prime-co)%prime])
+
+    while prime**exp < max_prime+1 :
+        ret=lift(exp,ret[0],ret[1],n,z,z2,prime)
+       # print("ret: ",ret)
+        co2=(prime**exp)-ret[0]
+      #  if ret[0] > lin_sieve_size2 and co2 > lin_sieve_size2:
+       #     break
+        
+        cos.append([ret[0],co2])
+
+        if len(ret) > 2:
+            print("SHOULDNT HAPPEN")
+        exp+=1
+    return cos[-1]   
 
 def generate_large_square(n,many_primes,valid_quads,valid_quads_factors,sprimelist_f,interval_list,roots,interval_list_pos,partials,large_prime_bound):
+    
+#prime,n,co,z,max_prime
+   # cos=lift_b(3,n,hmap[index][j+1],hmap[index][j],mod_array[c])
+   # print("done")
+   # time.sleep(10000)
     root_list=[]
     poly_list=[]
     flist=[]
