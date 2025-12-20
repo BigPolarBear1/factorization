@@ -31,7 +31,7 @@ I'm 99% sure I can pull it off now. In the last week, when I was messing around 
 
 Update: Here is an example of what needs to be done:
 
-1\*40^2-150\*40+4387 = -13
+1\*40^2-150\*40+4387 = -13</br>
 1\*36^2-158\*36+4387 = -5
 
 If we perform sieving (just iterating x and y), lets say we find the above smooths. And in both cases the linear coefficient has a valid mapping to the quadratic coefficient in the hashmap we calculated for mod 13 and mod 5. Can we combine the two above polynomials to find one that generates -65? 
