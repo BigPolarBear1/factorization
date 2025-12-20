@@ -20,3 +20,10 @@ To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 14 -base 20 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
 UPDATE Saturday 20 DEC: I'll upload a better PoC shortly as I work out the details.
+
+After spending the afternoon thinking about this, I think the following must be done now:
+
+We must combine quadratic polynomials, such that z*x*2 = y.
+I need to work out the exact math for this, so that when we combine them, no extra factors that don't already occur in the quadratic outputs that we are combining get added. 
+Ideally rather using quadratic polynomials to perform sieving such that the discriminant is smooth, we should combine them such that we generate a square and can take the GCD.. so somehow that combining of quadratic polynomials must be fed into guassian elimination over GF(2). So that's what I'll begin exploring now. I'm fairly sure it's do-able though. This does feel like the right approach. The main issue will be approaching it in a way that makes sense.. rather then desperately trying to mimic steps in the number field sieve algorithm.. because that's just going to confuse me.
+
