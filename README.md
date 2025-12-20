@@ -41,7 +41,3 @@ If we chinese remainder residues 150,-150 mod 13 and  158,-158 mod 5 and look fo
 1\*42^2-148\*42+4387 = -65
 
 However, is the existence of some nearby polynomial always garantueed that produces the product? And that question is probably solved with the work I did last week, where I was adding factors by multiplying/dividing coefficients and roots. So my goal now is to write some function, given two quadratics whose output factorizes over the factor base and has a valid mapping in the hashmap, combine then and return a new linear coefficient and root that produces the product. If I can solve this one thing, then I absolutely know how to finish everything else and my work should be completed within days... final sprint I guess.. lets hope this is it for real now.
-
-Update: Going to take a break for the day. Tomorrow I should also investigate if adding the condition that z\*x\*2 = y mod p makes it easier to combine these quadratics... there is a way to do it, I know that for sure. 
-
-
