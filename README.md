@@ -31,6 +31,8 @@ I'm 99% sure I can pull it off now. In the last week, when I was messing around 
 
 Update: Here is an example of what needs to be done:
 
+EDIT: BTW, THIS IS A BAD EXAMPLE, SINCE THIS DOESN'T HAVE THAT VALID MAPPING IN THAT QUADRATIC TO LINEAR COEFFICIENT MAPPING. JUST AN EXAMPLE TO ILLUSTRATE WHAT I'M TRYING TO DO I GUESS.
+
 1\*40^2-150\*40+4387 = -13</br>
 1\*36^2-158\*36+4387 = -5
 
