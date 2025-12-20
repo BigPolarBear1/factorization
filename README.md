@@ -19,5 +19,4 @@ Note: With a large enough -base and lin_size this PoC will find smooths for 110 
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 14 -base 20 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
-UPDATE Saturday 20 DEC: So the uploaded PoC, its very rough. I've started thinking a little bit deeper about this approach though. Sieving this way is great. We can generate extremely small values using quadratic polynomials with non-zero linear coefficients. But for the linear algebra step, what we need to do is find a square with the output of the quadratic polynomials, rather then the discriminant... AND THEN... deduce the correct linear coefficient. I'm having some issues staying focused today, but let me verify what I'm seeing. If it does work, then at this pace a lot of people are about to have their holidays ruined.. but whatever, my life has been ruined, so welcome to my world I guess.
-
+UPDATE Saturday 20 DEC: I'll upload a better PoC shortly as I work out the details.
