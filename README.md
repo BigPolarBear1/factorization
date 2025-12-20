@@ -28,3 +28,18 @@ I need to work out the exact math for this, so that when we combine them, no ext
 Ideally rather than using quadratic polynomials to perform sieving such that the discriminant is smooth, we should combine them such that we generate a square and can take the GCD.. so somehow that combining of quadratic polynomials must be fed into guassian elimination over GF(2). So that's what I'll begin exploring now. I'm fairly sure it's do-able though. This does feel like the right approach. The main issue will be approaching it in a way that makes sense.. rather then desperately trying to mimic steps in the number field sieve algorithm.. because that's just going to confuse me.
 
 I'm 99% sure I can pull it off now. In the last week, when I was messing around with adding factors to the quadratic output and doing modular division on that quadratic coefficient... now that I understand all those moving parts, I should have the understanding to pull it off now, if it is at all possible...  Anyway.. time to dig in now. I hate that it is taking this long... but then again, all these in retrospect idiotic detours I've taken in my research.. they helped to shape the understanding I have today.. and perhaps a lot of it, I could have learned by reading some math textbooks, but it wouldn't have given me the intuitive understanding I have now.. and I know from experience and a long career doing vulnerability research... that intuitive understanding triumphs everythings.
+
+Update: Here is an example of what needs to be done:
+
+1\*40^2-150\*40+4387 = -13
+1\*36^2-158\*36+4387 = -5
+
+If we perform sieving (just iterating x and y), lets say we find the above smooths. And in both cases the linear coefficient has a valid mapping to the quadratic coefficient in the hashmap we calculated for mod 13 and mod 5. Can we combine the two above polynomials to find one that generates -65? 
+
+If we chinese remainder residues 150,-150 mod 13 and  158,-158 mod 5 and look for nearby linear coefficients and roots that generate -65 we find for example:
+
+1\*42^2-148\*42+4387 = -65
+
+However, is the existence of some nearby polynomial always garantueed that produces the product? And that question is probably solved with the work I did last week, where I was adding factors by multiplying/dividing coefficients and roots. So my goal now is to write some function, given two quadratics whose output factorizes over the factor base and has a valid mapping in the hashmap, combine then and return a new linear coefficient and root that produces the product. If I can solve this one thing, then I absolutely now how to finish everything else and my work should be completed within days... final sprint I guess.. lets hope this is it for real now.
+
+
