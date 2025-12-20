@@ -33,6 +33,8 @@ Update: Here is an example of what needs to be done:
 
 EDIT: BTW, THIS IS A BAD EXAMPLE, SINCE THIS DOESN'T HAVE THAT VALID MAPPING IN THAT QUADRATIC TO LINEAR COEFFICIENT MAPPING. JUST AN EXAMPLE TO ILLUSTRATE WHAT I'M TRYING TO DO I GUESS.
 
+EDIT2: Woops, I already see it now... I confused myself by looking at an example that doesn't have a valid mapping in the hashmap.. when both do, then its very easy and straight forward to combine then. Anyway.. I'll continue tomorrow.
+
 1\*40^2-150\*40+4387 = -13</br>
 1\*36^2-158\*36+4387 = -5
 
