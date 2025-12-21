@@ -22,3 +22,5 @@ To run: python3 run_qs.py -keysize 14 -base 20 -debug 1 -lin_size 100_000 -quad_
 Coming soon...
 
 Update: Took a break today. I'm going to finish this tomorrow though. I know exactly how to do it.... just in time for christmas. Its always funny seeing threat intel folks cry about having to work during holidays and shit. Thats why I used to drop 0days, bc I hated those people and seeing their stupid nerd tears was funny as hell. Also they are a bunch of self-righteous losers. They arn't hackers. Real hackers dont work for big tech, real hackers peddle their goods on the dark web so their exploits get used to hack the FBI hahahaha.
+
+ps: If you want to troll the FBI, you should just come up with some bullshit about how you hacked them. Make it sound just plausible enough. Then they need to verify they arnt hacked for compliance reasons. Draining their resources and time. Governments and big tech have to do a lot of shit for compliance reasons. You can weaponise a lot of that shit to make their lifes miserable.
