@@ -19,5 +19,4 @@ Note: With a large enough -base and lin_size this PoC will find smooths for 110 
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 14 -base 20 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
-Coming soon...
-
+Update: Let me add a full numerical example to the paper. And I'll finish the code in the coming days after that. Even if I dont complete my work by christmas, I can still ruin people's new year celebrations by breaking the internet. Everyone will be just as miserable as I am. Hahaha. 
