@@ -23,3 +23,4 @@ Coming soon...
 
 Update: Took a break today. I'm going to finish this tomorrow though. I know exactly how to do it.... just in time for christmas. Its always funny seeing threat intel folks cry about having to work during holidays and shit. Thats why I used to drop 0days, bc I hated those people and seeing their stupid nerd tears was funny as hell. Also they are a bunch of self-righteous losers. They arn't hackers. Real hackers dont work for big tech, real hackers peddle their goods on the dark web so their exploits get used to hack the FBI hahahaha.
 
+I really despise belgium. Thia country has always been a dead end for me.
