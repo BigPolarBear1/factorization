@@ -30,3 +30,7 @@ Then do those calculations to shift all my solutions to the next quadratic coeff
 Wait, what? I literally cant think of a single reason why this wouldn't work. Oh my god. Let me rush out a PoC by Christmas. If that fails miserably.. I'll just continue what I was doing these last few days. But its so simple and elegant that I have to drop everything and atleast try it. Writing the code is super simple since Ive worked out all the math for a long time now..
 
 God damnit. How could I not have seen this earlier? Its so simple, yet elegant. And I have all the math to do it now. God damnit! Happy christmas assholes. Factorization is coming!
+
+OMG. WHY DIDNT I SEE THIS EARLIER. I can literally set it up, so everything can just be done with vector operations. EVERYTHING. FUCK!!!! 
+
+https://youtu.be/2zpCOYkdvTQ
