@@ -34,3 +34,5 @@ God damnit. How could I not have seen this earlier? Its so simple, yet elegant. 
 OMG. WHY DIDNT I SEE THIS EARLIER. I can literally set it up, so everything can just be done with vector operations. EVERYTHING. FUCK!!!! 
 
 https://youtu.be/2zpCOYkdvTQ
+
+TWO DAYS. THAT IS ALL I NEED. Happy holidays assholes. 
