@@ -22,3 +22,5 @@ To run: python3 run_qs.py -keysize 14 -base 20 -debug 1 -lin_size 100_000 -quad_
 Update: Let me add a full numerical example to the paper. And I'll finish the code in the coming days after that. Even if I dont complete my work by christmas, I can still ruin people's new year celebrations by breaking the internet. Everyone will be just as miserable as I am. Hahaha. 
 
 Update: One sec... I think the proper way to do it is to restrict to a single quadratic coefficient. To keep that quadratic coefficient small. Let me edit some stuff in the paper.
+
+Update: Added a proper example to the paper. Let me add to the PoC some lifting for when we check the hashmap... that should further filter out results we cant combine...
