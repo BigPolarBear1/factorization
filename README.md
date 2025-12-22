@@ -24,3 +24,5 @@ Update: Let me add a full numerical example to the paper. And I'll finish the co
 Update: One sec... I think the proper way to do it is to restrict to a single quadratic coefficient. To keep that quadratic coefficient small. Let me edit some stuff in the paper.
 
 Update: Added a proper example to the paper. Let me add to the PoC some lifting for when we check the hashmap... that should further filter out results we cant combine...
+
+Update: I'll go for a run. Actually you know what I'm going to do tomorrow. Just sieve at quadratic coefficient z = 1. So iterate x and y for 1\*x^2-yx+N .. make sure every factor has a valid mapping in the precalculated hashmap (eventually we should sieve using the hashmap directly)  .... if it has add it as smooth... perform gaussian elimination over GF(2) ... and then we try to Chinese remainder these quadratics together and with some luck we'll have a square when taking the discriminant and we take the GCD... that should work often enough... and if not.. I'm sure I can figure it out. And then I just take it from there.. keep improving it.
