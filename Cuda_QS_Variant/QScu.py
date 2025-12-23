@@ -563,90 +563,162 @@ def init_2d_interval(primeslist,hmap,n,quad):
     i=0
     interval2d=cp.zeros((len(primeslist),lin_sieve_size))
     
-    while i < len(primeslist):
+  #  while i < len(primeslist):
       #  print(primeslist[i])
-        prime=primeslist[i]
-        y=hmap[i][2]
-        z=hmap[i][1]
-        z_div=modinv(z,prime)
-        z_inv=modinv(quad*z_div,prime)
-        if z_inv == None or jacobi(z_inv,prime)!=1:
-            i+=1
-            continue
+      #  prime=primeslist[i]
+      #  y=hmap[i][2]
+      #  z=hmap[i][1]
+        #z_div=modinv(z,prime)
+        #z_inv=modinv(quad*z_div,prime)
+        #if z_inv == None or jacobi(z_inv,prime)!=1:
+         #   i+=1
+          #  continue
         #print("co: "+str(y)+" prime: "+str(prime)+" z: "+str(z))
-        root_mult=tonelli(z_inv,prime)
-        log=int(math.log2(prime))
-        x=get_root(prime,y,z)
-        x=(x*root_mult)%prime
-        test=z*x**2+n
-        if test%prime !=0:
-            print("FATAL ERROR")
-        x_b=(prime-x)%prime  
-        interval2d[i,x::prime]=log
-        interval2d[i,x_b::prime]=log
-        i+=1
+        #root_mult=tonelli(z_inv,prime)
+       # log=int(math.log2(prime))
+      #  x=get_root(prime,y,z)
+      #  #x=(x*root_mult)%prime
+      #  test=z*x**2+n
+      #  if test%prime !=0:
+        #    print("FATAL ERROR")
+     #   x_b=(prime-x)%prime  
+      #  interval2d[i,x::prime]=log
+      #  interval2d[i,x_b::prime]=log
+      #  i+=1
     #print(interval2d)
 
     return interval2d
 
 def process_interval2d(interval2d,n,ret_array,z,primelist_f,large_prime_bound,partials):
     sum=interval2d.sum(axis=0)
-    threshold = int(math.log2((lin_sieve_size)*math.sqrt(abs(n))) - thresvar)
-   # print(sum)
+    threshold = int(math.log2(n) - thresvar)
+  #  print(sum)
     i=0
     while i < len(sum):
       #  print(sum[i])
         if sum[i]>threshold:
+          #  print("checking")
             x=i
-            poly_val=z*x**2+n*x
+          #  poly_val=z*x**2+n*x
 
 
 
             quad_can=z
 
-            local_factors, value,seen_primes = factorise_fast(quad_can,primelist_f)
-           
-            if value == 1:
-                new_root=quad_can*x
-                poly_val=new_root**2+n*quad_can
-                if poly_val % quad_can!=0:
-                    print("fatal error")
-                    time.sleep(10000)
-                local_factors, value,seen_primes = factorise_fast(poly_val,primelist_f)
-               # print("seen_primes: "+str(seen_primes)+" index: "+str(i)+" polyval: "+str(poly_val))
-                if value != 1:
-                    if value < large_prime_bound:
-                        if value in partials:
-                            rel, lf, pv = partials[value]
-                            if rel == new_root:
-                                i+=1
-                                continue
-                            new_root *= rel
-                            local_factors ^= lf
-                            poly_val *= pv
-                        else:
-                            partials[value] = (new_root, local_factors, poly_val)
+             
+            new_root=quad_can*x
+            poly_val=new_root**2+n*quad_can
+          #  print(bitlen(poly_val))
+            if poly_val % quad_can!=0:
+                print("fatal error")
+                time.sleep(10000)
+            local_factors, value,seen_primes = factorise_fast(poly_val,primelist_f)
+
+
+
+            #local_factors2, value2,seen_primes2 = factorise_fast(poly_val//quad_can,primelist_f)
+            #seen_log=0
+            #prev=0
+            #for prime in seen_primes2:
+                #if prime !=prev and prime >2:
+                    #seen_log+=round(math.log2(prime))
+                #prev=prime
+            #if seen_log != sum[i]:
+                #print("error")
+          #  print(str(value)+" seen_primes: "+str(seen_primes)+" index: "+str(i)+" polyval: "+str(poly_val)+" thres: "+str(sum[i])+"/"+str(threshold)+" z: "+str(quad_can))
+          
+            if value != 1:
+               # i+=1
+              #  continue
+                if value < large_prime_bound:
+                    if value in partials:
+                        rel, lf, pv = partials[value]
+                        if rel == new_root:
                             i+=1
                             continue
+                        new_root *= rel
+                        local_factors ^= lf
+                        poly_val *= pv
                     else:
-                        i+=1 
+                        partials[value] = (new_root, local_factors, poly_val)
+                        i+=1
                         continue
+                else:
+                    i+=1 
+                    continue
 
 
               
-                        
-                if new_root not in ret_array[1]:
+              #  print("seen_primes: "+str(seen_primes)+" index: "+str(i)+" polyval: "+str(poly_val)+" thres: "+str(sum[i])+"/"+str(threshold)+" z: "+str(quad_can))
+            
+            if new_root not in ret_array[1]:
                 #print("adding")
                   #  print("found: "+str(i))
-                    ret_array[1].append(new_root)
-                    ret_array[0].append(poly_val)
-                    ret_array[2].append(local_factors)
-                    if len(ret_array[2])>base+2:
-                        return
+                ret_array[1].append(new_root)
+                ret_array[0].append(poly_val)
+                ret_array[2].append(local_factors)
+                if len(ret_array[2])>base+2:
+                    return
 
         #    print("hit")
         i+=1
     return
+
+def roll_interval2d(interval2d,hmap,primeslist,n,quad):
+    ##I need to think how to speed this up... I could do it with rolling, but then I need seperate lists for both roots
+    i=0
+    delete_list=[]
+    while i < len(primeslist):
+        prime=primeslist[i]
+        y=hmap[i][2]
+        z=hmap[i][1]
+        z_div=modinv(z,prime)
+        z_inv=modinv(quad*z_div,prime)
+        if z_inv == None or jacobi(z_inv,prime)!=1:
+            delete_list.append(i)
+            i+=1
+            continue
+        
+        root_mult=tonelli(z_inv,prime)
+        log=round(math.log2(prime))
+        x=get_root(prime,y,z)
+        x2=(x*root_mult)%prime
+        dist=(x2-x)%prime
+        x=x2
+        test=quad*x**2+n
+        if test%prime !=0:
+            print("FATAL ERROR")
+       # print("co: "+str(y)+" prime: "+str(prime)+" z: "+str(z)+" root: "+str(x))
+        x_b=(prime-x)%prime  
+        interval2d[i,x::prime]=log
+        interval2d[i,x_b::prime]=log
+        i+=1
+    interval2d=cp.delete(interval2d,(delete_list),axis=0)
+   # print(interval2d)
+    return
+
+def filter_quads(qbase,n):
+    valid_quads=[]
+    valid_quads_factors=[]
+
+    roots=[]
+    i=1
+    while i < quad_sieve_size+1:
+        if i != 1 and math.sqrt(i)%1==0:
+            i+=1
+            continue
+        if i ==0:
+            print("wtf")
+        quad_local_factors, quad_value,seen_primes = factorise_fast(i,qbase)  ##TO DO: move this way up
+
+        if quad_value != 1:
+            i+=1
+            continue
+
+        valid_quads.append(i)
+        valid_quads_factors.append(quad_local_factors)
+        i+=1
+    return valid_quads,valid_quads_factors
 
 def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound):
     cp.set_printoptions(
@@ -663,13 +735,25 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound):
     primelist_f.insert(0,len(primelist_f)+1)
     primelist_f=array.array('q',primelist_f)
     #print(hmap)
-    interval2d=init_2d_interval(primeslist,hmap,n,1)
-    process_interval2d(interval2d,n,ret_array,1,primelist_f,large_prime_bound,partials)
+    valid_quads,valid_quads_factors=filter_quads(primelist_f,n)
+    interval2d_orig=init_2d_interval(primeslist,hmap,n,1)
+
+
+
+    i=1
+    while i < len(valid_quads):
+        z=valid_quads[i]
+        #print("Trying z: "+str(z))
+        interval2d=cp.copy(interval2d_orig)
+        roll_interval2d(interval2d,hmap,primeslist,n,z)
+        process_interval2d(interval2d,n,ret_array,z,primelist_f,large_prime_bound,partials)
+        print("", end=f"[i]Smooths: {len(ret_array[2])} / {base*1+2}\r")
+        if len(ret_array[2])>base+2:
+            test=QS(n,primelist,ret_array[0],ret_array[1],ret_array[2])  
+            return
+        i+=1
  
-    print("", end=f"[i]Smooths: {len(ret_array[2])} / {base*1+2}\r")
-    if len(ret_array[2])>base+2:
-        test=QS(n,primelist,ret_array[0],ret_array[1],ret_array[2])  
-        return
+    print("ended")
 
     return
 
