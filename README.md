@@ -35,4 +35,5 @@ I'm going to go for a run now. Changing the quadratic coefficient is easy.. that
 
 Btw, what I'll do tomorrow is use cupy.roll() to shift these arrays after changing quadratic coefficient. That should be very fast. So that we just have a loop were we keep rolling and summing that 2d interval... which is going to be pretty neat when its finished.
 
+You know, I really hate microsoft. They destroyed everything that was good in my life. They also went after the only person in this industry who actually believed in me and supported me. And nobody at microsoft did anything. Fuck they probably patted the guy who threatened me with a gun on the back, wouldn't surprise me if they knew exactly who that guy was. All these people who work in security at microsoft, they all suck at their job, they are all incompetent. I dont even know why i'm mad at the fbi, bc its really microsoft that i'm mad at. But then again, the fbi are also losers.
 
