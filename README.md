@@ -26,15 +26,11 @@ Note: Broken for now... this is some work in progress research
 
 #### To run from folder "CUDA_QS_Variant"  (QS variant using mainly vector operations and CUDA support):</br></br>
 
-To run: python3 QScu.py -keysize 20 -base 50 -lin_size 10_000 -quad_size 1</br></br>
+To run: python3 QScu.py -keysize 50 -base 500 -lin_size 10_000 -quad_size 10_000</br></br>
 
 Note: You need to run from the host. I'm using wsl2 and ubuntu with CUDA support. I don't believe this will work from hyper-v.
 
-To do: Shift everything so we can use more quadratic coefficients. Either we use more quadratic coefficients, which would be the easiest option. Or we change the spacing in the interval step with moduli.
-
-I'm going to go for a run now. Changing the quadratic coefficient is easy.. that code is already implemented in QS_variant so its just copy paste... I'll add it tomorrow, just stressed today and cant focus. And after that I'll just optimize it as good as I can and hopefully by christmas its pushing beyond anything I was doing earlier...
-
-Btw, what I'll do tomorrow is use cupy.roll() to shift these arrays after changing quadratic coefficient. That should be very fast. So that we just have a loop were we keep rolling and summing that 2d interval... which is going to be pretty neat when its finished.
+To do: It is still seriously bad. I'll fix stuff tomorrow. Right now its initializing the 2d interval with zeroes... then making a copy for each quadratic coefficient. Which isn't good. What I would really like is that as we go up in quadratic coefficient, we call a function like roll() on the entire 2d interval... let me investigate tomorrow if this would be possible. Because then we basically just roll() and sum() like there is no tomorrow... after that I need to use moduli for the interval step size and make sure we arnt bottlenecking with slow python indexing.
 
 You know, I really hate microsoft. They destroyed everything that was good in my life. They also went after the only person in this industry who actually believed in me and supported me. And nobody at microsoft did anything. Fuck they probably patted the guy who threatened me with a gun on the back, wouldn't surprise me if they knew exactly who that guy was. All these people who work in security at microsoft, they all suck at their job, they are all incompetent. I dont even know why i'm mad at the fbi, bc its really microsoft that i'm mad at. But then again, the fbi are also losers.
 
