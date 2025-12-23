@@ -1,5 +1,7 @@
 Disclaimer: At no point did AI contribute anything to this research project. Copilot can't even calculate basic congruences without making mistakes. People who think AI can do novel math research are delusional.
 
+NOTE: Starting 2026, none of my research will be published. Only people who treat me with respect will be allowed access to my work. And NATO countries/big tech are very low on that list after harassing me for years and treating me like shit.
+
 #### To run debug.py" (Prints the linear and quadratic coefficients to solve for 0 in the integers, for use with my paper):</br></br>
 
 To run: python3 debug.py -keysize 12
@@ -28,3 +30,7 @@ To run: python3 QScu.py -keysize 20 -base 50 -lin_size 10_000 -quad_size 1</br><
 Note: You need to run from the host. I'm using wsl2 and ubuntu with CUDA support. I don't believe this will work from hyper-v.
 
 To do: Shift everything so we can use more quadratic coefficients. Either we use more quadratic coefficients, which would be the easiest option. Or we change the spacing in the interval step with moduli.
+
+I'm going to go for a run now. Changing the quadratic coefficient is easy.. that code is already implemented in QS_variant so its just copy paste... I'll add it tomorrow, just stressed today and cant focus. And after that I'll just optimize it as good as I can and hopefully by christmas its pushing beyond anything I was doing earlier...
+
+
