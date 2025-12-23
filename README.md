@@ -33,4 +33,6 @@ To do: Shift everything so we can use more quadratic coefficients. Either we use
 
 I'm going to go for a run now. Changing the quadratic coefficient is easy.. that code is already implemented in QS_variant so its just copy paste... I'll add it tomorrow, just stressed today and cant focus. And after that I'll just optimize it as good as I can and hopefully by christmas its pushing beyond anything I was doing earlier...
 
+Btw, what I'll do tomorrow is use cupy.roll() to shift these arrays after changing quadratic coefficient. That should be very fast. So that we just have a loop were we keep rolling and summing that 2d interval... which is going to be pretty neat when its finished.
+
 
