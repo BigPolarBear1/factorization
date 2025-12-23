@@ -27,4 +27,4 @@ To run: python3 QScu.py -keysize 20 -base 50 -lin_size 10_000 -quad_size 1</br><
 
 Note: You need to run from the host. I'm using wsl2 and ubuntu with CUDA support. I don't believe this will work from hyper-v.
 
-To do: Shift everything so we can use more quadratic coefficients
+To do: Shift everything so we can use more quadratic coefficients. Either we use more quadratic coefficients, which would be the easiest option. Or we change the spacing in the interval step with moduli.
