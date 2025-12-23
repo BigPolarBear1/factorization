@@ -19,24 +19,12 @@ Note: With a large enough -base and lin_size this PoC will find smooths for 110 
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 14 -base 20 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
-Update: A realization just hit me. Ergh. 
+Note: Broken for now... this is some work in progress research
 
-So with the paper, we can precalculate zx^2+N = 0 mod p.
-We can create a 2d sieve interval where the rows are the primes and the columns the roots (and we extend all primes up to some sieve interval size).
+#### To run from folder "CUDA_QS_Variant"  (QS variant using mainly vector operations and CUDA support):</br></br>
 
-Now the thing is.. we can do vector addition... which is very fast.. add all rows together... and see if we have a column that appears in a lot of primes (we can use log values and add them together). 
-Then do those calculations to shift all my solutions to the next quadratic coefficient and repeat... all just fast vector operations.
+To run:python3 QScu.py -keysize 14 -base 11 -lin_size 100_000 -quad_size 1</br></br>
 
-Wait, what? I literally cant think of a single reason why this wouldn't work. Oh my god. Let me rush out a PoC by Christmas. If that fails miserably.. I'll just continue what I was doing these last few days. But its so simple and elegant that I have to drop everything and atleast try it. Writing the code is super simple since Ive worked out all the math for a long time now..
+Note: You need to run from the host. I'm using wsl2 and ubuntu with CUDA support. I don't believe this will work from hyper-v.
 
-God damnit. How could I not have seen this earlier? Its so simple, yet elegant. And I have all the math to do it now. God damnit! Happy christmas assholes. Factorization is coming!
-
-OMG. WHY DIDNT I SEE THIS EARLIER. I can literally set it up, so everything can just be done with vector operations. EVERYTHING. FUCK!!!! 
-
-https://youtu.be/2zpCOYkdvTQ
-
-TWO DAYS. THAT IS ALL I NEED. Happy holidays assholes. 
-
-Update: Remember that scene from lord of the rings, when the orcs finally crawl out of the mud pits and start beating the war drums to march on their enemies? Thats me today after 4 hours of sleep. I may just try to use CUDA for python this time around, writing SIMD optimized code kinda sucks. But let me just start by writing a python script with numpy arrays first. Anyway... first I have to go to my lawyer, because of the US gov harassing me. Thanks for the lawyer fees btw. My price to not go to China after I break factorization is now 2 billion for me and my former manager, plus a huge castle somewhere super remote so I dont ever have to interact with humans ever again. It keeps going up the more I'm harassed and my former manager doesn't see justice for what microsoft did to him.
-
-Update: I hope to drop it on Christmas. I think after that, I will stop sharing research... I will continue working on factorization until I find a polynomial time algorithm... but obviously just dumping everything on github, hasn't worked for my career... even though I mainly did it for safety reasons.. but I dont care anymore. If people want access to my work, they can either pay me, or try to steal it, and if they try to steal it and you threaten the safety of my family.. you will find out why I'm also refered to as "Polar Bear". And also, these last 3 years.. this was my training.. to make up for dropping out of highschool. I'm a lot stronger now then I was a year ago and I know its just a matter of coming up with ideas, trying them out... and repeating that cycle until I have my major breakthrough. I know how to do research. I know it is a game of running out the clock and throwing unreasonable amounts of time and effort at a problem.
+To do: Shift everything so we can use more quadratic coefficients
