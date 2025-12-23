@@ -287,7 +287,7 @@ def build_matrix(factor_base, smooth_nums, factors):
    #     ind = ind + ind
     return M2
 
-def launch(n,primeslist1,primeslist2):
+def launch(n,primeslist1):
     print("[i]Total lin_sieve_size: ",lin_sieve_size)
     manager=multiprocessing.Manager()
     return_dict=manager.dict()
@@ -343,7 +343,7 @@ def launch(n,primeslist1,primeslist2):
     print("[i]Creating iN datastructure in total took: "+str(duration))
 
     print("[*]Launching attack with "+str(workers)+" workers\n")
-    find_comb(n,complete_hmap,primeslist1,primeslist2)
+    find_comb(n,complete_hmap,primeslist1)
 
     return 
 
@@ -709,7 +709,7 @@ def lift_root(r,prime,n,quad_co,exp):
     root2=(new_r*z_inv)%prime**exp
     return root2
 
-def find_comb(n,hmap,primeslist1,primeslist2):
+def find_comb(n,hmap,primeslist1):
     #To do: Pointless function
     ret_array=[[],[],[],[]]
     partials={}
@@ -757,14 +757,11 @@ def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_
     primeslist.extend(get_primes(3,20000000))
     i=0
     while len(primeslist1) < base:
+        if n%primeslist[i] !=0:
+            primeslist1.append(primeslist[i])
+        i+=1
 
-        primeslist1.append(primeslist[i])
-        i+=1
-    i=0
-    while len(primeslist2) < qbase:
-        primeslist2.append(primeslist[i])
-        i+=1
-    launch(n,primeslist1,primeslist2)     
+    launch(n,primeslist1)     
     duration = default_timer() - start
     print("\nFactorization in total took: "+str(duration))
 
