@@ -4,10 +4,8 @@
 
 ##References: I have borrowed many of the optimizations from here: https://stackoverflow.com/questions/79330304/optimizing-sieving-code-in-the-self-initializing-quadratic-sieve-for-pypy
 
-
-###To build: python3 setup.py build_ext --inplace
-###To run: python3 run_qs.py -base 4000 -keysize 140 -debug 1 -lin_size 1_000_000 -quad_size 1
-
+###To run: python3 QScu.py -keysize 20 -base 50 -lin_size 10_000 -quad_size 1
+###To do: Iterate quadratic coefficients and shift the rows in the 2d interval
 
 import sympy
 import random
