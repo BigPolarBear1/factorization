@@ -32,6 +32,7 @@ Note: You need to run from the host. I'm using wsl2 and ubuntu with CUDA support
 
 Update: Bah. I solved some big bottlenecking... I should only really run sum() inside of the GPU lol. Let me add some moduli for the step size of the interval. We also shouldnt run cp.copy() in the gpu lol.. because then we are restricted by GPU memory. I also wonder if we cant calculate multiple quadratic coefficients in one go hmm... because we could just like use the first 16bit for quadratic coefficient = 1, the next 16bit  for quadratic coefficient=2 ... and so on... this actually may work well with a GPU since I assume it doesn't struggle with register size limitations like the CPU. And since we use log base 2 values.. it wouldn't overflow 16bit.
 
+Yea... let me add support for using different moduli for the interval step size first.. that will stop factorizaton from failing as much as it does now. And then expand the 2d interval so we can do sum() for multiple quadratic coefficients in one go. Get atleast that moduli support done today.. should be copy paste from my earlier PoC... then tomorrow make it so we do sum() for multiple quadratic coefficient in one go... hehehehehehehehehehe. 
 
 
 
