@@ -30,18 +30,7 @@ To run: python3 QScu.py -keysize 50 -base 500 -lin_size 10_000 -quad_size 10_000
 
 Note: You need to run from the host. I'm using wsl2 and ubuntu with CUDA support. I don't believe this will work from hyper-v.
 
-To do: It is still seriously bad. I'll fix stuff tomorrow. Right now its initializing the 2d interval with zeroes... then making a copy for each quadratic coefficient. Which isn't good. What I would really like is that as we go up in quadratic coefficient, we call a function like roll() on the entire 2d interval... let me investigate tomorrow if this would be possible. Because then we basically just roll() and sum() like there is no tomorrow... after that I need to use moduli for the interval step size and make sure we arnt bottlenecking with slow python indexing. I really want to reduce this to just roll() and sum(), I know its possible.. if I can pull that off I win, I just know it.
-
-Update: Eureka! I believe I have a way to get roll() working. Nothing stops us from having multiple smaller "2d intervals"... so we can set the length to a modulus.. that way its all nicely contained. Something like that... let me give it a try tomorrow. roll() or death.
-
-So I guess if I set my 2d interval length to some composite modulus, i.e 3\*5\*7\*11 then I may just be able to pull off calling roll() on the entire construction. Ofcourse we would then construct a bunch of these, of all roughly the same modulus size and sum them all together. Something like that... an idea to try out tomorrow.. it may just work. If I can just roll() the entire thing.. that would be the best quadratic sieve variant ever made... 
-
-
-Update: Alright, my goal for today is to achieve calling roll() on an entire 2d interval. I'll probably need to set its length equal to a composite modulus.. I mean... if it all possible.. thats the only way that will work. Then after that we can offload huge 2d intervals to the GPU and just keep roll()'ing and sum()'ing and grabbing those smooths.
-
-
-
-
+UPDATE: I did some brain storming today. I need to use array slicing.... it will be by far the fastest method to shift/roll rows as we change quadratic coefficients. Then the only computation heavy thing that has to be offloaded to the GPU will be taking the sum() of that 2d interval. And in addition we can precompute by how much we have to shift rows when we change quadratic coefficients.. because if we do it in the hot loop we end up with a lot of duplicate computations, especially for small primes. 
 
 
 
