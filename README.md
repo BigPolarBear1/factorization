@@ -36,5 +36,22 @@ Update: Eureka! I believe I have a way to get roll() working. Nothing stops us f
 
 So I guess if I set my 2d interval length to some composite modulus, i.e 3\*5\*7\*11 then I may just be able to pull off calling roll() on the entire construction. Ofcourse we would then construct a bunch of these, of all roughly the same modulus size and sum them all together. Something like that... an idea to try out tomorrow.. it may just work. If I can just roll() the entire thing.. that would be the best quadratic sieve variant ever made... 
 
+
+Update: Alright, my goal for today is to achieve calling roll() on an entire 2d interval. I'll probably need to set its length equal to a composite modulus.. I mean... if it all possible.. thats the only way that will work. Then after that we can offload huge 2d intervals to the GPU and just keep roll()'ing and sum()'ing and grabbing those smooths.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 You know, I really hate microsoft. They destroyed everything that was good in my life. They also went after the only person in this industry who actually believed in me and supported me. And nobody at microsoft did anything. Fuck they probably patted the guy who threatened me with a gun on the back, wouldn't surprise me if they knew exactly who that guy was. All these people who work in security at microsoft, they all suck at their job, they are all incompetent. I dont even know why i'm mad at the fbi, bc its really microsoft that i'm mad at. But then again, the fbi are also losers.
 
