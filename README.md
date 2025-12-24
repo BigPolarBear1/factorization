@@ -30,13 +30,7 @@ To run: python3 QScu.py -keysize 100 -base 500 -lin_size 100_000 -quad_size 10_0
 
 Note: You need to run from the host. I'm using wsl2 and ubuntu with CUDA support. I don't believe this will work from hyper-v.
 
-Update: Bah. I solved some big bottlenecking... I should only really run sum() inside of the GPU lol. Let me add some moduli for the step size of the interval. We also shouldnt run cp.copy() in the gpu lol.. because then we are restricted by GPU memory. I also wonder if we cant calculate multiple quadratic coefficients in one go hmm... because we could just like use the first 16bit for quadratic coefficient = 1, the next 16bit  for quadratic coefficient=2 ... and so on... this actually may work well with a GPU since I assume it doesn't struggle with register size limitations like the CPU. And since we use log base 2 values.. it wouldn't overflow 16bit.
-
-Yea... let me add support for using different moduli for the interval step size first.. that will stop factorizaton from failing as much as it does now. And then expand the 2d interval so we can do sum() for multiple quadratic coefficients in one go. Get atleast that moduli support done today.. should be copy paste from my earlier PoC... then tomorrow make it so we do sum() for multiple quadratic coefficient in one go... hehehehehehehehehehe. 
-
-
-
-
+Update: I've quickly added some more stuff. This needs a lot more work though. First things first though... tomorrow I will set it up so we create a sieve interval for atleast 4 quadratic coefficients (encode it in a 64-bit number) in one go. And I just start optimizing everything. And also make sure we keep making copies of intervals and all that to a minimum.. I have some ideas for that. Producing huge intervals should be lightning fast. 
 
 
 
