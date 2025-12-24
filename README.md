@@ -15,3 +15,6 @@ To run: python3 run_qs.py -keysize 120 -base 500 -debug 1 -lin_size 100_000 -qua
 
 Prerequisites: Numpy (test on 1.26.2), Sympy, cupy-cuda13x, cython, setuptools 
 Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), since it gets a lot harder to access the GPU on a virtual machine.
+
+To do: I will finish this PoC, and after that any work I do will be kept private as my career is currently going nowhere.
+A lot of minor optimizations still need to be done. A big ticket item which I hope to implement tomorrow is building a sieve interval with many quadratic coefficients at once. So we only have to call sum() once for many quadratic coefficient. One easy way would be to have 64bit numbers and have 16bit represent a quadratic coefficient, so we can cram 4 different quadratic coefficients in there. In addition... we can also just add more elements to accomadate more space for more quadratic coefficients.. so it just becomes a matter of how much memory the GPU can handle. After that, the main bottleneck will just be trial factorization. We should probably have two different processes. One creating sieve intervals in the GPU and then a bunch of worker threads on the cpu doing trial factorization.
