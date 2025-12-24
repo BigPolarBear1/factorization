@@ -32,6 +32,6 @@ Note: You need to run from the host. I'm using wsl2 and ubuntu with CUDA support
 
 Update: I've quickly added some more stuff. This needs a lot more work though. First things first though... tomorrow I will set it up so we create a sieve interval for atleast 4 quadratic coefficients (encode it in a 64-bit number) in one go. And I just start optimizing everything. And also make sure we keep making copies of intervals and all that to a minimum.. I have some ideas for that. Producing huge intervals should be lightning fast. 
 
-Update: Aha! Eureka! So the way this should be setup eventually is you have a worker process/thread just having the GPU create sieve intervals and do sum()... and write the result of the sum to disk. Then we have multiple worker processes just reading this and performing trial factorization. If all is well, one worker thread using the GPU should create more then enough workload for a bunch of workers doing trial factorization. 
+Update: Aha! Eureka! So the way this should be setup eventually is you have a worker process/thread just having the GPU create sieve intervals and do sum()... and write the result of the sum to disk. Then we have multiple worker processes just reading this and performing trial factorization. If all is well, one worker thread using the GPU should create more then enough workload for a bunch of workers doing trial factorization. Plus the more we can optimize creating sieve intervals.. the higher we can put the threshold variable.. making it less about trial factorization and more about fast indexing.
 
 
