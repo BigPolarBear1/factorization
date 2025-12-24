@@ -13,7 +13,7 @@ This basically creates a system of quadratics. Solving them mod p is easy. But t
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 120 -base 500 -debug 1 -lin_size 100_000 -quad_size 100</br></br>
 
-Prerequisites: Numpy (test on 1.26.2), Sympy, cupy-cuda13x, cython, setuptools 
+Prerequisites: Numpy (test on 1.26.2), Sympy, cupy-cuda13x, cython, setuptools.</br>
 Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), since it gets a lot harder to access the GPU on a virtual machine.
 
 To do: I will finish this PoC, and after that any work I do will be kept private as my career is currently going nowhere.
