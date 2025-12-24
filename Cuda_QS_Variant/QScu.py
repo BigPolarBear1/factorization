@@ -561,7 +561,7 @@ def solve_lin_con(a,b,m):
 
 def init_2d_interval(primeslist,hmap,n,quad):
     i=0
-    interval2d=cp.zeros((len(primeslist),lin_sieve_size))
+    interval2d=cp.zeros((len(primeslist),lin_sieve_size),dtype=int)
     
   #  while i < len(primeslist):
       #  print(primeslist[i])
@@ -590,7 +590,10 @@ def init_2d_interval(primeslist,hmap,n,quad):
     return interval2d
 
 def process_interval2d(interval2d,n,ret_array,z,primelist_f,large_prime_bound,partials):
+    #print("[i]Taking sum")
     sum=interval2d.sum(axis=0)
+    sum=cp.asnumpy(sum)
+    #print("[i]Checking sum")
     threshold = int(math.log2(n) - thresvar)
   #  print(sum)
     i=0
@@ -690,11 +693,14 @@ def roll_interval2d(interval2d,hmap,primeslist,n,quad):
             print("FATAL ERROR")
        # print("co: "+str(y)+" prime: "+str(prime)+" z: "+str(z)+" root: "+str(x))
         x_b=(prime-x)%prime  
+       # if prime ==11:
+       # print(" prime: "+str(prime)+" quad: "+str(quad)+" root: "+str(x)+" root_mult: "+str(root_mult))
         interval2d[i,x::prime]=log
-        interval2d[i,x_b::prime]=log
+       # interval2d[i,x_b::prime]=log
         i+=1
+  #  print("quad: "+str(quad)+"\n"+str(interval2d))
     interval2d=cp.delete(interval2d,(delete_list),axis=0)
-   # print(interval2d)
+    
     return
 
 def filter_quads(qbase,n):
@@ -722,10 +728,11 @@ def filter_quads(qbase,n):
 
 def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound):
     cp.set_printoptions(
-    linewidth=200,   # Max characters per line before wrapping
-    precision=3,     # Decimal places for floats
+    linewidth=500,   # Max characters per line before wrapping
+    precision=1,     # Decimal places for floats
     suppress=True,   # Avoid scientific notation for small numbers
-    threshold=np.inf # Show full array without truncation
+    edgeitems=30,#np.inf # Show full array without truncation
+    threshold=10
 )    
     
     primelist=copy.copy(primeslist)
@@ -737,13 +744,13 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound):
     #print(hmap)
     valid_quads,valid_quads_factors=filter_quads(primelist_f,n)
     interval2d_orig=init_2d_interval(primeslist,hmap,n,1)
+    #print("valid quads: "+str(valid_quads))
 
 
-
-    i=1
+    i=0
     while i < len(valid_quads):
         z=valid_quads[i]
-        #print("Trying z: "+str(z))
+        #print("[i]Trying z: "+str(z))
         interval2d=cp.copy(interval2d_orig)
         roll_interval2d(interval2d,hmap,primeslist,n,z)
         process_interval2d(interval2d,n,ret_array,z,primelist_f,large_prime_bound,partials)
