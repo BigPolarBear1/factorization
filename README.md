@@ -34,4 +34,5 @@ Update: I've quickly added some more stuff. This needs a lot more work though. F
 
 Update: Aha! Eureka! So the way this should be setup eventually is you have a worker process/thread just having the GPU create sieve intervals and do sum()... and write the result of the sum to disk. Then we have multiple worker processes just reading this and performing trial factorization. If all is well, one worker thread using the GPU should create more then enough workload for a bunch of workers doing trial factorization. Plus the more we can optimize creating sieve intervals.. the higher we can put the threshold variable.. making it less about trial factorization and more about fast indexing.
 
+ps: There is also some bug in the code because i'm using zx^2+n rather then zx^2-n this time around.. so I need to check some things so our smooth candidates arn't too big. I may just swap it around again.. but it shouldn't matter too much in theory.
 
