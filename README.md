@@ -26,7 +26,7 @@ Note: Broken for now... this is some work in progress research
 
 #### To run from folder "CUDA_QS_Variant"  (QS variant using mainly vector operations and CUDA support):</br></br>
 
-To run: python3 QScu.py -keysize 50 -base 100 -lin_size 1_000_000 -quad_size 10_000</br></br>
+To run: python3 QScu.py -keysize 100 -base 500 -lin_size 100_000 -quad_size 10_000</br></br>
 
 Note: You need to run from the host. I'm using wsl2 and ubuntu with CUDA support. I don't believe this will work from hyper-v.
 
