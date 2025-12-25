@@ -24,6 +24,7 @@ Prerequisites: </br>
 
 Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), since it gets a lot harder to access the GPU on a virtual machine.
 
-Update: I need to change and improve a bunch of things. The big thing will be to represent more information in a single interval.. which should be possible. But I'm still brain storming what the most optimal way of doing this will be. I'll upload as soon as I figure something out. I really want to prevent having to make new arrays completely and rather just rely on slicing or something.. something really fast. 
+Update: Let me do some pen and paper for a second. There is this thing with composite moduli in theory which could be used to speed all of this up by a huge factor. 
+Because zx^2 mod m, is always going to produce the same values on our interval for some certain zx^2 value mod m. I've worked out all that math and I understand it. So how can I use multiple smaller composite moduli to quickly construct larger intervals? 
 
-Update: I need to simplify this. Probably just a 1d interval but use the idea of encoding multiple quadratic coefficients on it at once.. I'm fairly sure there is some tricks there to speed everything up a lot. 
+That is the key to a fast algorithm.. I got to think out of the box here. 
