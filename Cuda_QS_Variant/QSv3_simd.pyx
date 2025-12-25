@@ -42,7 +42,7 @@ lin_sieve_size=1
 quad_sieve_size=10
 g_debug=0 #0 = No debug, 1 = Debug, 2 = A lot of debug
 g_lift_lim=0.5
-thresvar=40  ##Log value base 2 for when to check smooths with trial factorization. Eventually when we fix all the bugs we should be able to furhter lower this.
+thresvar=30  ##Log value base 2 for when to check smooths with trial factorization. Eventually when we fix all the bugs we should be able to furhter lower this.
 lp_multiplier=2
 min_prime=1
 g_max_diff_similar=5
@@ -565,7 +565,7 @@ def solve_lin_con(a,b,m):
 
 def init_2d_interval(primeslist,hmap,n,quad):
     i=0
-    interval2d=cp.zeros((base,lin_sieve_size),dtype=int)
+    interval2d=cp.zeros((base,lin_sieve_size),dtype=cp.uint16)
     
   #  while i < len(primeslist):
       #  print(primeslist[i])
@@ -595,7 +595,7 @@ def init_2d_interval(primeslist,hmap,n,quad):
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cdef iterate_sum(long [::1] sum,threshold):
+cdef iterate_sum(unsigned short [::1] sum,threshold):
     checklist=[]
     cdef Py_ssize_t i=0
     while i < lin_sieve_size:
@@ -606,7 +606,7 @@ cdef iterate_sum(long [::1] sum,threshold):
 
 def process_interval2d(interval2d,n,ret_array,z,primelist_f,large_prime_bound,partials,lin,cmod):
     #print("[i]Taking sum")
-    sum=interval2d.sum(axis=0)
+    sum=interval2d.sum(axis=0,dtype=np.uint16)
     sum=cp.asnumpy(sum)
     #print("[i]Checking sum")
     threshold = int(math.log2((lin_sieve_size)*math.sqrt(abs(n))) - thresvar)
@@ -777,6 +777,7 @@ cdef factorise_fast_quads(value,long long [::1] factor_base):
 
 
 def filter_quads(qbase,n):
+    ###Note: We look for quadratic coefficients that factor over the factor base but have no even exponents. This garantuees unique results
     valid_quads=[]
     valid_quads_factors=[]
 
@@ -978,7 +979,7 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
     qlist.insert(0,len(qlist)+1)
     qlist=array.array('q',qlist)
     #print(hmap)
-    print("[i]Sieving Quadratic coefficients")
+    print("[i]Filtering Quadratic coefficients")
     valid_quads,valid_quads_factors=filter_quads(qlist,n)
     interval2d_orig=init_2d_interval(primeslist,hmap,n,1)
     close_range=10
