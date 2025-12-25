@@ -29,3 +29,7 @@ UPDATE: OMG. I was out running and I suddenly was hit with a realization. You kn
 Lol. Its so simple. Calculate sieve intervals mod m, write them to disk. And then just sum them all together in the gpu onto one really big big interval. I may be writing "lol" but internally I'm screaming.. because this was my one chance to get justice for what microsoft did to the one person who supported and believed in me... and I've wasted to much time. Sound the war drums, we march on my enemies now. Hahahahahaha. Prepare yourselves. I won. You lost. Game over.
 
 Going to make sure my non-nato friends are aware of this. Because they are the only people to actually treat me with respect and dignity. I want the west the lose now. You people dont deserve anything but losing. Burn in hell.
+
+To do:
+
+We need to generate moduli m<sub>i</sub>, of unique primes, to calculate sieve intervals mod m and save them to disk (I'll probably use sqlite3 with python), we should also use p-adic lifting especially for small primes. Once enough are calculatead we move to the next phase of the algorithm. We pull the sieve intervals from file and use vector addition in the gpu to sum them onto a much large interval where the step size is just 1. And we just keep doing this until our smooth candidates become too big and then we cycle to the quadratic coefficient and use fast calculations to mutate our existing sieve intervals.
