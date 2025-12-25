@@ -24,9 +24,4 @@ Prerequisites: </br>
 
 Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), since it gets a lot harder to access the GPU on a virtual machine.
 
-Update: Let me do some pen and paper for a second. There is this thing with composite moduli in theory which could be used to speed all of this up by a huge factor. 
-Because zx^2 mod m, is always going to produce the same values on our interval for some certain zx^2 value mod m. I've worked out all that math and I understand it. So how can I use multiple smaller composite moduli to quickly construct larger intervals? 
-
-That is the key to a fast algorithm.. I got to think out of the box here. So let me stop right here, stop tinkering with that PoC. And work out the math on how we can construct large intervals using small intervals mod m. Its all just repeating patterns mod m anyway.. it should't be too difficult.
-
-Im starting to see how it should be done. Hmm. Let me do the math tomorrow.. shouldnt take more then a day to work out the details and hopefully I can publish before the new year. I'm actually feeling in a less dire mood suddenly, because I know now I wasnt delusional these past 3 years. I knew that working with moduli should yield an advantage somewhere. 
+UPDATE: OMG. I was out running and I suddenly was hit with a realization. You know, my brain has this weird thing, where I'll wildly overcomplicate things in my head. Its great for doing creative research because sometimes it leads to unexpected insights. Anyway.. I was overcomplication stuff wildly again. LOL. Its actually very simple. We just need to create small sieve intervals mod m. Write them to disk. Then once we calculate many of them.. we just sum() them together onto one very large interval in the GPU. Easy! So easy! Plus we can use p-adic lifting easily aswell this way. Its so easy and elegant and somehow I didn't see it until I was out running in the cold. I might be mentally challenged for real. It was infront of me for so long.... prepare to get a proper PoC before new year... going to start 2026 the right way! 
