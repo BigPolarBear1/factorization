@@ -754,6 +754,28 @@ def roll_interval2d(interval2d,hmap,primeslist,n,quad,lin,cmod):
     
     return
 
+@cython.boundscheck(False)
+@cython.wraparound(False)
+cdef factorise_fast_quads(value,long long [::1] factor_base):
+    factors = set()
+    if value % 2 == 0:
+        factors ^= {2}
+        value //= 2
+        if value % 2 == 0:
+            return -1, -1
+    length=factor_base[0]#len(factor_base)#factor_base[0]
+    cdef Py_ssize_t i=1
+    while i < length:
+        factor=factor_base[i]
+        if value % factor == 0:
+            factors ^= {factor}
+            value //= factor
+            if value % factor == 0:
+                return -1, -1
+        i+=1
+    return factors, value
+
+
 def filter_quads(qbase,n):
     valid_quads=[]
     valid_quads_factors=[]
@@ -761,20 +783,13 @@ def filter_quads(qbase,n):
     roots=[]
     i=1
     while i < quad_sieve_size+1:
-        if  isPrime(i,5)!=1 and i !=1:#(i != 1 and math.sqrt(i)%1==0) or
-            i+=2
-            continue
-        if i ==0:
-            print("wtf")
-        quad_local_factors, quad_value = factorise_fast(i,qbase)  ##TO DO: move this way up
-
+        quad_local_factors, quad_value = factorise_fast_quads(i,qbase)  ##TO DO: move this way up
         if quad_value != 1:
-            i+=2
+            i+=1
             continue
-
         valid_quads.append(i)
         valid_quads_factors.append(quad_local_factors)
-        i+=2
+        i+=1
     return valid_quads,valid_quads_factors
 
 def generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,tnum_bit,hmap):
@@ -963,6 +978,7 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
     qlist.insert(0,len(qlist)+1)
     qlist=array.array('q',qlist)
     #print(hmap)
+    print("[i]Sieving Quadratic coefficients")
     valid_quads,valid_quads_factors=filter_quads(qlist,n)
     interval2d_orig=init_2d_interval(primeslist,hmap,n,1)
     close_range=10
@@ -972,6 +988,7 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
     #print("valid quads: "+str(valid_quads))
     seen=[]
     found=0
+    print("[i]Entering main loop")
     while 1:
         tnum=int(((n)**0.5) /(lin_sieve_size))
         
