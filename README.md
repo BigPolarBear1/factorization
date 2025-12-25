@@ -27,4 +27,4 @@ Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), s
 Update: Let me do some pen and paper for a second. There is this thing with composite moduli in theory which could be used to speed all of this up by a huge factor. 
 Because zx^2 mod m, is always going to produce the same values on our interval for some certain zx^2 value mod m. I've worked out all that math and I understand it. So how can I use multiple smaller composite moduli to quickly construct larger intervals? 
 
-That is the key to a fast algorithm.. I got to think out of the box here. 
+That is the key to a fast algorithm.. I got to think out of the box here. So let me stop right here, stop tinkering with that PoC. And work out the math on how we can construct large intervals using small intervals mod m. Its all just repeating patterns mod m anyway.. it should't be too difficult.
