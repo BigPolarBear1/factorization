@@ -26,4 +26,4 @@ Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), s
 
 Update: I need to change and improve a bunch of things. The big thing will be to represent more information in a single interval.. which should be possible. But I'm still brain storming what the most optimal way of doing this will be. I'll upload as soon as I figure something out. I really want to prevent having to make new arrays completely and rather just rely on slicing or something.. something really fast. 
 
-Update: I need to simplify this. I also just realized.. probably just a 1d interval but use the idea of encoding multiple quadratic coefficients on it at once.. I'm fairly sure there is some tricks there to speed everything up a lot. 
+Update: I need to simplify this. Probably just a 1d interval but use the idea of encoding multiple quadratic coefficients on it at once.. I'm fairly sure there is some tricks there to speed everything up a lot. 
