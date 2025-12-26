@@ -27,6 +27,6 @@ Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), s
 
 To do: Use larger moduli, and save them to disk. So we don't need to do as much tiling. Additionally we can move workload to the GPU. We should also add support for p-adic lifting to the PoC</br></br>
 To do: Paralell reduction in the gpu on the completed sieve interval to find large values. Basically like performing a type of binary search for large values....</br></br>
-To do: Chunk the sieve interval .. like first do 0 to 10_000_000 then do 10_000_000 to 20_000_000 and so on.. because if we use a very small step size for the interval then we can keep going for much longer without increasing the smooth value size by much.</br></br>
+To do: Chunk the sieve interval .. like first do 0 to 10_000_000 then do 10_000_000 to 20_000_000 and so on.. because if we use a very small step size for the interval then we can keep going for much longer without increasing the smooth value size by much. Additionally I should also reimplement support to use moduli for the step size</br></br>
 
 Ok. Headed into the right direction now. I'll go for a run now. When I come back, I'm going to rewrite chapter 8 in the paper one final time.. then tomorrow I'll start going over that to-do list.. which shouldn't take long.
