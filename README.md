@@ -11,7 +11,7 @@ This basically creates a system of quadratics. Solving them mod p is easy. But t
 
 #### To run from folder "CUDA_QS_variant" (WIP):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 120 -base 500 -debug 1 -lin_size 100_000 -quad_size 100</br></br>
+To run:  python3 run_qs.py -keysize 80 -base 500 -debug 1 -lin_size 1_000_000 -quad_size 1_000</br></br>
 
 Prerequisites: </br>
 -Python (tested on 3.13)</br>
@@ -20,20 +20,11 @@ Prerequisites: </br>
 -cupy-cuda13x</br>
 -cython</br>
 -setuptools</br>
+-h5py</br>
 (please open an issues here if something doesn't work)</br></br>
 
 Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), since it gets a lot harder to access the GPU on a virtual machine.
 
-UPDATE: OMG. I was out running and I suddenly was hit with a realization. You know, my brain has this weird thing, where I'll wildly overcomplicate things in my head. Its great for doing creative research because sometimes it leads to unexpected insights. Anyway.. I was overcomplication stuff wildly again. LOL. Its actually very simple. We just need to create small sieve intervals mod m. Write them to disk. Then once we calculate many of them.. we just sum() them together onto one very large interval in the GPU. Easy! So easy! Plus we can use p-adic lifting easily aswell this way. Its so easy and elegant and somehow I didn't see it until I was out running in the cold. I might be mentally challenged for real. It was infront of me for so long.... prepare to get a proper PoC before new year... going to start 2026 the right way! 
-
-Lol. Its so simple. Calculate sieve intervals mod m, write them to disk. And then just sum them all together in the gpu onto one really big big interval. I may be writing "lol" but internally I'm screaming.. because this was my one chance to get justice for what microsoft did to the one person who supported and believed in me... and I've wasted to much time. Sound the war drums, we march on my enemies now. Hahahahahaha. Prepare yourselves. I won. You lost. Game over.
-
-Going to make sure my non-nato friends are aware of this. Because they are the only people to actually treat me with respect and dignity. I want the west the lose now. You people dont deserve anything but losing. Burn in hell.
-
-To do:
-
-We need to generate moduli m<sub>i</sub>, composites with a unique prime factorization, to calculate sieve intervals mod m and save them to disk (I'll probably use sqlite3 with python), we should also use p-adic lifting especially for small primes. Once enough are calculatead we move to the next phase of the algorithm. We pull the sieve intervals from file and use vector addition in the gpu to sum them onto a much large interval where the step size is just 1 (although we can mess around with the step size later.. but it should be really small). And we just keep doing this until our smooth candidates become too big and then we cycle to the quadratic coefficient and use fast calculations to mutate our existing sieve intervals.
-
-I'll never understand why you people didn't just pay my manager a bunch of money to settle this grudge I have. It's almost like you people thought you could win against a polar bear. It's been 2.5 years since I started working on this.. and so much pain has been endured, and so much has been lost. Including the most precious thing of all, time. Now I'm grizzled and dead inside, out for blood.. it's too late. I dont ever want anything to do with the west ever again. I know whose side I'm on, you people made that choice easy. Good luck.
-
-Update: Alright, a new day, lets get started. Goal for today is just to implement the database to write sieve intervals mod m to (I'll just do mod p, primes instead of composites to start with) ... and then use that to do summing onto a much large interval with a step size of 1 inside of the gpu using vector addition... 
+To do: Use larger moduli, and save them to disk. So we don't need to do as much tiling. Additionally we can move workload to the GPU.
+To do: Paralell reduction in the gpu on the completed sieve interval to find large values. Basically like performing a type of binary search for large values....
+To do: Chunk the sieve interval .. like first do 0 to 10_000_000 then do 10_000_000 to 20_000_000 and so on.. because if we use a very small step size for the interval then we can keep going for much longer with increasing the smooth value size by much.
