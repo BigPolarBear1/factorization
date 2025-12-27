@@ -11,7 +11,7 @@ This basically creates a system of quadratics. Solving them mod p is easy. But t
 
 #### To run from folder "CUDA_QS_variant" (WIP):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 90 -base 500 -debug 1 -lin_size 100_000_000 -quad_size 1_000</br></br>
+To run:  python3 run_qs.py -keysize 100 -base 1000 -debug 1 -lin_size 10_000_000 -quad_size 1_000</br></br>
 
 Prerequisites: </br>
 -Python (tested on 3.13)</br>
@@ -25,5 +25,4 @@ Prerequisites: </br>
 
 Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), since it gets a lot harder to access the GPU on a virtual machine.
 
-NOTE: It is still slow because of the interval stepsize being 1.
-There is still a bunch of things I need to improve now. Before I implement the stepsize of the interval.. I will encode multiple quadratic coefficients onto a single sieve interval, its easier to implement when the step size = 1, because the number theory behind it gets a little more complicated once we use moduli for the step size so I want to get it working like this first before I integrate changing the step size into my PoC. I really want to implement encoding multiple quadratic coefficients onto a single interval, as this will yield to biggest performance boost by far. 
+UPDATE: I've added doing multiple quadratic coefficients in one go. Actually just realized the easiest way to do it is with a 2d array. Let me add support for moduli with the step size again.. and then I'll keep optimizing any bottlenecks... and I'll also re-add p-adic lifting eventually.
