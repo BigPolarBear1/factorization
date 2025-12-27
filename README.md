@@ -26,7 +26,7 @@ Prerequisites: </br>
 Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), since it gets a lot harder to access the GPU on a virtual machine.
 
 To do: Use larger moduli, and save them to disk. So we don't need to do as much tiling. Additionally we can move workload to the GPU. We should also add support for p-adic lifting to the PoC</br></br>
-To do: Boolean mask in the GPU to find values larger then a threshold on the final sieve interval.. although I need to do some reading what the fastest method is</br></br>
+~~To do: Boolean mask in the GPU to find values larger then a threshold on the final sieve interval.. although I need to do some reading what the fastest method is</br></br>~~
 To do: Chunk the sieve interval .. like first do 0 to 10_000_000 then do 10_000_000 to 20_000_000 and so on.. because if we use a very small step size for the interval then we can keep going for much longer without increasing the smooth value size by much. Additionally I should also reimplement support to use moduli for the step size</br></br>
 To do: Process multiple quadratic coefficients in one go.. this is also a thing we can 100% do. After implementing this we should also re-implement using a modulus for the stepsize.. since both of these would work together nicely.
 
