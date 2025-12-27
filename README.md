@@ -11,7 +11,7 @@ This basically creates a system of quadratics. Solving them mod p is easy. But t
 
 #### To run from folder "CUDA_QS_variant" (WIP):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 80 -base 500 -debug 1 -lin_size 1_000_000 -quad_size 1_000</br></br>
+To run:  python3 run_qs.py -keysize 90 -base 500 -debug 1 -lin_size 100_000_000 -quad_size 1_000</br></br>
 
 Prerequisites: </br>
 -Python (tested on 3.13)</br>
@@ -25,13 +25,5 @@ Prerequisites: </br>
 
 Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), since it gets a lot harder to access the GPU on a virtual machine.
 
-To do: Use larger moduli, and save them to disk. So we don't need to do as much tiling. Additionally we can move workload to the GPU. We should also add support for p-adic lifting to the PoC</br></br>
-~~To do: Boolean mask in the GPU to find values larger then a threshold on the final sieve interval.. although I need to do some reading what the fastest method is</br></br>~~
-To do: Chunk the sieve interval .. like first do 0 to 10_000_000 then do 10_000_000 to 20_000_000 and so on.. because if we use a very small step size for the interval then we can keep going for much longer without increasing the smooth value size by much. Additionally I should also reimplement support to use moduli for the step size</br></br>
-To do: Process multiple quadratic coefficients in one go.. this is also a thing we can 100% do. After implementing this we should also re-implement using a modulus for the stepsize.. since both of these would work together nicely.
-
-
-Ok. Headed into the right direction now. I'll go for a run now. When I come back, I'm going to rewrite chapter 8 in the paper one final time.. then tomorrow I'll start going over that to-do list.. which shouldn't take long. Tomorrow I will add composite moduli support for the database.. this is mostly important for the small primes.. because we don't want to tile mod 3 or some small prime over a huge interval... better to just use a larger composite modulus. Actually thinking about it... I may just use p-adic lifting to increase the size of small primes. Thats the least complicated way to address that problem.
-
-Update: I've quickly added masking the sieve interval in the gpu.. just replacing all values smaller then a threshold with zeroes and then calling nonzero() to get the indices. I'm hoping this will be faster for very large sieve intervals then just iterating on the cpu. 
-But anyway, by far the largest bottleneck is now that tiling function when we construct the sieve interval... so I'm going to implement p-adic lifting now for small primes... so we dont need to tile them as much. If we must we could even save sieve intervals for composite moduli with multiple primes.. but let me see how far I can get with p-adic lifting alone. Also all that stuff in the build_database2interval() function is done on the cpu right now... I need to optimize that and move it to the gpu.
+NOTE: It is still slow because of the interval stepsize being 1.
+There is still a bunch of things I need to improve now. Before I implement the stepsize of the interval.. I will encode multiple quadratic coefficients onto a single sieve interval, its easier to implement when the step size = 1, because the number theory behind it gets a little more complicated once we use moduli for the step size. And I really want to implement encoding multiple quadratic coefficients onto a single interval, as this will yield to biggest performance boost by far.
