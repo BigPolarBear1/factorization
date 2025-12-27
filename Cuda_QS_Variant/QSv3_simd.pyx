@@ -645,16 +645,25 @@ def sumrowsby_index(a, index):
     id_ar[r,c]=1
     return id_ar.dot(a)[0]
 
-cdef process_interval2d(unsigned short [:] interval,n,ret_array,z,primelist_f,large_prime_bound,partials):#,lin,cmod,sum_list):
-
+cdef process_interval2d(interval,n,ret_array,z,primelist_f,large_prime_bound,partials):#,lin,cmod,sum_list):
+   # print("Applying mask")
+    interval=cp.asarray(interval)
     threshold = int(math.log2(abs(n)) - thresvar)
+    cp.putmask(interval, interval<threshold, 0)
+   # print("interval_gpu: ",interval_gpu)
+    indexlist=cp.nonzero(interval)[0]
+    indexlist=cp.asnumpy(indexlist)
     found=0
-    cdef Py_ssize_t i=0
-
-    length=len(interval)
-    while i < length:  
+    interval=cp.asnumpy(interval)
+   # print("interval: ",interval)
+    cdef Py_ssize_t k=0
+   # print("Checking results")
+    length=len(indexlist)
+    while k < length:  
+        i=indexlist[k]
+       # print("i: ",i)
         if interval[i]>threshold:       
-            x=i
+            x=int(i)
             quad_can=z
             new_root=quad_can*x
             poly_val=new_root**2+n*quad_can
@@ -677,17 +686,17 @@ cdef process_interval2d(unsigned short [:] interval,n,ret_array,z,primelist_f,la
                     if value in partials:
                         rel, lf, pv = partials[value]
                         if rel == new_root:
-                            i+=1
+                            k+=1
                             continue
                         new_root *= rel
                         local_factors ^= lf
                         poly_val *= pv
                     else:
                         partials[value] = (new_root, local_factors, poly_val)
-                        i+=1
+                        k+=1
                         continue
                 else:
-                    i+=1 
+                    k+=1 
                     continue
 
 
@@ -704,7 +713,8 @@ cdef process_interval2d(unsigned short [:] interval,n,ret_array,z,primelist_f,la
 
 
         #    print("hit")
-        i+=1
+        k+=1
+   # print("done")
     #if found !=0:
        # print("found: "+str(found)+" quad: "+str(quad_can))
     return found
