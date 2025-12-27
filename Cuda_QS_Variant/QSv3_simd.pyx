@@ -8,10 +8,6 @@
  
 ##References: I have borrowed many of the optimizations from here: https://stackoverflow.com/questions/79330304/optimizing-sieving-code-in-the-self-initializing-quadratic-sieve-for-pypy
 
-#To do: Use larger moduli, and save them to disk. So we don't need to do as much tiling. Additionally we can move workload to the GPU. We should also add support for p-adic lifting to the PoC</br></br>
-#To do: Boolean mask in the GPU to find values larger then a threshold on the final sieve interval.. although I need to do some reading what the fastest method is</br></br>
-#To do: Chunk the sieve interval .. like first do 0 to 10_000_000 then do 10_000_000 to 20_000_000 and so on.. because if we use a very small step size for the interval then we can keep going for much longer without increasing the smooth value size by much. Additionally I should also reimplement support to use moduli for the step size</br></br>
-#To do: Process multiple quadratic coefficients in one go.. this is also a thing we can 100% do. After implementing this we should also re-implement using a modulus for the stepsize.. since both of these would work together nicely.
 
 import pstats, cProfile
 import sympy
@@ -58,7 +54,7 @@ g_p=107
 g_q=41
 mod_mul=0.5
 g_max_exp=2
-
+quad_per_interval=16
 
 ##Key gen function##
 def power(x, y, p):
@@ -645,28 +641,30 @@ def sumrowsby_index(a, index):
     id_ar[r,c]=1
     return id_ar.dot(a)[0]
 
-cdef process_interval2d(interval,n,ret_array,z,primelist_f,large_prime_bound,partials):#,lin,cmod,sum_list):
+cdef process_interval2d(interval,n,ret_array,quadlist,primelist_f,large_prime_bound,partials):#,lin,cmod,sum_list):
    # print("Applying mask")
     threshold = int(math.log2(abs(n)) - thresvar)
     cp.putmask(interval, interval<threshold, 0)
-   # print("interval_gpu: ",interval_gpu)
-    indexlist=cp.nonzero(interval)[0]
-    indexlist=cp.asnumpy(indexlist)
     found=0
-    interval=cp.asnumpy(interval)
-   # print("interval: ",interval)
-    cdef Py_ssize_t k=0
-   # print("Checking results")
-    length=len(indexlist)
-    while k < length:  
-        i=indexlist[k]
-       # print("i: ",i)
-        if interval[i]>threshold:       
-            x=int(i)
-            quad_can=z
-            new_root=quad_can*x
-            poly_val=new_root**2+n*quad_can
-            local_factors, value = factorise_fast(poly_val,primelist_f)
+    #print("interval: ",interval)
+    u=0
+    cdef Py_ssize_t k
+    while u < quad_per_interval:
+        indexlist=cp.nonzero(interval[u])
+        #print(indexlist)
+        indexlist=cp.asnumpy(indexlist[0])
+        temp=cp.asnumpy(interval[u])
+        
+        k=0
+        length=len(indexlist)
+        while k < length:  
+            i=indexlist[k]
+            if temp[i]>threshold:       
+                x=int(i)
+                quad_can=quadlist[u]
+                new_root=quad_can*x
+                poly_val=new_root**2+n*quad_can
+                local_factors, value = factorise_fast(poly_val,primelist_f)
 
 
         #local_factors2, value2,seen_primes2 = factorise_fast_debug(poly_val//quad_can,primelist_f)
@@ -680,39 +678,40 @@ cdef process_interval2d(interval,n,ret_array,z,primelist_f,large_prime_bound,par
             #print("error")
 #           print(str(value2)+" seen_primes: "+str(local_factors2)+" polyval: "+str(poly_val//quad_can)+" cmod: "+str(cmod)+" seen_log: "+str(seen_log)+" assumed log: "+str(sum[i])+" i "+str(i)+" x: "+str(root)+" cmod: "+str(cmod))#+" index: "+str(i)+" polyval: "+str(poly_val)+" thres: "+str(sum[i])+"/"+str(threshold)+" z: "+str(quad_can))
           
-            if value != 1:
-                if value < large_prime_bound:
-                    if value in partials:
-                        rel, lf, pv = partials[value]
-                        if rel == new_root:
+                if value != 1:
+                    if value < large_prime_bound:
+                        if value in partials:
+                            rel, lf, pv = partials[value]
+                            if rel == new_root:
+                                k+=1
+                                continue
+                            new_root *= rel
+                            local_factors ^= lf
+                            poly_val *= pv
+                        else:
+                            partials[value] = (new_root, local_factors, poly_val)
                             k+=1
                             continue
-                        new_root *= rel
-                        local_factors ^= lf
-                        poly_val *= pv
                     else:
-                        partials[value] = (new_root, local_factors, poly_val)
-                        k+=1
+                        k+=1 
                         continue
-                else:
-                    k+=1 
-                    continue
 
 
               
               #  print("seen_primes: "+str(seen_primes)+" index: "+str(i)+" polyval: "+str(poly_val)+" thres: "+str(sum[i])+"/"+str(threshold)+" z: "+str(quad_can))
             
-            if new_root not in ret_array[1]:
-                found+=1
+                if new_root not in ret_array[1]:
+                    found+=1
                 #print("adding")
                   #  print("found: "+str(i))
-                ret_array[1].append(new_root)
-                ret_array[0].append(poly_val)
-                ret_array[2].append(local_factors)
+                    ret_array[1].append(new_root)
+                    ret_array[0].append(poly_val)
+                    ret_array[2].append(local_factors)
 
 
         #    print("hit")
-        k+=1
+            k+=1
+        u+=1     
    # print("done")
     #if found !=0:
        # print("found: "+str(found)+" quad: "+str(quad_can))
@@ -982,97 +981,55 @@ def gen_co2(factor_base,hmap,cmod,n):
         i+=1
     return co2_list
 
-def build_database(primeslist,hmap,quad,n):
-    h5f = h5py.File('res.hdf5', 'w')
-    i=0
-    while i< len(primeslist):
-        prime=primeslist[i]
-
-            
-        y=hmap[i][2]
-        z=hmap[i][1]
-        z_div=modinv(z,prime)
-        z_inv=modinv(quad*z_div,prime)
-        if z_inv == None or jacobi(z_inv,prime)!=1:
-            i+=1
-            continue
-        a=np.zeros(prime,dtype=np.uint16)
-        root_mult=tonelli(z_inv,prime)
-        log=round(math.log2(prime))
-        x=get_root(prime,y,z)
-        x=(x*root_mult)%prime
-        test=quad*x**2+n
-        if test%prime !=0:
-            print("FATAL ERROR")
-        x_b=(prime-x)%prime  
-        a[x::prime]=log
-        a[x_b::prime]=log
-        h5f.create_dataset(str(prime), data=a)
-
-        i+=1
-    h5f.close()
-    i=0
-    
-    h5f = h5py.File('res.hdf5','r')
-    while i< len(primeslist):
-        prime=primeslist[i]
-        z=hmap[i][1]
-        z_div=modinv(z,prime)
-        z_inv=modinv(quad*z_div,prime)
-        if z_inv == None or jacobi(z_inv,prime)!=1:
-            i+=1
-            continue
-        b = h5f[str(prime)][:]
-        print("prime: "+str(prime)+" "+str(b))
-        i+=1
-    h5f.close()
-    return
-
-
-cdef build_database2interval(primeslist,quad,hmap,n):
+@cython.boundscheck(False)
+@cython.wraparound(False)
+cdef build_database2interval(primeslist,quadlist,hmap,n):
     h5f = h5py.File('res.hdf5','a')
-    interval=cp.zeros(lin_sieve_size,dtype=np.uint16)
-    i=0
+    interval=cp.zeros((quad_per_interval,lin_sieve_size),dtype=np.uint16)
+   
+    cdef Py_ssize_t j
+    cdef Py_ssize_t i=0
     while i < len(primeslist):
+        j=0
+        while j < len(quadlist):
+            quad=quadlist[j]
+            prime=primeslist[i]
+            if quad%prime == 0:
+                j+=1
+                continue
+            y=hmap[i][2]
+            z=hmap[i][1]
 
-        prime=primeslist[i]
-        if quad%prime == 0:
-            i+=1
-            continue
-        y=hmap[i][2]
-        z=hmap[i][1]
+            z_div=modinv(z,prime)
+            z_inv=modinv(quad*z_div,prime)
+            if z_inv == None or jacobi(z_inv,prime)!=1:
+                j+=1
+                continue
 
-        z_div=modinv(z,prime)
-        z_inv=modinv(quad*z_div,prime)
-        if z_inv == None or jacobi(z_inv,prime)!=1:
-            i+=1
-            continue
-        #group = h5f.require_group('Group1/SubGroup1')
-
-        if str(prime)+"/"+str(quad%prime) in h5f:
-            b = cp.asarray(h5f[str(prime)+"/"+str(quad%prime)][:])
-            length=math.floor(lin_sieve_size/prime)+1
-            b=cp.tile(b,length)
-            interval=cp.add(interval,b[:lin_sieve_size:])
-        else:
-            a=np.zeros(prime,dtype=np.uint16)
-            root_mult=tonelli(z_inv,prime)
-            log=round(math.log2(prime))
-            x=get_root(prime,y,z)
-            x=(x*root_mult)%prime
-            test=quad*x**2+n
-            if test%prime !=0:
-                print("FATAL ERROR")
-            x_b=(prime-x)%prime  
-            a[x::prime]=log
-            a[x_b::prime]=log
-            h5f.create_dataset(str(prime)+"/"+str(quad%prime), data=a)                      #group = file.require_group('Group1/SubGroup1')
-            length=math.floor(lin_sieve_size/prime)+1
-            a=cp.tile(a,length)
-            interval=cp.add(interval,a[:lin_sieve_size:])
-            #print("interal: ",interval)
-  
+            if str(prime)+"/"+str(quad%prime) in h5f:
+                b = cp.asarray(h5f[str(prime)+"/"+str(quad%prime)][:])
+                length=math.floor(lin_sieve_size/prime)+1
+                b=cp.tile(b,length)
+                interval[j]=cp.add(interval[j],b[:lin_sieve_size:])
+            else:
+                a=np.zeros(prime,dtype=np.uint16)
+                root_mult=tonelli(z_inv,prime)
+                log=round(math.log2(prime))
+                x=get_root(prime,y,z)
+                x=(x*root_mult)%prime
+                test=quad*x**2+n
+                if test%prime !=0:
+                    print("FATAL ERROR")
+                x_b=(prime-x)%prime  
+                a[x::prime]=log
+                a[x_b::prime]=log
+                h5f.create_dataset(str(prime)+"/"+str(quad%prime), data=a)                      #group = file.require_group('Group1/SubGroup1')
+                length=math.floor(lin_sieve_size/prime)+1
+                a=cp.tile(a,length)
+                interval[j]=cp.add(interval[j],a[:lin_sieve_size:])
+            j+=1
         i+=1
+
     h5f.close()
     return interval
 
@@ -1082,7 +1039,7 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
     linewidth=500,   # Max characters per line before wrapping
     precision=1,     # Decimal places for floats
     suppress=True,   # Avoid scientific notation for small numbers
-    edgeitems=30,#np.inf # Show full array without truncation
+    edgeitems=100,#np.inf # Show full array without truncation
     threshold=10
 )    
     found=0
@@ -1106,12 +1063,16 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
     valid_quads,valid_quads_factors=filter_quads(qlist,n)
     i=0
     while i < len(valid_quads):
+        quadlist=[]
+        while len(quadlist)<quad_per_interval:
+            quadlist.append(valid_quads[i])
+            i+=1
         z=valid_quads[i]
        # print("\n[i]Building interval for quadratic coefficient: "+str(z))
     #build_database(primeslist,hmap,1,n)
-        interval=build_database2interval(primeslist,z,hmap,n)
+        interval=build_database2interval(primeslist,quadlist,hmap,n)
        # print("[i]Checking interval for quadratic coefficient: "+str(z))
-        found+=process_interval2d(interval,n,ret_array,z,primelist_f,large_prime_bound,partials)#,lin,new_mod,sum_list)
+        found+=process_interval2d(interval,n,ret_array,quadlist,primelist_f,large_prime_bound,partials)#,lin,new_mod,sum_list)
         print("", end=f"[i]Smooths: {len(ret_array[2])}\r")
         if found > 100 or found > base+2:
             test,test2=QS(n,primelist,ret_array[0],ret_array[1],ret_array[2]) 
