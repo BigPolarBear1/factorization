@@ -27,4 +27,4 @@ Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), s
 
 UPDATE: I've added doing multiple quadratic coefficients in one go. Actually just realized the easiest way to do it is with a 2d array. Let me add support for moduli with the step size again.. and then I'll keep optimizing any bottlenecks... and I'll also re-add p-adic lifting eventually.
 
-UPDATE: AAAAAAAAAAACTUaaally. We shouldnt change the step size. I just got struck by a much better idea. Our sieve interval should be the size of a composite modulus... and we should save it to disk. And then later we can use that for tiling.... like building up larger and larger moduli to use for tiling. Let me think how to do this as good as possible.
+
