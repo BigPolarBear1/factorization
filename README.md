@@ -11,7 +11,7 @@ This basically creates a system of quadratics. Solving them mod p is easy. But t
 
 #### To run from folder "CUDA_QS_variant" (WIP):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 100 -base 1000 -debug 1 -lin_size 10_000_000 -quad_size 1_000</br></br>
+To run:  python3 run_qs.py -keysize 140 -base 1000 -debug 1 -lin_size 10_000_000 -quad_size 1_000</br></br>
 
 Prerequisites: </br>
 -Python (tested on 3.13)</br>
@@ -25,6 +25,6 @@ Prerequisites: </br>
 
 Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), since it gets a lot harder to access the GPU on a virtual machine.
 
-UPDATE: I've added doing multiple quadratic coefficients in one go. Actually just realized the easiest way to do it is with a 2d array. Let me add support for moduli with the step size again.. and then I'll keep optimizing any bottlenecks... and I'll also re-add p-adic lifting eventually.
+UPDATE: Just uploading my work in progress for the day. Right now all the number theory except p-adic lifting is added to the PoC. I also realized, rather then having a 2d sieve interval of multiple quadratic/linear coefficients, we should keep it on disk. That way can build sieve intervals for all quadratic coefficients at the same time! Because there will be a lot of duplication with residues mod p... so we can really speed things up that way. I'll rewrite that 2d interval to have it all on disk tomorrow...
 
 
