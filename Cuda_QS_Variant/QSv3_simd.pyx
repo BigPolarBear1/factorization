@@ -647,7 +647,6 @@ def sumrowsby_index(a, index):
 
 cdef process_interval2d(interval,n,ret_array,z,primelist_f,large_prime_bound,partials):#,lin,cmod,sum_list):
    # print("Applying mask")
-    interval=cp.asarray(interval)
     threshold = int(math.log2(abs(n)) - thresvar)
     cp.putmask(interval, interval<threshold, 0)
    # print("interval_gpu: ",interval_gpu)
@@ -1032,7 +1031,7 @@ def build_database(primeslist,hmap,quad,n):
 
 cdef build_database2interval(primeslist,quad,hmap,n):
     h5f = h5py.File('res.hdf5','a')
-    interval=np.zeros(lin_sieve_size,dtype=np.uint16)
+    interval=cp.zeros(lin_sieve_size,dtype=np.uint16)
     i=0
     while i < len(primeslist):
 
@@ -1051,10 +1050,10 @@ cdef build_database2interval(primeslist,quad,hmap,n):
         #group = h5f.require_group('Group1/SubGroup1')
 
         if str(prime)+"/"+str(quad%prime) in h5f:
-            b = h5f[str(prime)+"/"+str(quad%prime)][:]
+            b = cp.asarray(h5f[str(prime)+"/"+str(quad%prime)][:])
             length=math.floor(lin_sieve_size/prime)+1
-            b=np.tile(b,length)
-            interval=np.add(interval,b[:lin_sieve_size:])
+            b=cp.tile(b,length)
+            interval=cp.add(interval,b[:lin_sieve_size:])
         else:
             a=np.zeros(prime,dtype=np.uint16)
             root_mult=tonelli(z_inv,prime)
@@ -1069,8 +1068,8 @@ cdef build_database2interval(primeslist,quad,hmap,n):
             a[x_b::prime]=log
             h5f.create_dataset(str(prime)+"/"+str(quad%prime), data=a)                      #group = file.require_group('Group1/SubGroup1')
             length=math.floor(lin_sieve_size/prime)+1
-            a=np.tile(a,length)
-            interval=np.add(interval,a[:lin_sieve_size:])
+            a=cp.tile(a,length)
+            interval=cp.add(interval,a[:lin_sieve_size:])
             #print("interal: ",interval)
   
         i+=1
