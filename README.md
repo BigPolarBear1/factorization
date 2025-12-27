@@ -25,6 +25,6 @@ Prerequisites: </br>
 
 Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), since it gets a lot harder to access the GPU on a virtual machine.
 
-UPDATE: Just uploading my work in progress for the day. Right now all the number theory except p-adic lifting is added to the PoC. I also realized, rather then having a 2d sieve interval of multiple quadratic/linear coefficients, we should keep it on disk. That way can build sieve intervals for all quadratic coefficients at the same time! Because there will be a lot of duplication with residues mod p... so we can really speed things up that way. I'll rewrite that 2d interval to have it all on disk tomorrow...
+UPDATE: Just uploading my work in progress for the day. Right now all the number theory except p-adic lifting is added to the PoC. I also realized, rather then having a 2d sieve interval of multiple quadratic/linear coefficients in memory, we should keep it on disk. That way can build sieve intervals for all quadratic coefficients at the same time! Because there will be a lot of duplication with residues mod p... so we can really speed things up that way. I'll rewrite that 2d interval to have it all on disk tomorrow...
 
 
