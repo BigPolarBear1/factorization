@@ -11,7 +11,7 @@ This basically creates a system of quadratics. Solving them mod p is easy. But t
 
 #### To run from folder "CUDA_QS_variant" (WIP):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 140 -base 2000 -debug 1 -lin_size 10_000_000 -quad_size 1_00</br></br>
+To run:  python3 run_qs.py -keysize 120 -base 2000 -debug 1 -lin_size 1_000_000 -quad_size 1_00</br></br>
 
 Prerequisites: </br>
 -Python (tested on 3.13)</br>
@@ -25,12 +25,13 @@ Prerequisites: </br>
 
 Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), since it gets a lot harder to access the GPU on a virtual machine.
 
-Update: I changed a few things and added p-adic lifting... then wasted 90% of the day tracking down a bug. Anyway... next I will speed up build_database2interval by making use of the fact that sieve intervals for multiple quadratic coefficients would have the same tiling mod p, especially for smaller primes. So we can speed that up. Goal is to really quickly produce many intervals at the same time and then process them in bulk in the gpu using putmask() and non_zero() to quickly find values above a threshold.
+UPDATE: Bah, moved some shit around again and put the roots in arrays on file to be memory efficient. It's a bit slow atm, but I rearranged it so I can finally do what I've been trying to do from the start.... which I will implement tomorrow. 
 
-So what need to be changed in build_database2interval:
+Ok, so tomorrow here's what I'll do:
 
-We should only iterate primes_list a single time. Iterate the possible residues mod p and grab all sieve intervals (across all quadratic coefficients) to which this residue applies (this residue is the root mod p minus the root for the modulus.. or something like that). This has to be really fast... I'm still thinking what the most optimal way is..  then just load them into a 2d interval and increase those values in the gpu in one go. Do this for all residues mod p and move to the next prime until we hit the end of primes_list ... at which point we should have succesfully build all sieve intervals for all quadratic coefficients. Then just move to processing those intervals.. and that function we will optimize later. Anyway.. I'll do some brain storming now.. what the best way is to pull sieve intervals that will have the same tiling mod p without building complicated residue hashmap each time we change the modulus... there's probably some fancy vector math I can use.
+-quad_size is going to become huge. We want to use enourmous values here. As much as our hard drive allows us. 
+In build_database2interval(), this loop:
 
-Update: Hmm.. I spent 30min just staring at the ceiling thinking about this. I think I have a good way thats going to minimize having to write sieve intervals to disk while still bulk building a lot of sieve intervals quickly. I'll implement it tomorrow. I'll go for a run now. I should never stop running matter what. Running is the only thing stopping me from fucking killing myself. I need to finish this, and move to a better country where I have oppurtunities still.
+while j < len(quadlist):
 
-Update: Actually let me skip running for 3 days. End-of-year recovery days, whatever. I'll restart the 1st of January. I really just want to finish this fucking work now so I can move on with my life.
+We will change that, and simply iterate 1 to prime. Because all quadratic coefficients mod p will have the same root. So we only need to do 1 to prime at most. And we just bulk build all the quadratic coefficients mod p with the same root. Just construct a massive amount of sieve intervals in one go. Going to save us from repeating calculations over and over again.
