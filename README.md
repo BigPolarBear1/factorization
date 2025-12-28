@@ -36,3 +36,5 @@ while j < len(quadlist):
 
 We will change that, and simply iterate 1 to prime. Because all quadratic coefficients mod p will have the same root. So we only need to do 1 to prime at most. And we just bulk build all the quadratic coefficients mod p with the same root. Just construct a massive amount of sieve intervals in one go. Going to save us from repeating calculations over and over again.
 And because while i < len(primeslist): is now the outer loop, we can preconstruct per prime, two large sieve intervals for both roots, just slice as needed and add them to our actual sieve intervals.. so we make use of vector addition in the GPU.
+
+That should be easy to implement tomorrow.. its not that much work. Going to take a break now bc I have been working all day and I regret not having gone running today. I just feel agitated if I skip running. 
