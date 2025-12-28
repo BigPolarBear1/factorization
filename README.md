@@ -25,7 +25,7 @@ Prerequisites: </br>
 
 Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), since it gets a lot harder to access the GPU on a virtual machine.
 
-Update: I changed a few things and added p-adic lifting... then wasted 90% of the day tracking down a bug. Anyway... next I will speed up build_database2interval by making use of the fact that sieve intervals for multiple quadratic coefficients would have the same tiling mod p, especially for smaller primes. So we can speed that up. Goal is to really quickly produce many intervals at the same time. 
+Update: I changed a few things and added p-adic lifting... then wasted 90% of the day tracking down a bug. Anyway... next I will speed up build_database2interval by making use of the fact that sieve intervals for multiple quadratic coefficients would have the same tiling mod p, especially for smaller primes. So we can speed that up. Goal is to really quickly produce many intervals at the same time and then process them in bulk in the gpu using putmask() and non_zero() to quickly find values above a threshold.
 
 So what need to be changed in build_database2interval:
 
