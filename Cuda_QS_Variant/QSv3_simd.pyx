@@ -53,8 +53,8 @@ g_enable_custom_factors=0
 g_p=107
 g_q=41
 mod_mul=0.5
-g_max_exp=2
-quad_per_interval=8
+g_max_exp=10
+quad_per_interval=1
 
 ##Key gen function##
 def power(x, y, p):
@@ -599,20 +599,11 @@ def init_2d_interval(primeslist,hmap,n,quad):
 
     return interval2d
 
-@cython.boundscheck(False)
-@cython.wraparound(False)
-cdef iterate_sum(unsigned short [::1] sum,threshold):
-    checklist=[]
-    cdef Py_ssize_t i=0
-    while i < lin_sieve_size:
-        if sum[i]>threshold:
-            checklist.append(i)
-        i+=1
-    return checklist
+
     
-@cython.boundscheck(False)
-@cython.wraparound(False)
-cdef factorise_fast_debug(value,long long [::1] factor_base):
+#@cython.boundscheck(False)
+#@cython.wraparound(False)
+cdef factorise_fast_debug(value,long long [::1] factor_base,max_exp):
     factors = set()
     seen_primes=[]
     if value < 0:
@@ -626,10 +617,13 @@ cdef factorise_fast_debug(value,long long [::1] factor_base):
     cdef Py_ssize_t i=1
     while i < length:
         factor=factor_base[i]
+        exp=1
         while value % factor == 0:
             factors ^= {factor}
             value //= factor
-            seen_primes.append(factor)
+            if exp < (max_exp+1):
+                seen_primes.append(factor)
+            exp+=1
         i+=1
     return factors, value,seen_primes
 
@@ -641,24 +635,24 @@ def sumrowsby_index(a, index):
     id_ar[r,c]=1
     return id_ar.dot(a)[0]
 
-cdef process_interval2d(interval,n,ret_array,quadlist,primelist_f,large_prime_bound,partials,lin_list_complete,cmod):#,lin,cmod,sum_list):
-   # print("Applying mask")
+cdef process_interval2d(n,ret_array,quadlist,primelist_f,large_prime_bound,partials,lin_list_complete,cmod):#,lin,cmod,sum_list):
     threshold = int(math.log2((lin_sieve_size)*math.sqrt(abs(n))) - thresvar)
     #threshold = int(math.log2(abs(n)) - thresvar)
-    cp.putmask(interval, interval<threshold, 0)
+    h5f = h5py.File('res.hdf5','r')
     found=0
     linlen=len(lin_list_complete[0])
-    #print("interval: ",interval)
     u=0
     cdef Py_ssize_t k
     while u < len(quadlist):
         quad_can=quadlist[u]
         u2=0
         while u2 < linlen:
-            indexlist=cp.nonzero(interval[u*linlen+u2])
-            #print(indexlist)
+            
+            interval=cp.asarray(h5f["intervals/"+str(cmod)+"/"+str(quadlist[u])+"/"+str(lin_list_complete[u][u2])][:])
+            cp.putmask(interval, interval<threshold, 0)
+            indexlist=cp.nonzero(interval)
             indexlist=cp.asnumpy(indexlist[0])
-            temp=cp.asnumpy(interval[u*linlen+u2])
+            temp=cp.asnumpy(interval)
             lin=lin_list_complete[u][u2]
            # print("Checking lin: "+str(lin)+" quad: "+str(quad_can)+" cmod: "+str(cmod)+" u2: "+str(u2)+" u: "+str(u)+" temp: "+str(temp))
             root=get_root(cmod,lin,quad_can)
@@ -679,15 +673,16 @@ cdef process_interval2d(interval,n,ret_array,quadlist,primelist_f,large_prime_bo
                         print("fatal")
                     local_factors, value = factorise_fast(poly_val,primelist_f)
                     #########START DEBUG###############
-                    local_factors2, value2,seen_primes2 = factorise_fast_debug(poly_val//quad_can,primelist_f)
-                    seen_log=0
-                    prev=0
-                    for prime in seen_primes2:
-                        if prime !=prev and cmod%prime !=0:
-                            seen_log+=round(math.log2(prime))
-                            prev=prime
-                    if seen_log != temp[i]:
-                        print("error:"+str(seen_primes2)+" seen_log: "+str(seen_log)+" assumed log: "+str(temp[i])+" quad: "+str(quad_can))
+                  #  poly_val2=quad_can*x**2+n
+                 #   local_factors2, value2,seen_primes2 = factorise_fast_debug(poly_val2,primelist_f,g_max_exp)
+                 #   seen_log=0
+                 #   for prime in seen_primes2:
+                 #       if cmod%prime !=0 and quad_can%prime !=0:
+                 #           seen_log+=round(math.log2(prime))
+ 
+        
+                 #   if seen_log != temp[i]:
+                 #       print("error:"+str(seen_primes2)+" seen_log: "+str(seen_log)+" assumed log: "+str(temp[i])+" quad: "+str(quad_can)+" cmod: "+str(cmod))
                     #########END DEBUG###############
                     if value != 1:
                         if value < large_prime_bound:
@@ -705,28 +700,16 @@ cdef process_interval2d(interval,n,ret_array,quadlist,primelist_f,large_prime_bo
                                 continue
                         else:
                             k+=1 
-                            continue
-
-
-              
-              #  print("seen_primes: "+str(seen_primes)+" index: "+str(i)+" polyval: "+str(poly_val)+" thres: "+str(sum[i])+"/"+str(threshold)+" z: "+str(quad_can))
-            
+                            continue         
                     if new_root not in ret_array[1]:
                         found+=1
-                #print("adding")
-                  #  print("found: "+str(i))
                         ret_array[1].append(new_root)
                         ret_array[0].append(poly_val)
                         ret_array[2].append(local_factors)
-
-
-        #    print("hit")
                 k+=1
             u2+=1
         u+=1     
-   # print("done")
-    #if found !=0:
-       # print("found: "+str(found)+" quad: "+str(quad_can))
+    h5f.close()
     return found
 
 cdef new(length,interval2d,root_dist1,root_dist2,log,prime,i):
@@ -790,8 +773,8 @@ cdef roll_interval2d(interval2d,hmap,long long [::1] primeslist,n,quad,lin,cmod)
         i+=1    
     return sum_list
 
-@cython.boundscheck(False)
-@cython.wraparound(False)
+#@cython.boundscheck(False)
+#@cython.wraparound(False)
 cdef factorise_fast_quads(value,long long [::1] factor_base):
     factors = set()
     if value % 2 == 0:
@@ -995,80 +978,136 @@ def gen_co2(factor_base,hmap,cmod,n):
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cdef build_database2interval(primeslist,quadlist,hmap,n,lin_list_complete,cmod):
+cdef build_database2interval(long long [:] primeslist,quadlist,hmap,n,lin_list_complete,cmod):
     h5f = h5py.File('res.hdf5','a')
+  
     linlen=len(lin_list_complete[0])
-    interval=cp.zeros((quad_per_interval*linlen,lin_sieve_size),dtype=np.uint16)
-    
     cdef Py_ssize_t j
-    cdef Py_ssize_t i=0
-    while i < len(primeslist):
-        prime=primeslist[i]
-        if cmod%prime == 0:
-            i+=1
-            continue
-        lcmod=cmod%prime
-        modi=modinv(lcmod,prime)
+    cdef Py_ssize_t i
+    cdef Py_ssize_t v
+    interval_single=np.zeros(lin_sieve_size,dtype=np.uint16)    
+    i=0
+    while i < len(quadlist):
         j=0
-        while j < len(quadlist):
-            quad=quadlist[j]
-            if quad%prime == 0:
-                j+=1
-                continue
-            y=hmap[i][2]
-            z=hmap[i][1]
-            z_div=modinv(z,prime)
-            z_inv=modinv(quad*z_div,prime)
-            if z_inv == None or jacobi(z_inv,prime)!=1:
-                j+=1
-                continue    
-            v=0
-            while v < len(lin_list_complete[j]):
-                root=get_root(cmod,lin_list_complete[j][v],quad)
-                if str(prime)+"/"+str(quad%prime)+"/"+str(root%prime) in h5f:
-                    b = cp.asarray(h5f[str(prime)+"/"+str(quad%prime)+"/"+str(root%prime)][:])
-                    length=math.floor(lin_sieve_size/prime)+1
-                    b=cp.tile(b,length)
-                    interval[j*linlen+v]=cp.add(interval[j*linlen+v],b[:lin_sieve_size:])
-                else:
-                    a=np.zeros(prime,dtype=np.uint16)
-                    root_mult=tonelli(z_inv,prime)
-                    log=round(math.log2(prime))
-                    x=get_root(prime,y,z)
-                    x=(x*root_mult)%prime
-                    test=quad*x**2+n
-                    if test%prime !=0:
-                        print("FATAL ERROR")
-                        time.sleep(100000)
-                    x_b=(prime-x)%prime  
-
-                                     
-                    length=math.floor(lin_sieve_size/prime)+1
-                    root_res=(x-root)%prime
-                    root_dist1=(root_res*modi)%prime
-                    root_res=(x_b-root)%prime
-                    root_dist2=(root_res*modi)%prime
-                    a[root_dist1::prime]=log
-                    a[root_dist2::prime]=log
-                    h5f.create_dataset(str(prime)+"/"+str(quad%prime)+"/"+str(root%prime), data=a)  
-                    CAN=quad*(root+root_dist1*cmod)**2+n
-                    test_co=2*quad*(root+root_dist1*cmod)
-                    if (test_co**2+n*4*quad)%(cmod*prime)!=0:
-                        print("FATAL ERROR123123")
-                        time.sleep(10000)
-                    if CAN % (cmod*prime)  != 0:
-
-                        print("EROROREROR",prime)
-    
-                    a=cp.tile(a,length)
-                    interval[j*linlen+v]=cp.add(interval[j*linlen+v],a[:lin_sieve_size:])
-                v+=1    
+        while j < len(lin_list_complete[i]):
+            h5f.create_dataset("intervals/"+str(cmod)+"/"+str(quadlist[i])+"/"+str(lin_list_complete[i][j]), data=interval_single)
             j+=1
         i+=1
-  #  print("interval[0][0]"+str(interval[0]))
-  #  print("interval[0][1]"+str(interval[1]))
+    
+    i=0
+    while i < len(quadlist):
+        quad=quadlist[i]
+        j=0
+        while j < len(lin_list_complete):
+            lin=lin_list_complete[i][j]
+            interval_single = cp.asarray(h5f["intervals/"+str(cmod)+"/"+str(quad)+"/"+str(lin)][:])
+            v=0
+            while v < len(primeslist):
+                prime=primeslist[v]
+                log=round(math.log2(prime))
+                if cmod%prime == 0 or quad%prime ==0:
+                 #   if prime <12:
+                       # print("skip: "+str(prime)+" quad: "+str(quad))
+                    v+=1
+                    continue
+
+                y=hmap[v][2]
+                z=hmap[v][1]
+                z_div=modinv(z,prime)
+                z_inv=modinv(quad*z_div,prime)
+                if z_inv == None or jacobi(z_inv,prime)!=1:
+                   # if prime <12:
+                      #  print("skip: "+str(prime)+" quad: "+str(quad))
+                    v+=1
+                    continue      
+                lcmod=cmod%prime
+                modi=modinv(lcmod,prime)
+                root=get_root(cmod,lin,quad)
+                if "tiles/"+str(prime)+"/"+str(quad%prime) in h5f:
+                   # if prime < 12:
+                      #  print("fetched: "+str(prime)+" quad: "+str(quad))
+                    x = int(h5f["tiles/"+str(prime)+"/"+str(quad%prime)][0])
+                    exp=1
+                    while exp < g_max_exp+1:
+                        p=prime**exp
+                        if exp > 1:
+                            x=lift_root(x,prime**(exp-1),n,quad,exp)
+                     #   if (quad*(x)**2+n)%(prime**exp) !=0:
+                        #    print("super fatal error: ",exp)
+                        #    time.sleep(10000)
+                        root_dist1=solve_lin_con(cmod,x-root,p)
+                        x_b=(p-x)%p 
+                        root_dist2=solve_lin_con(cmod,x_b-root,p)
+                        hit=0
+                        if root_dist1 < lin_sieve_size+1:
+                            interval_single[root_dist1::p]+=log
+                            hit=1
+                        if root_dist2 < lin_sieve_size+1:
+                            if root_dist1 != root_dist2:
+                                interval_single[root_dist2::p]+=log  
+                                hit=1
+                        if hit ==0:
+                            break
+
+                        #CAN=quad*(root+root_dist1*cmod)**2+n
+                        #test_co=2*quad*(root+root_dist1*cmod)
+                        #if (test_co**2+n*4*quad)%(cmod*p)!=0:
+                            #print("FATAL ERROR123123")
+                            #time.sleep(10000)
+                        #if CAN % (cmod*p)  != 0:
+
+                            #print("EROROREROR",prime)
+                            #time.sleep(10000)
+        
+                        exp+=1
+                else:
+                    root_mult=tonelli(z_inv,prime)
+                    x=get_root(prime,y,z)
+                    x=(x*root_mult)%prime
+                    h5f.create_dataset("tiles/"+str(prime)+"/"+str(quad%prime), data=[x])  
+                    exp=1
+                    while exp < g_max_exp+1:
+                        p=prime**exp
+                        if exp > 1:
+                            x=lift_root(x,prime**(exp-1),n,quad,exp)
+                     #   if (quad*(x)**2+n)%(prime**exp) !=0:
+                        #    print("super fatal error: ",exp)
+                        #    time.sleep(10000)
+                        root_dist1=solve_lin_con(cmod,x-root,p)
+                        x_b=(p-x)%p 
+                        root_dist2=solve_lin_con(cmod,x_b-root,p)
+                        hit=0
+                        if root_dist1 < lin_sieve_size+1:
+                            interval_single[root_dist1::p]+=log
+                            hit=1
+                        if root_dist2 < lin_sieve_size+1:
+                            if root_dist1 != root_dist2:
+                                interval_single[root_dist2::p]+=log  
+                                hit=1
+                        if hit ==0: 
+                            break
+                        #CAN=quad*(root+root_dist1*cmod)**2+n
+                        #test_co=2*quad*(root+root_dist1*cmod)
+                        #if (test_co**2+n*4*quad)%(cmod*p)!=0:
+                            #print("FATAL ERROR123123")
+                            #time.sleep(10000)
+                        #if CAN % (cmod*p)  != 0:
+
+                            #print("EROROREROR",prime)
+                            #time.sleep(10000)
+        
+                        exp+=1
+
+                    
+
+              
+                v+=1    
+            h5f["intervals/"+str(cmod)+"/"+str(quad)+"/"+str(lin)][...]=cp.asnumpy(interval_single)
+            j+=1
+        i+=1
+
     h5f.close()
-    return interval
+    return 
 
 def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,primeslist2):
     grays = get_gray_code(20)
@@ -1097,6 +1136,9 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
     qlist.insert(0,len(qlist)+1)
     qlist=array.array('q',qlist)
 
+    primeslist_a=copy.copy(primeslist)
+    primeslist_a=array.array('q',primeslist_a)
+
     valid_quads,valid_quads_factors=filter_quads(qlist,n)
     close_range=10
     too_close=5
@@ -1106,10 +1148,10 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
     seen=[]
     while 1:
         new_mod,cfact,indexes=generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,bitlen(tnum),hmap)
-      #  print("modulus: ",new_mod)
+        if new_mod ==0:
+            continue
         lin,orig_lin_parts=get_lin(hmap,cfact,new_mod,indexes,1,n)  
         co2_list=gen_co2(primelist_f,hmap,new_mod,n)
-      #  print("lin: ",lin)
         if (lin**2+n*4*1)%new_mod!=0:
             print("fatal error occured")
 
@@ -1132,6 +1174,8 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
                     continue
                 quadlist.append(valid_quads[i])
                 i+=1
+            if len(quadlist)==0:
+                break
            # print("quadlist: ",quadlist)
             lin_list_complete=[]
             j=0
@@ -1184,29 +1228,22 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
                     lin_co_array.append(lin)
                     poly_ind+=1
 
-              #  q=0
-             #   while q < len(lin_co_array):
-                #    lin=lin_co_array[q]
-                 #   q+=1
                 lin_list_complete.append(lin_co_array)
                 j+=1
-            #print("lin_list_complete: ",lin_list_complete)
-
-
-
-
-
-       # print("\n[i]Building interval for quadratic coefficient: "+str(z))
-    #build_database(primeslist,hmap,1,n)
-            interval=build_database2interval(primeslist,quadlist,hmap,n,lin_list_complete,new_mod)
-       # print("[i]Checking interval for quadratic coefficient: "+str(z))
-            found+=process_interval2d(interval,n,ret_array,quadlist,primelist_f,large_prime_bound,partials,lin_list_complete,new_mod)#,lin,new_mod,sum_list)
+           # print("building: ",quadlist)
+            build_database2interval(primeslist_a,quadlist,hmap,n,lin_list_complete,new_mod)
+           # print("PROCESSING")
+            found+=process_interval2d(n,ret_array,quadlist,primelist_f,large_prime_bound,partials,lin_list_complete,new_mod)#,lin,new_mod,sum_list)
+        
             print("", end=f"[i]Smooths: {len(ret_array[2])}\r")
             if found > 100 or found > base+2:
                 test,test2=QS(n,primelist,ret_array[0],ret_array[1],ret_array[2]) 
                 found=0 
                 if test !=0:
                     return
+        h5f = h5py.File('res.hdf5','a')
+        del h5f["intervals/"+str(new_mod)]
+        h5f.close()
     return
 
 def get_partials(mod,list1):
@@ -1233,7 +1270,7 @@ def get_partials(mod,list1):
 
 def lift_root(r,prime,n,quad_co,exp):
     z_inv=modinv(quad_co,prime**exp)
-    c=(quad_co*n)%prime**exp
+    c=(-quad_co*n)%prime**exp
     temp_r=r*quad_co
     zz=2*temp_r
     zz=pow(zz,-1,prime)
