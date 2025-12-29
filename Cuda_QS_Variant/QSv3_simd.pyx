@@ -908,7 +908,7 @@ cdef build_database2interval(long long [:] primeslist,quadlist,hmap,n,lin_list_c
         while j < len(quadlist):
             quad=quadlist[j]
             v=0
-            while v < len(lin_list_complete):
+            while v < len(lin_list_complete[j]):
                 lin=lin_list_complete[j][v]
                 interval_single = cp.asarray(h5f["intervals/"+str(cmod)+"/"+str(quad)+"/"+str(lin)][:])
                 if cmod%prime == 0 or quad%prime ==0:
@@ -1261,5 +1261,6 @@ def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_
     launch(n,primeslist1,primeslist2)     
     duration = default_timer() - start
     print("\nFactorization in total took: "+str(duration))
+
 
 
