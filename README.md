@@ -28,3 +28,5 @@ Prerequisites: </br>
 Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), since it gets a lot harder to access the GPU on a virtual machine.
 
 Update: Ok. I dug a bit deeper into what SIQS is doing. So what they are doing. Thats what we are doing with the modulus. What we are doing with our quadratic coefficients... that has nothing to do with SIQS. I dont quite understand why SIQS doesnt just work with moduli. Anyway. Wasted day. Lets make progress toward bulk building intervals now. 
+
+Update: Really digging in now. For the quadratic coefficients.. ideally I would just have one sieve interval where quadratic coefficient z = 1. And as we parse it.. also have some way to quickly get the log values for all the other quadratic coefficients. I know the math behind it now... question is, can I set it up in a way that computationally makes sense? 
