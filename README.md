@@ -39,3 +39,5 @@ Update: I did some more thinking. Let me first tonight or tomorrow implement bul
 
 UPDATE: OH MY GOD. I AM AN IDIOT. I ACTUALLY TOOK SOME TIME READING UP ABOUT SIQS AND HOW THEY DO SIEVING. OH MY GOD. THey dont use zx^2+yx-n ... they use zx^2+yx+c where c comes from y^2-n = zc .. fucking hell. Something suddenly hit me. I can make this a lot faster even without doing the 2d sieving interval building stuff.... let me get some more sleep first, bc I woke up in the middle of the night.
 FUCK. I'm suddenly seeing something I didnt see earlier. FUCK. One day... I don't need more then that. Good luck losers!
+
+FUUUUUUUUUUUUUUUUUCK. You know, I can create very small smooth candidates very quickly and really fast like this... FUUUUUUUUUUUUUUUUUUUUUUUUUUUUCK!!!!!!!!!!!!!!!! WHY DIDNT I SEE THIS BEFORE. AM I MENTALLY CHALLENGED? I MUST BE. 
