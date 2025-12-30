@@ -32,3 +32,5 @@ Update: Ok. I dug a bit deeper into what SIQS is doing. So what they are doing. 
 Update: Really digging in now. For the quadratic coefficients.. ideally I would just have one sieve interval where quadratic coefficient z = 1. And as we parse it.. also have some way to quickly get the log values for all the other quadratic coefficients. I know the math behind it now... question is, can I set it up in a way that computationally makes sense? 
 
 Update: I really really want to construct vertical sieve intervals that go in the direction of the quadratic coefficient rather then horizontal ones. Ok ok... pen and paper time.. I can figure this out.
+
+Update: I did some thinking... the only way to really sieve in the direction of the quadratic coefficient is by sieving without modulus so that each column for every row maps to the same root. But we can do it very quick. Infact... it should be so quick it would fill up the hard drive pretty fast... and that opens up some possibilities... bc we could then try to find smooths that share a lot of factors in common. I think that may be the better appraoch. Let me give that a try tomorrow. 
