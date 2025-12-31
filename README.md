@@ -36,3 +36,5 @@ We sieve at quadratic coefficient = 1 using square moduli... if a smooth is foun
 Then we iterate this list and use those primes as quadratic coefficient to construct a new sieve interval (with new square moduli since the factors of the modulus dont matter if its square,just need to get a good size)... this then garantuees that any smooths we find will also include this prime as factor... which then gives us a chance to succeed at the linear algebra step earlier. 
 
 I guess eventually we should keep track how many times factors appear in all smooths we found. Then target the ones with the least occurance. Just really keep going round and round, using the prime with the lowest occurance as quadratic coefficient to garantuee its inclusion in any smooths we find.
+
+hmm, this is actually starting to sound good now... way better then my shitty attempt at this back in September. September is only 3 months ago... but I feel like I've grown a lot in term of skills since then. Or a year ago... when I did that buggy attempt using LLL.. god damn.. I've definitely not wasted this last year because I've learned so many things.
