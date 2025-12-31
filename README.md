@@ -34,3 +34,5 @@ So what still needs to be done is this:
 
 We sieve at quadratic coefficient = 1 using square moduli... if a smooth is found, we add all primes with odd exponents large then some size to a list. 
 Then we iterate this list and use those primes as quadratic coefficient to construct a new sieve interval (with new square moduli since the factors of the modulus dont matter if its square,just need to get a good size)... this then garantuees that any smooths we find will also include this prime as factor... which then gives us a chance to succeed at the linear algebra step earlier. 
+
+I guess eventually we should keep track how many times factors appear in all smooths we found. Then target the ones with the least occurance. Just really keep going round and round, using the prime with the lowest occurance as quadratic coefficient to garantuee its inclusion in any smooths we find.
