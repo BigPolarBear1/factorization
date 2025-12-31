@@ -28,3 +28,9 @@ Prerequisites: </br>
 Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), since it gets a lot harder to access the GPU on a virtual machine.
 
 Update: Alright. I've added square moduli to the PoC. This reduces the number of odd exponent factors in the smooth candidates. Next (to do) we go over the odd exponent factors in any smooth candidate found and for large primes, we use the large prime as quadratic coefficient and look for smooth candidates again... 
+
+Update: Worked all day on 5 hours of sleep. Very tired now. So going to call it a day. Should be an hour of work tomorow to implement this last thing I want to do.
+So what still needs to be done is this:
+
+We sieve at quadratic coefficient = 1 using square moduli... if a smooth is found, we add all primes with odd exponents large then some size to a list. 
+Then we iterate this list and use those primes as quadratic coefficient to construct a new sieve interval (with new square moduli since the factors of the modulus dont matter if its square,just need to get a good size)... this then garantuees that any smooths we find will also include this prime as factor... which then gives us a chance to succeed at the linear algebra step earlier. 
