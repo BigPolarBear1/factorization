@@ -27,6 +27,4 @@ Prerequisites: </br>
 
 Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), since it gets a lot harder to access the GPU on a virtual machine.
 
-Update: Fuck it. I'm just going to do what I tried doing earlier in September. Try to find "similar smooths" .. I could just generate square moduli... use those for sieving.. and try to find odd exponent factors by having them as quadratic coefficient. Now that I understand how this works... this may actually be a feasible idea. 
-
-And its also like.. small factors will always be well represented in smooth candidates.. however... large prime factors with odd exponents showing up in our smooth candidates are the bottleneck.. so I could just use those large prime factors as quadratic coefficient... thats going to then generate smooth candidates with that large prime factor included... I do really like this way of appraoching it... plus if I use square moduli thats additionally going to reduce the amount of odd exponent primes I need to worry about. Bah. Let me give it a try. I dont need to invent any new code for this, its all stuff I've already done in some shape or form in the past.
+Update: Alright. I've added square moduli to the PoC. This reduces the number of odd exponent factors in the smooth candidates. Next we go over the odd exponent factors in any smooth candidate found and for large primes, we use the large prime as quadratic coefficient and look for smooth candidates again... 
