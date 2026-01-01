@@ -13,7 +13,7 @@ This basically creates a system of quadratics. Solving them mod p is easy. But t
 
 #### To run from folder "CUDA_QS_variant" (WIP):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 180 -base 4000 -debug 1 -lin_size 10_000_000 -quad_size 100</br></br>
+To run:  python3 run_qs.py -keysize 180 -base 4000 -debug 1 -lin_size 10_000_000 -quad_size 50</br></br>
 
 Prerequisites: </br>
 -Python (tested on 3.13)</br>
