@@ -687,9 +687,11 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
         u2+=1
   
     h5f.close()
-    #if bSeenOnly == 1:
-      #  print("found: "+str(found)+" total: "+str(len(ret_array[0]))+" cmod: "+str(bitlen(cmod))+" quad: "+str(bitlen(quad_can)))
-   # print("factor ranking: ",factor_ranking)
+    if g_debug ==1:
+        if bSeenOnly == 1:
+            print("found: "+str(found)+" total: "+str(len(ret_array[0]))+" cmod: "+str(bitlen(cmod))+" quad: "+str(bitlen(quad_can)))
+        else:
+            print("***found: "+str(found)+" total: "+str(len(ret_array[0]))+" cmod: "+str(bitlen(cmod))+" quad: "+str(bitlen(quad_can)))
     return found
 
 @cython.boundscheck(False)
@@ -1089,11 +1091,11 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
            # new_quad=primeslist[i]
             
             skip=0
-            k=0
+            k=len(factor_ranking[i])-2
             new_cfact=[]
             new_indexes=[]
             lmod=1
-            while k < len(factor_ranking[i])-1:
+            while k >-1:
                 if jacobi((-new_quad*n)%primeslist[factor_ranking[i][k]],primeslist[factor_ranking[i][k]])==1:
                    # skip=1
                    # break
@@ -1102,9 +1104,9 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
                     lmod*=primeslist[factor_ranking[i][k]]
                     if bitlen(lmod)>(keysize//2):
                         break
-                    if abs(bitlen(lmod)-bitlen(target))<5:
+                    if abs(bitlen(lmod)-bitlen(target))<6:
                         break
-                k+=1
+                k-=1
             
             if abs(bitlen(lmod)-bitlen(target))>5:
                 i-=1
