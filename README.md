@@ -13,7 +13,7 @@ This basically creates a system of quadratics. Solving them mod p is easy. But t
 
 #### To run from folder "CUDA_QS_variant" (WIP):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 160 -base 2000 -debug 0 -lin_size 10_000_000 -quad_size 1</br></br>
+To run:  python3 run_qs.py -keysize 180 -base 4000 -debug 1 -lin_size 10_000_000 -quad_size 100</br></br>
 
 Prerequisites: </br>
 -Python (tested on 3.13)</br>
@@ -27,9 +27,4 @@ Prerequisites: </br>
 
 Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), since it gets a lot harder to access the GPU on a virtual machine.
 
-Update: Alright... the code is still very rough now... but it works like this:
-
-We find smooths using x^2+N and square moduli (to reduce to amount of odd exponent factors)
-Then we use a factor with odd exponent from the smooth we found as quadratic coefficient and construct a modulus with the rest of the factors and find more smooths with zx^2+N .. this means that we end up with a lot of smooths with a similar factorization. I still need to work a bit on more on which factors to use as quadratic coefficient and which to use as modulus.. so we get a good parabola when generating smooth candidates. But the base idea is implemented.
-
-Anyway... my hope is that that cuts down the required amount of smooths for really really large numbers when working with really really large factor bases. As a proof of concept this works.. but it still requires a bit more work to get it all setup correctly. Fuck it.. all I wanted was some dignity, respect.. an income.. justice for my former manager... instead the west treats me like complete trash and then gaslights me into believing im insane or some shit. These last two years, I have been stuck in a small room, without income, unable to see my friends anymore, socially isolated. And everyone stays silent. Even though I know people know I'm right about my math. Yet I am treated like this. If a visa can be arranged for any country, be it russia, china.. fuck, iran.. I dont care anymore... i'll go. Because every day, I struggle with suicidal thoughts due to being stuck in life here in the west, and if I don't do something, find a place where I'm respected for my work, I know how this will end.
+Update: Alright changed a few more things.. 
