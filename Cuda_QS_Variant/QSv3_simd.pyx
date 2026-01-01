@@ -687,8 +687,8 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
         u2+=1
   
     h5f.close()
-  #  if bSeenOnly == 1:
-     #   print("found: "+str(found)+" total: "+str(len(ret_array[0]))+" cmod: "+str(bitlen(cmod))+" quad: "+str(bitlen(quad_can)))
+    #if bSeenOnly == 1:
+      #  print("found: "+str(found)+" total: "+str(len(ret_array[0]))+" cmod: "+str(bitlen(cmod))+" quad: "+str(bitlen(quad_can)))
    # print("factor ranking: ",factor_ranking)
     return found
 
@@ -1084,16 +1084,16 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
       #  print("", end=f"[i]Smooths: {len(ret_array[2])}\r")
         i=len(factor_ranking)-1
         while i >-1:
-            new_quad=primeslist[factor_ranking[i][0]]
-
+            new_quad=primeslist[factor_ranking[i][-1]]
+            target=int(((n/new_quad)**0.5) /(lin_sieve_size))
            # new_quad=primeslist[i]
             
             skip=0
-            k=1
+            k=0
             new_cfact=[]
             new_indexes=[]
             lmod=1
-            while k < len(factor_ranking[i]):
+            while k < len(factor_ranking[i])-1:
                 if jacobi((-new_quad*n)%primeslist[factor_ranking[i][k]],primeslist[factor_ranking[i][k]])==1:
                    # skip=1
                    # break
@@ -1102,8 +1102,10 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
                     lmod*=primeslist[factor_ranking[i][k]]
                     if bitlen(lmod)>(keysize//2):
                         break
+                    if abs(bitlen(lmod)-bitlen(target))<5:
+                        break
                 k+=1
-            target=int(((n/quad)**0.5) /(lin_sieve_size))
+            
             if abs(bitlen(lmod)-bitlen(target))>5:
                 i-=1
                 continue
