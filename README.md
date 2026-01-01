@@ -28,3 +28,8 @@ Prerequisites: </br>
 Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), since it gets a lot harder to access the GPU on a virtual machine.
 
 Update: Alright changed a few more things..  will first sieve using a square modulus and then sieve at different quadratic coefficients with the modulus set as the odd exponent factors of any smooths found. The hope is that this setup will allow us to succeed earlier when factorizing very large numbers with huge factor bases.. Anyway.. suddenly got really bad headache. Gonna take a break.
+
+Update: I just had an insight:
+
+We can also add smooth candidates generated with zx^2-N to the linear algebra step... its still congruent mod N. It really doesn't matter.
+I should try sieving both zx^2+N and zx^2-N tomorrow...  just in case there is something there we can leverage to finish faster. 
