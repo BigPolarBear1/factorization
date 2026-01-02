@@ -42,7 +42,7 @@ quad_co_per_worker=1 #Amount of quadratic coefficients to check. Keep as small a
 base=1_000
 qbase=10
 lin_sieve_size=1
-lin_sieve_size2=100_000
+lin_sieve_size2=1_000_000
 quad_sieve_size=10
 g_debug=0 #0 = No debug, 1 = Debug, 2 = A lot of debug
 g_lift_lim=0.5
@@ -1275,4 +1275,5 @@ def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_
     launch(n,primeslist1,primeslist2)     
     duration = default_timer() - start
     print("\nFactorization in total took: "+str(duration))
+
 
