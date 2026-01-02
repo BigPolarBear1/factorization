@@ -48,6 +48,8 @@ It just makes the most sense... hmm. I just got to try it.. it might just yield 
 Like... it makes so much intuitive sense... I am internally cursing myself. This is literally what Ive been talking about in my paper for 3 years. Why just sieve one side when I can set it up like this....  ergh. What if... what if....  fuck it, time to get to work tomorrow. I can definitely check this in one day tomorrow. Easy. 
 
 
+Update: Shit day today. I'll do some work tonight. I just want to go for a run first. Running is the only time I'm able to be free from everything. Similar to backpacking I guess, but I'm broke, otherwise I would be doing that right now. Anyway.. the proof of concept is now just sieving zx^2+N .... first finding smooths where z = 1.. then constructing new moduli with odd exponent factors of any smooths found and look at different quadratic coefficients.. but according to my number theory... we should be creating a modulus of zx^2 that generated the smooth and construct a new zx^2 from the smooth candidate and sieve zx^2-N. I'm not sure if it would perform better then just sieving zx^2+N ... but it would make sense if it does. I'll try it out.. if that doesn't work... I'll tinker some more with tthe PoC that is currently uploaded. What I really need there is some type of heuristic to decide which factors we need to find to have a chance at succeeding with the linear algebra step earlier. 
+
 
 
 
