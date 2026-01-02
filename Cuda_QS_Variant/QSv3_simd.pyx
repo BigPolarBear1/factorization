@@ -42,6 +42,7 @@ quad_co_per_worker=1 #Amount of quadratic coefficients to check. Keep as small a
 base=1_000
 qbase=10
 lin_sieve_size=1
+lin_sieve_size2=100_000
 quad_sieve_size=10
 g_debug=0 #0 = No debug, 1 = Debug, 2 = A lot of debug
 g_lift_lim=0.5
@@ -603,7 +604,10 @@ def sumrowsby_index(a, index):
     return id_ar.dot(a)[0]
 
 cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,partials,root_list_complete,cmod,factor_ranking,fb_map,bSeenOnly):#,lin,cmod,sum_list):
-    threshold = int(math.log2((lin_sieve_size)*math.sqrt(abs(n))) - thresvar)
+    linsize=lin_sieve_size
+    if bSeenOnly==1:
+        linsize=lin_sieve_size2
+    threshold = int(math.log2((linsize)*math.sqrt(abs(n))) - thresvar)
     #threshold = int(math.log2(abs(n)) - thresvar)
     h5f = h5py.File('res.hdf5','r')
     found=0
@@ -673,12 +677,15 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                         continue         
                 if new_root not in ret_array[1]:
                     factor_ranking.append([])
+                    local_factors=list(local_factors)
+                    local_factors.sort()
+    
                     for fac in local_factors:
                         if fac != -1 and fac !=2 and bSeenOnly==0:
                             idx=fb_map[fac]
                             factor_ranking[-1].append(idx)
 
-                  #  print("seen_primes2: "+str(local_factors)+" cmod: "+str(cmod))
+                    #print("seen_primes2: "+str(local_factors)+" cmod: "+str(cmod))
                     found+=1
                     ret_array[1].append(new_root)
                     ret_array[0].append(poly_val)
@@ -914,11 +921,16 @@ def get_lin2(hmap,cfact,local_mod,indexes,quad_co,n,roots2d):
 @cython.boundscheck(False)
 @cython.wraparound(False)
 cdef build_database2interval(long long [:] primeslist,quad,hmap,n,root_list_complete,cmod,roots2d,bSeenOnly,factor_ranking):
+    
     h5f = h5py.File('res.hdf5','a')
     linlen=len(root_list_complete) 
     cdef Py_ssize_t i
     cdef Py_ssize_t v
-    interval_single=np.zeros([linlen,lin_sieve_size],dtype=np.uint16)    
+    if bSeenOnly==1:
+        linsize=lin_sieve_size2
+    else:
+        linsize=lin_sieve_size
+    interval_single=np.zeros([linlen,linsize],dtype=np.uint16)    
 
     h5f.create_dataset("intervals/"+str(cmod)+"/"+str(quad), data=interval_single,chunks=True)
 
@@ -926,9 +938,6 @@ cdef build_database2interval(long long [:] primeslist,quad,hmap,n,root_list_comp
     interval_single = cp.asarray(h5f["intervals/"+str(cmod)+"/"+str(quad)][:])
     i=0
     while i < len(primeslist):
-        if bSeenOnly ==1 and factor_ranking[i] ==0:
-            i+=1
-            continue
         prime=primeslist[i]
         log=round(math.log2(prime))
         x = int(roots2d[quad,i])
@@ -951,9 +960,9 @@ cdef build_database2interval(long long [:] primeslist,quad,hmap,n,root_list_comp
             root_res=(x_b-root)%prime
             root_dist2=(root_res*modi)%prime
         
-            if root_dist1 < lin_sieve_size+1:
+            if root_dist1 < linsize+1:
                 interval_single[v,root_dist1::prime]+=log
-            if root_dist2 < lin_sieve_size+1:
+            if root_dist2 < linsize+1:
                 if root_dist1 != root_dist2:
                     interval_single[v,root_dist2::prime]+=log  
 
@@ -1094,7 +1103,7 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
             while l < len(valid_quads):
                 #print("v: "+str(v))
                 new_quad=valid_quads[l]#primeslist[factor_ranking[i][-1]]
-                target=int(((n/new_quad)**0.5) /(lin_sieve_size))
+                target=int(((n/new_quad)**0.5) /(lin_sieve_size2))
                 # new_quad=primeslist[i]
             
                 skip=0
@@ -1113,12 +1122,15 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
                             break
                         if abs(bitlen(lmod)-bitlen(target))<3:
                             break
+                    elif new_quad == 1:
+                        print("WHY????????????????????????????????????????????????????",jacobi((-new_quad*n)%primeslist[factor_ranking[i][k]],primeslist[factor_ranking[i][k]]))
+                    
                     k-=1
             
                 if abs(bitlen(lmod)-bitlen(target))>2:
                     l+=1
                     continue
-
+             #   print("new_cfact: "+str(new_cfact))
          #   print("trying quad: "+str(new_quad)+" mod: "+str(lmod)+" cfact_new: "+str(new_cfact))
                 lin,lin_parts=get_lin2(hmap,new_cfact,lmod,new_indexes,new_quad,n,roots2d)
                 z=new_quad#quadlist[j]
@@ -1143,7 +1155,7 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
                 if len(lin_co_array) > 10000:
                     print("fatal error: "+str(new_cfact)+" lin_co_array: "+str(len(lin_co_array))+" cmod bits: "+str(bitlen(lmod)))#+" linlen: "+str(len))
                     sys.exit()
-                build_database2interval(primeslist_a,new_quad,hmap,n,lin_co_array,lmod,roots2d,0,factor_ranking)
+                build_database2interval(primeslist_a,new_quad,hmap,n,lin_co_array,lmod,roots2d,1,factor_ranking)
                 found+=process_interval2d(n,ret_array,new_quad,primelist_f,large_prime_bound,partials,lin_co_array,lmod,factor_ranking,fb_map,1)#,lin,new_mod,sum_list)
                 print("", end=f"[i]Smooths: {len(ret_array[2])}\r")
                 h5f = h5py.File('res.hdf5','a')
@@ -1263,5 +1275,4 @@ def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_
     launch(n,primeslist1,primeslist2)     
     duration = default_timer() - start
     print("\nFactorization in total took: "+str(duration))
-
 
