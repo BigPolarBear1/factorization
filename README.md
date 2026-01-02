@@ -26,28 +26,4 @@ Prerequisites: </br>
 
 Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), since it gets a lot harder to access the GPU on a virtual machine.
 
-Update: Alright changed a few more things..  will first sieve using a square modulus and then sieve at different quadratic coefficients with the modulus set as the odd exponent factors of any smooths found. The hope is that this setup will allow us to succeed earlier when factorizing very large numbers with huge factor bases.. Anyway.. suddenly got really bad headache. Gonna take a break.
-
-Update: I just had an insight:
-
-We can also add smooth candidates generated with zx^2-N to the linear algebra step... its still congruent mod N. It really doesn't matter.
-I should try sieving both zx^2+N and zx^2-N tomorrow...  just in case there is something there we can leverage to finish faster. 
-
-Aha.
-
-So if N=4387
-
-33^2+4387 = 5476  lets say we find this by sieving... now if we know the factorization of 33, we can use that as modulus and try to sieve for zx^2-4387 = 0 mod 33 where we construct zx from the smooth candidate we found. 
-And we might find 74^2-4387 = 1089
-
-Actually, that intuitively makes more sense. Let me try it tomorrow. Thats one hour of coding max. I will need to create a split again for the linear algebra step since we'll need to find a square for the left and right side. 
-It just makes the most sense... hmm. I just got to try it.. it might just yield squares faster.. I wont know for sure until I try it. Maybe it will work like shit... but I cant risk not trying it and potentially missing something huge. It does make intuitive sense...
-
-Like... it makes so much intuitive sense... I am internally cursing myself. This is literally what Ive been talking about in my paper for 3 years. Why just sieve one side when I can set it up like this....  ergh. What if... what if....  fuck it, time to get to work tomorrow. I can definitely check this in one day tomorrow. Easy. 
-
-
-Update: Shit day today. I'll do some work tonight. I just want to go for a run first. Running is the only time I'm able to be free from everything. Similar to backpacking I guess, but I'm broke, otherwise I would be doing that right now. Anyway.. the proof of concept is now just sieving zx^2+N .... first finding smooths where z = 1.. then constructing new moduli with odd exponent factors of any smooths found and look at different quadratic coefficients.. but according to my number theory... we should be creating a modulus of zx^2 that generated the smooth and construct a new zx^2 from the smooth candidate and sieve zx^2-N. I'm not sure if it would perform better then just sieving zx^2+N ... but it would make sense if it does. I'll try it out.. if that doesn't work... I'll tinker some more with tthe PoC that is currently uploaded. What I really need there is some type of heuristic to decide which factors we need to find to have a chance at succeeding with the linear algebra step earlier. I'll try that out... either one of these two will hopefully yield success... after that I'm taking my research private. Bc I'm stuck in life. 
-
-
-
-
+Update: Bah wasted day. It doesn't make sense to sieve both sides of the congruences with zx^2+N and zx^2-N. There may be some weird number theoretical trick there.. but thats going to require further research and I'll investigate that some more in the future (wont publish, pay me) .. let me finish what I was doing yesterday.
