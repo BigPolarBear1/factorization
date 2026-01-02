@@ -27,3 +27,6 @@ Prerequisites: </br>
 Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), since it gets a lot harder to access the GPU on a virtual machine.
 
 Update: Bah wasted day. It doesn't make sense to sieve both sides of the congruences with zx^2+N and zx^2-N. There may be some weird number theoretical trick there.. but thats going to require further research and I'll investigate that some more in the future (wont publish, pay me) .. let me finish what I was doing yesterday.
+
+Update: Fixed a small bug in the PoC. It wasn't using the largest factors to construct a modulus... but i fixed that now so it does use the largest smooth factors to construct a modulus...
+I'm going to try again to add p-adic lifting for when we try to find smooths with large factors of an earlier smooth.. because for those smooth candidates.. we dont want to introduce any new large factors.. we only want the large factors from the original smooth there.. and the only way I know how to solve that is to use p-adic lifting...we absolutely cant introduce any new large factors there... because that defeats the entire purpose of what I'm doing... and its the large factors which are the most problematic since the bigger they get they rarer their occurance. I'll do it tomorrow... feeling optimistic... maybe tonight I can sleep.
