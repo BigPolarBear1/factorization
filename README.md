@@ -28,6 +28,8 @@ Update: Bah, woke up in the middle of the night. So did some more work. I re-add
 
 You know... seeing it finally behave like it should.. aside from finetuning parameters, optimizing and finishing the paper.. Im basically done. After that I'm taking my research private.. and start the hunt for a polynomial time algorithm.... anyway... glad atleast this chapter is about to come to an end now...
 
+Update: Didn't do much work due to insomnia today. I'll continue tomorrow. So what we need to do now is, finetune those parameters... and also determine in advance if a quadratic coefficient is even worth sieving when we try to find smooth candidates with similar factorization... preferably we pass the test with legendre symbols for many small primes.. that would dramatically increase the odds of finding what we need.
+
 -------------------------------------------------------------------------
 NOTE: Starting 2026, none of my research will be published. Only people who treat me with respect will be allowed access to my work. And NATO countries/big tech are very low on that list after harassing me for years and treating me like shit. And I garantuee you, I will succeed at finding a polynomial time algorithm. There is no one else alive in this fucking world more determined then me to succeed at this. Fucking losers.
 
