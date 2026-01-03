@@ -976,7 +976,7 @@ cdef build_database2interval(long long [:] primeslist,quad,hmap,n,root_list_comp
     return 
 
 def build_2drootmap(primeslist,hmap,n):
-    roots2d=np.zeros([quad_sieve_size+1,base],dtype=np.int64)
+    roots2d=np.zeros([quad_sieve_size+1,base],dtype=np.int32)
     i=0
     while i < len(primeslist):
         prime=primeslist[i]
@@ -995,7 +995,8 @@ def build_2drootmap(primeslist,hmap,n):
             root_mult=tonelli(z_inv,prime)
             x=get_root(prime,y,z)
             x=(x*root_mult)%prime
-
+            if bitlen(x)>32:
+                print("big root, increase dtype in build_2drootmap()")
             roots2d[quad::prime,i]=x
 
             if (quad*x**2+n)%prime !=0:
@@ -1122,9 +1123,9 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
                             break
                         if abs(bitlen(lmod)-bitlen(target))<3:
                             break
-                    elif new_quad == 1:
-                        print("WHY????????????????????????????????????????????????????",jacobi((-new_quad*n)%primeslist[factor_ranking[i][k]],primeslist[factor_ranking[i][k]]))
-                    
+                #    elif new_quad == 1:
+                    #    print("WHY????????????????????????????????????????????????????",jacobi((-new_quad*n)%primeslist[factor_ranking[i][k]],primeslist[factor_ranking[i][k]]))
+                     #   print(primeslist[factor_ranking[i][k]])
                     k-=1
             
                 if abs(bitlen(lmod)-bitlen(target))>2:
@@ -1229,8 +1230,9 @@ def get_primes(start,stop):
 
 
 def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_size):
-    global key,keysize,workers,g_debug,base,key,lin_sieve_size,quad_sieve_size,max_bound
+    global key,keysize,workers,g_debug,base,key,lin_sieve_size,quad_sieve_size,max_bound,lin_sieve_size2
     key,keysize,workers,g_debug,base,lin_sieve_size,quad_sieve_size=l_key,l_keysize,l_workers,l_debug,l_base,l_lin_sieve_size,l_quad_sieve_size
+    lin_sieve_size2=lin_sieve_size
     start = default_timer() 
     if max_bound > lin_sieve_size:
         max_bound = lin_sieve_size
@@ -1275,5 +1277,4 @@ def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_
     launch(n,primeslist1,primeslist2)     
     duration = default_timer() - start
     print("\nFactorization in total took: "+str(duration))
-
 
