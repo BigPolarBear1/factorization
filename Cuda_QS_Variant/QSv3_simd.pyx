@@ -47,6 +47,8 @@ quad_sieve_size=10
 g_debug=0 #0 = No debug, 1 = Debug, 2 = A lot of debug
 g_lift_lim=0.5
 thresvar=30  ##Log value base 2 for when to check smooths with trial factorization. Eventually when we fix all the bugs we should be able to furhter lower this.
+thresvar2=10
+dupe_max_prime=10_000
 lp_multiplier=2
 min_prime=1
 g_max_diff_similar=5
@@ -54,7 +56,7 @@ g_enable_custom_factors=0
 g_p=107
 g_q=41
 mod_mul=0.5
-g_max_exp=1
+g_max_exp=20
 quad_per_interval=1
 
 ##Key gen function##
@@ -607,7 +609,9 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
     linsize=lin_sieve_size
     if bSeenOnly==1:
         linsize=lin_sieve_size2
-    threshold = int(math.log2((linsize)*math.sqrt(abs(n))) - thresvar)
+        threshold = int(math.log2((linsize)*math.sqrt(abs(n))) - thresvar2)
+    else:
+        threshold = int(math.log2((linsize)*math.sqrt(abs(n))) - thresvar)
     #threshold = int(math.log2(abs(n)) - thresvar)
     h5f = h5py.File('res.hdf5','r')
     found=0
@@ -644,18 +648,18 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                 if poly_val%(cmod*quad_can)!=0:
                     print("fatal")
                 local_factors, value = factorise_fast(poly_val,primelist_f)
-
+                #if g_debug ==1: note: need to fix is we skip odd exponents for large primes when lifting
                     #########START DEBUG###############
                     #poly_val2=quad_can*x**2+n
                     #local_factors2, value2,seen_primes2 = factorise_fast_debug(poly_val2//cmod,primelist_f,g_max_exp)
                     
-                    #seen_log=0
-                    #for prime in seen_primes2:
+                   # seen_log=0
+                  #  for prime in seen_primes2:
                        # if cmod%prime !=0 and quad_can%prime !=0:
-                        #    seen_log+=round(math.log2(prime))
+                          #  seen_log+=round(math.log2(prime))
  
         
-                  #  if seen_log != temp[i]:
+                #    if seen_log != temp[i]:
                      #   print("error:"+str(seen_primes2)+" seen_log: "+str(seen_log)+" assumed log: "+str(temp[i])+" quad: "+str(quad_can)+" cmod: "+str(cmod))
                     #########END DEBUG###############
                 if value != 1:
@@ -684,8 +688,11 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                         if fac != -1 and fac !=2 and bSeenOnly==0:
                             idx=fb_map[fac]
                             factor_ranking[-1].append(idx)
-
-                    #print("seen_primes2: "+str(local_factors)+" cmod: "+str(cmod))
+                    if g_debug == 1:
+                        if bSeenOnly==0:
+                            print("***seen_primes: "+str(local_factors)+" cmod: "+str(cmod))
+                        if bSeenOnly==1:
+                            print("seen_primes: "+str(local_factors)+" cmod: "+str(cmod))
                     found+=1
                     ret_array[1].append(new_root)
                     ret_array[0].append(poly_val)
@@ -940,8 +947,8 @@ cdef build_database2interval(long long [:] primeslist,quad,hmap,n,root_list_comp
     while i < len(primeslist):
         prime=primeslist[i]
         log=round(math.log2(prime))
-        x = int(roots2d[quad,i])
-        if x ==0:
+        xc = int(roots2d[quad,i])
+        if xc ==0:
             i+=1
             continue
         v=0
@@ -952,20 +959,53 @@ cdef build_database2interval(long long [:] primeslist,quad,hmap,n,root_list_comp
                 continue
             lcmod=cmod%prime
             modi=modinv(lcmod,prime)
+            x=xc
+            exp=1
+            while exp < g_max_exp+1:
+                
+                p=prime**exp
+                if exp > 1:
+                    x=lift_root(x,prime**(exp-1),n,quad,exp)
 
-            root_res=(x-root)%prime
-            root_dist1=(root_res*modi)%prime
+                root_dist1=solve_lin_con(cmod,x-root,p)
+                x_b=(p-x)%p 
+                root_dist2=solve_lin_con(cmod,x_b-root,p)
+                if bSeenOnly==0 or (bSeenOnly ==1 and prime < dupe_max_prime):
+                    hit=0
+                    if root_dist1 < linsize+1:
+                        interval_single[v,root_dist1::p]+=log
+                        hit=1
+                    if root_dist2 < linsize+1:
+                        if root_dist1 != root_dist2:
+                            interval_single[v,root_dist2::p]+=log  
+                            hit=1
+                    if g_debug ==1:
+                        CAN=quad*(root+root_dist1*cmod)**2+n
+                        if CAN % (cmod*p)  != 0:
 
-            x_b=(prime-x)%prime
-            root_res=(x_b-root)%prime
-            root_dist2=(root_res*modi)%prime
-        
-            if root_dist1 < linsize+1:
-                interval_single[v,root_dist1::prime]+=log
-            if root_dist2 < linsize+1:
-                if root_dist1 != root_dist2:
-                    interval_single[v,root_dist2::prime]+=log  
+                            print("EROROREROR",prime)
+                            sys.exit()
+                    if hit ==0:
+                        break
+                elif bSeenOnly ==1 and prime > dupe_max_prime-1 and exp%2 ==0:
+                    hit=0
+                    if root_dist1 < linsize+1:
+                        interval_single[v,root_dist1::p]+=(log*2)
+                        hit=1
+                    if root_dist2 < linsize+1:
+                        if root_dist1 != root_dist2:
+                            interval_single[v,root_dist2::p]+=(log*2)
+                            hit=1
+                    if g_debug ==1:
+                        CAN=quad*(root+root_dist1*cmod)**2+n
+                        if CAN % (cmod*p)  != 0:
 
+                            print("EROROREROR",prime)
+                            sys.exit()
+                    if hit ==0:
+                        break
+
+                exp+=1
             v+=1    
         i+=1
     h5f["intervals/"+str(cmod)+"/"+str(quad)][...]=cp.asnumpy(interval_single)
@@ -1131,7 +1171,8 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
                 if abs(bitlen(lmod)-bitlen(target))>2:
                     l+=1
                     continue
-             #   print("new_cfact: "+str(new_cfact))
+                if g_debug ==1:
+                    print("Modulus factors: "+str(new_cfact))
          #   print("trying quad: "+str(new_quad)+" mod: "+str(lmod)+" cfact_new: "+str(new_cfact))
                 lin,lin_parts=get_lin2(hmap,new_cfact,lmod,new_indexes,new_quad,n,roots2d)
                 z=new_quad#quadlist[j]
