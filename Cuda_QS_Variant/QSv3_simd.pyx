@@ -42,13 +42,13 @@ quad_co_per_worker=1 #Amount of quadratic coefficients to check. Keep as small a
 base=1_000
 qbase=10
 lin_sieve_size=1
-lin_sieve_size2=1_000_000
+lin_sieve_size2=10_000_000
 quad_sieve_size=10
 g_debug=0 #0 = No debug, 1 = Debug, 2 = A lot of debug
 g_lift_lim=0.5
 thresvar=30  ##Log value base 2 for when to check smooths with trial factorization. Eventually when we fix all the bugs we should be able to furhter lower this.
 thresvar2=10
-dupe_max_prime=10_000
+dupe_max_prime=100_000
 lp_multiplier=2
 min_prime=1
 g_max_diff_similar=5
@@ -195,7 +195,7 @@ def QS(n,factor_list,sm,xlist,flist):
         del xlist[g_max_smooths:]
         del flist[g_max_smooths:]  
     M2 = build_matrix(factor_list, sm, flist)
-    null_space=solve_bits(M2)
+    null_space=solve_bits(M2,factor_list)
     f1,f2=extract_factors(n, sm, xlist, null_space)
     if f1 != 0:
         print("[SUCCESS]Factors are: "+str(f1)+" and "+str(f2))
@@ -238,8 +238,8 @@ def extract_factors(N, relations, roots, null_space):
 
     return 0, 0
 
-def solve_bits(matrix):
-    n=base+2
+def solve_bits(matrix,factor_base):
+    n=len(factor_base)#base+2
     lsmap = {lsb: 1 << lsb for lsb in range(n+10000)}
     m = len(matrix)
     marks = []
@@ -280,7 +280,7 @@ def build_matrix(factor_base, smooth_nums, factors):
 
     ind=1
 
-    M2=[0]*(base+2)
+    M2=[0]*len(factor_base)
     for i in range(len(smooth_nums)):
         for fac in factors[i]:
             idx = fb_map[fac]
@@ -484,17 +484,17 @@ def solve_roots(prime,n):
         new_root=((main_root*root_mult))%prime
         if (s*new_root**2+n)%prime !=0:
             print("error2")
-        new_co=(2*s*new_root)%prime
-        if (new_co**2+n*4*s)%prime !=0:
-            print("error")
+       # new_co=(2*s*new_root)%prime
+       # if (new_co**2+n*4*s)%prime !=0:
+           # print("error")
       #  if (s*new_root**2-new_co*new_root+n)%prime !=0: ###To do: For debug delete later
            # print("error")
-        if new_co > prime // 2:
-            new_co=(prime-new_co)%prime  
+        if new_root > prime // 2:
+            new_root=(prime-new_root)%prime  
 
         end=temp_hmap[0]
         temp_hmap[end]=s
-        temp_hmap[end+1]=new_co
+        temp_hmap[end+1]=new_root
         temp_hmap[0]+=2
         s+=1   
     except Exception as e:
@@ -605,7 +605,7 @@ def sumrowsby_index(a, index):
     id_ar[r,c]=1
     return id_ar.dot(a)[0]
 
-cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,partials,root_list_complete,cmod,factor_ranking,fb_map,bSeenOnly):#,lin,cmod,sum_list):
+cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,partials,root_list_complete,cmod,factor_ranking,fb_map,bSeenOnly,seen_factors):#,lin,cmod,sum_list):
     linsize=lin_sieve_size
     if bSeenOnly==1:
         linsize=lin_sieve_size2
@@ -685,9 +685,12 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                     local_factors.sort()
     
                     for fac in local_factors:
-                        if fac != -1 and fac !=2 and bSeenOnly==0:
+                        if fac != -1 and fac !=2:
                             idx=fb_map[fac]
-                            factor_ranking[-1].append(idx)
+                            seen_factors[idx]+=1
+                            if bSeenOnly==0:
+                               
+                                factor_ranking[-1].append(idx)
                     if g_debug == 1:
                         if bSeenOnly==0:
                             print("***seen_primes: "+str(local_factors)+" cmod: "+str(cmod))
@@ -730,7 +733,7 @@ cdef factorise_fast_quads(value,long long [::1] factor_base):
     return factors, value
 
 
-def filter_quads(qbase,n):
+def filter_quads(qbase,n,score):
     ###Note: We look for quadratic coefficients that factor over the factor base but have no even exponents. This garantuees unique results
     valid_quads=[]
     valid_quads_factors=[]
@@ -738,12 +741,13 @@ def filter_quads(qbase,n):
     roots=[]
     i=1
     while i < quad_sieve_size+1:
-        quad_local_factors, quad_value = factorise_fast_quads(i,qbase) 
-        if quad_value != 1:
-            i+=1
-            continue
-        valid_quads.append(i)
-        valid_quads_factors.append(quad_local_factors)
+        if score[i]>10:
+            quad_local_factors, quad_value = factorise_fast_quads(i,qbase) 
+            if quad_value != 1:
+                i+=1
+                continue
+            valid_quads.append(i)
+            valid_quads_factors.append(quad_local_factors)
         i+=1
     return valid_quads,valid_quads_factors
 
@@ -865,7 +869,7 @@ def generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SI
                 return cmod,cfact,indexes
     return 0,0,0
 
-def get_lin(hmap,cfact,local_mod,indexes,quad_co,n,roots2d):
+def get_lin(cfact,local_mod,indexes,quad_co,n,roots2d):
     all_lin_parts=[]
     j=0
     lin=0
@@ -895,7 +899,7 @@ def get_lin(hmap,cfact,local_mod,indexes,quad_co,n,roots2d):
     return lin,all_lin_parts
 
 
-def get_lin2(hmap,cfact,local_mod,indexes,quad_co,n,roots2d):
+def get_lin2(cfact,local_mod,indexes,quad_co,n,roots2d):
     all_lin_parts=[]
     j=0
     lin=0
@@ -927,7 +931,7 @@ def get_lin2(hmap,cfact,local_mod,indexes,quad_co,n,roots2d):
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cdef build_database2interval(long long [:] primeslist,quad,hmap,n,root_list_complete,cmod,roots2d,bSeenOnly,factor_ranking):
+cdef build_database2interval(long long [:] primeslist,quad,n,root_list_complete,cmod,roots2d,bSeenOnly,factor_ranking):
     
     h5f = h5py.File('res.hdf5','a')
     linlen=len(root_list_complete) 
@@ -1015,7 +1019,10 @@ cdef build_database2interval(long long [:] primeslist,quad,hmap,n,root_list_comp
     h5f.close()
     return 
 
-def build_2drootmap(primeslist,hmap,n):
+def build_2drootmap(primeslist,hmap,n):       
+    #h5f = h5py.File('res.hdf5','a')
+
+    score=np.zeros(quad_sieve_size+1,dtype=np.int32)
     roots2d=np.zeros([quad_sieve_size+1,base],dtype=np.int32)
     i=0
     while i < len(primeslist):
@@ -1031,9 +1038,13 @@ def build_2drootmap(primeslist,hmap,n):
                 j+=1
                 continue  
             
-            y=hmap[i][2]
+            
+            if prime < 100:
+                k=quad
+                
+                score[k::prime]+=1
+            x=hmap[i][2]
             root_mult=tonelli(z_inv,prime)
-            x=get_root(prime,y,z)
             x=(x*root_mult)%prime
             if bitlen(x)>32:
                 print("big root, increase dtype in build_2drootmap()")
@@ -1044,15 +1055,20 @@ def build_2drootmap(primeslist,hmap,n):
                 sys.exit()
             j+=1
         i+=1
+    i=0
+
+
+  #  h5f.create_dataset("tiles/"+str(prime), data=dat,chunks=True)  
+  #  h5f.close()
    # print(roots2d)
-    return roots2d
+    return roots2d,score
 
 def gen_modulus_and_interval(quad,n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,hmap,primeslist_a,grays,roots2d,bSeenOnly,factor_ranking):
     new_mod,cfact,indexes=generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,bitlen(tnum),hmap,quad)
     if new_mod ==0:
         return 0,0
     root_list_complete=[]
-    lin,lin_parts=get_lin(hmap,cfact,new_mod,indexes,quad,n,roots2d)
+    lin,lin_parts=get_lin(cfact,new_mod,indexes,quad,n,roots2d)
     z=quad#quadlist[j]
     lin_co_array=[]
     q=0
@@ -1074,7 +1090,7 @@ def gen_modulus_and_interval(quad,n,primeslist,seen,tnum,close_range,too_close,L
         poly_ind+=1
 
     
-    build_database2interval(primeslist_a,quad,hmap,n,lin_co_array,new_mod,roots2d,bSeenOnly,factor_ranking)
+    build_database2interval(primeslist_a,quad,n,lin_co_array,new_mod,roots2d,bSeenOnly,factor_ranking)
     return lin_co_array,new_mod
 
 
@@ -1115,28 +1131,29 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
     UPPER_BOUND_SIQS=4000
     tnum=int(((n)**0.5) /(lin_sieve_size))
     seen=[]
-    i=0
-    while i < len(primeslist):
-        prime=primeslist[i]
-        h5f = h5py.File('res.hdf5','a')
-        dat=np.zeros(prime,dtype=np.int64)
-        h5f.create_dataset("tiles/"+str(prime), data=dat,chunks=True)  
-        h5f.close()
-        i+=1
+    #i=0
+    #while i < len(primeslist):
+     #   prime=primeslist[i]
+     #   h5f = h5py.File('res.hdf5','a')
+     #   dat=np.zeros(prime,dtype=np.int64)
+     #   h5f.create_dataset("tiles/"+str(prime), data=dat,chunks=True)  
+     #   h5f.close()
+     #   i+=1
     print("[i]Building 2d root map")
-    roots2d=build_2drootmap(primeslist_a,hmap,n)
+    roots2d,score=build_2drootmap(primeslist_a,hmap,n)
     print("[i]Entering attack loop")
-    valid_quads,valid_quads_factors=filter_quads(qlist,n)
+    valid_quads,valid_quads_factors=filter_quads(qlist,n,score)
     fb_map = {val: i for i, val in enumerate(primeslist)}
    # print("fb_map: ",fb_map)
    # factor_ranking=[]#np.zeros(len(primeslist),dtype=np.uint16)
+    seen_factors=array.array('i',len(primeslist)*[0])
     while 1:
         factor_ranking=[]
         quad=1
         root_list_complete,new_mod=gen_modulus_and_interval(quad,n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,hmap,primeslist_a,grays,roots2d,0,factor_ranking)
         if new_mod ==0:
             continue            
-        found+=process_interval2d(n,ret_array,quad,primelist_f,large_prime_bound,partials,root_list_complete,new_mod,factor_ranking,fb_map,0)#,lin,new_mod,sum_list)
+        found+=process_interval2d(n,ret_array,quad,primelist_f,large_prime_bound,partials,root_list_complete,new_mod,factor_ranking,fb_map,0,seen_factors)#,lin,new_mod,sum_list)
       #  print("", end=f"[i]Smooths: {len(ret_array[2])}\r")
         i=len(factor_ranking)-1
         while i >-1:
@@ -1153,6 +1170,9 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
                 new_indexes=[]
                 lmod=1
                 while k >-1:
+                    if seen_factors[factor_ranking[i][k]]>10:
+                        k-=1
+                        continue
                     if jacobi((-new_quad*n)%primeslist[factor_ranking[i][k]],primeslist[factor_ranking[i][k]])==1:
                    # skip=1
                    # break
@@ -1174,7 +1194,7 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
                 if g_debug ==1:
                     print("Modulus factors: "+str(new_cfact))
          #   print("trying quad: "+str(new_quad)+" mod: "+str(lmod)+" cfact_new: "+str(new_cfact))
-                lin,lin_parts=get_lin2(hmap,new_cfact,lmod,new_indexes,new_quad,n,roots2d)
+                lin,lin_parts=get_lin2(new_cfact,lmod,new_indexes,new_quad,n,roots2d)
                 z=new_quad#quadlist[j]
                 lin_co_array=[]
                 q=0
@@ -1197,15 +1217,26 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
                 if len(lin_co_array) > 10000:
                     print("fatal error: "+str(new_cfact)+" lin_co_array: "+str(len(lin_co_array))+" cmod bits: "+str(bitlen(lmod)))#+" linlen: "+str(len))
                     sys.exit()
-                build_database2interval(primeslist_a,new_quad,hmap,n,lin_co_array,lmod,roots2d,1,factor_ranking)
-                found+=process_interval2d(n,ret_array,new_quad,primelist_f,large_prime_bound,partials,lin_co_array,lmod,factor_ranking,fb_map,1)#,lin,new_mod,sum_list)
+                build_database2interval(primeslist_a,new_quad,n,lin_co_array,lmod,roots2d,1,factor_ranking)
+                found+=process_interval2d(n,ret_array,new_quad,primelist_f,large_prime_bound,partials,lin_co_array,lmod,factor_ranking,fb_map,1,seen_factors)#,lin,new_mod,sum_list)
                 print("", end=f"[i]Smooths: {len(ret_array[2])}\r")
                 h5f = h5py.File('res.hdf5','a')
                 del h5f["intervals/"+str(lmod)]
                 h5f.close()
                     #   print("", end=f"[i]Smooths: {len(ret_array[2])}\r")
                 if found > 500 or len(ret_array[0]) > base+2:
-                    test,test2=QS(n,primelist,ret_array[0],ret_array[1],ret_array[2]) 
+                   # if g_debug ==1:
+                     #   print("seen_factors: ",seen_factors)
+                    fin=[]
+                    d=0
+                    while d < len(primeslist):
+                        if seen_factors[d]!=0:
+                            fin.append(primeslist[d])
+                        d+=1
+                    fin.insert(0,2)
+                    fin.insert(0,-1)
+
+                    test,test2=QS(n,fin,ret_array[0],ret_array[1],ret_array[2]) 
                     found=0 
                     if test !=0:
                         return
@@ -1214,6 +1245,8 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
             i-=1 
         ######To do: Return a list of all odd exponent factors for any smooths found. Now iterate that and call gen_modulus_and_interal for those quadratic coefficients.
         if found > 500 or len(ret_array[0]) > base+2:
+            if g_debug ==1:
+                print("seen_factors: ",seen_factors)
             test,test2=QS(n,primelist,ret_array[0],ret_array[1],ret_array[2]) 
             found=0 
             if test !=0:
@@ -1273,7 +1306,7 @@ def get_primes(start,stop):
 def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_size):
     global key,keysize,workers,g_debug,base,key,lin_sieve_size,quad_sieve_size,max_bound,lin_sieve_size2
     key,keysize,workers,g_debug,base,lin_sieve_size,quad_sieve_size=l_key,l_keysize,l_workers,l_debug,l_base,l_lin_sieve_size,l_quad_sieve_size
-    lin_sieve_size2=lin_sieve_size
+   # lin_sieve_size2=lin_sieve_size
     start = default_timer() 
     if max_bound > lin_sieve_size:
         max_bound = lin_sieve_size
