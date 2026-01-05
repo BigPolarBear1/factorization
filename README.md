@@ -37,7 +37,7 @@ I'm still trying to figure out how to sieve this somehow.
 
 Update: Did some more thinking about this. Actually the way you would sieve this is probably very similar to number field sieve. Where one side is mod N and the other side is in the integers.  So one side we sieve zx<sub>0</sub>^2-yx<sub>0</sub> = a and the otherside zx<sub>1</sub>^2-yx<sub>1</sub> = a mod N. Let me do some thinking how exactly I will set this up.
 
-Update: Oh actuallyI I have an idea. Precalculate this: zx<sub>0</sub>^2-yx<sub>0</sub> = zx<sub>1</sub>^2-yx<sub>1</sub> = a mod (N, p) Once that is precalculated into a hashmap, we can pull solutions from it.. should be as easy as that. Lets see. I'll get a very rough PoC out tonight. 
+Update: Oh actuallyI I have an idea. Precalculate this: zx<sub>0</sub>^2-yx<sub>0</sub> = zx<sub>1</sub>^2-yx<sub>1</sub> mod (N, p) Once that is precalculated into a hashmap, we can pull solutions from it.. should be as easy as that. Lets see. I'll get a very rough PoC out tonight. 
 
 
 -------------------------------------------------------------------------
