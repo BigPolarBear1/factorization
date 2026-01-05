@@ -24,7 +24,7 @@ Prerequisites: </br>
 
 Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), since it gets a lot harder to access the GPU on a virtual machine.
 
-UPDATE: I got some more stuff done. Optimized memory useage etc. The dupe_max_prime is fairly high, should probably be a lot smaller if using a factor base of 100_000. But if you want to do 300 bit and above, you need a factor base in the millions and dupe_max_prime should be high enough. I'll begin experimentation now with bit sizes larger then 300 bit. If I get to 400 bit and higher.. I have won. 
+UPDATE: I got some more stuff done. Optimized memory useage etc. The dupe_max_prime is fairly high, should probably be a lot smaller if using a factor base of 100_000. But if you want to do 300 bit and above, you need a factor base in the millions and dupe_max_prime should be high enough (and either way, anything below 300 bit is trivial to factor anyway, what matters is 300 and above now). I'll begin experimentation now with bit sizes larger then 300 bit. If I get to 400 bit and higher.. I have won. 
 
 -------------------------------------------------------------------------
 #### Rants
