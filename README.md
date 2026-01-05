@@ -33,7 +33,7 @@ Update: I'm going to see what I need to factor 400-bit and begin working toward 
 
 #### To run from folder "nfs_variant" (WIP):</br></br>
 
-Note: Experimental WORK IN PROGRESS.
+Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -key 4387 -base 11 -debug 1 -lin_size 1000 -quad_size 100</br></br>
 
