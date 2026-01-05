@@ -35,7 +35,7 @@ To run:  python3 run_qs.py -keysize 20 -base 20 -debug 1 -lin_size 1000 -quad_si
 This uses the number theory from the paper and full quadratics. It will succeed if two distinct roots for the same coefficients produce the same results mod N. 
 I'm still trying to figure out how to sieve this somehow.
 
-Update: Oh yea.. I guess if we find one smooth by sieving zx^2-yx mod N ... then we know the possible root residues that may occur modulo the smooth... and we may actually be able to deduce the a second smooth generating the same value from that. I know I initially explored this all the way back last spring... but I may actually have matured my skills and understanding enough to pull it off. Let me quickly have a try. I dont want to risk having missed something obvious and end up with someone else stealing the credits.
+Update: Did some more thinking about this. Actually the way you would sieve this is probably very similar to number field sieve. Where one side is mod N and the other side is in the integers.  So one side we sieve zx^2-yx = a and the otherside zx^2-yx = a mod N. Let me do some thinking how exactly I will set this up.
 
 -------------------------------------------------------------------------
 #### Rants
