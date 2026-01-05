@@ -31,6 +31,16 @@ In theory it may finish well before gathering 1_000_000 smooths. But I also need
 
 Update: I'm going to see what I need to factor 400-bit and begin working toward that goal now. Once I can succeed at that on my laptop within a day.. I'll be done. 
 
+#### To run from folder "nfs_variant" (WIP):</br></br>
+
+Note: Experimental WORK IN PROGRESS.
+To build: python3 setup.py build_ext --inplace</br>
+To run:  python3 run_qs.py -key 4387 -base 11 -debug 1 -lin_size 1000 -quad_size 100</br></br>
+
+I still really believe that bridge to NFS exists by sieving the full quadratics, not just discriminants, and where 2zx != y. I'm going to try one final time to get that to work. 
+In essence we try to find a solution as we see in debug.py ... by solving for 0 mod any prime.
+
+
 -------------------------------------------------------------------------
 #### Rants
 NOTE: Starting 2026, none of my research will be published. Only people who treat me with respect will be allowed access to my work. And NATO countries/big tech are very low on that list after harassing me for years and treating me like shit. And I garantuee you, I will succeed at finding a polynomial time algorithm. There is no one else alive in this fucking world more determined then me to succeed at this. Fucking losers.
