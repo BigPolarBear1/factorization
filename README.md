@@ -26,6 +26,9 @@ Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), s
 
 UPDATE: I got some more stuff done. Optimized memory useage etc. The dupe_max_prime is fairly high, should probably be a lot smaller if using a factor base of 100_000. But if you want to do 300 bit and above, you need a factor base in the millions and dupe_max_prime should be high enough (and either way, anything below 300 bit is trivial to factor anyway, what matters is 300 and above now). I'll begin experimentation now with bit sizes larger then 300 bit. If I get to 400 bit and higher.. I have won, since only number field sieve can factor numbers larger then +/- 110 digits.. hence it would prove my work if I can push past that with a quadratic sieve style algorithm.
 
+ps: You can try to attack 300 bit using: python3 run_qs.py -keysize 300 -base 1_000_000 -debug 1 -lin_size 100_000_000 -quad_size 100
+In theory it may finish well before gathering 1_000_000 smooths. But I also need to tinker with the PoC some more and run some tests to see what works well and what doesnt.
+
 -------------------------------------------------------------------------
 #### Rants
 NOTE: Starting 2026, none of my research will be published. Only people who treat me with respect will be allowed access to my work. And NATO countries/big tech are very low on that list after harassing me for years and treating me like shit. And I garantuee you, I will succeed at finding a polynomial time algorithm. There is no one else alive in this fucking world more determined then me to succeed at this. Fucking losers.
