@@ -35,18 +35,10 @@ Update: I'm going to see what I need to factor 400-bit and begin working toward 
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -key 4387 -base 11 -debug 1 -lin_size 1000 -quad_size 100</br></br>
+To run:  python3 run_qs.py -keysize 20 -base 20 -debug 1 -lin_size 1000 -quad_size 1</br></br>
 
-I still really believe that bridge to NFS exists by sieving the full quadratics, not just discriminants, and where 2zx != y. I'm going to try one final time to get that to work. 
-In essence we try to find a solution as we see in debug.py ... by solving for 0 mod any prime.
-
-i.e Lets say through sieving we find the following:
-
-54^2-133\*54+4387 = 121   (x=54, y0=133, z=1)
-54^2+25\*54-4387 = -121   (x=54, y1=25, z=1)
-
-Now, according to debug.py ... if this solve for 0 in the integers instead of 121, then the root will end up being a factor of N. 
-There has to be something here... I'll do some thinking in the coming days. The way the uploaded PoC does it is all wrong. 
+This uses the number theory from the paper and full quadratics. It will succeed if two distinct roots for the same coefficients produce the same results mod N. 
+I'm still trying to figure out how to sieve this somehow.
 
 -------------------------------------------------------------------------
 #### Rants
