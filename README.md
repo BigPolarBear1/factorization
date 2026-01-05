@@ -40,6 +40,13 @@ To run:  python3 run_qs.py -key 4387 -base 11 -debug 1 -lin_size 1000 -quad_size
 I still really believe that bridge to NFS exists by sieving the full quadratics, not just discriminants, and where 2zx != y. I'm going to try one final time to get that to work. 
 In essence we try to find a solution as we see in debug.py ... by solving for 0 mod any prime.
 
+i.e Lets say through sieving we find the following:
+
+54^2-133\*54+4387 = 121   (x=54, y0=133, z=1)
+54^2+25\*54-4387 = -121   (x=54, y1=25, z=1)
+
+Now, according to debug.py ... if this solve for 0 in the integers instead of 121, then the root will end up being a factor of N. 
+There has to be something here... I'll do some thinking in the coming days. The way the uploaded PoC does it is all wrong. 
 
 -------------------------------------------------------------------------
 #### Rants
