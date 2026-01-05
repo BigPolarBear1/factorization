@@ -26,11 +26,6 @@ Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), s
 
 UPDATE: I got some more stuff done. Optimized memory useage etc. The dupe_max_prime is fairly high, should probably be a lot smaller if using a factor base of 100_000. But if you want to do 300 bit and above, you need a factor base in the millions and dupe_max_prime should be high enough (and either way, anything below 300 bit is trivial to factor anyway, what matters is 300 and above now). I'll begin experimentation now with bit sizes larger then 300 bit. If I get to 400 bit and higher.. I have won, since only number field sieve can factor numbers larger then +/- 110 digits.. hence it would prove my work if I can push past that with a quadratic sieve style algorithm.
 
-ps: You can try to attack 300 bit using: python3 run_qs.py -keysize 300 -base 1_000_000 -debug 1 -lin_size 100_000_000 -quad_size 100
-In theory it may finish well before gathering 1_000_000 smooths. But I also need to tinker with the PoC some more and run some tests to see what works well and what doesnt.
-
-Update: I'm going to see what I need to factor 400-bit and begin working toward that goal now. Once I can succeed at that on my laptop within a day.. I'll be done. 
-
 #### To run from folder "nfs_variant" (WIP):</br></br>
 
 Note: Experimental WORK IN PROGRESS.</br>
@@ -39,6 +34,8 @@ To run:  python3 run_qs.py -keysize 20 -base 20 -debug 1 -lin_size 1000 -quad_si
 
 This uses the number theory from the paper and full quadratics. It will succeed if two distinct roots for the same coefficients produce the same results mod N. 
 I'm still trying to figure out how to sieve this somehow.
+
+Update: Oh yea.. I guess if we find one smooth by sieving zx^2-yx mod N ... then we know the possible root residues that may occur modulo the smooth... and we may actually be able to deduce the a second smooth generating the same value from that. I know I initially explored this all the way back last spring... but I may actually have matured my skills and understanding enough to pull it off. Let me quickly have a try. I dont want to risk having missed something obvious and end up with someone else stealing the credits.
 
 -------------------------------------------------------------------------
 #### Rants
