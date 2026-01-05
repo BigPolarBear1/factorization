@@ -24,7 +24,7 @@ Prerequisites: </br>
 
 Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), since it gets a lot harder to access the GPU on a virtual machine.
 
-UPDATE: I got some more stuff done. Optimized memory useage etc. The dupe_max_prime is fairly high, should probably be a lot smaller if using a factor base of 100_000. But if you want to do 300 bit and above, you need a factor base in the millions and dupe_max_prime should be high enough (and either way, anything below 300 bit is trivial to factor anyway, what matters is 300 and above now). I'll begin experimentation now with bit sizes larger then 300 bit. If I get to 400 bit and higher.. I have won, since only number field sieve can factor numbers larger then +/- 110 digits.. hence it would prove my work if I can push past that with a quadratic sieve style algorithm.
+Update: While making this PoC, I suddenly had an idea, linking back to some things I tried earlier last spring. See below:
 
 #### To run from folder "nfs_variant" (WIP):</br></br>
 
@@ -32,14 +32,12 @@ Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 20 -base 20 -debug 1 -lin_size 1000 -quad_size 1</br></br>
 
-This uses the number theory from the paper and full quadratics. It will succeed if two distinct roots for the same coefficients produce the same results mod N. 
+This uses the number theory from the paper and full quadratics. It will succeed if two distinct roots for the same coefficient produce the same results mod N. 
 I'm still trying to figure out how to sieve this somehow.
 
-Update: Did some more thinking about this. Actually the way you would sieve this is probably very similar to number field sieve. Where one side is mod N and the other side is in the integers.  So one side we sieve zx<sub>0</sub>^2-yx<sub>0</sub> = a and the otherside zx<sub>1</sub>^2-yx<sub>1</sub> = a mod N. Let me do some thinking how exactly I will set this up.
+Update: Oh actually! I have an idea. Precalculate this: zx<sub>0</sub>^2-yx<sub>0</sub> = zx<sub>1</sub>^2-yx<sub>1</sub> mod (N, p) Once that is precalculated into a hashmap, we can pull solutions from it.. should be as easy as that. I'll release a PoC somewhere this week. The uploaded PoC shows how the math works in the integers. Now we need to leverage everything from the paper and precompute everything mod p so we can pull these solutions from a hashmap. Its really as easy as that. God damnit. Should have figured this out a long time ago.
 
-Update: Oh actuallyI I have an idea. Precalculate this: zx<sub>0</sub>^2-yx<sub>0</sub> = zx<sub>1</sub>^2-yx<sub>1</sub> mod (N, p) Once that is precalculated into a hashmap, we can pull solutions from it.. should be as easy as that. Lets see. I'll get a very rough PoC out tonight. 
-
-
+</br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
 -------------------------------------------------------------------------
 #### Rants
 NOTE: Starting 2026, none of my research will be published. Only people who treat me with respect will be allowed access to my work. And NATO countries/big tech are very low on that list after harassing me for years and treating me like shit. And I garantuee you, I will succeed at finding a polynomial time algorithm. There is no one else alive in this fucking world more determined then me to succeed at this. Fucking losers.
