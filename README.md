@@ -36,6 +36,8 @@ Update: Mentally going really bad places. I did verify that the code is able to 
 
 Update: I did some minor improvements. You can factorize a 200-bit key with a factor base of 100_000 using: python3 run_qs.py -keysize 200 -base 100_000 -debug 1 -lin_size 10_000_000 -quad_size 100, but it should finish well before 100_000 smooths. It does slow down when we jump into the logic for finding smooths with similar large factors..due to only sieving with odd exponents up to the bound defined by dupe_max_prime, but I'm hoping there is some type of asymetrical scaling there I can abuse so i can just use enormous factor basis. Anyway..200 bit, ez. Now I will start pushing the PoC and see how far we can get.
 
+Update: I just realized something. If I optimize the memory layout properly.. even a factor base of in the millions will take up very little space. So I could just use much much much much much bigger factor basis and much much much much bigger sieve intervals. Hmm. That will be my goal for tomorrow.
+
 -------------------------------------------------------------------------
 NOTE: Starting 2026, none of my research will be published. Only people who treat me with respect will be allowed access to my work. And NATO countries/big tech are very low on that list after harassing me for years and treating me like shit. And I garantuee you, I will succeed at finding a polynomial time algorithm. There is no one else alive in this fucking world more determined then me to succeed at this. Fucking losers.
 
