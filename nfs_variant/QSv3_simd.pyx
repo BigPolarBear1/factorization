@@ -730,17 +730,22 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
     x1=1
     y0=1
 
-    while z < 100:
+    while z < 2:
         o=0
-        while o < 100:
+        while o < 10:
             i=0
             y0=math.isqrt(n*4*z)
             y=y0+o
+            seen=[]
+            roots=[]
             while i < n:
                 fail=0
             
                 x=x1+i
-                poly_val=z*x**2-y*x+n
+                poly_val=(z*x**2-y*x)%n
+
+                
+
                 if poly_val ==0:
                     i+=1
                     continue
@@ -769,30 +774,45 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
                                 break
                         j+=1
                     if fail ==0:
+
+                        u=0
+                        while u < len(seen):
+                            if seen[u]==poly_val:
+                                gcdres=gcd(abs(roots[u]-x),n)
+                                print("gcdres: "+str(gcdres)+" polyval: "+str(poly_val)+" x: "+str(x)+" old x: "+str(roots[u])+" y: "+str(y)+" z: "+str(z))
+                                if gcdres != 1 and gcdres != n:
+                                    print("found factor: "+str(gcdres))
+                                    sys.exit()
+                            u+=1
+                        seen.append(poly_val)
+                        roots.append(x)
+                #        test=math.isqrt(abs(poly_val))
+                #        if test**2==poly_val:
+                #            print(" z: "+str(z)+" x: "+str(x)+" y: "+str(y)+" poly_val: "+str(poly_val))
                     #print("poly_val: "+str(poly_val)+" y: "+str(y)+" seen_primes: "+str(seen_primes))
-                        r=get_root(n,y,z) 
-                        r2=get_root(total_mod,y,z) 
-                        if r == r2:
-                            new=z*r**2-y*r+n
-                            disc=y**2-n*4*z
-                            if disc ==0:
-                                print("FATAL ERROR DISC")
+                  #      r=get_root(n,y,z) 
+                  #      r2=get_root(total_mod,y,z) 
+                  #      if r == r2:
+                  #          new=z*r**2-y*r+n
+                  #          disc=y**2-n*4*z
+                  #          if disc ==0:
+                   #             print("FATAL ERROR DISC")
                            # print("poly_val: "+str(poly_val)+" y: "+str(y)+" seen_primes: "+str(seen_primes))
-                            local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(disc,primelist_f)
+                   #         local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(disc,primelist_f)
                         
                           #  print("z: "+str(z)+" val: "+str(value)+" y: "+str(y)+" seen_primes: "+str(seen_primes)+" root: "+str(r)+" modulus: "+str(total_mod))
                       #  print("total_mod: "+str(total_mod))
-                            if value == 1:
-                                if y not in root_list:
-                                    root_list.append(y)
-                                    poly_list.append(disc)
-                                    flist.append(local_factors)
-                                    ylist.append(y)
-                                    total_mod_list.append(total_mod)
-                                    print("", end=f"[i]Smooths: {len(root_list)} / {base*1+2}\r")
-                                    if len(root_list)>base+2:
-                                        test=QS(n,primelist,poly_list,root_list,flist,ylist,total_mod_list)  
-                                        return                
+                   #         if value == 1:
+                   #             if y not in root_list:
+                   #                 root_list.append(y)
+                   #                 poly_list.append(disc)
+                   #                 flist.append(local_factors)
+                   #                 ylist.append(y)
+                   #                 total_mod_list.append(total_mod)
+                   #                 print("", end=f"[i]Smooths: {len(root_list)} / {base*1+2}\r")
+                   #                 if len(root_list)>base+2:
+                   #                     test=QS(n,primelist,poly_list,root_list,flist,ylist,total_mod_list)  
+                   #                     return                
 
                 i+=1
             o+=1
