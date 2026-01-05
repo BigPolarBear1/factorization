@@ -10,7 +10,7 @@ This basically creates a system of quadratics. Solving them mod p is easy. But t
 
 #### To run from folder "CUDA_QS_variant" (WIP):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 200 -base 100_000 -debug 1 -lin_size 10_000_000 -quad_size 100</br></br>
+To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
 
 Prerequisites: </br>
 -Python (tested on 3.13)</br>
@@ -24,21 +24,10 @@ Prerequisites: </br>
 
 Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), since it gets a lot harder to access the GPU on a virtual machine.
 
-Update: Bah, woke up in the middle of the night. So did some more work. I re-added p-adic lifting. Now when it tries to find similar smooth candidates, it uses p-adic lifting and only sieves even exponents if prime is larger then dupe_max_prime. Additionally thresvar2 sets the threshold tighter then when we do our normal sieving. This has the effect that any smooths we find wont have any new large factors. Hence they have a great chance of forcing the linear algebra step to succeed early. Anyway.. I need some more sleep. I'll fine tune the parameters tomorrow and optimize everything. Feeling very optimistic... I know I tried this before.. but somehow, it works much better this time around.. I think its because Im just worrying about the large factors now... which is what really matters anyway.
-
-You know... seeing it finally behave like it should.. aside from finetuning parameters, optimizing and finishing the paper.. Im basically done. After that I'm taking my research private.. and start the hunt for a polynomial time algorithm.... anyway... glad atleast this chapter is about to come to an end now...
-
-Update: Didn't do much work due to insomnia today. I'll continue tomorrow. So what we need to do now is, finetune those parameters... and also determine in advance if a quadratic coefficient is even worth sieving when we try to find smooth candidates with similar factorization... preferably we pass the test with legendre symbols for many small primes.. that would dramatically increase the odds of finding what we need.
-
-Update: I'll try to finish this when I can.. it's basically finished already.. needs finetuning and optimization work now.. all the math is there though. Just struggling with really severe depression and dark thoughts. This world has lost its color a long time ago.. its all so god damn ugly. And like I also dont see what is going on. I'm not stupid. I know I'm right with my math, and I know people must know. And the only reason they woudln't tell me is that they must be freaked out and that it opens up attacks on RSA-1024. Which is funny... because I had been telling microsoft, the fbi, everyone I was working on this before I published anything at all.. and now that I did publish out of desperation and not seeing another way forward anymore, this happened. A year of silence, unemployment, hopelessness, isolation... while western leaders are mocking people like me. I just want to be alone in the arctic mountains right now. I want to witness the beauty of the natural world, the empty frozen landscapes... because atleast there the world still has some color left.
-
-Update: Mentally going really bad places. I did verify that the code is able to finish much earlier now. So I'm just going to mess with the PoC parameters now and try to factor incrementally largers numbers.
-
-Update: I did some minor improvements. You can factorize a 200-bit key with a factor base of 100_000 using: python3 run_qs.py -keysize 200 -base 100_000 -debug 1 -lin_size 10_000_000 -quad_size 100, but it should finish well before 100_000 smooths. It does slow down when we jump into the logic for finding smooths with similar large factors..due to only sieving with odd exponents up to the bound defined by dupe_max_prime, but I'm hoping there is some type of asymetrical scaling there I can abuse so i can just use enormous factor basis. Anyway..200 bit, ez. Now I will start pushing the PoC and see how far we can get.
-
-Update: I just realized something. If I optimize the memory layout properly.. even a factor base of in the millions will take up very little space. So I could just use much much much much much bigger factor basis and much much much much bigger sieve intervals. Hmm. That will be my goal for tomorrow.
+UPDATE: I got some more stuff done. Optimized memory useage etc. The dupe_max_prime is fairly high, should probably be a lot smaller if using a factor base of 100_000. But if you want to do 300 bit and above, you need a factor base in the millions and dupe_max_prime should be high enough. I'll begin experimentation now with bit sizes larger then 300 bit. If I get to 400 bit and higher.. I have won. 
 
 -------------------------------------------------------------------------
+#### Rants
 NOTE: Starting 2026, none of my research will be published. Only people who treat me with respect will be allowed access to my work. And NATO countries/big tech are very low on that list after harassing me for years and treating me like shit. And I garantuee you, I will succeed at finding a polynomial time algorithm. There is no one else alive in this fucking world more determined then me to succeed at this. Fucking losers.
 
 ps: If I one day succeed at finding a polynomial time algorithm, I will make sure it is used to defeat america. Fuck you all. Nazi losers. Little man pete hegseth. Pathetic piece of shit. And fuck europe too, all these european leaders love that american nazi shit. Fuck them all. Spineless cowards. All of this could have had a different outcome, yet you people decide to be fucking nazis and harass people like me. Pay the price shitheads.
