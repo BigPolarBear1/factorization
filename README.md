@@ -35,7 +35,8 @@ To run:  python3 run_qs.py -keysize 20 -base 20 -debug 1 -lin_size 1000 -quad_si
 This uses the number theory from the paper and full quadratics. It will succeed if two distinct roots for the same coefficients produce the same results mod N. 
 I'm still trying to figure out how to sieve this somehow.
 
-Update: Did some more thinking about this. Actually the way you would sieve this is probably very similar to number field sieve. Where one side is mod N and the other side is in the integers.  So one side we sieve zx^2-yx = a and the otherside zx^2-yx = a mod N. Let me do some thinking how exactly I will set this up.
+Update: Did some more thinking about this. Actually the way you would sieve this is probably very similar to number field sieve. Where one side is mod N and the other side is in the integers.  So one side we sieve zx<sub>0</sub>^2-yx<sub>0</sub> = a and the otherside zx<sub>1</sub>^2-yx<sub>1</sub> = a mod N. Let me do some thinking how exactly I will set this up.
+
 
 -------------------------------------------------------------------------
 #### Rants
