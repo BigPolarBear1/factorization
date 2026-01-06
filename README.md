@@ -40,6 +40,8 @@ Update: Oh actually! I have an idea. Precalculate this: zx<sub>0</sub>^2-yx<sub>
 Update: I might take the day off from work tomorrow and go see the snow outside. And meanwhile think about implementation details a little. There is several different approaches. The one most similar to the current PoC would be to find just one smooth where every factor has a valid mapping and then try to find another one by querying a precomputed hashmap. Since we know the linear coefficient will stay the same... that makes it a bit easier. 
 The more complicated method would be to pull both smooths from a hashmap without doing any sieving at all... but I'm not sure if that would scale well to larger numbers.. and I should probably try the first method first, as its closer to what I already have. I'll do some thinking tomorrow. I have been having massive stress headache for days now.. wouldn't be bad to take a day off to just ponder things.
 
+Ps: Also I just realized that this make it easy to figure out what that k should be in zx^2-yx+Nk (or -Nk) if we sieve like we do in the PoC. Ok ok.. this may actually work for real now.. anything happens in the coming day, it was western nazi losers who killed me. 
+
 </br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
 -------------------------------------------------------------------------
 #### Rants
