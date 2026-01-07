@@ -30,7 +30,7 @@ Update: While making this PoC, I suddenly had an idea, linking back to some thin
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 20 -base 20 -debug 1 -lin_size 1000 -quad_size 1</br></br>
+To run:  python3 run_qs.py -keysize 20 -base 50 -debug 1 -lin_size 1000 -quad_size 1</br></br>
 
 This uses the number theory from the paper and full quadratics. It will succeed if two distinct roots for the same coefficient produce the same results mod N. 
 I'm still trying to figure out how to sieve this somehow.
