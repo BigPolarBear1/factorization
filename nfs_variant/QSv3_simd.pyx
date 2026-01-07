@@ -660,7 +660,20 @@ def solve_lin_con(a,b,m):
     ##ax=b mod m
     #g=gcd(a,m)
     #a,b,m = a//g,b//g,m//g
-    return pow(a,-1,m)*b%m  
+    return pow(a,-1,m)*b%m
+
+def solve_quad_integers(a,b,c):
+    disc=b**2-4*a*c
+
+    if disc < 0:
+        return -1
+    if disc == 0:
+        return -1
+    test=math.isqrt(disc)
+    if test**2!=disc:
+        return -1
+
+    return [(-b+test)//(2*a),(-b-test)//(2*a)]  
 
 cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bound,primeslist2,small_primeslist):
    # p=0
@@ -736,11 +749,9 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
             i=0
             y0=math.isqrt(n*4*z)
             y=y0+o
-            seen=[]
-            roots=[]
             while i < n:
                 fail=0
-            
+                #x1=y//2
                 x=x1+i
                 poly_val=(z*x**2-y*x)%n
 
@@ -773,46 +784,20 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
                                 fail=1
                                 break
                         j+=1
-                    if fail ==0:
-
-                        u=0
-                        while u < len(seen):
-                            if seen[u]==poly_val:
-                                gcdres=gcd(abs(roots[u]-x),n)
-                                print("gcdres: "+str(gcdres)+" polyval: "+str(poly_val)+" x: "+str(x)+" old x: "+str(roots[u])+" y: "+str(y)+" z: "+str(z))
-                                if gcdres != 1 and gcdres != n:
-                                    print("found factor: "+str(gcdres))
-                                    sys.exit()
-                            u+=1
-                        seen.append(poly_val)
-                        roots.append(x)
-                #        test=math.isqrt(abs(poly_val))
-                #        if test**2==poly_val:
-                #            print(" z: "+str(z)+" x: "+str(x)+" y: "+str(y)+" poly_val: "+str(poly_val))
-                    #print("poly_val: "+str(poly_val)+" y: "+str(y)+" seen_primes: "+str(seen_primes))
-                  #      r=get_root(n,y,z) 
-                  #      r2=get_root(total_mod,y,z) 
-                  #      if r == r2:
-                  #          new=z*r**2-y*r+n
-                  #          disc=y**2-n*4*z
-                  #          if disc ==0:
-                   #             print("FATAL ERROR DISC")
-                           # print("poly_val: "+str(poly_val)+" y: "+str(y)+" seen_primes: "+str(seen_primes))
-                   #         local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(disc,primelist_f)
-                        
-                          #  print("z: "+str(z)+" val: "+str(value)+" y: "+str(y)+" seen_primes: "+str(seen_primes)+" root: "+str(r)+" modulus: "+str(total_mod))
-                      #  print("total_mod: "+str(total_mod))
-                   #         if value == 1:
-                   #             if y not in root_list:
-                   #                 root_list.append(y)
-                   #                 poly_list.append(disc)
-                   #                 flist.append(local_factors)
-                   #                 ylist.append(y)
-                   #                 total_mod_list.append(total_mod)
-                   #                 print("", end=f"[i]Smooths: {len(root_list)} / {base*1+2}\r")
-                   #                 if len(root_list)>base+2:
-                   #                     test=QS(n,primelist,poly_list,root_list,flist,ylist,total_mod_list)  
-                   #                     return                
+                    if fail ==0:# and poly_val%(3*11) ==0:
+                        g=0
+                        while g < 100:
+                            new_x=solve_quad_integers(z,-y,(n*g)-poly_val)
+                            if new_x != -1 and x not in new_x:
+                              #  print(new_x)
+                                for root in new_x:
+                                    gcdres=gcd(abs(root-x),n)
+                                    print("gcdres: "+str(gcdres)+" x: "+str(x)+" new_x: "+str(new_x))
+                                    if gcdres != 1 and gcdres != n:
+                                        print("found factor: "+str(gcdres))
+                                        sys.exit()
+                            g+=1
+           
 
                 i+=1
             o+=1
@@ -1155,4 +1140,3 @@ def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_
     launch(n,primeslist1,primeslist2,small_primeslist)     
     duration = default_timer() - start
     print("\nFactorization in total took: "+str(duration))
-
