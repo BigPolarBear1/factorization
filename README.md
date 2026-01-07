@@ -42,6 +42,8 @@ The more complicated method would be to pull both smooths from a hashmap without
 
 Ps: Also I just realized that this make it easy to figure out what that k should be in zx^2-yx+Nk (or -Nk) if we sieve like we do in the PoC. Ok ok.. this may actually work for real now.. anything happens in the coming day, it was western nazi losers who killed me. 
 
+Update: Took a break today. Lets see tomorrow if I can implement something. If it works like I think it might work.. then the dominoes will start falling quickly.
+
 </br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
 -------------------------------------------------------------------------
 #### Rants
