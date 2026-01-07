@@ -24,7 +24,7 @@ Prerequisites: </br>
 
 Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), since it gets a lot harder to access the GPU on a virtual machine.
 
-Update: While making this PoC, I suddenly had an idea, linking back to some things I tried earlier last spring. See below:
+Update: While making this PoC, I suddenly had an idea, linking back to some things I tried earlier last spring. See below (I think this approach is interesting, but its hard to get an advantage.. however using these different multiples of N.. there is a much easier way to exploit this, hence see NFS_variant):
 
 #### To run from folder "nfs_variant" (WIP):</br></br>
 
