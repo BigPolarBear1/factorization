@@ -30,23 +30,12 @@ Update: While making this PoC, I suddenly had an idea, linking back to some thin
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 18 -base 50 -debug 1 -lin_size 1000 -quad_size 1</br></br>
+To run:  python3 run_qs.py -keysize 20 -base 50 -debug 1 -lin_size 1000 -quad_size 1</br></br>
 
 This uses the number theory from the paper and full quadratics. It will succeed if two distinct roots for the same coefficient produce the same results mod N. 
 I'm still trying to figure out how to sieve this somehow.
 
-UPDATE: EUREKA! I HAVE WORKED OUT THE MATH!! zx^2-yx+nk=a if a is square then we can use the square root of a as an offset to fix/shift the discriminant output back into alignment (I dont know the proper math term, but thats how I abstracted it in my head) and take the gcd with y and the discriminant output of y minus that offset. I'm going to take a break for a few hours. I'll have a first working PoC later today or tomorrow. Fuck you all shitheads. Fuck you all for everything you people did. Fucking despicable humans. The world would be a better place without humans. Only bears. hahahaha.
-
-FUCK I SOLVED IT!! After nearly 3 years. 8th of januari 2026. I seriously need a break for a few hours. Then I'll implement the linear algebra step with what I just figured out. I cant believe I finally did it. Its funny, because now that I see it its like "oh damn, thats actually pretty simple" ... but most things are simple once you see it. This all ends before the end of the week. Fuck you all. And fuck microsoft for going after my former manager, one of the only people who ever believed in me in this shit industry. I'm never stopping doing math research and making breakthroughs and I dont care anymore about the consequences of releasing that research. You people brought nothing but chaos into my life and the people around me. Now you can all know what that feels like. Enjoy dickheads.  
-
-fucking nazi losers. Go cry dumb idiots. I piss on you people.
-
-Update: I quickly uploaded the math I just figured out. Now instead of bruteforce, we need to use linear algebra... which I will implement after I take a break now..
-happy irresponsible disclosure day, you fucking assholes.
-
-ps: For linear algebra.. just finding an a-value ( zx^2-yx+nk=a) that is square, is enough. Because from that we can derive the other coefficient, although you need to add some jacobi symbols to also make sure disc-poly_val\*4\*z is square. I'll probably drop a PoC with linear algebra tomorrow. So yea, it is actually the same like NFS.. but better. 
-
-Update: I'll do a little bit more coding, begin setting everything up for linear algebra and then take a break. Then tomorrow, if all goes as planned, expect a drop with linear algebra.. and that will be the end of that... finally.. 
+Update: Final upload for today. In the uploaded poc I need to change trial factorization of y1_squared to poly_val instead (its just normal quadratic sieve until I do). I understand now how this works and I've already worked out the math. So tomorrow... its over.. 
 
 </br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
 -------------------------------------------------------------------------
