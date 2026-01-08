@@ -46,6 +46,8 @@ happy irresponsible disclosure day, you fucking assholes.
 
 ps: For linear algebra.. just finding an a-value ( zx^2-yx+nk=a) that is square, is enough. Because from that we can derive the other coefficient, although you need to add some jacobi symbols to also make sure disc-poly_val\*4\*z is square. I'll probably drop a PoC with linear algebra tomorrow. So yea, it is actually the same like NFS.. but better. 
 
+Update: I'll do a little bit more coding, begin setting everything up for linear algebra and then take a break. Then tomorrow, if all goes as planned, expect a drop with linear algebra.. and that will be the end of that... finally.. 
+
 </br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
 -------------------------------------------------------------------------
 #### Rants
