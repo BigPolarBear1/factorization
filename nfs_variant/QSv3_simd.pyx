@@ -372,7 +372,7 @@ cdef tonelli(long long n, long long p):  # tonelli-shanks to solve modular squar
 def solve_roots(prime,n):
     hmap_p={}
     iN=0
-    modi=modinv(4*n,prime)
+    modi=modinv((4*n)%prime,prime)
     while iN < prime:
         ja= jacobi(iN,prime )
         if ja ==1:
@@ -384,7 +384,8 @@ def solve_roots(prime,n):
             s=(root**2*modi)%prime
 
 
-
+            if (root**2-4*n*s)%prime!=0:
+                print("error123")
             try:
                 c=hmap_p[str(s)]
                 c.append(root)
@@ -671,11 +672,14 @@ def solve_quad_integers(a,b,c):
         return -1
     test=math.isqrt(disc)
     if test**2!=disc:
+      #  print("fail")
         return -1
 
     return [(-b+test)//(2*a),(-b-test)//(2*a)]  
 
 cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bound,primeslist2,small_primeslist):
+
+   
    # p=0
   # # while p < len(hmap):
     #    print("Prime: "+str(primeslist[p])+" hmap: "+str(hmap[p]))
@@ -686,7 +690,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
     #time.sleep(100000)
     ylist=[]
     total_mod_list=[]
-    cdef Py_ssize_t i
+    
     cdef Py_ssize_t j
 
     LOWER_BOUND_SIQS=1
@@ -743,15 +747,16 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
     x1=1
     y0=1
 
-    while z < 2:
+    while z < 100:
         o=0
-        while o < 10:
+        while o < n:
             i=0
             y0=math.isqrt(n*4*z)
             y=y0+o
+
             while i < n:
                 fail=0
-                #x1=y//2
+                #x1=(y//2)//z
                 x=x1+i
                 poly_val=(z*x**2-y*x)%n
 
@@ -784,25 +789,30 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
                                 fail=1
                                 break
                         j+=1
-                    if fail ==0:# and poly_val%(3*11) ==0:
-                        g=0
-                        while g < 100:
-                            new_x=solve_quad_integers(z,-y,(n*g)-poly_val)
-                            if new_x != -1 and x not in new_x:
-                              #  print(new_x)
-                                for root in new_x:
-                                    gcdres=gcd(abs(root-x),n)
-                                    print("gcdres: "+str(gcdres)+" x: "+str(x)+" new_x: "+str(new_x))
-                                    if gcdres != 1 and gcdres != n:
-                                        print("found factor: "+str(gcdres))
-                                        sys.exit()
-                            g+=1
-           
-
+                    if fail ==0:    
+                       # test=math.isqrt(poly_val)
+                       # if test**2 == poly_val:
+                        k=((z*x**2-y*x)-poly_val)//n
+                        if k == 0:
+                            i+=1
+                            continue
+                        disc=y**2-4*z*(-n*k-poly_val)
+                        y1_squared=disc-poly_val*4*z
+                        if y1_squared<1:
+                            i+=1
+                            continue
+                        y1=math.isqrt(y1_squared)
+                        if y1**2 == y1_squared:
+                            if y1**2%n != y**2%n:
+                                print("fatal error")
+                            gcdres=gcd(abs(y+y1),n)
+                            print("gcd: ",str(gcdres)+" x: "+str(x)+" y: "+str(y)+" z: "+str(z)+" k: "+str(k)+" disc: "+str(disc)+" poly_val: "+str(poly_val))
+                            if gcdres != 1 and gcdres != n:
+                                sys.exit()
                 i+=1
             o+=1
         z+=1
-    test=QS(n,primelist,poly_list,root_list,flist,ylist,total_mod_list)  
+   # test=QS(n,primelist,poly_list,root_list,flist,ylist,total_mod_list)  
     return      
 
 
