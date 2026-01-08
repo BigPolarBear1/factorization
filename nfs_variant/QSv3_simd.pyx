@@ -159,25 +159,24 @@ def gcd(a,b): # Euclid's algorithm ##To do: Use a version without recursion?
     else:
         return gcd(b,a)
         
-def QS(n,factor_list,sm,xlist,flist,ylist,total_mod_list):
-    g_max_smooths=small_base*1+2
-    if len(sm) > g_max_smooths: 
+def QS(n,factor_list,sm,xlist,flist):
+    g_max_smooths=base*1+2
+    if len(sm) > g_max_smooths*10000: 
         del sm[g_max_smooths:]
         del xlist[g_max_smooths:]
         del flist[g_max_smooths:]  
     M2 = build_matrix(factor_list, sm, flist)
-    null_space=solve_bits(M2)
-    f1,f2=extract_factors(n, sm, xlist, null_space,ylist,total_mod_list)
+    null_space=solve_bits(M2,factor_list)
+    f1,f2=extract_factors(n, sm, xlist, null_space)
     if f1 != 0:
         print("[SUCCESS]Factors are: "+str(f1)+" and "+str(f2))
         return f1,f2   
     print("[FAILURE]No factors found")
-    return 0
+    return 0,0
 
-def extract_factors(N, relations, roots, null_space,ylist,total_mod_list):
+def extract_factors(N, relations, roots, null_space):
     n = len(relations)
     for vector in null_space:
-       # print("checking")
         prod_left = 1
         prod_right = 1
         for idx in range(len(relations)):
@@ -186,10 +185,6 @@ def extract_factors(N, relations, roots, null_space,ylist,total_mod_list):
             if bit == 1:
                 prod_left *= roots[idx]
                 prod_right *= relations[idx]
-               # print("adding_left: "+str(roots[idx]))
-               # print("adding_right: "+str(relations[idx]))
-               # print("adding co: "+str(ylist[idx]))
-               # print("total_mod: "+str(total_mod_list[idx]))
             idx += 1
         sqrt_right = math.isqrt(prod_right)
         sqrt_left = prod_left# math.isqrt(prod_left)
@@ -214,8 +209,8 @@ def extract_factors(N, relations, roots, null_space,ylist,total_mod_list):
 
     return 0, 0
 
-def solve_bits(matrix):
-    n=small_base+2
+def solve_bits(matrix,factor_base):
+    n=len(factor_base)#base+2
     lsmap = {lsb: 1 << lsb for lsb in range(n+10000)}
     m = len(matrix)
     marks = []
@@ -239,8 +234,8 @@ def solve_bits(matrix):
     free_cols = [col for col in range(n) if col not in marks]
     k = 0
     for col in free_cols:
-        shift = n - col - 1
-        val = 1 << shift
+        shift2 = n - col - 1
+        val = 1 << shift2
         fin = val
         for v in matrix:
             if v & val:
@@ -256,12 +251,13 @@ def build_matrix(factor_base, smooth_nums, factors):
 
     ind=1
 
-    M2=[0]*(small_base*1+2)
+    M2=[0]*len(factor_base)
     for i in range(len(smooth_nums)):
         for fac in factors[i]:
             idx = fb_map[fac]
             M2[idx] |= ind
         ind = ind + ind
+
 
 
   #  offset=(small_base+2)-1
@@ -746,29 +742,30 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
     z=1
     x1=1
     y0=1
-
+    print("TO DO: PLACEHOLDER POC. WE NEED TO SWITCH TRIAL FACTORIZATION OF y1_squared WITH poly_val.. I'LL SHOW TOMORROW :), I FIGURED OUT A WAY TO DO IT")
     while z < 100:
         o=0
         while o < n:
             i=0
-            y0=math.isqrt(n*4*z)
+            y0=math.isqrt(n*z)
             y=y0+o
 
             while i < n:
                 fail=0
-                #x1=(y//2)//z
+                x1=(y//2)//z
                 x=x1+i
-                poly_val=(z*x**2-y*x)%n
-
-                
-
-                if poly_val ==0:
+                poly_val=z*x**2-y*x+n
+                if poly_val>n:
+                    break
+                disc=y**2-4*z*(n-poly_val)
+                y1_squared=disc-poly_val*4*z
+                if y1_squared == 0:
                     i+=1
                     continue
-                local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(poly_val,primelist_f)
-        
-                if value == 1:
-            
+                local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(y1_squared,primelist_f)
+                if value ==1:
+
+                    ###This logic below right now is not needed, but we'll need it when we switch y1_squared to poly_val instead.
                     j=0
                     total_mod=1
                     while j < len(seen_primes_indexes):
@@ -777,42 +774,82 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
                         if pindex != -1:
                             try:
                                 co=hmap[pindex][str(z)]
-                        #print("co: "+str(co))
+                      
                             except Exception as e:
                                 fail=1
                                 break
 
-               # print("prime: "+str(seen_primes[j])+" prime check: "+str(primeslist[pindex])+" hmap: "+str(hmap[pindex]))
                             if co[0]**2%prime == y**2%prime:
                                 total_mod*=prime
                             else:
                                 fail=1
                                 break
                         j+=1
-                    if fail ==0:    
-                       # test=math.isqrt(poly_val)
-                       # if test**2 == poly_val:
-                        k=((z*x**2-y*x)-poly_val)//n
-                        if k == 0:
-                            i+=1
-                            continue
-                        disc=y**2-4*z*(-n*k-poly_val)
-                        y1_squared=disc-poly_val*4*z
-                        if y1_squared<1:
-                            i+=1
-                            continue
-                        y1=math.isqrt(y1_squared)
-                        if y1**2 == y1_squared:
-                            if y1**2%n != y**2%n:
-                                print("fatal error")
-                            gcdres=gcd(abs(y+y1),n)
-                            print("gcd: ",str(gcdres)+" x: "+str(x)+" y: "+str(y)+" z: "+str(z)+" k: "+str(k)+" disc: "+str(disc)+" poly_val: "+str(poly_val))
-                            if gcdres != 1 and gcdres != n:
-                                sys.exit()
+                    if fail ==0 and y not in root_list:  
+                        poly_list.append(y1_squared)
+                        root_list.append(y)
+                        flist.append(local_factors)
+                print("", end=f"[i]Smooths: {len(root_list)}\r")
+                if len(poly_list)>base+2:
+                    test=QS(n,primelist,poly_list,root_list,flist)   
+                    if test !=0:
+                        sys.exit()   
+           #     if poly_val <1:
+           #         i+=1
+           #         continue
+           #     local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(poly_val,primelist_f)
+       # 
+        #        if value == 1:
+            
+         #           j=0
+         #           total_mod=1
+         #           while j < len(seen_primes_indexes):
+         #               pindex=seen_primes_indexes[j]
+         #               prime=seen_primes[j]
+         #               if pindex != -1:
+          #                  try:
+          #                      co=hmap[pindex][str(z)]
+                        #print("co: "+str(co))
+          #                  except Exception as e:
+          #                      fail=1
+          #                      break
+
+               # print("prime: "+str(seen_primes[j])+" prime check: "+str(primeslist[pindex])+" hmap: "+str(hmap[pindex]))
+          #                  if co[0]**2%prime == y**2%prime:
+          #                      total_mod*=prime
+           #                 else:
+           #                     fail=1
+            #                    break
+             #           j+=1
+              #      if fail ==0:    
+             #           test=math.isqrt(poly_val)
+             #           if test**2 == poly_val:
+
+              #              disc=y**2-4*z*(n-poly_val)
+               #             y1_squared=disc-poly_val*4*z
+                #            if y1_squared<1:
+                 #               i+=1
+                 #               continue
+
+                  #          disc_sr=math.isqrt(disc)
+                   #         if disc_sr**2 != disc:
+                    #            print("something went wrong")
+                    #        y1=math.isqrt(y1_squared)
+                    #        y1_b=disc_sr-test
+                    #        if y1**2 == y1_squared:
+                    #            if y1**2%n != y**2%n:
+                    #                print("fatal error")
+                    #            gcdres=gcd(abs(y+y1),n)
+                    #            print("gcd: ",str(gcdres)+" x: "+str(x)+" y: "+str(y)+" z: "+str(z)+" disc: "+str(disc)+" poly_val: "+str(poly_val))
+                    #            new_gcdres=gcd(abs(y+y1_b),n)
+                    #            print("new_gcdres: ",new_gcdres)
+                    #            if gcdres != 1 and gcdres != n:
+                    #                if new_gcdres !=1 and new_gcdres !=n:
+                    #                    sys.exit()
                 i+=1
             o+=1
         z+=1
-   # test=QS(n,primelist,poly_list,root_list,flist,ylist,total_mod_list)  
+    test=QS(n,primelist,poly_list,root_list,flist,ylist,total_mod_list)  
     return      
 
 
