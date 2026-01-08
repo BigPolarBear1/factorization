@@ -42,7 +42,7 @@ FUCK I SOLVED IT!! After nearly 3 years. 8th of januari 2026. I seriously need a
 fucking nazi losers. Go cry dumb idiots. I piss on you people.
 
 Update: I quickly uploaded the math I just figured out. Now instead of bruteforce, we need to use linear algebra... which I will implement after I take a break now..
-
+happy irresponsible disclosure day, you fucking assholes.
 
 </br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
 -------------------------------------------------------------------------
