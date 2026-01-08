@@ -35,7 +35,9 @@ To run:  python3 run_qs.py -keysize 20 -base 50 -debug 1 -lin_size 1000 -quad_si
 This uses the number theory from the paper and full quadratics. It will succeed if two distinct roots for the same coefficient produce the same results mod N. 
 I'm still trying to figure out how to sieve this somehow.
 
-Update: Made some further simplifications. So if it finds a smooth by sieving the full quadratic polynomial... then we simply check zx^2-yx+nk=a, where we use the same z, y, n and a, and check if another root solution can be found for some k value. Now this is starting to look a lot better! However, as an algorithm, we dont just want to check every k value.. since these values will increasingly become larger as the modulus size goes up. But we have figured out a lot of the modular number theory behind these quadatics.. so next I'm going to try and precompute some datastructure from which we can then hopefully pull a correct k value instead. 
+Update: Made some further simplifications. So if it finds a smooth by sieving the full quadratic polynomial... then we simply check zx^2-yx+nk=a, where we use the same z, y, n and a, and check if another root solution can be found for some k value. 
+
+Update: It would seem that k value is usually fairly small. Let me do the math tomorrow to see if I can combine two smooths found with sieving into one.. because then that way I can make use of linear algebra to garantuee squaredness when taking the discriminant (see chapter 9 in paper). Which would be really cool if I can manage that.. because then we have literally QS/NFS on steroids. If I can figure it out tomorrow.. then I may finally have my undisputable breakthrough in mere days.. and end this nightmare.. the mental anguish of these last 2 years... I'm never forgiven people this. I want nothing to do anymore with the human world. The moment I have money again, I'm going to live in a tent in the arctic.
 
 </br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
 -------------------------------------------------------------------------
