@@ -44,6 +44,8 @@ fucking nazi losers. Go cry dumb idiots. I piss on you people.
 Update: I quickly uploaded the math I just figured out. Now instead of bruteforce, we need to use linear algebra... which I will implement after I take a break now..
 happy irresponsible disclosure day, you fucking assholes.
 
+ps: For linear algebra.. just finding an a-value ( zx^2-yx+nk=a) that is square, is enough. Because from that we can derive the other coefficient, although you need to add some jacobi symbols to also make sure disc-poly_val\*4\*z is square. I'll probably drop a PoC with linear algebra tomorrow. 
+
 </br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
 -------------------------------------------------------------------------
 #### Rants
