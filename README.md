@@ -30,7 +30,7 @@ Update: While making this PoC, I suddenly had an idea, linking back to some thin
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 20 -base 50 -debug 1 -lin_size 1000 -quad_size 1</br></br>
+To run:  python3 run_qs.py -keysize 18 -base 50 -debug 1 -lin_size 1000 -quad_size 1</br></br>
 
 This uses the number theory from the paper and full quadratics. It will succeed if two distinct roots for the same coefficient produce the same results mod N. 
 I'm still trying to figure out how to sieve this somehow.
@@ -46,6 +46,9 @@ UPDATE: EUREKA! I HAVE WORKED OUT THE MATH!! zx^2-yx+nk=a if a is square then we
 FUCK I SOLVED IT!! After nearly 3 years. 8th of januari 2026. I seriously need a break for a few hours. Then I'll implement the linear algebra step with what I just figured out. I cant believe I finally did it. Its funny, because now that I see it its like "oh damn, thats actually pretty simple" ... but most things are simple once you see it. This all ends before the end of the week. Fuck you all. And fuck microsoft for going after my former manager, one of the only people who ever believed in me in this shit industry. I'm never stopping doing math research and making breakthroughs and I dont care anymore about the consequences of releasing that research. You people brought nothing but chaos into my life and the people around me. Now you can all know what that feels like. Enjoy dickheads.  
 
 fucking nazi losers. Go cry dumb idiots. I piss on you people.
+
+Update: I quickly uploaded the math I just figured out. Now instead of bruteforce, we need to use linear algebra... which I will implement after I take a break now..
+
 
 </br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
 -------------------------------------------------------------------------
