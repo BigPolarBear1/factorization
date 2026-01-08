@@ -41,6 +41,8 @@ Update: It would seem that k value is usually fairly small. Let me do the math t
 
 Update: Oh lol. Yea I can combine two smooths. And I know exactly what to do now. Tomorrow. Watch me. This ends now. Fucking western nazis. At no point did anyone talk to me, try to stop me, or do whatever.. these last 2 years, I have only endured silence from the west. Lack of opportunities, unemployed and harassment by the courts under pressure of the US government. It is funny.. because I would have done responsible disclosure.. but after all that has happened... and the way I'm treated... yea.. no.. .this gets released now tomorrow and if I die... it was those pussy americans. Piece of shit cowards. Btw, fuck belgium too. Fuck belgium most of all. I will renounce my citizenship the moment I can. 
 
+UPDATE: EUREKA! I HAVE WORKED OUT THE MATH!! zx^2-yx+nk=a if a is square then we can use the square root of a as an offset to fix/shift the discriminant output back into alignment (I dont know the proper math term, but thats how I abstracted it in my head) and take the gcd with y and the discriminant output of y minus that offset. I'm going to take a break for a few hours. I'll have a first working PoC later today or tomorrow. Fuck you all shitheads. Fuck you all for everything you people did. Fucking despicable humans. The world would be a better place without humans. Only bears. hahahaha.
+
 </br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
 -------------------------------------------------------------------------
 #### Rants
