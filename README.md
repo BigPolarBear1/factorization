@@ -30,12 +30,12 @@ Update: While making this PoC, I suddenly had an idea, linking back to some thin
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 20 -base 50 -debug 1 -lin_size 1000 -quad_size 1</br></br>
+To run:  python3 run_qs.py -keysize 26 -base 50 -debug 1 -lin_size 1000 -quad_size 1</br></br>
 
 This uses the number theory from the paper and full quadratics. It will succeed if two distinct roots for the same coefficient produce the same results mod N. 
 I'm still trying to figure out how to sieve this somehow.
 
-Update: Final upload for today. In the uploaded poc I need to change trial factorization of y1_squared to poly_val instead (its just normal quadratic sieve until I do). I understand now how this works and I've already worked out the math. So tomorrow... its over.. 
+Update: Wasted day today. I was going over the implementation details again. And I realized the by far EASIEST way to do this is to set it up like I do in the uploaded PoC... but instead of bruteforce trying to find two different k values for the same linear coefficient y (zx^2-yx+nk) which produces the same polynomial value.. if we find one.. then we can simply use a hashmap to look up another k value.. now that I understand how this discriminant actually works.. its actually super simple. Just overcomplicating things in my stupid head. Like.. the solution is so obvious and easy.. I feel sick to my stomach for having missed it for so long.. I got really really close last spring.. just didn't have the mathematical maturity yet I guess. Anyway.. now that I've settled on an approach... time to start coding... 
 
 </br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
 -------------------------------------------------------------------------
