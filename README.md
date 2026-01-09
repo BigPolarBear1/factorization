@@ -37,6 +37,8 @@ I'm still trying to figure out how to sieve this somehow.
 
 Update: Wasted day today. I was going over the implementation details again. And I realized the by far EASIEST way to do this is to set it up like I do in the uploaded PoC... but instead of bruteforce trying to find two different k values for the same linear coefficient y (zx^2-yx+nk) which produces the same polynomial value.. if we find one.. then we can simply use a hashmap to look up another k value.. now that I understand how this discriminant actually works.. its actually super simple. Just overcomplicating things in my stupid head. Like.. the solution is so obvious and easy.. I feel sick to my stomach for having missed it for so long.. I got really really close last spring.. just didn't have the mathematical maturity yet I guess. Anyway.. now that I've settled on an approach... time to start coding... 
 
+As always... anything happens before I finish this, it was the fucking american nazi cowards.
+
 </br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
 -------------------------------------------------------------------------
 #### Rants
