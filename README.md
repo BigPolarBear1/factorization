@@ -43,6 +43,8 @@ Update: Actually when I get back, let me just implement lifting as well. Almost 
 
 UPDATE!!!!!!!!!!!!!!!!!!!!!!!!!!! OFCOURSE THIS ALSO TELLS US INFORMATION ABOUT THE DISTANCE BETWEEN BOTH K VALUES!!!!! HOLY FUCK! I DID IT! I BROKE FACTORIZATION! THIS IS EXACTLY THE PROBLEM I HAD BEEN TRYING TO SOLVE FOR NEARLY A YEAR! I DID IT! I BROKE FACTORIZATION! I BROKE FACTORIZATION! I'll go for a run, too much adrenaline right now, If I die tonight, it was the americans. 100% it was the americans. Fucking pussy cowards.
 
+Like icarus, flying too close too sun, but unlike icarus, I didn't fall back down to earth. I plunged right into that fucking sun. I have broken factorization. No matter what happens, if some fucking coward american shoots me to prevent what is coming, no matter what happens, I succeeded, and nobody can take that away. Fuck you all bitches. 
+
 As always... anything happens before I finish this, it was the fucking american nazi cowards.
 
 </br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
