@@ -382,7 +382,7 @@ cdef tonelli(long long n, long long p):  # tonelli-shanks to solve modular squar
 def solve_roots(prime,n):
     hmap_p={}
     iN=0
-    modi=modinv((4*n)%prime,prime)
+    modi=modinv((-4*n)%prime,prime)
     while iN < prime:
         ja= jacobi(iN,prime )
         if ja ==1:
@@ -394,7 +394,7 @@ def solve_roots(prime,n):
             s=(root**2*modi)%prime
 
 
-            if (root**2-4*n*s)%prime!=0:
+            if (root**2+4*n*s)%prime!=0:
                 print("error123")
             try:
                 c=hmap_p[str(s)]
@@ -760,24 +760,25 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
         
     while z < 2:
         o=0
-        while o < 10:
+        while o < 100:
             i=0
             y0=math.isqrt(n*4*z)
             y=y0+o
+           # y=66
             seen=[]
             roots=[]
             while i < n:
                 fail=0
                 x=x1+i
-                poly_val=(z*x**2-y*x)%n
-                
-                if poly_val<1:
+                poly_val=(z*x**2+y*x)%n
+                z2=((x**2+y*x)-poly_val)//n
+                if poly_val<2:
                     i+=1
                     continue
              #   test=math.isqrt(poly_val)
-            #    if test**2 != poly_val:
-              #      i+=1
-              #      continue
+             #   if test**2 != poly_val:
+               #     i+=1
+               #     continue
                 local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(poly_val,primelist_f)
                 if value == 1:
                     j=0
@@ -787,7 +788,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
                         prime=seen_primes[j]
                         if pindex != -1:
                             try:
-                                co=hmap[pindex][str(z)]
+                                co=hmap[pindex][str(z2%prime)]
                             except Exception as e:
                                 fail=1
                                 break
@@ -797,24 +798,26 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
                                 fail=1
                                 break
                         j+=1
-                    if fail ==0:# and poly_val%2!=0:
+                    if fail ==0 and poly_val%2!=0:
                         h=0
                         while h < len(seen):
                             if poly_val==seen[h]:
                                 x2=roots[h]
                                 gcdres=gcd(abs(x-x2),n)
-                                k1=((x**2-y*x)-poly_val)//n
-                                k2=((x2**2-y*x2)-poly_val)//n
-                                disc1_squared=y**2-4*z*(-n*k1-poly_val)
+                                k1=((x**2+y*x)-poly_val)//n
+                                k2=((x2**2+y*x2)-poly_val)//n
+                                disc1_squared=y**2+4*z*(n*k1+poly_val)
                                 disc1=math.isqrt(disc1_squared)
-                                disc2=math.isqrt(y**2-4*z*(-n*k2-poly_val))
+                                disc2=math.isqrt(y**2+4*z*(n*k2+poly_val))
+                                disc1_normal=y**2+4*z*(n*k1)
+                                disc2_normal=y**2+4*z*(n*k2)
                                 if disc1**2 != disc1_squared:
                                     print("disc1 error")
-                                print("gcdres: "+str(gcdres)+" x: "+str(x)+" x2: "+str(x2)+" y: "+str(y)+" seen_primes: "+str(seen_primes)+" poly_val: "+str(poly_val)+" k1: "+str(k1)+" k2: "+str(k2)+" disc1: "+str(disc1)+" disc2: "+str(disc2))
+                                print("gcdres: "+str(gcdres)+" x: "+str(x)+" x2: "+str(x2)+" y: "+str(y)+" seen_primes: "+str(seen_primes)+" poly_val: "+str(poly_val)+" k1: "+str(k1)+" k2: "+str(k2)+" disc1: "+str(disc1)+" disc2: "+str(disc2)+" disc1_normal: "+str(disc1_normal)+" disc2_normal: "+str(disc2_normal))
 
-                                if gcdres != 1 and gcdres != n:
-                                    sys.exit()
-                                break
+                               # if gcdres != 1 and gcdres != n:
+                                    #sys.exit()
+                               # break
                             h+=1
                         seen.append(poly_val)
                         roots.append(x)
