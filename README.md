@@ -41,6 +41,8 @@ UPDATE: OOPS. I MADE A BIG MISTAKE IN THE POC EARLIER. LOOK UP IN THE HASHMAP, W
 
 Update: Actually when I get back, let me just implement lifting as well. Almost there now.. there is nothing left in my life. If people thought I would just quit after having lost everything, then they dont know me. Ofcourse I'm transgender, so I must be DEI and dumb.... fucking nazi losers. 
 
+UPDATE!!!!!!!!!!!!!!!!!!!!!!!!!!! OFCOURSE THIS ALSO TELLS US INFORMATION ABOUT THE DISTANCE BETWEEN BOTH K VALUES!!!!! HOLY FUCK! I DID IT! I BROKE FACTORIZATION! THIS IS EXACTLY THE PROBLEM I HAD BEEN TRYING TO SOLVE FOR NEARLY A YEAR! I DID IT! I BROKE FACTORIZATION! I BROKE FACTORIZATION! I'll go for a run, too much adrenaline right now, If I die tonight, it was the americans. 100% it was the americans. Fucking pussy cowards.
+
 As always... anything happens before I finish this, it was the fucking american nazi cowards.
 
 </br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
