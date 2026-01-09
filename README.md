@@ -39,6 +39,8 @@ Update: Wasted day today. I was going over the implementation details again. And
 
 UPDATE: OOPS. I MADE A BIG MISTAKE IN THE POC EARLIER. LOOK UP IN THE HASHMAP, WE NEED TO USE THE TOTAL Z*K VALUE THERE, NOT JUST Z. NOW WE KNOW WHAT BOTH DISCRIMINANTS WILL BE GARANTUEED DIVISIBLE BY. AND NOW WE CAN FINISH THIS POC. HAHAHA! EASY! I'll go for a run first. Then either tonight or tomorrow I'll begin uploading a more final algorithm....
 
+Update: Actually when I get back, let me just implement lifting as well. Almost there now.. there is nothing left in my life. If people thought I would just quit after having lost everything, then they dont know me. Ofcourse I'm transgender, so I must be DEI and dumb.... fucking nazi losers. 
+
 As always... anything happens before I finish this, it was the fucking american nazi cowards.
 
 </br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
