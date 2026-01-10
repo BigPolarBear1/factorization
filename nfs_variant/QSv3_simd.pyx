@@ -806,33 +806,57 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
                                 break
                         j+=1
                     if poly_val%2!=0 and total_mod > 20:# and total_mod>20:# and poly_val==5*7*7*7:#%2!=0 and total_mod>20:
-                        h=0
+                       # test=math.isqrt(poly_val)
+                       # if test**2 != poly_val:
+                       ##     i+=1
+                      #      continue
                         k1=((x**2+y*x)-poly_val)//n
                         disc1_squared=y**2+4*z*(n*k1+poly_val)
                         disc1=math.isqrt(disc1_squared)
-                        while h < len(seen):
-                            if poly_val==seen[h]:
-                                x2=roots[h]
-                                y2=seen_y[h]
-
-                                k1=((x**2+y*x)-poly_val)//n
-                                k2=((x2**2+y2*x2)-poly_val)//n
-                                disc2_squared=y2**2+4*z*(n*k2+poly_val)
-
+                        start_x=x%total_mod
+                        while start_x < n:
+                            poly_val2=(start_x**2+y*start_x)%n 
+                            if poly_val == poly_val2 and start_x != x:
+                                k2=((start_x**2+y*start_x)-poly_val2)//n
+                                disc2_squared=y**2+4*z*(n*k2+poly_val2)
                                 disc2=math.isqrt(disc2_squared)
-                                if disc1**2 != disc1_squared:
-                                    print("disc1 error")
-
+                                if disc2**2 != disc2_squared:
+                                    print("fatal error")
                                 disc_gcd=gcd(disc1+disc2,n)
-                                print(" discgcd: "+str(disc_gcd)+" x: "+str(x)+" x2: "+str(x2)+" y: "+str(y)+" y2: "+str(y2)+" seen_primes: "+str(seen_primes)+" poly_val: "+str(poly_val)+" k1: "+str(k1)+" k2: "+str(k2)+" disc1: "+str(disc1)+" disc2: "+str(disc2)+" disc1%total_mod: "+str(disc1%total_mod)+" disc2%total_mod: "+str(disc2%total_mod)+" total_mod: "+str(total_mod))#_#+" disc1_normal: "+str(disc1_normal)+" disc2_normal: "+str(disc2_normal))
+                                print("factor: "+str(disc_gcd)+" x: "+str(x)+" x2: "+str(start_x)+" y: "+str(y)+" seen_primes: "+str(seen_primes)+" poly_val: "+str(poly_val)+" k1: "+str(k1)+" k2: "+str(k2)+" disc1: "+str(disc1)+" disc2: "+str(disc2)+" disc1%total_mod: "+str(disc1%total_mod)+" disc2%total_mod: "+str(disc2%total_mod)+" total_mod: "+str(total_mod))#_#+" disc1_normal: "+str(disc1_normal)+" disc2_normal: "+str(disc2_normal))
+
+            
+                                if disc_gcd != 1 and disc_gcd != n:
+                                    sys.exit()
+                            start_x+=total_mod
+                  #      h=0
+                  #      k1=((x**2+y*x)-poly_val)//n
+                  #      disc1_squared=y**2+4*z*(n*k1+poly_val)
+                  #      disc1=math.isqrt(disc1_squared)
+                  #      while h < len(seen):
+                  #          if poly_val==seen[h]:
+                  #              x2=roots[h]
+                  #              y2=seen_y[h]
+                  #              dist=x-x2
+                  #              dist//=total_mod
+                  #              k1=((x**2+y*x)-poly_val)//n
+                  #              k2=((x2**2+y2*x2)-poly_val)//n
+                  #              disc2_squared=y2**2+4*z*(n*k2+poly_val)#
+#
+#                                disc2=math.isqrt(disc2_squared)
+#                                if disc1**2 != disc1_squared:
+#                                    print("disc1 error")##
+
+                          #      disc_gcd=gcd(disc1+disc2,n)
+                          #      print(" discgcd: "+str(disc_gcd)+" x: "+str(x)+" x2: "+str(x2)+" y: "+str(y)+" y2: "+str(y2)+" seen_primes: "+str(seen_primes)+" poly_val: "+str(poly_val)+" k1: "+str(k1)+" k2: "+str(k2)+" disc1: "+str(disc1)+" disc2: "+str(disc2)+" disc1%total_mod: "+str(disc1%total_mod)+" disc2%total_mod: "+str(disc2%total_mod)+" total_mod: "+str(total_mod)+" dist: "+str(dist))#_#+" disc1_normal: "+str(disc1_normal)+" disc2_normal: "+str(disc2_normal))
 
                                # if disc_gcd != 1 and disc_gcd != n:
                                   #  sys.exit()
 
-                            h+=1
-                        seen.append(poly_val)
-                        roots.append(x)
-                        seen_y.append(y)
+         #                   h+=1
+         ##               seen.append(poly_val)
+          #              roots.append(x)
+           #             seen_y.append(y)
                 
 
                 i+=1
