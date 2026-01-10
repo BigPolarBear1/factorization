@@ -674,7 +674,7 @@ def solve_lin_con(a,b,m):
     return pow(a,-1,m)*b%m
 
 def solve_quad_integers(a,b,c):
-    disc=b**2-4*a*c
+    disc=b**2+4*a*c
 
     if disc < 0:
         return -1
@@ -690,10 +690,10 @@ def solve_quad_integers(a,b,c):
 cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bound,primeslist2,small_primeslist):
 
    
-   # p=0
-  # # while p < len(hmap):
+  #  p=0
+  ##  while p < len(hmap):
     #    print("Prime: "+str(primeslist[p])+" hmap: "+str(hmap[p]))
-    #    p+=1
+     #   p+=1
 
 
     #print("done")
@@ -783,6 +783,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
                 if value == 1:
                     j=0
                     total_mod=1
+                    prev=1
                     while j < len(seen_primes_indexes):
                         pindex=seen_primes_indexes[j]
                         prime=seen_primes[j]
@@ -792,33 +793,50 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
                             except Exception as e:
                                 fail=1
                                 break
-                            if co[0]**2%prime == y**2%prime:
-                                total_mod*=prime
+                            if co[0]**2%prime == y**2%prime: 
+                                if prime !=prev:
+                                    total_mod*=prime
+                                    prev=prime
                             else:
                                 fail=1
                                 break
                         j+=1
-                    if fail ==0 and poly_val%2!=0:
+                    if fail ==0 and poly_val%2!=0:# and total_mod>10:
                         h=0
-                        while h < len(seen):
-                            if poly_val==seen[h]:
-                                x2=roots[h]
-                                gcdres=gcd(abs(x-x2),n)
-                                k1=((x**2+y*x)-poly_val)//n
-                                k2=((x2**2+y*x2)-poly_val)//n
-                                disc1_squared=y**2+4*z*(n*k1+poly_val)
-                                disc1=math.isqrt(disc1_squared)
-                                disc2=math.isqrt(y**2+4*z*(n*k2+poly_val))
-                                disc1_normal=y**2+4*z*(n*k1)
-                                disc2_normal=y**2+4*z*(n*k2)
-                                if disc1**2 != disc1_squared:
-                                    print("disc1 error")
-                                print("gcdres: "+str(gcdres)+" x: "+str(x)+" x2: "+str(x2)+" y: "+str(y)+" seen_primes: "+str(seen_primes)+" poly_val: "+str(poly_val)+" k1: "+str(k1)+" k2: "+str(k2)+" disc1: "+str(disc1)+" disc2: "+str(disc2)+" disc1_normal: "+str(disc1_normal)+" disc2_normal: "+str(disc2_normal))
+                        k1=((x**2+y*x)-poly_val)//n
+                    #    print("x: "+str(x)+" y: "+str(y)+" seen_primes: "+str(seen_primes)+" poly_val: "+str(poly_val)+" k1: "+str(k1)+" total_mod: "+str(total_mod))              
+                        while k1 > 0:
+
+                            x2_list=solve_quad_integers(z,y,n*k1+poly_val)
+                            
+                            if x2_list !=-1:
+                                for x2 in x2_list:
+                                    poly_val2=(z*x2**2+y*x2)%n
+                                    if poly_val2 == poly_val:
+                                        gcdres2=gcd(abs(x-x2),n)
+                                        if gcdres2!=1 and gcdres2!=n:
+                                            print("Factor: "+str(gcdres2)+" k2: "+str(k1)+" total_mod: "+str(total_mod))
+                                            sys.exit()
+                            k1-=total_mod
+                       # while h < len(seen):
+                         #   if poly_val==seen[h]:
+                         #       x2=roots[h]
+                         #       gcdres=gcd(abs(x-x2),n)
+                         #       k1=((x**2+y*x)-poly_val)//n
+                         #       k2=((x2**2+y*x2)-poly_val)//n
+                         #       disc1_squared=y**2+4*z*(n*k1+poly_val)
+                         #       disc1=math.isqrt(disc1_squared)
+                         #       disc2=math.isqrt(y**2+4*z*(n*k2+poly_val))
+                         #       disc1_normal=y**2+4*z*(n*k1)
+                         #       disc2_normal=y**2+4*z*(n*k2)
+                         #       if disc1**2 != disc1_squared:
+                         #           print("disc1 error")
+                         #       print("gcdres: "+str(gcdres)+" x: "+str(x)+" x2: "+str(x2)+" y: "+str(y)+" seen_primes: "+str(seen_primes)+" poly_val: "+str(poly_val)+" k1: "+str(k1)+" k2: "+str(k2)+" disc1: "+str(disc1)+" disc2: "+str(disc2)+" disc1_normal: "+str(disc1_normal)+" disc2_normal: "+str(disc2_normal))
 
                                # if gcdres != 1 and gcdres != n:
                                     #sys.exit()
                                # break
-                            h+=1
+                          #  h+=1
                         seen.append(poly_val)
                         roots.append(x)
                 
