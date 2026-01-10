@@ -804,7 +804,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,large_prime_bo
                     if fail ==0 and poly_val%2!=0:# and total_mod>10:
                         h=0
                         k1=((x**2+y*x)-poly_val)//n
-                    #    print("x: "+str(x)+" y: "+str(y)+" seen_primes: "+str(seen_primes)+" poly_val: "+str(poly_val)+" k1: "+str(k1)+" total_mod: "+str(total_mod))              
+                        print("x: "+str(x)+" y: "+str(y)+" seen_primes: "+str(seen_primes)+" poly_val: "+str(poly_val)+" k1: "+str(k1)+" total_mod: "+str(total_mod))              
                         while k1 > 0:
 
                             x2_list=solve_quad_integers(z,y,n*k1+poly_val)
