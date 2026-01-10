@@ -35,7 +35,7 @@ To run:  python3 run_qs.py -keysize 26 -base 50 -debug 1 -lin_size 1000 -quad_si
 This uses the number theory from the paper and full quadratics. It will succeed if two distinct roots for the same coefficient produce the same results mod N. 
 I'm still trying to figure out how to sieve this somehow.
 
-Update: Ergh, just a moment, give me a few days to fix all this math. The idea is great, but I'm suddenly seeing the bigger picture. You know.. we dont need to restrict ourselves to one linear coefficient and find a root that produces the same quadratic output.. you know how 2zx = y mod p if the discriminant is divisible by p... so yea.. it doesn't matter since we can always convert 2zx to a linear coefficient mod p, there's no reaosn to restrict ourselves to one linear coefficient.. GOD DAMNIT. So close. Give me a few days.. I see it now.
+Update: Alright. I simplified everything again. If two quadratics with the same linear coefficient generate the same value, then we can take the gcd using the discriminants (shown in PoC), in addition, we also know the discriminants will be divisible by the prime factors of the full quadratic value. NOW THEN... let me see about properly sieving this and finding some way to implement linear algebra.. I've gotten rid of all the bogus and gotten down to the core now... I'll finish the PoC first now and then fix the paper. 
 
 </br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
 -------------------------------------------------------------------------
