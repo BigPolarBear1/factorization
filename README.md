@@ -37,6 +37,8 @@ I'm still trying to figure out how to sieve this somehow.
 
 Update: Nearly there now. When we check the hashmap, we should get that to work for higher exponents as well. Anyway, the more important part is quickly finding that other root which produces the same polynomial value.. and now that I have a way to know what the residues are garantueed to be for that other root, that k variable (zx^2+yx-nk) and the discriminant.. I actually may be able to use p-adic lifting now to quickly find it... I should try to write a function to do this tomorrow.. I'll begin that first thing tomorrow.. bc if I can get that to work, then thats a simple and elegant solution to very quickly find that other root once we have a smooth.. hmm.
 
+note to self: I should also check that instead of finding two roots that produce the same polynomial value... can I do the same with 2 different roots, whose polynomial values multiplied together are equal to a third root's polynomial value... and so on.. because if it still holds true in that case... then we can just use linear algebra easily.. I should check this first thing tomorrow... before I check anything else... that surely would be the path of least resistance toward finishing this.
+
 </br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
 -------------------------------------------------------------------------
 #### Rants
