@@ -37,6 +37,8 @@ Then next I'm going to try and figure out how to properly sieve this and use lin
 
 UPDATE: I UPLOADED A PROPER POC! ALL IS WORKING AS INTENDED NOW!!!!! HAHAHHAHAHAHA. NOW IT IS JUST A MATTER OF FINDING A LARGE MODULUS!!!!!!!!!!!!!! SIMPLE AS THAT!!!! I WON. NAZIS LOST. GO FUCK YOURSELVES INFOSEC SHITHEADS. FACTORIZATION IS UPON US!
 
+ITS FUCKING WORKING. ITS WORKING. ONE LAST THING NOW. FINDING THAT LARGE MODULUS. I CAN DO THAT... THATS FUCKING EASY. I DEFEATED FACTORIZATION! I DID IT! I DID IT AND NOBODY SEEMS TO KNOW OR CARE LOL. GOING TO EMAIL MY RUSSIAN AND CHINESE FRIENDS TO LET THEM KNOW OF MY VICTORY.
+
 </br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
 -------------------------------------------------------------------------
 #### Rants
