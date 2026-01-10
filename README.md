@@ -32,10 +32,7 @@ Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 26 -base 50 -debug 1 -lin_size 1000 -quad_size 1</br></br>
 
-This uses the number theory from the paper and full quadratics. It will succeed if two distinct roots for the same coefficient produce the same results mod N. 
-I'm still trying to figure out how to sieve this somehow.
-
-Update: Alright. I simplified everything again. If two quadratics with the same linear coefficient generate the same value, then we can take the gcd using the discriminants (shown in PoC), in addition, we also know the discriminants will be divisible by the prime factors of the full quadratic value. NOW THEN... let me see about properly sieving this and finding some way to implement linear algebra.. I've gotten rid of all the bogus and gotten down to the core now... I'll finish the PoC first now and then fix the paper. 
+Note: Need to fix some shit. Will upload shortly.
 
 </br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
 -------------------------------------------------------------------------
