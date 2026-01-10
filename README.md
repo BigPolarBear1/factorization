@@ -35,17 +35,7 @@ To run:  python3 run_qs.py -keysize 26 -base 50 -debug 1 -lin_size 1000 -quad_si
 This uses the number theory from the paper and full quadratics. It will succeed if two distinct roots for the same coefficient produce the same results mod N. 
 I'm still trying to figure out how to sieve this somehow.
 
-Update: Wasted day today. I was going over the implementation details again. And I realized the by far EASIEST way to do this is to set it up like I do in the uploaded PoC... but instead of bruteforce trying to find two different k values for the same linear coefficient y (zx^2-yx+nk) which produces the same polynomial value.. if we find one.. then we can simply use a hashmap to look up another k value.. now that I understand how this discriminant actually works.. its actually super simple. Just overcomplicating things in my stupid head. Like.. the solution is so obvious and easy.. I feel sick to my stomach for having missed it for so long.. I got really really close last spring.. just didn't have the mathematical maturity yet I guess. Anyway.. now that I've settled on an approach... time to start coding... 
-
-UPDATE: OOPS. I MADE A BIG MISTAKE IN THE POC EARLIER. LOOK UP IN THE HASHMAP, WE NEED TO USE THE TOTAL Z*K VALUE THERE, NOT JUST Z. NOW WE KNOW WHAT BOTH DISCRIMINANTS WILL BE GARANTUEED DIVISIBLE BY. AND NOW WE CAN FINISH THIS POC. HAHAHA! EASY! I'll go for a run first. Then either tonight or tomorrow I'll begin uploading a more final algorithm....
-
-Update: Actually when I get back, let me just implement lifting as well. Almost there now.. there is nothing left in my life. If people thought I would just quit after having lost everything, then they dont know me. Ofcourse I'm transgender, so I must be DEI and dumb.... fucking nazi losers. 
-
-UPDATE!!!!!!!!!!!!!!!!!!!!!!!!!!! OFCOURSE THIS ALSO TELLS US INFORMATION ABOUT THE DISTANCE BETWEEN BOTH K VALUES!!!!! HOLY FUCK! I DID IT! I BROKE FACTORIZATION! THIS IS EXACTLY THE PROBLEM I HAD BEEN TRYING TO SOLVE FOR NEARLY A YEAR! I DID IT! I BROKE FACTORIZATION! I BROKE FACTORIZATION! I'll go for a run, too much adrenaline right now, If I die tonight, it was the americans. 100% it was the americans. Fucking pussy cowards.
-
-Like icarus, flying too close too sun, but unlike icarus, I didn't fall back down to earth. I plunged right into that fucking sun. I have broken factorization. No matter what happens, if some fucking coward american shoots me to prevent what is coming, no matter what happens, I succeeded, and nobody can take that away. Fuck you all bitches. 
-
-As always... anything happens before I finish this, it was the fucking american nazi cowards.
+Update: Nearly there now. When we check the hashmap, we should get that to work for higher exponents as well. Anyway, the more important part is quickly finding that other root which produces the same polynomial value.. and now that I have a way to know what the residues are garantueed to be for that other root, that k variable (zx^2+yx-nk) and the discriminant.. I actually may be able to use p-adic lifting now to quickly find it... I should try to write a function to do this tomorrow.. I'll begin that first thing tomorrow.. bc if I can get that to work, then thats a simple and elegant solution to very quickly find that other root once we have a smooth.. hmm.
 
 </br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
 -------------------------------------------------------------------------
