@@ -32,7 +32,8 @@ Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 26 -base 50 -debug 1 -lin_size 1000 -quad_size 1</br></br>
 
-Note: Need to fix some shit. Will upload shortly.
+Note: FINALLY. I fixed the fucking math. NOW ITS WORKING. Jesus fucking christ. I suck at math. That shouldnt have taken me as many days as it did. Let me fix the paper.
+Then next I'm going to try and figure out how to properly sieve this and use linear algebra or perhaps find that other root using p-adic lifting. 
 
 </br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
 -------------------------------------------------------------------------
