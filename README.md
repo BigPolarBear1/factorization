@@ -34,4 +34,6 @@ Update: The main number theory is now implemented. The one thing left is to gene
 
 Update: Taking a break from math today. Tomorrow I will implement a way to get a large modulus.. I should just be able to pull it from that hashmap if I index by coefficient/root. Easy enough. And that should be that.. anyway.. mental health break today. 
 
+Update: The math is nearly correct, just noticed one small mistake. That other root isn't garantueed to have the same residue modulo a composite, but it will be the same residue for each prime. I'll fix it in the paper tonight. 
+
 
