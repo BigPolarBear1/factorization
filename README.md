@@ -30,13 +30,6 @@ Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 26 -base 50 -debug 1 -lin_size 1000 -quad_size 1</br></br>
 
-Update: The main number theory is now implemented. The one thing left is to generate a large enough modulus such that finding that other root becomes trivial. I will finish this in the coming days. 
-
-Update: Taking a break from math today. Tomorrow I will implement a way to get a large modulus.. I should just be able to pull it from that hashmap if I index by coefficient/root. Easy enough. And that should be that.. anyway.. mental health break today. 
-
-Update: The math is nearly correct, just noticed one small mistake. That other root isn't garantueed to have the same residue modulo a composite, but it will be the same residue for each prime. I'll fix it in the paper tonight. 
-
-Update: Bah, a little too quick making assumptions. Let me have a closer look at what going on with the math.. I'll update everything shortly.
-
+UPDATE: Ok. So the assumptions I made are wrong. But, there is still something happening in the uploaded PoC which I dont yet fully comprehend. Let me figure it out in the coming days. Its very close now... I just need to understand this properly.
 
 
