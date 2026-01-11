@@ -38,6 +38,5 @@ Update: The math is nearly correct, just noticed one small mistake. That other r
 
 Update: Bah, a little too quick making assumptions. Let me have a closer look at what going on with the math.. I'll update everything shortly.
 
-UPDATE: OMG OFCOURSE. I NEED TO DO SAME ROOT BUT DIFFERENT LINEAR COEFFICIENT GENERATING THE SAME POLYNOMIAL VALUE. JUST LIKE IN THE PAPER. BUT NOW I UNDERSTAND IT. FUCK. Let me fix that PoC ASAP.
 
 
