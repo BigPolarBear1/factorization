@@ -36,4 +36,6 @@ Update: Taking a break from math today. Tomorrow I will implement a way to get a
 
 Update: The math is nearly correct, just noticed one small mistake. That other root isn't garantueed to have the same residue modulo a composite, but it will be the same residue for each prime. I'll fix it in the paper tonight. 
 
+Update: Bah, a little too quick making assumptions. Let me have a closer look at what going on with the math.. I'll update everything shortly.
+
 
