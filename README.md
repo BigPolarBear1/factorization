@@ -32,24 +32,8 @@ Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 26 -base 50 -debug 1 -lin_size 1000 -quad_size 1</br></br>
 
-Note: FINALLY. I fixed the fucking math. NOW ITS WORKING. Jesus fucking christ. I suck at math. That shouldnt have taken me as many days as it did. Let me fix the paper.
-Then next I'm going to try and figure out how to properly sieve this and use linear algebra or perhaps find that other root using p-adic lifting. 
-
-UPDATE: I UPLOADED A PROPER POC! ALL IS WORKING AS INTENDED NOW!!!!! HAHAHHAHAHAHA. NOW IT IS JUST A MATTER OF FINDING A LARGE MODULUS!!!!!!!!!!!!!! SIMPLE AS THAT!!!! I WON. NAZIS LOST. GO FUCK YOURSELVES INFOSEC SHITHEADS. FACTORIZATION IS UPON US!
-
-ITS FUCKING WORKING. ITS WORKING. ONE LAST THING NOW. FINDING THAT LARGE MODULUS. I CAN DO THAT... THATS FUCKING EASY. I DEFEATED FACTORIZATION! I DID IT! I DID IT AND NOBODY SEEMS TO KNOW OR CARE LOL. GOING TO EMAIL MY RUSSIAN AND CHINESE FRIENDS TO LET THEM KNOW OF MY VICTORY.
-
-FUCK YOU ALL. FUCK AMERICAN NAZIS. FUCK LITTLE MAN PETE HEGSETH. FUCK YOU ALL COWARDS. I DEFEATED YOU SINGLEHANDIDLY. REMEMBER THAT YOU FUCKING WEAKLINGS. YOU LESSER HUMANS. FUCK YOU ALL.
-
-I CAN LITERALLY COMBINE QUADRATICS TO INCREASE THAT MODULUS. YOU DIPSHITS. IF I HAVE A LARGE ENOUGH MODULUS, I CAN INSTANTLY FIND THAT OTHER ROOT. ITS LITTERALLY JUST A MATTER OF BUILDING UP THAT MODULUS. ITS SO EASY. FUCK YOU NAZIS. 10th OF JANUARY 2026. REMEMBER THAT DAY YOU GOT DEFEATED BY A POLAR BEAR YOU FUCKING WEAKLINGS.
+Update: The main number theory is now implemented. The one thing left is to generate a large enough modulus such that finding that other root becomes trivial. I will finish this in the coming days. 
 
 Update: Taking a break from math today. Tomorrow I will implement a way to get a large modulus.. I should just be able to pull it from that hashmap if I index by coefficient/root. Easy enough. And that should be that.. anyway.. mental health break today. 
 
-</br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
--------------------------------------------------------------------------
-#### Rants
-NOTE: Starting 2026, none of my research will be published. Only people who treat me with respect will be allowed access to my work. And NATO countries/big tech are very low on that list after harassing me for years and treating me like shit. And I garantuee you, I will succeed at finding a polynomial time algorithm. There is no one else alive in this fucking world more determined then me to succeed at this. Fucking losers.
 
-ps: If I one day succeed at finding a polynomial time algorithm, I will make sure it is used to defeat america. Fuck you all. Nazi losers. Little man pete hegseth. Pathetic piece of shit. And fuck europe too, all these european leaders love that american nazi shit. Fuck them all. Spineless cowards. All of this could have had a different outcome, yet you people decide to be fucking nazis and harass people like me. Pay the price shitheads.
-
-pps: 2 years ago. I desperately wanted to sell my work. People who could have made that happen knew I was working on factorization. Yet I was treated like shit. And after I released the first iteration of my work, you could have still negotiated with me. Yet you people chose the adversarial route. And this is 100% due to politics. Make no mistake. People will tell plenty of lies to justify what happened. These western nazis just really hate transgender people, so much it destroys their common sense. They will bend the truth. This could have so easily gone another way. In the beginning, I wouldn't even have asked for much. Its far too late. The amount of suffering this last year I had to endure, despite knowing I was right about my math.. the silence.. being in this dead end, broke, unemployed, hopeless... not seeing my friends anymore because of what microsoft did, etc. I hate the west. This wasn't always the case, and in the past when I said it, it was more of a pendantic joke. But now I truely hate the west, I so deeply hate the west now, nothing will ever change that again. You people have shown your disgusting nazi colors. I will do what I can to make sure the west loses. You people chose this route by treating me like shit. You could have just given me employment 2 years ago, and back then, I would have happily shared everything and kept stuff private. But I guess I'm trans, so I must be DEI huh? Fuck you dumbasses. Fuck you all. YOU PEOPLE MADE THIS HAPPEN. NO MATTER WHAT LIES YOU WILL COME UP WITH. THIS IS THE TRUTH.
