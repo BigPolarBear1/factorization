@@ -43,6 +43,8 @@ FUCK YOU ALL. FUCK AMERICAN NAZIS. FUCK LITTLE MAN PETE HEGSETH. FUCK YOU ALL CO
 
 I CAN LITERALLY COMBINE QUADRATICS TO INCREASE THAT MODULUS. YOU DIPSHITS. IF I HAVE A LARGE ENOUGH MODULUS, I CAN INSTANTLY FIND THAT OTHER ROOT. ITS LITTERALLY JUST A MATTER OF BUILDING UP THAT MODULUS. ITS SO EASY. FUCK YOU NAZIS. 10th OF JANUARY 2026. REMEMBER THAT DAY YOU GOT DEFEATED BY A POLAR BEAR YOU FUCKING WEAKLINGS.
 
+Update: Taking a break from math today. Tomorrow I will implement a way to get a large modulus.. I should just be able to pull it from that hashmap if I index by coefficient/root. Easy enough. And that should be that.. anyway.. mental health break today. 
+
 </br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
 -------------------------------------------------------------------------
 #### Rants
