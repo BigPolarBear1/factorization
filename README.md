@@ -41,3 +41,5 @@ So adding two quadratics with the same root is easy. Same with subtracting. So I
 
 
 Update: Ow yea, I just realized. I shouldnt just subtract quadratics with the same root, because if solving for 0 in the integers will only ever happen with one of the factors as root.. then this wouldnt work. However, it would still work mod m.. wait I am seeing something.. ok thank god it isn't just as simple as subtracting quadratics in the integers. But we have to do it mod m.. so a little bit more complicated, but I've figured out all the number theory to pull it off... lets see tomorrow.
+
+Update: OOOOH! Thats how you solve different moduli for 0 while keeping coefficients small and eventually solve for 0 in the integers! BY SUBTRACTING QUADRATICS and sieving similar to how I'm doing in the PoC. Eureka! I knew there was a way. I just had to think logically about it for a moment. Time to get to work tomorrow.
