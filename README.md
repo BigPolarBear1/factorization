@@ -33,7 +33,7 @@ To run:  python3 run_qs.py -keysize 26 -base 50 -debug 1 -lin_size 1000 -quad_si
 UPDATE: Going to take a break for today. The idea I'm playing with is promising. I just need to approach it the correct way. So as I am doing it now.. the discriminant will be divisible by the modulus.. in theory this means that if I can grow that modulus then eventually that discriminant will factor over the factor base entirely... and then I have a way to attack factorization with this setup. Sometimes I make wrong assumptions, or I'm too quick asuming something works a certain way.. but its part of the research process. But most people dont understand what research actually is. Research is years of trial and error and slowly chipping away at complexity. Its not a clean process. Its very messy and thats just the way it is.  
 
 5^2+5\*1-7 = 23</br>
-5^2+5*\2-7 = 28</br>
+5^2+5\*2-7 = 28</br>
 ----------------------------- + </br>
 2\*5^2+5\*3-14 = 51</br>
 
