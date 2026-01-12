@@ -28,18 +28,6 @@ Update: While making this PoC, I suddenly had an idea, linking back to some thin
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 26 -base 50 -debug 1 -lin_size 1000 -quad_size 1</br></br>
+To run:  python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 1000 -quad_size 1</br></br>
 
-UPDATE: Going to take a break for today. The idea I'm playing with is promising. I just need to approach it the correct way. So as I am doing it now.. the discriminant will be divisible by the modulus.. in theory this means that if I can grow that modulus then eventually that discriminant will factor over the factor base entirely... and then I have a way to attack factorization with this setup. Sometimes I make wrong assumptions, or I'm too quick asuming something works a certain way.. but its part of the research process. But most people dont understand what research actually is. Research is years of trial and error and slowly chipping away at complexity. Its not a clean process. Its very messy and thats just the way it is.  
-
-5^2+5\*1-7 = 23</br>
-5^2+5\*2-7 = 28</br>
------------------------------ + </br>
-2\*5^2+5\*3-14 = 51</br>
-
-So adding two quadratics with the same root is easy. Same with subtracting. So I wonder... can I just subtract quadratics to turn the polynomial value to zero, would that results in a polynomial from debug.py? Hmm, that shouldn't work right? I'll try tomorrow. I feel like a god damn idiot. There should be some really easy way to solve this lol. 
-
-
-Update: Ow yea, I just realized. I shouldnt just subtract quadratics with the same root, because if solving for 0 in the integers will only ever happen with one of the factors as root.. then this wouldnt work. However, it would still work mod m.. wait I am seeing something.. ok thank god it isn't just as simple as subtracting quadratics in the integers. But we have to do it mod m.. so a little bit more complicated, but I've figured out all the number theory to pull it off... lets see tomorrow.
-
-Update: OOOOH! Thats how you solve different moduli for 0 while keeping coefficients small and eventually solve for 0 in the integers! BY SUBTRACTING QUADRATICS and sieving similar to how I'm doing in the PoC. Eureka! I knew there was a way. I just had to think logically about it for a moment. Time to get to work tomorrow.
+Update: Doing some more work today. I realized that I can use different quadratic coefficients as well... as long as the linear coefficient is the same. Everything else can be different. Let me see how to sieve this now.. all the math is there.. I just need to develop a proper sieving algorithm now.
