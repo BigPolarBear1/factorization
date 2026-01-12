@@ -767,11 +767,11 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
         seen_y=[]
         seen_mod=[]
         seen_z=[]
-        while z < n:
+        while z < 100:
             i=0
 
            # y=66
-            while i < n:
+            while i < 100:
                 fail=0
                 x=x1+i
                 poly_val=(z*x**2+y*x)%n
@@ -804,13 +804,19 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                                 fail=1
                                # break
                         j+=1
-                    if fail != -1:#and total_mod > 100:# and fail ==0:# and fail ==0:# and total_mod>20:# and poly_val==5*7*7*7:#%2!=0 and total_mod>20:
- 
+                    if fail != -1 and poly_val%2!=0:#and total_mod > 100:# and fail ==0:# and fail ==0:# and total_mod>20:# and poly_val==5*7*7*7:#%2!=0 and total_mod>20:
+
                         h=0
                         while h < len(seen):
                             z2=seen_z[h]
+                           # if gcd(z,z2)!=1:
+                             #   h+=1
+                            #    continue
                             if poly_val*z==seen[h]*z2:
                                 x2=roots[h]
+                                if (z*x)%n == (z2*x2)%n:
+                                    h+=1
+                                    continue
                                 y2=seen_y[h]
                                 
                               #  dist=x-x2
