@@ -47,3 +47,5 @@ UPDATE: WAI WAIT WAIT. THIS WOULD DEFINITELY WORK. IF WE SUBTRACT QUADRATICS WIT
 I JUST NEED TO SUBTRACT QUADRATICS AT DIFFERENT QUADRATIC COEFFICIENTS TO GENERATE THE POLYNOMIAL VALUE OF 0, THEN CALCULATE THE DERIVATIVE AND TAKE THE GCD WITH BOTH LINEAR COEFFICIENTS. FUCK. OFCOURSE THAT WOULD WORK. FUCK. 
 
 FFFFFFFFFFFFFFFFUUUCK. I would shout out loud right now, but then I think people would call the police lol since its the middle of the night. God damnit. Its really THAT EASY. GOD DAMNIT. FUUUUCK. Ok, i'm going to get some sleep.... and time to finish this tomorrow. 
+
+I will literally quit math if this works tomorrow... all this shit with the quadratics and those earlier chapter in the paper.. I FIGURED THAT OUT IN MY FIRST YEAR OF RESEARCH. I COULD HAVE FINISHED IN ONE YEAR INSTEAD OF 3 IF I HAD JUST FUCKING REALIZED THIS SOONER. Fuck. A WASTE OF YEARS. YEARS OF MY LIFE WASTED ON FUCKING QUADRATICS. Fuck!
