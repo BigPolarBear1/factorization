@@ -40,3 +40,6 @@ UPDATE: Going to take a break for today. The idea I'm playing with is promising.
 So adding two quadratics with the same root is easy. Same with subtracting. So I wonder... can I just subtract quadratics to turn the polynomial value to zero, would that results in a polynomial from debug.py? Hmm, that shouldn't work right? I'll try tomorrow. I feel like a god damn idiot. There should be some really easy way to solve this lol. 
 
 Hmm.. why wouldnt that work if I just subtract them? HMMMMMMMM. I'll try that tomorrow.. but there is no way the solution is going to end up being that easy. Imagine if that ends up working... and I just hadn't seen it for nearly a year. I'll quit math for sure if thats the case.
+
+
+UPDATE: WAI WAIT WAIT. THIS WOULD DEFINITELY WORK. IF WE SUBTRACT QUADRATICS WITH DISTINCT QUADRATIC COEFFICIENTS. Yes yes, this would work. Holy fuck man. WHY DID THIS TAKE ME YEARS???????????????????????????? WHAT THE FUCK. ITS SO EASY. TOMORROW. WATCH ME ASSHOLES. THIS ENDS TOMORROW. FUCK YOU ASSHOLES.
