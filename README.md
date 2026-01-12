@@ -31,3 +31,5 @@ To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 20 -base 50 -debug 1 -lin_size 1000 -quad_size 1</br></br>
 
 Update: Doing some more work today. I realized that I can use different quadratic coefficients as well... as long as the linear coefficient is the same. Everything else can be different. Let me see how to sieve this now.. all the math is there.. I just need to develop a proper sieving algorithm now.
+
+UPDATE: After pondering every angle of attack for a while.. I think the best way to use these full quadratics is to sieve the discriminant... we want to arrive at quadratics where zx^2 = y... because if that factors over the factor base, then also the discriminant factors over the factor base. So  ideally I now need to figure out how do I combine multiple quadratics where zx^2 != y to one where zx^2 = y. Using these full quadratics as a way to build smooths, I think is the correct appraoch. Its really the only angle of attack that I can see working. Let me figure that out now... almost there... almost. 
