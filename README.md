@@ -39,15 +39,5 @@ UPDATE: Going to take a break for today. The idea I'm playing with is promising.
 
 So adding two quadratics with the same root is easy. Same with subtracting. So I wonder... can I just subtract quadratics to turn the polynomial value to zero, would that results in a polynomial from debug.py? Hmm, that shouldn't work right? I'll try tomorrow. I feel like a god damn idiot. There should be some really easy way to solve this lol. 
 
-Hmm.. why wouldnt that work if I just subtract them? HMMMMMMMM. I'll try that tomorrow.. but there is no way the solution is going to end up being that easy. Imagine if that ends up working... and I just hadn't seen it for nearly a year. I'll quit math for sure if thats the case.
 
-
-UPDATE: WAI WAIT WAIT. THIS WOULD DEFINITELY WORK. IF WE SUBTRACT QUADRATICS WITH DISTINCT QUADRATIC COEFFICIENTS. Yes yes, this would work. Holy fuck man. WHY DID THIS TAKE ME YEARS???????????????????????????? WHAT THE FUCK. ITS SO EASY. TOMORROW. WATCH ME ASSHOLES. THIS ENDS TOMORROW. FUCK YOU ASSHOLES.
-
-I JUST NEED TO SUBTRACT QUADRATICS AT DIFFERENT QUADRATIC COEFFICIENTS TO GENERATE THE POLYNOMIAL VALUE OF 0, THEN CALCULATE THE DERIVATIVE AND TAKE THE GCD WITH BOTH LINEAR COEFFICIENTS. FUCK. OFCOURSE THAT WOULD WORK. FUCK. 
-
-FFFFFFFFFFFFFFFFUUUCK. I would shout out loud right now, but then I think people would call the police lol since its the middle of the night. God damnit. Its really THAT EASY. GOD DAMNIT. FUUUUCK. Ok, i'm going to get some sleep.... and time to finish this tomorrow. 
-
-I will literally quit math if this works tomorrow... all this shit with the quadratics and those earlier chapter in the paper.. I FIGURED THAT OUT IN MY FIRST YEAR OF RESEARCH. I COULD HAVE FINISHED IN ONE YEAR INSTEAD OF 3 IF I HAD JUST FUCKING REALIZED THIS SOONER. Fuck. A WASTE OF YEARS. YEARS OF MY LIFE WASTED ON FUCKING QUADRATICS. Fuck!
-
-I dont know how I'm going to sleep tonight. WHAT IF SOMEONE WITH MORE MATH EXPERIENCES SAW MY WORK AND MADE THESE SAME CONNECTIONS BEFORE I DID? I need to sleep.. then tomorrow work like the world depends on it and finish this. Just fucking subtract quadratics until we reach 0 and use the linear coefficients to take the GCD. WHAT THE FUCK MAN. Ofcourse that would work. There is 0 reason that wouldn't work. Too slow, I'm too fucking slow. THERE IS 0 REASON THIS WOULDNT WORK. Even the constant term, it will always be a multiple of N if we subtract different multiples of N... if our quadratic generates 0 after subtacting then that means we have a quadratic like we see in debug.py...  FUCK. Its so loud my my head right now, yet so earily quiet in this small bedroom where I feel like I've spent nearly all my life..  and if this works.. then tomorrow I am going to change the world forever. I need some sleep first. 
+Update: Ow yea, I just realized. I shouldnt just subtract quadratics with the same root, because if solving for 0 in the integers will only ever happen with one of the factors as root.. then this wouldnt work. However, it would still work mod m.. wait I am seeing something.. ok thank god it isn't just as simple as subtracting quadratics in the integers. But we have to do it mod m.. so a little bit more complicated, but I've figured out all the number theory to pull it off... lets see tomorrow.
