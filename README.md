@@ -28,6 +28,6 @@ Update: While making this PoC, I suddenly had an idea, linking back to some thin
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 1000 -quad_size 1</br></br>
+To run:  python3 run_qs.py -keysize 20 -base 50 -debug 1 -lin_size 1000 -quad_size 1</br></br>
 
 Update: Doing some more work today. I realized that I can use different quadratic coefficients as well... as long as the linear coefficient is the same. Everything else can be different. Let me see how to sieve this now.. all the math is there.. I just need to develop a proper sieving algorithm now.
