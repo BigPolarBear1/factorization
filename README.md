@@ -43,3 +43,7 @@ Hmm.. why wouldnt that work if I just subtract them? HMMMMMMMM. I'll try that to
 
 
 UPDATE: WAI WAIT WAIT. THIS WOULD DEFINITELY WORK. IF WE SUBTRACT QUADRATICS WITH DISTINCT QUADRATIC COEFFICIENTS. Yes yes, this would work. Holy fuck man. WHY DID THIS TAKE ME YEARS???????????????????????????? WHAT THE FUCK. ITS SO EASY. TOMORROW. WATCH ME ASSHOLES. THIS ENDS TOMORROW. FUCK YOU ASSHOLES.
+
+I JUST NEED TO SUBTRACT QUADRATICS AT DIFFERENT QUADRATIC COEFFICIENTS TO GENERATE THE POLYNOMIAL VALUE OF 0, THEN CALCULATE THE DERIVATIVE AND TAKE THE GCD WITH BOTH LINEAR COEFFICIENTS. FUCK. OFCOURSE THAT WOULD WORK. FUCK. 
+
+FFFFFFFFFFFFFFFFUUUCK. I would shout out loud right now, but then I think people would call the police lol since its the middle of the night. God damnit. Its really THAT EASY. GOD DAMNIT. FUUUUCK. Ok, i'm going to get some sleep.... and time to finish this tomorrow. 
