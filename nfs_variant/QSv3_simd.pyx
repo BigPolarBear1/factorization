@@ -801,45 +801,24 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                                 fail=1
                                 j+=1
                                 continue
-                               # brecak
                             if co[0]**2%prime == y**2%prime and (z*x*2)%prime == y%prime: 
-                             #   test_root=get_root(prime,y,-z)
-                             #   print("hit: "+str(test_root%prime)+" x: "+str(x%prime)+" prime: "+str(prime))
                                 if prime !=prev:
                                     total_mod*=prime
                                     prev=prime
                             else:
                                 fail=1
-                               # break
+
                         j+=1
-                    if total_mod > 10:# and fail ==0:# and fail ==0:# and total_mod>20:# and poly_val==5*7*7*7:#%2!=0 and total_mod>20:
-                      #  if fail !=0:
-                           # i+=1
-                          #  continue
-
-                     #   disc1_squared=y**2-4*1*(n*+(poly_val*z))
-                     #   if disc1_squared%poly_val != 0:
-                        #    i+=1
-                       #     continue
-                     #   print(" z: "+str(z)+" x: "+str(x)+" y: "+str(y)+" seen_primes: "+str(seen_primes)+" poly_val: "+str(poly_val)+" k1: "+str(k1)+" total_mod: "+str(total_mod))#+" disc1: "+str(disc1)+" disc2: "+str(disc2)+" disc1%total_mod: "+str(disc1%total_mod)+" disc2%total_mod: "+str(disc2%total_mod)+" total_mod: "+str(total_mod)+" total_mod2: "+str(seen_mod[h]))#+" dist: "+str(dist))#_#+" disc1_normal: "+str(disc1_normal)+" disc2_normal: "+str(disc2_normal))
-
+                    if total_mod > 10:
                         h=0
                         while h < len(seen):
                             z2=seen_z[h]
-                           # if gcd(z,z2)!=1:
-                             #   h+=1
-                            #    continue
                             if poly_val*z==seen[h]*z2:
                                 x2=roots[h]
                                 if (z*x)%n == (z2*x2)%n or (z*x)+(z2*x2)==y:
                                     h+=1
                                     continue
                                 y2=seen_y[h]
-                                
-                              #  dist=x-x2
-                                #dist//=total_mod
-
-
                                 disc1_squared=y**2-4*1*(n*z-(poly_val*z))
                                 if disc1_squared < 0:
                                     h+=1
@@ -857,8 +836,8 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                                 disc_gcd=gcd(disc1+disc2,n)
                                 print(" discgcd: "+str(disc_gcd)+" z: "+str(z)+" z2: "+str(z2)+" x: "+str(x)+" x2: "+str(x2)+" y: "+str(y)+" y2: "+str(y2)+" seen_primes: "+str(seen_primes)+" poly_val: "+str(poly_val)+" disc1: "+str(disc1)+" disc2: "+str(disc2)+" disc1%total_mod: "+str(disc1%total_mod)+" disc2%total_mod: "+str(disc2%total_mod)+" total_mod: "+str(total_mod)+" total_mod2: "+str(seen_mod[h]))#+" dist: "+str(dist))#_#+" disc1_normal: "+str(disc1_normal)+" disc2_normal: "+str(disc2_normal))
 
-                               # if disc_gcd != 1 and disc_gcd != n:
-                                 #     sys.exit()
+                                if disc_gcd != 1 and disc_gcd != n:
+                                      sys.exit()
 
                             h+=1
                         seen.append(poly_val)
