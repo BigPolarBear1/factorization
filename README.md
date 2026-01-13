@@ -42,3 +42,5 @@ UPDATE: Slow day today. I changed the PoC quickly to use y<sub>0</sub> instead o
 So now to implement the sieving algorithm next... Once 2zx = y we know we'll have a smooth aswell with the discriminant (where the constant is N without an offset).
 
 Anyway... going to go for a run.. fucking stressed man. I know I'm right about my math. I know what I got. And people must know... not everyone in infosec can be a complete morron. Ofcourse they think people like me are "DEI" and blah blah blah.. people are so fucking brain washed, they woudln't even believe it if it was staring them right in their eyes. Anyway, factorization will come to this world, even if it is the last thing I do in my life.
+
+UPDATE: ERGH. I JUST NOTICED SOMETHING. WHAT THE FUCK MAN.
