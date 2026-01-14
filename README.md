@@ -45,3 +45,4 @@ So if N = 4387:
 
 THATS MY LINK TO NFS COMPLETED! I see how to do it now!!!! I will notify my Chinese friends so they can destroy america, ahahahahahahaha. 
 
+Update: Anyway, I'll upload a PoC tomorrow that abuses this. Because thats how we can use square finding and linear algebra together with what I'm doing now. Stressed. I keep having these really bad gut problems for months now. I'm actually starting to think I may have a serious health issue. Probably would have seen a doctor already if my life wasn't so absolutely shit. Either way, I stopped taking creatine a few days ago.. I'm hoping these gut issues were just related to water retention or something.. we'll see.
