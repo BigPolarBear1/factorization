@@ -834,14 +834,19 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                                     print("disc2 error")
                                 if disc1**2 != disc1_squared:
                                     print("disc1 error")
-                                new_y=y-seen_disc_y[h]
+                                new_y=y**2-seen_disc_y[h]**2
+                                ysqr=math.isqrt(new_y)
+                                if ysqr**2 !=new_y:
+                                    h+=1
+                                    continue
+                                
                                 new_z=z-seen_disc_z[h]
-                                new_disc=new_y**2-4*n*new_z
+                                new_disc=ysqr**2-4*n*new_z
                                 if new_disc > 0:
                                     test_sq=math.isqrt(new_disc)
-                                    if test_sq**2 == new_disc and new_y != test_sq:
-                                        testgcd=gcd(new_y+test_sq,n)
-                                        print("gcd: "+str(testgcd)+" new_y: "+str(new_y)+" new_y2: "+str(test_sq)+" mod1: "+str(total_mod)+" mod2: "+str(seen_disc_mod[h])+" x: "+str(x)+" x2: "+str(seen_disc_x[h])+" z: "+str(z)+" z2: "+str(seen_disc_z[h])+" disc1: "+str(disc1)+" disc2: "+str(disc2)+" polyval: "+str(poly_val)+" polyval2: "+str(poly_val2//z2)+" y: "+str(y)+" y2: "+str(seen_disc_y[h]))
+                                    if test_sq**2 == new_disc and ysqr != test_sq:
+                                        testgcd=gcd(ysqr+test_sq,n)
+                                        print("gcd: "+str(testgcd)+" new_y: "+str(ysqr)+" new_y2: "+str(test_sq)+" mod1: "+str(total_mod)+" mod2: "+str(seen_disc_mod[h])+" x: "+str(x)+" x2: "+str(seen_disc_x[h])+" z: "+str(z)+" z2: "+str(seen_disc_z[h])+" disc1: "+str(disc1)+" disc2: "+str(disc2)+" polyval: "+str(poly_val)+" polyval2: "+str(poly_val2//z2)+" y: "+str(y)+" y2: "+str(seen_disc_y[h]))
                                         if testgcd != 1 and testgcd != n:
                                             sys.exit()
                            
