@@ -43,3 +43,4 @@ So now to implement the sieving algorithm next... Once 2zx = y we know we'll hav
 
 Anyway... going to go for a run.. fucking stressed man. I know I'm right about my math. I know what I got. And people must know... not everyone in infosec can be a complete morron. Ofcourse they think people like me are "DEI" and blah blah blah.. people are so fucking brain washed, they woudln't even believe it if it was staring them right in their eyes. Anyway, factorization will come to this world, even if it is the last thing I do in my life.
 
+Update: Fixed that chapter in the paper quickly. I really need to rewrite it entirely eventually. Every chapter was written at a different stage over the course of 3 years.... at wildly different levels of understanding and math skills... its just a bit of a mess because of that. Any.. now I'm zeroed in on the solution.. time to finish this.
