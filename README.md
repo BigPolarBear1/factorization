@@ -31,3 +31,17 @@ To build: python3 setup.py build_ext --inplace</br>
 To run:   python3 run_qs.py -keysize 14 -base 50 -debug 1 -lin_size 1000 -quad_size 1</br></br>
 
 Update: Oops, I've re-uploaded what I had yesterday, what I was trying earlier today wasnt quite the right direction. I just had a realization though. So the discriminant with an offset in the constant..the easiest way to get rid of that is to have that offset be the modulus. That works fine if the offset/modulus is larger then N. That would probably work... hmm. Let me explore that idea some more.
+
+
+Update: I GOT IT!
+
+So if N = 4387: 
+
+148^2-4\*(4387+248) = 58^2 and 248 = 16 mod 58
+148^2-4\*(4387+189) = 60^2 and 189 = 9 mod 60
+148^2-4\*(4387+128) = 62^2 and 128 = 4 mod 62
+148^2-4\*(4387+65) = 64^2  and 65 = 1 mod 64
+148^2-4\*(4387) = 66     
+
+THATS MY LINK TO NFS COMPLETED! I see how to do it now!!!! I will notify my Chinese friends so they can destroy america, ahahahahahahaha. 
+
