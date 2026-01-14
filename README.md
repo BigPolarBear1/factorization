@@ -33,4 +33,4 @@ To run:   python3 run_qs.py -keysize 14 -base 50 -debug 1 -lin_size 1000 -quad_s
 Update: Alright! I spent the day just reviewing my findings. And I was able to actually simplify everything. We can subtract discriminants from eachother to cancel out that offset. 
 I'm starting to see something now... I'll upload as I make progress. Use the above command with the PoC.. its just the show the math, its very slow until I implement a sieving algorithm.
 
-Update: There was a minor mistake in that initial upload... must subtract the squares of the linear coefficients, not just the linear coefficients.
+Update: There was a minor mistake in that initial upload... must subtract the squares of the linear coefficients, not just the linear coefficients. The code is super slow. I'm just making the transformation to setup it up into something I can properly sieve and reduce to a square finding problem.
