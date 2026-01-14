@@ -815,18 +815,25 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                     if total_mod > 0:# and fail ==0:
                     #    if fail ==0:
                           #  print(" z: "+str(z)+" x: "+str(x)+" y: "+str(y)+" seen_primes: "+str(seen_primes)+" poly_val: "+str(poly_val))#+" disc1: "+str(disc1)+" disc1%total_mod: "+str(disc1%total_mod)+" disc2%total_mod: "+str(disc2%total_mod)+" total_mod: "+str(total_mod)+" total_mod2: "+str(seen_mod[h]))#+" dist: "+str(dist))#_#+" disc1_normal: "+str(disc1_normal)+" disc2_normal: "+str(disc2_normal))
-
-
-
                         disc1_squared=y**2-4*1*(n*z-(poly_val*z))
                         if disc1_squared < 0:
-                            h+=1
-                            continue
+                            print("error shouldn't happen")
+                             
                         disc1=math.isqrt(disc1_squared)
-
                         h=0
                         while h < len(seen_disc):
                             if  poly_val*z==seen_disc_poly[h] and y!=seen_disc_y[h]:
+                                z2=seen_disc_z[h]
+                                poly_val2=seen_disc_poly[h]
+                                y2=seen_disc_y[h]
+                                disc2_squared=y2**2-4*1*(n*z2-(poly_val2))
+                                if disc2_squared < 0:
+                                    print("error shoulnd't happen")
+                                disc2=math.isqrt(disc2_squared)
+                                if disc2**2 != disc2_squared:
+                                    print("disc2 error")
+                                if disc1**2 != disc1_squared:
+                                    print("disc1 error")
                                 new_y=y-seen_disc_y[h]
                                 new_z=z-seen_disc_z[h]
                                 new_disc=new_y**2-4*n*new_z
@@ -834,7 +841,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                                     test_sq=math.isqrt(new_disc)
                                     if test_sq**2 == new_disc and new_y != test_sq:
                                         testgcd=gcd(new_y+test_sq,n)
-                                        print("gcd: "+str(testgcd)+" new_y: "+str(new_y)+" new_y2: "+str(test_sq)+" mod1: "+str(total_mod)+" mod2: "+str(seen_disc_mod[h])+" x: "+str(x)+" x2: "+str(seen_disc_x[h])+" z: "+str(z)+" z2: "+str(seen_disc_z[h]))
+                                        print("gcd: "+str(testgcd)+" new_y: "+str(new_y)+" new_y2: "+str(test_sq)+" mod1: "+str(total_mod)+" mod2: "+str(seen_disc_mod[h])+" x: "+str(x)+" x2: "+str(seen_disc_x[h])+" z: "+str(z)+" z2: "+str(seen_disc_z[h])+" disc1: "+str(disc1)+" disc2: "+str(disc2))
                                         if testgcd != 1 and testgcd != n:
                                             sys.exit()
                            
