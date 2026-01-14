@@ -37,11 +37,11 @@ Update: I GOT IT!
 
 So if N = 4387: 
 
-148^2-4\*(4387+248) = 58^2 and 248 = 16 mod 58
-148^2-4\*(4387+189) = 60^2 and 189 = 9 mod 60
-148^2-4\*(4387+128) = 62^2 and 128 = 4 mod 62
-148^2-4\*(4387+65) = 64^2  and 65 = 1 mod 64
-148^2-4\*(4387) = 66     
+148^2-4\*(4387+248) = 58^2 and 248 = 16 mod 58</br>
+148^2-4\*(4387+189) = 60^2 and 189 = 9 mod 60</br>
+148^2-4\*(4387+128) = 62^2 and 128 = 4 mod 62</br>
+148^2-4\*(4387+65) = 64^2  and 65 = 1 mod 64</br>
+148^2-4\*(4387) = 66     </br>
 
 THATS MY LINK TO NFS COMPLETED! I see how to do it now!!!! I will notify my Chinese friends so they can destroy america, ahahahahahahaha. 
 
