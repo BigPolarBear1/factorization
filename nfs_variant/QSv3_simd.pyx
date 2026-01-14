@@ -700,11 +700,11 @@ def grab_co(co,primeslist,hmap):
     return modulus,z_list
 
 cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_prime_bound,primeslist2,small_primeslist):
- #   i=0
- #   while i < len(hmap):
+  #  i=0
+ ##   while i < len(hmap):
 
-  #      print("prime: "+str(primeslist[i])+" "+str(hmap[i]))
-  #      i+=1
+   ##     print("prime: "+str(primeslist[i])+" "+str(hmap[i]))
+   ##     i+=1
     cdef Py_ssize_t j
 
     LOWER_BOUND_SIQS=1
@@ -761,15 +761,18 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
     z=1
     x1=1
     y0=1
-    o=1  
-    while o < n:
-        y=o
-        z=1
-        seen=[]
-        roots=[]
-        seen_y=[]
-        seen_mod=[]
-        seen_z=[]
+    y=1  
+    seen_disc=[]
+    seen_disc_y=[]
+    seen_disc_poly=[]
+    seen_disc_z=[]
+    seen_disc_mod=[]
+    seen_disc_x=[]
+    o=0
+    while o < 10_000:
+       # ystart=math.isqrt(n)
+        y=o#ystart+o
+        z=1        
         while z < 100:
             i=0
 
@@ -794,7 +797,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                     while j < len(seen_primes_indexes):
                         pindex=seen_primes_indexes[j]
                         prime=seen_primes[j]
-                        if pindex != -1:
+                        if pindex != -1 and x%prime !=0:
                             try:
                                 co=hmap[pindex][str(z2%prime)]
                             except Exception as e:
@@ -809,43 +812,40 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                                 fail=1
 
                         j+=1
-                    if total_mod > 10:
-                        h=0
-                        while h < len(seen):
-                            z2=seen_z[h]
-                            if poly_val*z==seen[h]*z2:
-                                x2=roots[h]
-                                if (z*x)%n == (z2*x2)%n or (z*x)+(z2*x2)==y:
-                                    h+=1
-                                    continue
-                                y2=seen_y[h]
-                                disc1_squared=y**2-4*1*(n*z-(poly_val*z))
-                                if disc1_squared < 0:
-                                    h+=1
-                                    continue
-                                disc1=math.isqrt(disc1_squared)
+                    if total_mod > 0:# and fail ==0:
+                    #    if fail ==0:
+                          #  print(" z: "+str(z)+" x: "+str(x)+" y: "+str(y)+" seen_primes: "+str(seen_primes)+" poly_val: "+str(poly_val))#+" disc1: "+str(disc1)+" disc1%total_mod: "+str(disc1%total_mod)+" disc2%total_mod: "+str(disc2%total_mod)+" total_mod: "+str(total_mod)+" total_mod2: "+str(seen_mod[h]))#+" dist: "+str(dist))#_#+" disc1_normal: "+str(disc1_normal)+" disc2_normal: "+str(disc2_normal))
 
 
-                                disc2_squared=y2**2-4*1*(n*z2-(seen[h]*z2))#
-#                           
-                                disc2=math.isqrt(disc2_squared)
-                                if disc1**2 != disc1_squared:
-                                    print("disc1 error")##
-                                if disc2**2 != disc2_squared:
-                                    print("disc2 error")
-                                disc_gcd=gcd(disc1+disc2,n)
-                                print(" discgcd: "+str(disc_gcd)+" z: "+str(z)+" z2: "+str(z2)+" x: "+str(x)+" x2: "+str(x2)+" y: "+str(y)+" y2: "+str(y2)+" seen_primes: "+str(seen_primes)+" poly_val: "+str(poly_val)+" disc1: "+str(disc1)+" disc2: "+str(disc2)+" disc1%total_mod: "+str(disc1%total_mod)+" disc2%total_mod: "+str(disc2%total_mod)+" total_mod: "+str(total_mod)+" total_mod2: "+str(seen_mod[h]))#+" dist: "+str(dist))#_#+" disc1_normal: "+str(disc1_normal)+" disc2_normal: "+str(disc2_normal))
 
-                                if disc_gcd != 1 and disc_gcd != n:
-                                      sys.exit()
-
+                        disc1_squared=y**2-4*1*(n*z-(poly_val*z))
+                        if disc1_squared < 0:
                             h+=1
-                        seen.append(poly_val)
-                        roots.append(x)
-                        seen_y.append(y)
-                        seen_mod.append(total_mod)
-                        seen_z.append(z)
+                            continue
+                        disc1=math.isqrt(disc1_squared)
 
+                        h=0
+                        while h < len(seen_disc):
+                            if  poly_val*z==seen_disc_poly[h] and y!=seen_disc_y[h]:
+                                new_y=y-seen_disc_y[h]
+                                new_z=z-seen_disc_z[h]
+                                new_disc=new_y**2-4*n*new_z
+                                if new_disc > 0:
+                                    test_sq=math.isqrt(new_disc)
+                                    if test_sq**2 == new_disc and new_y != test_sq:
+                                        testgcd=gcd(new_y+test_sq,n)
+                                        print("gcd: "+str(testgcd)+" new_y: "+str(new_y)+" new_y2: "+str(test_sq)+" mod1: "+str(total_mod)+" mod2: "+str(seen_disc_mod[h])+" x: "+str(x)+" x2: "+str(seen_disc_x[h])+" z: "+str(z)+" z2: "+str(seen_disc_z[h]))
+                                        if testgcd != 1 and testgcd != n:
+                                            sys.exit()
+                           
+                            h+=1
+
+                        seen_disc.append(disc1)
+                        seen_disc_y.append(y)
+                        seen_disc_poly.append(poly_val*z)
+                        seen_disc_z.append(z)
+                        seen_disc_mod.append(total_mod)
+                        seen_disc_x.append(x)
                 i+=1
             z+=1
         o+=1
