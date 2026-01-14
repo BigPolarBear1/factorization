@@ -841,7 +841,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                                     test_sq=math.isqrt(new_disc)
                                     if test_sq**2 == new_disc and new_y != test_sq:
                                         testgcd=gcd(new_y+test_sq,n)
-                                        print("gcd: "+str(testgcd)+" new_y: "+str(new_y)+" new_y2: "+str(test_sq)+" mod1: "+str(total_mod)+" mod2: "+str(seen_disc_mod[h])+" x: "+str(x)+" x2: "+str(seen_disc_x[h])+" z: "+str(z)+" z2: "+str(seen_disc_z[h])+" disc1: "+str(disc1)+" disc2: "+str(disc2))
+                                        print("gcd: "+str(testgcd)+" new_y: "+str(new_y)+" new_y2: "+str(test_sq)+" mod1: "+str(total_mod)+" mod2: "+str(seen_disc_mod[h])+" x: "+str(x)+" x2: "+str(seen_disc_x[h])+" z: "+str(z)+" z2: "+str(seen_disc_z[h])+" disc1: "+str(disc1)+" disc2: "+str(disc2)+" polyval: "+str(poly_val)+" polyval2: "+str(poly_val2//z2)+" y: "+str(y)+" y2: "+str(seen_disc_y[h]))
                                         if testgcd != 1 and testgcd != n:
                                             sys.exit()
                            
