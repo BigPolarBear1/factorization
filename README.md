@@ -37,12 +37,14 @@ Update: I GOT IT!
 
 So if N = 4387: 
 
-148^2-4\*(4387+248) = 58^2 and 248 = 16 mod 58</br>
-148^2-4\*(4387+189) = 60^2 and 189 = 9 mod 60</br>
-148^2-4\*(4387+128) = 62^2 and 128 = 4 mod 62</br>
-148^2-4\*(4387+65) = 64^2  and 65 = 1 mod 64</br>
+148^2-4\*(4387+248) = 58^2 and 66^2 = 140 mod 248 and 58^2 = 140 mod 248</br>
+148^2-4\*(4387+189) = 60^2 and 66^2 = 9 mod 189 and 60^2 = 16 mod 189</br>
+148^2-4\*(4387+128) = 62^2 and 66^2 = 4 mod 128 and 62^2 = 4 mod 128</br>
+148^2-4\*(4387+65) = 64^2  and 66^2 = 1 mod 65 and 64^2 = 1 mod 65</br>
 148^2-4\*(4387) = 66     </br>
 
 THATS MY LINK TO NFS COMPLETED! I see how to do it now!!!! I will notify my Chinese friends so they can destroy america, ahahahahahahaha. 
 
 Update: Anyway, I'll upload a PoC tomorrow that abuses this. Because thats how we can use square finding and linear algebra together with what I'm doing now. Stressed. I keep having these really bad gut problems for months now. I'm actually starting to think I may have a serious health issue. Probably would have seen a doctor already if my life wasn't so absolutely shit. Either way, I stopped taking creatine a few days ago.. I'm hoping these gut issues were just related to water retention or something.. we'll see.
+
+Update: Digging a better deeper into what I'm seeing.. I updated the above number sequence... so that is a very useful pattern. Let me move toward completing a PoC now.
