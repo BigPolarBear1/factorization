@@ -813,7 +813,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                         print("super fatal error")
                     if z*x**2-y*x+n*k != poly_val:
                         print("fatal error: ",k)
-                    if k > 0 and fail ==0: 
+                    if k > 0 and fail ==0 and total_mod > 1: 
                         test=abs(poly_val*z)
                         disc1_squared=y**2-4*(n*k*z-(poly_val*z))
                         disc2_squared=y**2-4*(n*k*z)
@@ -821,12 +821,15 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                             print("should never happen")
                         disc1=math.isqrt(disc1_squared)
                         test_sq=disc1_squared%test
+                        if test_sq == 0:
+                            i+=1
+                            continue
                         test_sqr=math.isqrt(test_sq)
                        # if test_sqr**2 ==test_sq:
                        #     print("poly_val: "+str(poly_val)+" disc1_squared: "+str(disc1_squared)+" disc2_squared: " +str(disc2_squared)+" disc1: "+str(disc1)+" test_sq: "+str(test_sq)+" test_sqr: "+str(test_sqr)+" k: "+str(k)+" y: "+str(y)+" total_mod: "+str(total_mod))
-                        if test_sqr**2 ==test_sq and test_sq == disc2_squared:
+                        if test_sqr**2 ==test_sq:
                             testgcd=gcd(test_sqr+y,n)
-                            print(" Factor: "+str(testgcd)+" disc1: "+str(disc1)+" poly_val: "+str(poly_val)+" disc1_squared: "+str(disc1_squared)+" disc1: "+str(disc1)+" test_sq: "+str(test_sq)+" k: "+str(k)+" y: "+str(y))
+                            print(" Factor: "+str(testgcd)+" poly_val: "+str(poly_val)+" disc1_squared: "+str(disc1_squared)+" disc2_squared: "+str(disc2_squared)+" disc2_squared%total_mod: " +str(disc2_squared%total_mod)+" disc1: "+str(disc1)+" test_sq: "+str(test_sq)+" test_sq%total_mod: "+str(test_sq%total_mod)+" test_sqr: "+str(test_sqr)+" k: "+str(k)+" y: "+str(y)+" total_mod: "+str(total_mod))
                             if testgcd != 1 and testgcd !=n:
                                 sys.exit()
                 i+=1
