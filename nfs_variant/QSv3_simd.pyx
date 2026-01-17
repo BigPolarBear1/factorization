@@ -770,6 +770,10 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
         seen_y=[]
         seen_mod=[]
         seen_z=[]
+
+
+        smooths=[]
+        coefficients=[]
         while z < 2:
             i=0
     
@@ -778,7 +782,9 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                 fail=0
                 x=x1+i
                 poly_val=(z*x**2-y*x)%n
-                z2=z
+                k=((z*x**2-y*x)-poly_val)//n
+                k*=-1
+                z2=z*k
                 if poly_val==0:
                     i+=1
                     continue
