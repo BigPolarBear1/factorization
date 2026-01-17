@@ -782,9 +782,6 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                 fail=0
                 x=x1+i
                 poly_val=(z*x**2-y*x)%n
-                if poly_val%2==0:
-                    i+=1
-                    continue
                 k=((z*x**2-y*x)-poly_val)//n
                 k*=-1
                 z2=z*k
@@ -822,7 +819,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                         print("super fatal error")
                     if z*x**2-y*x+n*k != poly_val:
                         print("fatal error: ",k)
-                    if k > 0 and fail ==0 and poly_val%2!=0:# and total_mod > 20: 
+                    if k > 0 and fail ==0 and total_mod > 1:# and poly_val%2!=0:# and total_mod > 20: 
                         test=abs(poly_val*z)
                         disc1_squared=y**2-4*(n*k*z-(poly_val*z))
                         disc2_squared=y**2-4*(n*k*z)
