@@ -826,14 +826,16 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                         if disc1_squared < 0:
                             print("should never happen")
                         disc1=math.isqrt(disc1_squared)
+                       
                         test_sq=disc1_squared%test
-                        if test_sq == 0:
+                        if test_sq == 0 or disc2_squared < 0:
                             i+=1
                             continue
+                        disc2=math.isqrt(disc2_squared)
                         test_sqr=math.isqrt(test_sq)
                        # if test_sqr**2 ==test_sq:
                        #     print("poly_val: "+str(poly_val)+" disc1_squared: "+str(disc1_squared)+" disc2_squared: " +str(disc2_squared)+" disc1: "+str(disc1)+" test_sq: "+str(test_sq)+" test_sqr: "+str(test_sqr)+" k: "+str(k)+" y: "+str(y)+" total_mod: "+str(total_mod))
-                        if test_sqr**2 ==test_sq and disc2_squared>0:
+                        if test_sqr**2 ==test_sq and test_sqr == disc2:
                             testgcd=gcd(test_sqr+y,n)
                             print(" Factor: "+str(testgcd)+" poly_val: "+str(poly_val)+" disc1_squared: "+str(disc1_squared)+" disc2_squared: "+str(disc2_squared)+" disc2_squared%total_mod: " +str(disc2_squared%total_mod)+" disc1: "+str(disc1)+" test_sq: "+str(test_sq)+" test_sq%total_mod: "+str(test_sq%total_mod)+" test_sqr: "+str(test_sqr)+" k: "+str(k)+" y: "+str(y)+" total_mod: "+str(total_mod))
                             if testgcd != 1 and testgcd !=n:
