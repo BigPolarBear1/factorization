@@ -761,9 +761,9 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
  
     x1=1
     y0=1
-    o=0
-    while o < 1000:
-        y=math.isqrt(n*4)+o
+    o=1
+    while o < n:
+        y=o#math.isqrt(n*4)+o
         z=1
         seen=[]
         roots=[]
@@ -784,7 +784,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                 poly_val=(z*x**2-y*x)%n
                 k=((z*x**2-y*x)-poly_val)//n
                 k*=-1
-                z2=z*k
+                z2=z#*k
                 if poly_val==0:
                     i+=1
                     continue
@@ -833,7 +833,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                         test_sqr=math.isqrt(test_sq)
                        # if test_sqr**2 ==test_sq:
                        #     print("poly_val: "+str(poly_val)+" disc1_squared: "+str(disc1_squared)+" disc2_squared: " +str(disc2_squared)+" disc1: "+str(disc1)+" test_sq: "+str(test_sq)+" test_sqr: "+str(test_sqr)+" k: "+str(k)+" y: "+str(y)+" total_mod: "+str(total_mod))
-                        if test_sqr**2 ==test_sq:
+                        if test_sqr**2 ==test_sq and disc2_squared>0:
                             testgcd=gcd(test_sqr+y,n)
                             print(" Factor: "+str(testgcd)+" poly_val: "+str(poly_val)+" disc1_squared: "+str(disc1_squared)+" disc2_squared: "+str(disc2_squared)+" disc2_squared%total_mod: " +str(disc2_squared%total_mod)+" disc1: "+str(disc1)+" test_sq: "+str(test_sq)+" test_sq%total_mod: "+str(test_sq%total_mod)+" test_sqr: "+str(test_sqr)+" k: "+str(k)+" y: "+str(y)+" total_mod: "+str(total_mod))
                             if testgcd != 1 and testgcd !=n:
