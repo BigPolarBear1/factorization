@@ -62,3 +62,5 @@ Ps: When I started 3 years ago, I never finished highschool, I never had math ed
 
 
 Update: Changed the PoC. All the math is there.. only thing left now is to instead of doing brute force... we should use linear algebra.. and I guess that will be that. I'll slowly begin implementing that now.. next time I upload it will be a working POC with linear algebra and then its definitely game over..
+
+Update: Ok... good enough for now.. the uploaded PoC isnt great, it really needs linear algebra and all that.. Ill start working on that now.. probably will need some jacobi symbols too.
