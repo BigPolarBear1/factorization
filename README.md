@@ -39,3 +39,5 @@ Factorizing 2+8746 (2x2x3x3x3x3x3x3x3) and 2-8746 (2x2x2x1093) is going to revea
 Ok, I'll begin writing that tomorrow. I need a break for today. I've got pounding headache.
 
 Somewhere in Siberia, a soviet cryptologist, living alone amongst the polar bears, is seeing my work and preparing to destroy america. Hahahhahaha. 
+
+Update: Actually let me skip running today, make some food now, wait for painkiller to work and then quickly write a PoC with linear algebra as its very simple now that I understand it....
