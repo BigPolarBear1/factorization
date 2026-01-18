@@ -28,10 +28,11 @@ Update: While making this PoC, I suddenly had an idea, linking back to some thin
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:   python3 run_qs.py -keysize 18 -base 50 -debug 1 -lin_size 1000 -quad_size 1</br></br>
+To run:   python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 1000 -quad_size 1</br></br>
 
 Update: Almost there. Not quite yet ready to implement linear algebra. I need to spent a few more days taking apart what I've found so far. 
 There is something identical going on as to what number field sieve is doing. But its fairly complicated. Pretty I have all the pieces now.. I just need a few focused days studying it so I can implement the linear algebra.
 
 Update: Rolled back to a few days ago. I see the link with number field sieve, but I just got to dig in now. Let me figure this out.
 
+Update: I changed it again to use y<sub>1</sub> instead of y<sub>0</sub> ... now I'm going to go ahead and figure out how to pull off linear algebra...
