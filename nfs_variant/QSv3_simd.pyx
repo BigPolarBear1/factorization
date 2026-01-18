@@ -35,7 +35,7 @@ workers=1 #max amount of parallel processes to use
 quad_co_per_worker=1 #Amount of quadratic coefficients to check. Keep as small as possible.
 base=1_000
 small_base=1000
-qbase=5_00
+qbase=10
 quad_sieve_size=10
 g_debug=0 #0 = No debug, 1 = Debug, 2 = A lot of debug
 g_lift_lim=0.5
@@ -50,7 +50,7 @@ g_max_exp=10
 lin_sieve_size=1000
 max_diff=1_000_000
 
-##Key gen function##
+##Key gen function ##
 def power(x, y, p):
     res = 1;
     x = x % p;
@@ -159,22 +159,22 @@ def gcd(a,b): # Euclid's algorithm ##To do: Use a version without recursion?
     else:
         return gcd(b,a)
         
-def QS(n,factor_list,sm,xlist,flist,disc_sr_list,pval_list,pflist):
-    g_max_smooths=base*1+2
-    if len(sm) > g_max_smooths*10000: 
+def QS(n,factor_list,sm,xlist,flist):#,jsymbols,testl,primeslist2,disc1_squared_list):#,disc_sr_list,pval_list,pflist):
+    g_max_smooths=base+2#+qbase
+    if len(sm) > g_max_smooths*10000000: 
         del sm[g_max_smooths:]
         del xlist[g_max_smooths:]
         del flist[g_max_smooths:]  
-    M2 = build_matrix(factor_list, sm, flist,pflist)
-    null_space=solve_bits(M2,factor_list)
-    f1,f2=extract_factors(n, sm, xlist, null_space,disc_sr_list,pval_list,pflist)
+    M2 = build_matrix(factor_list, sm, flist)#,pflist)
+    null_space=solve_bits(M2,factor_list,base+2)
+    f1,f2=extract_factors(n, sm, xlist, null_space)#,disc_sr_list,pval_list,pflist)
     if f1 != 0:
         print("[SUCCESS]Factors are: "+str(f1)+" and "+str(f2))
         return f1,f2   
     print("[FAILURE]No factors found")
     return 0,0
 
-def extract_factors(N, relations, roots, null_space,disc_sr_list,pval_list,pflist):
+def extract_factors(N, relations, roots, null_space):#,disc_sr_list,pval_list,pflist):
     n = len(relations)
     for vector in null_space:
         prod_left = 1
@@ -187,44 +187,34 @@ def extract_factors(N, relations, roots, null_space,disc_sr_list,pval_list,pflis
             if bit == 1:
                 prod_left *= roots[idx]
                 prod_right *= relations[idx]
-                pval*=pval_list[idx]
-                disc_sr*=disc_sr_list[idx]
-               # sm: "+str(relations[idx])+" adding root: "+str(roots[idx])+" adding pval: "+str(pval_list[idx])+" adding disc_sr: "+str(disc_sr_list[idx]))
             idx += 1
-        pval_sr = math.isqrt(pval)
-        if pval_sr**2 != pval:
-            print("error pval_sr")
-        y1_b=disc_sr-pval_sr
         sqrt_right = math.isqrt(prod_right)
-        sqrt_left = prod_left# math.isqrt(prod_left)
+        sqrt_left = prod_left
         ###Debug shit, remove for final version
         sqr1=prod_left**2%N 
         sqr2=prod_right%N
         if sqrt_right**2 != prod_right:
-            print("something fucked up1")
+            print("not a square in the integers")
             time.sleep(10000)
 
         if sqr1 != sqr2:
             print("ERROR ERROR")
             time.sleep(10000)
         ###End debug shit#########
-      #  sqrt_left = sqrt_left % N
-      #  sqrt_right = sqrt_right % N
+        sqrt_left = sqrt_left % N
+        sqrt_right = sqrt_right % N
         factor_candidate = gcd(N, abs(sqrt_right+sqrt_left))
-        factor_candidate2 = gcd(N, abs(y1_b+sqrt_left))
-        fail=0
-        if y1_b**2%N != sqrt_left**2%N:
-            fail=1
-       # print(factor_candidate)
+
+
         if factor_candidate not in (1, N):
-            print("y1_b: "+str(factor_candidate2)+" y1_b: "+str(y1_b)+" bfail: "+str(fail)+" sm: "+str(sqrt_right)+" root: "+str(sqrt_left))
+            print(str(factor_candidate)+" sm: "+str(sqrt_right)+" root: "+str(sqrt_left))
             other_factor = N // factor_candidate
             return factor_candidate, other_factor
 
     return 0, 0
 
-def solve_bits(matrix,factor_base):
-    n=len(factor_base)*2#base+2
+def solve_bits(matrix,factor_base,length):
+    n=length#len(factor_base)*1#base+2
     lsmap = {lsb: 1 << lsb for lsb in range(n+10000)}
     m = len(matrix)
     marks = []
@@ -260,12 +250,12 @@ def solve_bits(matrix,factor_base):
             break
     return nulls
 
-def build_matrix(factor_base, smooth_nums, factors,pflist):
+def build_matrix(factor_base, smooth_nums, factors):#,pflist):
     fb_map = {val: i for i, val in enumerate(factor_base)}
 
     ind=1
 
-    M2=[0]*(len(factor_base)*2)
+    M2=[0]*(base+2)#+2+qbase)
     for i in range(len(smooth_nums)):
         for fac in factors[i]:
             idx = fb_map[fac]
@@ -274,13 +264,21 @@ def build_matrix(factor_base, smooth_nums, factors,pflist):
 
 
 
-    offset=len(factor_base)#(base+2)-1
-    ind=1
-    for i in range(len(pflist)):
-        for fac in pflist[i]:
-            idx = fb_map[fac]
-            M2[idx+offset] |= ind
-        ind = ind + ind
+ #   offset=(base+2)-1
+ #   ind=1
+
+  #  i=0
+  #  while i <len(jsymbols):
+  #      j=0
+  #      while j < len(jsymbols[i]):
+  #          sym=jsymbols[i][j]
+  #          if sym == -1:
+  #         # idx = fb_map[fac]
+  #              M2[j+offset] |= ind
+  #          j+=1
+  #      ind = ind + ind
+  #      i+=1
+          
     return M2
 
 @cython.profile(False)
@@ -479,6 +477,8 @@ def jacobi(a, n):
 @cython.boundscheck(False)
 @cython.wraparound(False)
 cdef factorise_fast(value,long long [::1] factor_base):
+    if value == 0:
+        return -1,-1,-1,-1
     seen_primes=[]
     seen_primes_indexes=[]
     factors = set()
@@ -700,11 +700,7 @@ def grab_co(co,primeslist,hmap):
     return modulus,z_list
 
 cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_prime_bound,primeslist2,small_primeslist):
- #   i=0
- #   while i < len(hmap):
 
-  #      print("prime: "+str(primeslist[i])+" "+str(hmap[i]))
-  #      i+=1
     cdef Py_ssize_t j
 
     LOWER_BOUND_SIQS=1
@@ -726,8 +722,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
     sprimelist_f.insert(0,len(sprimelist_f)+1)
     sprimelist_f=array.array('q',sprimelist_f)
 
-    primeslist2.insert(0,2)
-    primeslist2.insert(0,-1)
+
 
 
     
@@ -758,97 +753,66 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
     disc_sr_list=[]
     pval_list=[]
     pflist=[]
-    z=1
+ 
+
+    smooths=[]
+    coefficients=[]
+    factors=[]
+    jsymbols=[]
+    testl=[]
+    disc1_squared_list=[]
+
     x1=1
     y0=1
-    o=1  
-    while o < 500:
-        y=o
+    o=1
+    while o < n:
+        y=o#math.isqrt(n*4)+o
         z=1
         seen=[]
         roots=[]
         seen_y=[]
         seen_mod=[]
         seen_z=[]
-        seen_k=[]
+
+
+
         while z < 2:
             i=0
-
+    
            # y=66
-            while i < n:
+            while i < 100:
                 fail=0
                 x=x1+i
                 poly_val=(z*x**2+y*x)%n
-                k=((z*x**2+y*x)-poly_val)//n 
-                if ((z*x**2+y*x)-poly_val)%n !=0:
-                    print("fatal error")
-                zk=z*k
-                if poly_val==0:
+                k=((z*x**2+y*x)-poly_val)//n
+  
+                z2=z*k
+                if poly_val==0 or k ==0:
                     i+=1
                     continue
-
                 local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(poly_val,primelist_f)
                 if value == 1:
-                    j=0
-                    total_mod=1
-                    prev=1
-                    while j < len(seen_primes_indexes):
-                        pindex=seen_primes_indexes[j]
-                        prime=seen_primes[j]
-                        if pindex != -1:
-                            try:
-                                co=hmap[pindex][str(zk%prime)]
-                            except Exception as e:
-                                fail=1
-                                j+=1
-                                continue
-                            if co[0]**2%prime == y**2%prime:# and (z*x*2)**%prime == y%prime: 
-                                if prime !=prev:
-                                    total_mod*=prime
-                                    prev=prime
-                            else:
-                                fail=1
+                    disc1_squared=y**2+4*(n*k*z+(poly_val*z))
+                    disc1=math.isqrt(disc1_squared)
+                    if disc1**2 != disc1_squared:
+                        print("fatal error")
 
-                        j+=1
-                    if y == 66:
-                        print(str(poly_val*z)+" total_mod: "+str(total_mod))
-                    if total_mod > 1:
-                        h=0
-                        while h < len(seen):
-                            z2=seen_z[h]
-                            if poly_val*z==seen[h]*z2:
-                                x2=roots[h]
-                                if (z*x)%n == (z2*x2)%n or (z*x)+(z2*x2)==y:
-                                    h+=1
-                                    continue
-                                y2=seen_y[h]
-                                disc1_squared=y**2+4*(n*k*z+(poly_val*z))
-                                if disc1_squared < 0:
-                                    h+=1
-                                    continue
-                                disc1=math.isqrt(disc1_squared)
+                    poly_val2=(n*k*z+(poly_val*z))  #note: factorization for this is y+disc1 and y-disc1
+                    local_factors2, value2,seen_primes2,seen_primes_indexes2 = factorise_fast(poly_val2*poly_val,primelist_f)
+                    if value2 == 1:
+                      #  if poly_val not in coefficients:
+                        smooths.append(poly_val2*poly_val)
+                        factors.append(local_factors2)
+                        coefficients.append(poly_val)
+                          #  print("root: "+str(poly_val)+" smooth: "+str(poly_val2*poly_val)+" local_factors: "+str(local_factors2)+" k: "+str(k))
+                        print("Smooths #: "+str(len(smooths)))
+                        if len(smooths)>base+2:
+                            f1,f2=QS(n,primelist,smooths,coefficients,factors)#,jsymbols,testl,primeslist2,disc1_squared_list)#,disc_sr_list,pval_list,pflist)
+                            sys.exit()
 
 
-                                disc2_squared=y2**2+4*(n*seen_k[h]*z2+(seen[h]*z2))#
-#                           
-                                disc2=math.isqrt(disc2_squared)
-                                if disc1**2 != disc1_squared:
-                                    print("disc1 error")##
-                                if disc2**2 != disc2_squared:
-                                    print("disc2 error")
-                                disc_gcd=gcd(disc1+disc2,n)
-                                print(" discgcd: "+str(disc_gcd)+" z: "+str(z)+" z2: "+str(z2)+" x: "+str(x)+" x2: "+str(x2)+" y: "+str(y)+" y2: "+str(y2)+" seen_primes: "+str(seen_primes)+" poly_val: "+str(poly_val)+" disc1: "+str(disc1)+" disc2: "+str(disc2)+" disc1%total_mod: "+str(disc1%total_mod)+" disc2%total_mod: "+str(disc2%total_mod)+" total_mod: "+str(total_mod)+" total_mod2: "+str(seen_mod[h]))#+" dist: "+str(dist))#_#+" disc1_normal: "+str(disc1_normal)+" disc2_normal: "+str(disc2_normal))
 
-                                if disc_gcd != 1 and disc_gcd != n:
-                                      sys.exit()
-
-                            h+=1
-                        seen.append(poly_val)
-                        roots.append(x)
-                        seen_y.append(y)
-                        seen_mod.append(total_mod)
-                        seen_z.append(z)
-                        seen_k.append(k)
+         
                 i+=1
             z+=1
         o+=1
@@ -1179,7 +1143,7 @@ def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_
         primeslist1.append(primeslist[i])
 
         i+=1
-    i=0
+    
     while len(primeslist2) < qbase:
         if n%primeslist[i]==0:
             i+=1
