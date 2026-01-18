@@ -30,4 +30,4 @@ Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:   python3 run_qs.py -keysize 20 -base 50 -debug 1 -lin_size 1000 -quad_size 1</br></br>
 
-Update: Alright linear algebra implemented. I need to optimize now.... and also perform actual sieving... but the is there now.
+Update: Alright linear algebra implemented. I need to optimize now.... and also perform actual sieving... but the math is there now..... so I guess today, the 18th of January 2026, will be the day I won against the NSA, FBI, DIA, CIA, etc. Hahaha. Going to be a shit day for western cryptologists. Cause and effect losers.
