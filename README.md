@@ -59,7 +59,7 @@ But this is not always the case:</br></br>
 2^2+4\*(4387\*4379-26274) = 8760^2</br>
 etc..</br></br>
 
-Ofcourse then we would need to find a square such that that offset to N is divisible by N. But that is the same as solving a quadratic congruence, which we cant do without knowledge of the factorization of N.
+Ofcourse then we would need to find a square such that that offset to N is divisible by N. But that is the same as solving a quadratic congruence, which we cant do without knowledge of the factorization of N and in addition this would basically change that k variable.. aka the quadratic coefficient. 
 However: 66^2+4*(4387+1749) = 170^2 = 148^2 mod 1749 
 
 Because 1749 mod 11 = 0, so we know that it is atleast aligned to a multiple of N mod 11. And ofcourse 170 = 148 mod 11. 
