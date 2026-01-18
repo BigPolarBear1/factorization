@@ -37,27 +37,27 @@ Update: Rolled back to a few days ago. I see the link with number field sieve, b
 
 Update: I changed it again to use y<sub>1</sub> instead of y<sub>0</sub> ... now I'm going to go ahead and figure out how to pull off linear algebra...
 
-I guess if we have something like this:
+I guess if we have something like this:</br>
 
-66^2+4*(4387+1749) = 170^2 = 148^2 mod 1749 
-66^2+4*(4387+1248) = 164^2 = 148^2 mod 1248 
-66^2+4*(4387+1085) = 162^2 = 148^2 mod 1085 
-66^2+4\*(4387+453) = 154^2 = 148^2 mod 453
-66^2+4\*(4387+300) = 152^2 = 148^2 mod 300
-66^2+4\*(4387+149) = 150^2 = 148^2 mod 149
-66^2+4\*4387 = 148^2
+66^2+4*(4387+1749) = 170^2 = 148^2 mod 1749 </br>
+66^2+4*(4387+1248) = 164^2 = 148^2 mod 1248 </br>
+66^2+4*(4387+1085) = 162^2 = 148^2 mod 1085 </br>
+66^2+4\*(4387+453) = 154^2 = 148^2 mod 453</br>
+66^2+4\*(4387+300) = 152^2 = 148^2 mod 300</br>
+66^2+4\*(4387+149) = 150^2 = 148^2 mod 149</br>
+66^2+4\*4387 = 148^2</br></br>
 
-453-153=300-151=149-149=0
+453-153=300-151=149-149=0</br></br>
 
-Reducing the square and constant eventually hits a multiple of N as constant.
+Reducing the square and constant eventually hits a multiple of N as constant.</br></br>
 
-But this is not always the case:
+But this is not always the case:</br></br>
 
-2^2+4\*(4387\*4379+15) = 8766^2
-2^2+4\*(4387\*4379-8750) = 8764^2
-2^2+4\*(4387\*4379-17513) = 8762^2
-2^2+4\*(4387\*4379-26274) = 8760^2
-etc..
+2^2+4\*(4387\*4379+15) = 8766^2</br>
+2^2+4\*(4387\*4379-8750) = 8764^2</br>
+2^2+4\*(4387\*4379-17513) = 8762^2</br>
+2^2+4\*(4387\*4379-26274) = 8760^2</br>
+etc..</br></br>
 
 Ofcourse then we would need to find a square such that that offset to N is divisible by N. But that is the same as solving a quadratic congruence, which we cant do without knowledge of the factorization of N.
 However: 66^2+4*(4387+1749) = 170^2 = 148^2 mod 1749 
