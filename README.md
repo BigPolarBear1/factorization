@@ -33,4 +33,5 @@ To run:   python3 run_qs.py -keysize 18 -base 50 -debug 1 -lin_size 1000 -quad_s
 Update: Almost there. Not quite yet ready to implement linear algebra. I need to spent a few more days taking apart what I've found so far. 
 There is something identical going on as to what number field sieve is doing. But its fairly complicated. Pretty I have all the pieces now.. I just need a few focused days studying it so I can implement the linear algebra.
 
+Update: Rolled back to a few days ago. I see the link with number field sieve, but I just got to dig in now. Let me figure this out.
 
