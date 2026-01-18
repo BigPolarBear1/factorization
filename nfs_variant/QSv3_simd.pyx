@@ -344,7 +344,7 @@ def solve_roots(prime,n):
     hmap_p={}
     hmap_p2={}
     iN=0
-    modi=modinv((4*n)%prime,prime)
+    modi=modinv((-4*n)%prime,prime)
     while iN < prime:
         ja= jacobi(iN,prime )
         if ja ==1:
@@ -356,7 +356,7 @@ def solve_roots(prime,n):
             s=(root**2*modi)%prime
 
 
-            if (root**2-4*n*s)%prime!=0:
+            if (root**2+4*n*s)%prime!=0:
                 print("error123")
             try:
                 c=hmap_p[str(s)]
@@ -762,7 +762,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
     x1=1
     y0=1
     o=1  
-    while o < n:
+    while o < 500:
         y=o
         z=1
         seen=[]
@@ -770,18 +770,19 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
         seen_y=[]
         seen_mod=[]
         seen_z=[]
-        while z < 100:
+        seen_k=[]
+        while z < 2:
             i=0
 
            # y=66
-            while i < 100:
+            while i < n:
                 fail=0
                 x=x1+i
-                poly_val=z*x**2-y*x+n
-                if poly_val > 0:
-                    i+=1
-                    continue
-                z2=z
+                poly_val=(z*x**2+y*x)%n
+                k=((z*x**2+y*x)-poly_val)//n 
+                if ((z*x**2+y*x)-poly_val)%n !=0:
+                    print("fatal error")
+                zk=z*k
                 if poly_val==0:
                     i+=1
                     continue
@@ -796,12 +797,12 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                         prime=seen_primes[j]
                         if pindex != -1:
                             try:
-                                co=hmap[pindex][str(z2%prime)]
+                                co=hmap[pindex][str(zk%prime)]
                             except Exception as e:
                                 fail=1
                                 j+=1
                                 continue
-                            if co[0]**2%prime == y**2%prime and (z*x*2)%prime == y%prime: 
+                            if co[0]**2%prime == y**2%prime:# and (z*x*2)**%prime == y%prime: 
                                 if prime !=prev:
                                     total_mod*=prime
                                     prev=prime
@@ -809,7 +810,9 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                                 fail=1
 
                         j+=1
-                    if total_mod > 10:
+                    if y == 66:
+                        print(str(poly_val*z)+" total_mod: "+str(total_mod))
+                    if total_mod > 1:
                         h=0
                         while h < len(seen):
                             z2=seen_z[h]
@@ -819,14 +822,14 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                                     h+=1
                                     continue
                                 y2=seen_y[h]
-                                disc1_squared=y**2-4*1*(n*z-(poly_val*z))
+                                disc1_squared=y**2+4*(n*k*z+(poly_val*z))
                                 if disc1_squared < 0:
                                     h+=1
                                     continue
                                 disc1=math.isqrt(disc1_squared)
 
 
-                                disc2_squared=y2**2-4*1*(n*z2-(seen[h]*z2))#
+                                disc2_squared=y2**2+4*(n*seen_k[h]*z2+(seen[h]*z2))#
 #                           
                                 disc2=math.isqrt(disc2_squared)
                                 if disc1**2 != disc1_squared:
@@ -845,7 +848,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                         seen_y.append(y)
                         seen_mod.append(total_mod)
                         seen_z.append(z)
-
+                        seen_k.append(k)
                 i+=1
             z+=1
         o+=1
