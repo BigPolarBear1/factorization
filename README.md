@@ -66,3 +66,5 @@ Update: Changed the PoC. All the math is there.. only thing left now is to inste
 Update: Ok... good enough for now.. the uploaded PoC isnt great, it really needs linear algebra and all that.. Ill start working on that now.. probably will need some jacobi symbols too.
 
 Update: Tomorrow is linear algebra day.. so what I'll add to guassian elimination over gf(2) is two discriminants.. the one with the offset in the constant modulo the quadratic output (poly_val) .. i'll add its factorization.. and then take jacobi symbols for the discriminant without any offset (so just a multiple of N) .. since for any valid solutions both should be square. If that doesn't work... I'll try some variations. So that will be the goal for tomorrow.. if that does work.. then thats great... and my work will be done tomorrow. If not.. I know I'm very close now and I'll just have to think logically about what I've got.
+
+Update: Alright. Lets begin... if this works.. then there is  a chance my work will be finished today.. that would be a good day..
