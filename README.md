@@ -31,3 +31,5 @@ To build: python3 setup.py build_ext --inplace</br>
 To run:   python3 run_qs.py -keysize 20 -base 50 -debug 1 -lin_size 1000 -quad_size 1</br></br>
 
 Update: Alright linear algebra implemented. I need to optimize now.... and also perform actual sieving... but the math is there now..... so I guess today, the 18th of January 2026, will be the day I won against the NSA, FBI, DIA, CIA, etc. Hahaha. Going to be a shit day for western cryptologists. Cause and effect losers.
+
+Ps: Go to hell. The only reason why I would be treated like this is if people were gambling that I woudln't achieve what I achieved today. Go to hell. I ever meet any of the people who made this decision, I will end you. And now I will find my way to Asia. The only thing that will change my mind is if you pay my former manager 1 billion USD (microsoft can pay that easily, its their fault anyway). But we all know there is no justice in this shit world. Burn it all down then. Perhaps a better world will arise from the ashes.
