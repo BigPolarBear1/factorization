@@ -40,4 +40,6 @@ Ps: I would have sold my work. I would have gladly sold my work. But instead all
 
 Pps: Btw, I'm serious, you people working in western intel should quit your jobs. Fucking embarassment. Incompetency. Preventing something like this and gaining capabilities is literally your one job. Fucking morons. A more mature PoC will be released in the coming days... good luck assholes.
 
-Update: Quickly minimized the PoC and added support for quadratic coefficients. Next all my focus will go into sieving this properly. Once that is complete it should be vastly superior then other algorithms.
+Update: Quickly minimized the PoC and added support for quadratic coefficients. Next all my focus will go into sieving this properly. Once that is complete it should be vastly superior then other algorithms. 
+
+I'll probably go for a run soon and just focus on the paper for the rest of the day. I can begin finalizing the paper now.. although one day when I have time and money I wont to formalize and rewrite that entire paper.
