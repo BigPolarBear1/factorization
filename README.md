@@ -43,3 +43,5 @@ Pps: Btw, I'm serious, you people working in western intel should quit your jobs
 Update: Quickly minimized the PoC and added support for quadratic coefficients. Next all my focus will go into sieving this properly. Once that is complete it should be vastly superior then other algorithms. 
 
 I'll probably go for a run soon and just focus on the paper for the rest of the day. I can begin finalizing the paper now.. although one day when I have time and money I wont to formalize and rewrite that entire paper.
+
+Its funny.. the silence before the storm. I'm very well aware of what I've achieved. And either people know this aswell, but they are all spineless cowards.. or people are about to find out soon enough. This entire setup allows for much more granular and superior sieving. I wish I could feel something right now, sense of accomplishment.. but after all the bullshit these last few years.. I just feel angry and sad. Anyway, if anyone in Asia (i.e China) wants to talk business: big_polar_bear1@proton.me .. I'm not going to waste more years living like this in a part of the world where I'm treated this way.
