@@ -28,7 +28,7 @@ Update: While making this PoC, I suddenly had an idea, linking back to some thin
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:   python3 run_qs.py -keysize 20 -base 50 -debug 1 -lin_size 1000 -quad_size 1</br></br>
+To run:  python3 run_qs.py -keysize 40 -base 100 -debug 0 -lin_size 100_000 -quad_size 100</br></br>
 
 Update: Alright linear algebra implemented. I need to optimize now.... and also perform actual sieving... but the math is there now..... so I guess today, the 18th of January 2026, will be the day I won against the NSA, FBI, DIA, CIA, etc. Hahaha. Going to be a shit day for western cryptologists. Cause and effect losers.
 
@@ -39,3 +39,5 @@ Oh and on the off chance someone is considering paying my former manager 1 billi
 Ps: I would have sold my work. I would have gladly sold my work. But instead all I got was silence and harassment by the belgian courts under pressure of the americans. I know what is at stake, and because I know how much is at stake, I feel so much more endless rage and hate for this fucking idiocracy I find myself in. Fuck this shit. I'm going to Asia when I get the chance. The damage you people did, it cannot be repaired anymore. I have my god damn pride and I have nothing left to lose. Everything was taken from me, and the people who supported me. You people have left my life in ruins. And no attempt was made to stop this. I can only come to one conclusion and that is that you must hate transgender people so much, you cannot acknowledge reality when it stares you in the face. And that, I cannot forgive. The world is falling apart, and its ruled by idiots.
 
 Pps: Btw, I'm serious, you people working in western intel should quit your jobs. Fucking embarassment. Incompetency. Preventing something like this and gaining capabilities is literally your one job. Fucking morons. A more mature PoC will be released in the coming days... good luck assholes.
+
+Update: Quickly minimized the PoC and added support for quadratic coefficients. Next all my focus will go into sieving this properly. Once that is complete it should be vastly superior then other algorithms.
