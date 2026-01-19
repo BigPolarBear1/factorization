@@ -49,3 +49,5 @@ Its funny.. the silence before the storm. I'm very well aware of what I've achie
 I'm most dissappointed about belgium. And one day I want to revoke my belgian citizenship. Europe could have had this to themselves, instead they did whatever the fuck they did these last 2 years. I still cant believe this idiocracy. I was willing to sell my work. I tried selling my work. Idiots. I cant stand these animals of low intelligence I find myself amongst.
 
 Update: I was thinking about how I'm going to sieve this. I also realized I could probably very quicly find a bunch of smooths with similar factorization easily now. This solves a lot of the annoyances I had earlier when attempting this. Tomorrow I begin implementing sieving.. will upload as I go.
+
+Update: A full day went by today.. one day after disclosure and nobody seems to have caught on yet. Tomorrow before I add sieving, let me just implement some logic to find a bunch of smooths with similar factorization.. thats actually very easy to do now. I wonder how many days will pass until someone sounds the alarm. All of this is such lunacy. There is so much at stake, a little respect could have gone a long way.
