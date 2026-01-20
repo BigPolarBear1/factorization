@@ -2,6 +2,8 @@ Disclaimer: At no point did AI contribute anything to this research project. Cop
 
 Contact: big_polar_bear1@proton.me , I am looking for employment. Mainly to continue my math research. I am willing to teach my methodologies also. In addition I am willing to renounce my Belgian citizenship, because people in the west must have known my math was correct from the start, yet I was treated like absolute shit for years. I dont ever again want to call myself Belgian. As far as I can see, Belgium is a country of spineless cowards. Imagine doing this to one of your own citizens lol.. Europe could have had this algorithm and math to themselves. But this is pretty much inline with most of my life in Europe, never had oppurtunities here.
 
+I dont know what lies people will tell to take away this achievement from me. But they are just that, lies by people who cannot accept that I did this. Even though I sacrificed 3 years of my life, working fulltime on this. They will tell lies, they wont ever let a transgender person win, let alone one who dropped out of highschool. Its lies by lesser men (and women), who lack ambition and perseverance themselves. I did this. I did this through sacrifice most people cannot imagine. I gave everything for this and I have nothing left. And I piss on everyone who will attempt to deny me what I've achieved, you pathetic weaklings.
+
 #### To run debug.py" (Prints the linear and quadratic coefficients to solve for 0 in the integers, for use with my paper):</br></br>
 
 To run: python3 debug.py -keysize 12
