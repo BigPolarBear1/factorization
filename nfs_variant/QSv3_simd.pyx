@@ -466,6 +466,122 @@ def solve_quad_integers(a,b,c):
         return -1
 
     return [(-b+test)//(2*a),(-b-test)//(2*a)] 
+#@cython.boundscheck(False)
+#@cython.wraparound(False)
+def generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,tnum_bit,hmap,quad):
+    const_1=1_000
+    const_2=1_000_000
+
+    small_B = base#len(primeslist)
+    lower_polypool_index = 2
+    upper_polypool_index = small_B - 1
+    poly_low_found = False
+    
+    for i in range(small_B):  ##To do: Can be moved outside mainloop
+        if primeslist[i] > LOWER_BOUND_SIQS and not poly_low_found:
+            lower_polypool_index = i
+            poly_low_found = True
+            break
+        if primeslist[i] > UPPER_BOUND_SIQS:
+            upper_polypool_index = i - 1
+            break
+    small_B=upper_polypool_index
+    counter4=0
+    while counter4 < const_1:
+        counter4+=1
+        cmod = 1
+        cfact = []#[0]*base
+        indexes=[]
+        counter2=0
+        while counter2 < const_2:
+            found_a_factor = False
+            counter=0
+            while(found_a_factor == False) and counter < const_2:
+                randindex = random.randint(lower_polypool_index, upper_polypool_index)
+                if  jacobi((-quad*n)%primeslist[randindex],primeslist[randindex])!=1:
+                    counter+=1
+                    continue
+                potential_a_factor = primeslist[randindex]
+                found_a_factor = True
+                it=0
+                length=len(cfact)
+                while it < length:
+                    if potential_a_factor ==cfact[it]:
+                        found_a_factor = False
+                        break
+                    it+=1
+                counter+=1
+            if counter == const_2:
+                cmod = 1
+                s = 0
+                cfact = []#[0]*base
+                indexes=[]
+                continue                
+            cmod = cmod * potential_a_factor
+            cfact.append(potential_a_factor)
+            if  jacobi((-quad*n)%primeslist[randindex],primeslist[randindex])!=1:#hmap[randindex][1]!=quad%primeslist[randindex]:
+                print("THE FUC")
+                time.sleep(1000000)
+            indexes.append(randindex)
+            j = tnum_bit - cmod.bit_length()
+            counter2+=1
+            if j < too_close:
+                cmod = 1
+                s = 0
+                cfact = []#[0]*base
+                indexes=[]
+                continue
+            elif j < (too_close + close_range):
+                break
+        a1 = tnum // cmod
+        mindiff = 100000000000000000
+        randindex = 0
+        for i in range(small_B):
+            if abs(a1 - primeslist[i]) < mindiff:
+                randindex = i
+                mindiff = abs(a1 - primeslist[i])
+                
+        
+
+        found_a_factor = False
+        counter3=0
+        while not found_a_factor and counter3< const_2 and randindex <base:
+            if  jacobi((-quad*n)%primeslist[randindex],primeslist[randindex])!=1:
+                randindex += 1
+                continue
+            potential_a_factor = primeslist[randindex]
+
+            found_a_factor = True
+            it=0
+            length=len(cfact)
+            while it < length:
+                if potential_a_factor ==cfact[it]:
+                    found_a_factor = False
+                    break
+                it+=1
+            if not found_a_factor:
+                randindex += 1
+            counter3+=1
+        if randindex > small_B:
+            continue
+        if counter3==const_2:
+            continue
+
+        cmod = cmod * potential_a_factor
+        if  jacobi((-quad*n)%primeslist[randindex],primeslist[randindex])!=1:
+            print("THE FUC: ",randindex)
+            time.sleep(1000000)
+        cfact.append(potential_a_factor)
+        indexes.append(randindex)
+
+        diff_bits = (tnum - cmod).bit_length()
+        if diff_bits < tnum_bit:
+            if cmod in seen:
+                continue
+            else:
+                seen.append(cmod)
+                return cmod,cfact,indexes
+    return 0,0,0
 
 cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_prime_bound,primeslist2,small_primeslist):
 
@@ -498,59 +614,75 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
     x1=1
     y0=1
     o=1
-    while o < n:
-        y=o#math.isqrt(n*4)+o
-        zi=0
-        seen=[]
-        roots=[]
-        seen_y=[]
-        seen_mod=[]
-        seen_z=[]
+
+    close_range=10
+    too_close=1
+    LOWER_BOUND_SIQS=1
+    UPPER_BOUND_SIQS=4000
+    tnum=int(((n)**0.5) /1)#(lin_sieve_size))
+    seen=[]
+    while 1:
+
+        new_mod,cfact,indexes=generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,bitlen(tnum),hmap,1)
+        print("new_mod: "+str(new_mod))
+        if new_mod ==0:
+            return 0,0
+        o=0
+        while o < n:
+            y=o#math.isqrt(n*4)+o
+            zi=0
+            seen=[]
+            roots=[]
+            seen_y=[]
+            seen_mod=[]
+            seen_z=[]
 
 
 
-        while zi < len(valid_quads):
-            i=0
-            z=valid_quads[zi]
-            if g_debug ==1:
-                print("[i]Trying z: "+str(z)+" y: "+str(y))
-           # y=66
-            while i < lin_sieve_size:
-                fail=0
-                x=x1+i
-                poly_val=(z*x**2+y*x)%n
-                k=((z*x**2+y*x)-poly_val)//n
+            while zi < len(valid_quads):
+         
+                z=valid_quads[zi]
+             #   if g_debug ==1:
+             #       print("[i]Trying z: "+str(z)+" y: "+str(y))
+                i=0
+                while i < lin_sieve_size:
+                    fail=0
+                    x=new_mod*i#x1+i
+                    poly_val=z*x**2+y*x-n
+                    k=((z*x**2+y*x)-poly_val)//n
   
-                z2=z*k
-                if poly_val==0 or k ==0:
-                    i+=1
-                    continue
-                local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(poly_val,primelist_f)
-                if value == 1:
-                    disc1_squared=y**2+4*(n*k*z+(poly_val*z))
-                    disc1=math.isqrt(disc1_squared)
-                    if disc1**2 != disc1_squared:
-                        print("fatal error")
+                    z2=z*k
+                    if poly_val==0 or k ==0:
+                        i+=1
+                        continue
+                    local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(poly_val,primelist_f)
+                    if value == 1:
+                        disc1_squared=y**2+4*(n*k*z+(poly_val*z))
+                        disc1=math.isqrt(disc1_squared)
+                        if disc1**2 != disc1_squared:
+                            print("fatal error")
 
-                    poly_val2=(n*k*z+(poly_val*z))  #note: factorization for this is y+disc1 and y-disc1
-                    local_factors2, value2,seen_primes2,seen_primes_indexes2 = factorise_fast(poly_val2*poly_val*z,primelist_f)
-                    if value2 == 1:
-                        if poly_val*z not in coefficients:
-                            smooths.append(poly_val2*poly_val*z)
-                            factors.append(local_factors2)
-                            coefficients.append(poly_val*z)
-                      #  print("root: "+str(poly_val)+" smooth: "+str(poly_val2*poly_val)+" local_factors: "+str(local_factors2)+" k: "+str(k)+" z: "+str(z)+" x: "+str(x)+" y: "+str(y))
-                            print("Smooths #: "+str(len(smooths)))
-                            if len(smooths)>(base+2):
-                                f1,f2=QS(n,primelist,smooths,coefficients,factors)#,jsymbols,testl,primeslist2,disc1_squared_list)#,disc_sr_list,pval_list,pflist)
-                                sys.exit()
+                        poly_val2=(n*k*z+(poly_val*z))  #note: factorization for this is y+disc1 and y-disc1
+                        local_factors2, value2,seen_primes2,seen_primes_indexes2 = factorise_fast(poly_val2*poly_val*z,primelist_f)
+                        if value2 == 1:
+                            if poly_val*z not in coefficients:
+                                smooths.append(poly_val2*poly_val*z)
+                                factors.append(local_factors2)
+                                coefficients.append(poly_val*z)
+                                if g_debug == 1:
+                                    print("Smooths #: "+str(len(smooths))+" root: "+str(poly_val)+" smooth: "+str(poly_val2*poly_val)+" local_factors: "+str(local_factors2)+" k: "+str(k)+" z: "+str(z)+" x: "+str(x)+" y: "+str(y)+" x factors: "+str(cfact))
+                                else: 
+                                    print("Smooths #: "+str(len(smooths)))
+                                if len(smooths)>(base+2):
+                                    f1,f2=QS(n,primelist,smooths,coefficients,factors)
+                                    sys.exit()
 
                       
 
          
-                i+=1
-            zi+=1
-        o+=1
+                    i+=1
+                zi+=1
+            o+=1
     return      
 
 
