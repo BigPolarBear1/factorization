@@ -24,7 +24,7 @@ Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), s
 
 Update: While making this PoC, I suddenly had an idea, linking back to some things I tried earlier last spring. See below (I think this approach is interesting, but its hard to get an advantage.. however using these different multiples of N.. there is a much easier way to exploit this, hence see NFS_variant):
 
-#### To run from folder "nfs_variant" (WIP):</br></br>
+#### To run from folder "nfs_variant" (note: I'll rename this folder eventually, its really just improved way of sieving using quadratic polynomials):</br></br>
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
