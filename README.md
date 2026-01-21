@@ -33,10 +33,10 @@ To run:   python3 run_qs.py -keysize 50 -base 100 -debug 1 -lin_size 100 -quad_s
 Just quickly added a small improvement. Use above command to factor 50-bit moduli. I still need to implement sieving. Still thinking how to do this.
 So the final smooth value is constructed from multiple parts, each of which we can sieve:
 
-Part 1: The quadratic coefficient, the factorization of the quadratic coefficient is eventually transfered to the smooth candidate
-Part 2: The factorization of the root .. at one point in the algorithm we need to factorize the constant of the discriminant of the quadratic polynomial, the factorization of the root is responisble for half the factors and the factorization of the root plus the linear coefficient (x+y) is responsibe for the other half. 
-Part 3: The factorization of x+y (root plus linear coefficient), see explanation above (part 2) or in the paper.
-Part 4: The output of the quadratic polynomial. 
+Part 1: The quadratic coefficient, the factorization of the quadratic coefficient is eventually transfered to the smooth candidate</br>
+Part 2: The factorization of the root .. at one point in the algorithm we need to factorize the constant of the discriminant of the quadratic polynomial, the factorization of the root is responisble for half the factors and the factorization of the root plus the linear coefficient (x+y) is responsibe for the other half. </br>
+Part 3: The factorization of x+y (root plus linear coefficient), see explanation above (part 2) or in the paper.</br>
+Part 4: The output of the quadratic polynomial. </br>
 
 So we have 4 parts and all of them multiplied together are responsible for the final smooth... part 1 is easy, we can pre-sieve those quadratic coefficients at the start of the algorithm. Part 2 is easy.. we can call generate_modulus and construct a root from factors in the factor base. Part 3, this is a little harder, because unless y is a factor from the root, we may need to actually sieve this. However, there is some tricks we can use while sieving part 4 to sieve both of these at the same time. And then part 4, this definitely needs to be sieved... however, unlike with standard SIQS, we dont just sieve with zx^2-N, but we now have an additional linear coefficient to adjust the size of smooth candidates with. Now then, the trick to sieving this is really sieving part 3 and 4 at the same time... and I know the math.. and how to do it.. I just need to think how I'm going to do it in code. Dealing with a lot of stress though.. because I made a breakthrough.. and people would know.. I'm guessing the americans are threatening folks to stay silent. Its really the only explanation, because I know I'm correct about my math.
 
