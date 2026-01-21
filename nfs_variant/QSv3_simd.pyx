@@ -187,6 +187,7 @@ def extract_factors(N, relations, roots, null_space):#,disc_sr_list,pval_list,pf
             if bit == 1:
                 prod_left *= roots[idx]
                 prod_right *= relations[idx]
+               # print("adding to smooth:  "+str(relations[idx]))
             idx += 1
         sqrt_right = math.isqrt(prod_right)
         sqrt_left = prod_left
@@ -207,7 +208,7 @@ def extract_factors(N, relations, roots, null_space):#,disc_sr_list,pval_list,pf
 
 
         if factor_candidate not in (1, N):
-            print(str(factor_candidate)+" sm: "+str(sqrt_right)+" root: "+str(sqrt_left))
+         #   print(str(factor_candidate)+" sm: "+str(sqrt_right)+" root: "+str(sqrt_left))
             other_factor = N // factor_candidate
             return factor_candidate, other_factor
 
@@ -619,7 +620,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
     too_close=1
     LOWER_BOUND_SIQS=1
     UPPER_BOUND_SIQS=4000
-    tnum=int(((n)**0.5) /1)#(lin_sieve_size))
+    tnum=int(((n)**0.49) /1)#(lin_sieve_size))
     seen=[]
     while 1:
 
@@ -627,33 +628,24 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
         print("new_mod: "+str(new_mod))
         if new_mod ==0:
             return 0,0
-        o=0
-        while o < n:
-            y=o#math.isqrt(n*4)+o
-            zi=0
-            seen=[]
-            roots=[]
-            seen_y=[]
-            seen_mod=[]
-            seen_z=[]
 
-
-
-            while zi < len(valid_quads):
-         
-                z=valid_quads[zi]
-             #   if g_debug ==1:
-             #       print("[i]Trying z: "+str(z)+" y: "+str(y))
-                i=0
-                while i < lin_sieve_size:
-                    fail=0
-                    x=new_mod*i#x1+i
+        zi=0
+        while zi < len(valid_quads):
+            z=valid_quads[zi]
+            i=1
+            while i < 2:
+                x=new_mod*i#x1+i
+                o=1
+                while o < 100_000:
+                    y=o#cfact[0]*i#math.isqrt(n*4)+o
                     poly_val=z*x**2+y*x-n
+                    if poly_val > n:
+                        break
                     k=((z*x**2+y*x)-poly_val)//n
   
                     z2=z*k
                     if poly_val==0 or k ==0:
-                        i+=1
+                        o+=1
                         continue
                     local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(poly_val,primelist_f)
                     if value == 1:
@@ -663,26 +655,40 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                             print("fatal error")
 
                         poly_val2=(n*k*z+(poly_val*z))  #note: factorization for this is y+disc1 and y-disc1
+                        factors_part1=z*x
+                        factors_part2=z*x+y
+                        factors_part3=poly_val*z
+                        all_parts=factors_part1*factors_part2*factors_part3
+                        if all_parts != poly_val2*poly_val*z:
+                            print("fatal error")
+                        if (4*poly_val2)%((2*z*x))!=0:
+                            print("error")
+
+                        if (4*poly_val2)%(2*(z*x+y))!=0:
+                            print("error2")
+                          #  print("error: "+str(4*poly_val2)+" z: "+str(z)+" x: "+str(x)+" y: "+str(y)+" 2zx: "+str(2*z*x)+" "+str((4*poly_val2)/(2*z*x)))
                         local_factors2, value2,seen_primes2,seen_primes_indexes2 = factorise_fast(poly_val2*poly_val*z,primelist_f)
                         if value2 == 1:
                             if poly_val*z not in coefficients:
+                            
                                 smooths.append(poly_val2*poly_val*z)
                                 factors.append(local_factors2)
                                 coefficients.append(poly_val*z)
                                 if g_debug == 1:
-                                    print("Smooths #: "+str(len(smooths))+" root: "+str(poly_val)+" smooth: "+str(poly_val2*poly_val)+" local_factors: "+str(local_factors2)+" k: "+str(k)+" z: "+str(z)+" x: "+str(x)+" y: "+str(y)+" x factors: "+str(cfact))
+                                    print("Smooths #: "+str(len(smooths))+" z: "+str(z)+" x: "+str(x)+" y: "+str(y)+" zx: "+str(factors_part1)+" zx+y "+str(factors_part2)+" poly_val*z "+str(factors_part3)+" final smooth: "+str(all_parts))
                                 else: 
                                     print("Smooths #: "+str(len(smooths)))
                                 if len(smooths)>(base+2):
                                     f1,f2=QS(n,primelist,smooths,coefficients,factors)
-                                    sys.exit()
+                                    if f1 !=0:
+                                        sys.exit()
 
                       
 
          
-                    i+=1
-                zi+=1
-            o+=1
+                    o+=1
+                i+=1
+            zi+=1
     return      
 
 
