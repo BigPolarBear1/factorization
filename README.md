@@ -6,7 +6,7 @@ To run: python3 debug.py -keysize 12
 
 This basically creates a system of quadratics. Solving them mod p is easy. But there is only one root solution (the factor of N) which solves the system for 0 for any mod p (aka solves it in the integers). Figuring out how to exactly do this quickly is still an ongoing area of research for me. And if a polynomial time algorithm for factorization exists, it is likely done by solving this system of quadratics. Finding a polyomial time algorithm is my ultimate goal, as this would make progress toward solving p = np as well. 
 
-#### (Outdated, check nfs_variant instead) To run from folder "CUDA_QS_variant":</br></br>
+#### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
 
@@ -22,9 +22,9 @@ Prerequisites: </br>
 
 Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), since it gets a lot harder to access the GPU on a virtual machine.
 
-Update: While making this PoC, I suddenly had an idea, linking back to some things I tried earlier last spring. See below (I think this approach is interesting, but its hard to get an advantage.. however using these different multiples of N.. there is a much easier way to exploit this, hence see NFS_variant):
+Update: While making this PoC, I suddenly had an idea, linking back to some things I tried earlier last spring. See below.
 
-#### To run from folder "nfs_variant" (note: I'll rename this folder eventually, its really just improved way of sieving using quadratic polynomials):</br></br>
+#### To run from folder "Improved_Sieving":</br></br>
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
