@@ -166,7 +166,7 @@ def QS(n,factor_list,sm,xlist,flist):#,jsymbols,testl,primeslist2,disc1_squared_
         del xlist[g_max_smooths:]
         del flist[g_max_smooths:]  
     M2 = build_matrix(factor_list, sm, flist)#,pflist)
-    null_space=solve_bits(M2,factor_list,base+2)
+    null_space=solve_bits(M2,factor_list,len(sm))
     f1,f2=extract_factors(n, sm, xlist, null_space)#,disc_sr_list,pval_list,pflist)
     if f1 != 0:
         print("[SUCCESS]Factors are: "+str(f1)+" and "+str(f2))
@@ -261,7 +261,7 @@ def build_matrix(factor_base, smooth_nums, factors):#,pflist):
         for fac in factors[i]:
             idx = fb_map[fac]
             M2[idx] |= ind
-        ind = ind + ind          
+        ind = ind + ind       
     return M2
 
 @cython.profile(False)
@@ -620,7 +620,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
     too_close=1
     LOWER_BOUND_SIQS=1
     UPPER_BOUND_SIQS=4000
-    tnum=int(((n)**0.49) /1)#(lin_sieve_size))
+    tnum=int(((n)**0.45) /1)#(lin_sieve_size))
     seen=[]
     while 1:
 
@@ -631,6 +631,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
 
         zi=0
         while zi < len(valid_quads):
+          
             z=valid_quads[zi]
             i=1
             while i < 2:
@@ -641,6 +642,9 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                     poly_val=z*x**2+y*x-n
                     if poly_val > n:
                         break
+                    if bitlen(poly_val) > keysize:
+                        o+=1
+                        continue
                     k=((z*x**2+y*x)-poly_val)//n
   
                     z2=z*k
@@ -669,7 +673,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                           #  print("error: "+str(4*poly_val2)+" z: "+str(z)+" x: "+str(x)+" y: "+str(y)+" 2zx: "+str(2*z*x)+" "+str((4*poly_val2)/(2*z*x)))
                         local_factors2, value2,seen_primes2,seen_primes_indexes2 = factorise_fast(poly_val2*poly_val*z,primelist_f)
                         if value2 == 1:
-                            if poly_val*z not in coefficients:
+                            if poly_val*z not in coefficients and poly_val2*poly_val*z not in smooths:
                             
                                 smooths.append(poly_val2*poly_val*z)
                                 factors.append(local_factors2)
@@ -681,8 +685,8 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                                 if len(smooths)>(base+2):
                                     f1,f2=QS(n,primelist,smooths,coefficients,factors)
                                     if f1 !=0:
-                                        sys.exit()
-
+                                      sys.exit()
+                              #  break
                       
 
          
