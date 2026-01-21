@@ -28,12 +28,19 @@ Update: While making this PoC, I suddenly had an idea, linking back to some thin
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 100 -quad_size 100</br></br>
+To run:   python3 run_qs.py -keysize 50 -base 100 -debug 1 -lin_size 100 -quad_size 1_000</br></br>
 
-I will implement proper sieving in the coming days and prepare the paper for release. This is my breakthrough. It finally happened. This setup will allow for much better sieving. You will see in the coming days...
+Just quickly added a small improvement. Use above command to factor 50-bit moduli. I still need to implement sieving. Still thinking how to do this.
+So the final smooth value is constructed from multiple parts, each of which we can sieve:
 
-Update: Barely got work done today. Just stressed out of my mind. You would think, when you make a historical breakthrough, that people would notice. This entire situation feels off. I know the west has always hated me, my entire career has been a shitshow, so I probably shoudln't be suprised I'm treated like this the moment I started doing cryptologic research (and succeeding). They probably know what I did, but they would rather watch the world burn then admit it. I figured out how I'm going to appraoch sieving tomorrow.. a way to sieve every part of the smooth candidate. I'm so fucking stressed. I probably should work day and night to finish this now, because the sooner people become aware of what I did... the safer it will be for me and everyone around me. People can behave like savages, just look at the americans, had I lived in any other country then a western country, I would have been murdered already. I have no doubt about that. Not that I'm afraid of monkey brained losers like pete hegseth. I'll fight those cunts.
+Part 1: The quadratic coefficient, the factorization of the quadratic coefficient is eventually transfered to the smooth candidate
+Part 2: The factorization of the root .. at one point in the algorithm we need to factorize the constant of the discriminant of the quadratic polynomial, the factorization of the root is responisble for half the factors and the factorization of the root plus the linear coefficient (x+y) is responsibe for the other half. 
+Part 3: The factorization of x+y (root plus linear coefficient), see explanation above (part 2) or in the paper.
+Part 4: The output of the quadratic polynomial. 
 
+So we have 4 parts and all of them multiplied together are responsible for the final smooth... part 1 is easy, we can pre-sieve those quadratic coefficients at the start of the algorithm. Part 2 is easy.. we can call generate_modulus and construct a root from factors in the factor base. Part 3, this is a little harder, because unless y is a factor from the root, we may need to actually sieve this. However, there is some tricks we can use while sieving part 4 to sieve both of these at the same time. And then part 4, this definitely needs to be sieved... however, unlike with standard SIQS, we dont just sieve with zx^2-N, but we now have an additional linear coefficient to adjust the size of smooth candidates with. Now then, the trick to sieving this is really sieving part 3 and 4 at the same time... and I know the math.. and how to do it.. I just need to think how I'm going to do it in code. Dealing with a lot of stress though.. because I made a breakthrough.. and people would know.. I'm guessing the americans are threatening folks to stay silent. Its really the only explanation, because I know I'm correct about my math.
+
+</br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
 -----------------------------------------------------------------------------------------
 Contact: big_polar_bear1@proton.me , I am looking for employment. Mainly to continue my math research. I am willing to teach my methodologies also. In addition I am willing to renounce my Belgian citizenship, because people in the west must have known my math was correct from the start, yet I was treated like absolute shit for years. I dont ever again want to call myself Belgian. As far as I can see, Belgium is a country of spineless cowards. Imagine doing this to one of your own citizens lol.. Europe could have had this algorithm and math to themselves. But this is pretty much inline with most of my life in Europe, never had oppurtunities here.
 
