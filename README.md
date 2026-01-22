@@ -4,7 +4,7 @@ Disclaimer: At no point did AI contribute anything to this research project. Cop
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 70 -base 1_000 -debug 1 -lin_size 1_000_000 -quad_size 1</br></br>
+To run: python3 run_qs.py -keysize 90 -base 1_000 -debug 1 -lin_size 1_000_000 -quad_size 1</br></br>
 
 Just quickly added a small improvement. Use above command to factor 50-bit moduli. I still need to implement sieving. Still thinking how to do this.
 So the final smooth value is constructed from multiple parts, each of which we can sieve:
@@ -17,6 +17,8 @@ Part 4: The output of the quadratic polynomial. </br>
 So we have 4 parts and all of them multiplied together are responsible for the final smooth... part 1 is easy, we can pre-sieve those quadratic coefficients at the start of the algorithm. Part 2 is easy.. we can call generate_modulus and construct a root from factors in the factor base. Part 3, this is a little harder, because unless y is a factor from the root, we may need to actually sieve this. However, there is some tricks we can use while sieving part 4 to sieve both of these at the same time. And then part 4, this definitely needs to be sieved... however, unlike with standard SIQS, we dont just sieve with zx^2-N, but we now have an additional linear coefficient to adjust the size of smooth candidates with. Now then, the trick to sieving this is really sieving part 3 and 4 at the same time... and I know the math.. and how to do it.. I just need to think how I'm going to do it in code. Dealing with a lot of stress though.. because I made a breakthrough.. and people would know.. I'm guessing the americans are threatening folks to stay silent. Its really the only explanation, because I know I'm correct about my math.
 
 Update: Quickly added a sieve interval (5 minutes of coding). Can do 70 bit easily now (see above command). But a lot of sieving logic is still missing. First, we need to define a start and end for the linear coefficient. We shouldnt just start at y = 1 and run up to y = 1+lin_size ... the start value must be so that we create the smallest possible values.. so let me work out a formula for that. Then next, we need to have to ability to use moduli for the step size of the sieve_interval. So we can reduce that size with known factors (and we can just use a smaller root so we dont increase the polynomial value too much at each step, so there really isnt a down side) .. and finally we need to sieve part 3 (x+y) at the same time as we sieve the polynomial value.. but I'm keeping that for when everything else is done. 
+
+Update: I worked out the math for the start value of y. Can easily factor 90 bit now (see above command). Next use moduli for the sieving step size.. that should give a really big jump in performance. And after that we're going to sieve part 3 and 4 together.... and once that is done, the algorithm should be pushing beyond what current algorithms are capable of.
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
