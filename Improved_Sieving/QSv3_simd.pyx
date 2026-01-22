@@ -27,6 +27,7 @@ import gc
 from cpython cimport array
 import array
 cimport cython
+import numpy as np
 
 key=0                 #Define a custom modulus to factor
 build_workers=8
@@ -39,7 +40,7 @@ qbase=10
 quad_sieve_size=10
 g_debug=0 #0 = No debug, 1 = Debug, 2 = A lot of debug
 g_lift_lim=0.5
-thresvar=300000  ##Log value base 2 for when to check smooths with trial factorization. Eventually when we fix all the bugs we should be able to furhter lower this.
+thresvar=10  ##Log value base 2 for when to check smooths with trial factorization. Eventually when we fix all the bugs we should be able to furhter lower this.
 lp_multiplier=2
 min_prime=1
 g_enable_custom_factors=0
@@ -584,6 +585,31 @@ def generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SI
                 return cmod,cfact,indexes
     return 0,0,0
 
+def solve_lin_con(a,b,m):
+    ##ax=b mod m
+    #g=gcd(a,m)
+    #a,b,m = a//g,b//g,m//g
+    return pow(a,-1,m)*b%m  
+
+def create_interval(primeslist,n,x,y,z):
+    poly_val=z*x**2+y*x-n
+    interval= np.zeros(lin_sieve_size,dtype=np.uint16)
+    i=0
+    while i < len(primeslist):
+        prime=primeslist[i]
+        if gcd(x,prime)!=1:
+            i+=1
+            continue
+        
+       # print(jacobi(x,prime))
+        s=solve_lin_con(x,-poly_val,prime)
+        log=round(math.log2(prime))
+        if (z*x**2+(y+s)*x-n)%prime != 0:
+            print("fatal error: "+str(s)+" prime: "+str(prime))
+        interval[s::prime]+=log
+        i+=1
+    return interval
+
 cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_prime_bound,primeslist2,small_primeslist):
 
 
@@ -617,15 +643,18 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
     o=1
 
     close_range=10
-    too_close=1
+    too_close=5
     LOWER_BOUND_SIQS=1
     UPPER_BOUND_SIQS=4000
-    tnum=int(((n)**0.45) /1)#(lin_sieve_size))
+    tnum=int(((n)**0.50) /1)#(lin_sieve_size))
     seen=[]
+    threshold = int(math.log2((lin_sieve_size)*math.sqrt(abs(n))) - thresvar)
+    if threshold < 0:
+        threshold = 1
     while 1:
 
         new_mod,cfact,indexes=generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,bitlen(tnum),hmap,1)
-        print("new_mod: "+str(new_mod))
+        #print("new_mod: "+str(new_mod))
         if new_mod ==0:
             return 0,0
 
@@ -636,15 +665,19 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
             i=1
             while i < 2:
                 x=new_mod*i#x1+i
-                o=1
-                while o < 100_000:
-                    y=o#cfact[0]*i#math.isqrt(n*4)+o
-                    poly_val=z*x**2+y*x-n
-                    if poly_val > n:
-                        break
-                    if bitlen(poly_val) > keysize:
+                y_init=1
+                interval=create_interval(primeslist,n,x,y_init,z)
+                o=0
+                while o < len(interval):
+                    if interval[o]<threshold:
                         o+=1
                         continue
+
+                    y=y_init+o#cfact[0]*i#math.isqrt(n*4)+o
+
+                    poly_val=z*x**2+y*x-n
+
+
                     k=((z*x**2+y*x)-poly_val)//n
   
                     z2=z*k
