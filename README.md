@@ -4,7 +4,7 @@ Disclaimer: At no point did AI contribute anything to this research project. Cop
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:   python3 run_qs.py -keysize 50 -base 100 -debug 1 -lin_size 100 -quad_size 1_000</br></br>
+To run: python3 run_qs.py -keysize 70 -base 1_000 -debug 1 -lin_size 1_000_000 -quad_size 1</br></br>
 
 Just quickly added a small improvement. Use above command to factor 50-bit moduli. I still need to implement sieving. Still thinking how to do this.
 So the final smooth value is constructed from multiple parts, each of which we can sieve:
@@ -19,6 +19,8 @@ So we have 4 parts and all of them multiplied together are responsible for the f
 Update: Basically didn't get anything done today. Just mentally struggling these last few days. I'll add sieving the polynomial output tomorrow... that is straight forward enough.. then after that I'll figure out how to integrate sieving x+y (part 3) into that in the days after... and then I should slowly begin to see a more final version of my algorithm. It doesn't matter. I could just work nonstop, have it all finished by tomorrow, but then what? Atleast this way I have a few more days of peace... because eventually people will realize what happened, even if they dont yet.
 
 Update: Slept like shit. I'll see if I end up doing work today or not.. its basically finished anyway, the only component missing is sieving. All the important math and transformations are already in the uploaded PoC. Lets see.
+
+Update: Quickly added a sieve interval (5 minutes of coding). Can do 70 bit easily now (see above command). But a lot of sieving logic is still missing. First, we need to define a start and end for the linear coefficient. We shouldnt just start at y = 1 and run up to y = 1+lin_size ... the start value must be so that we create the smallest possible values.. so let me work out a formula for that. Then next, we need to have to ability to use moduli for the step size of the sieve_interval. So we can reduce that size with known factors (and we can just use a smaller root so we dont increase the polynomial value too much at each step, so there really isnt a down side) .. and finally we need to sieve part 3 (x+y) at the same time as we sieve the polynomial value.. but I'm keeping that for when everything else is done. 
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
