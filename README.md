@@ -20,6 +20,8 @@ Update: Quickly added a sieve interval (5 minutes of coding). Can do 70 bit easi
 
 Update: I worked out the math for the start value of y (although I need to add support for the quadratic coefficient later, just run with -quad_size 1 for now). Can easily factor 90 bit now (see above command). Next use moduli for the sieving step size.. that should give a really big jump in performance. And after that we're going to sieve part 3 and 4 together.... and once that is done, the algorithm should be pushing beyond what current algorithms are capable of.
 
+Btw, if you come across this repo. Be sure to clone it. Incase someone tries to stop what is about to happen.. bc little man pete hegseth probably throwing a tantrum right now haha. losers.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
