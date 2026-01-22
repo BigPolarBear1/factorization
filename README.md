@@ -22,6 +22,8 @@ Update: I worked out the math for the start value of y (although I need to add s
 
 Btw, if you come across this repo. Be sure to clone it. Incase someone tries to stop what is about to happen.. bc little man pete hegseth probably throwing a tantrum right now haha. losers.
 
+Oh, and people may not see it yet, but I'm now sieving a linear coefficient, not a root. People will see soon what that means.. just a few more days to finish everything. I am stressed. Got back from running. Fucking trauma. At the slightest hint that I think people may be taunting me, I just end up staring at them. There is so much aggression in me, I truely fear the day someone actually does taunt me or provokes me bc I may end up in jail. And its just bc of everything that happened in 2023. Getting threatened with a gun, and losing everything in my life in the weeks after, and the persistent unemployment after that and being treated like shit.. there is so much aggression in me. I could legit kill a person if they said the wrong thing. And thats completely not me, and that aggression scares me, but on the other hand, I dont know how to cope with what happened, bc unless I can have some dignity again and a career, I cant heal from it.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
