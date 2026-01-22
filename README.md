@@ -1,23 +1,5 @@
 Disclaimer: At no point did AI contribute anything to this research project. Copilot can't even calculate basic congruences without making mistakes. People who think AI can do novel math research are delusional. I did not use AI for the paper, and I did not use AI for any of the code. I attacked this problem, from the very basics 3 years ago, slowly burrowing deeper and deeper. I know people will say lies because they will never let a person like me win. Not when it comes to something as important as this. Because that would literally go against all the bullshit propaganda the far right has been spreading for years. Also, this could have been avoided. Its a disaster of your own making. 
 
-#### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
-To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
-
-Prerequisites: </br>
--Python (tested on 3.13)</br>
--Numpy (tested on 1.26.2)</br>
--Sympy</br>
--cupy-cuda13x</br>
--cython</br>
--setuptools</br>
--h5py</br>
-(please open an issues here if something doesn't work)</br></br>
-
-Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), since it gets a lot harder to access the GPU on a virtual machine.
-
-Update: While making this PoC, I suddenly had an idea, linking back to some things I tried earlier last spring. See below.
-
 #### To run from folder "Improved_Sieving":</br></br>
 
 Note: Experimental WORK IN PROGRESS.</br>
@@ -35,6 +17,26 @@ Part 4: The output of the quadratic polynomial. </br>
 So we have 4 parts and all of them multiplied together are responsible for the final smooth... part 1 is easy, we can pre-sieve those quadratic coefficients at the start of the algorithm. Part 2 is easy.. we can call generate_modulus and construct a root from factors in the factor base. Part 3, this is a little harder, because unless y is a factor from the root, we may need to actually sieve this. However, there is some tricks we can use while sieving part 4 to sieve both of these at the same time. And then part 4, this definitely needs to be sieved... however, unlike with standard SIQS, we dont just sieve with zx^2-N, but we now have an additional linear coefficient to adjust the size of smooth candidates with. Now then, the trick to sieving this is really sieving part 3 and 4 at the same time... and I know the math.. and how to do it.. I just need to think how I'm going to do it in code. Dealing with a lot of stress though.. because I made a breakthrough.. and people would know.. I'm guessing the americans are threatening folks to stay silent. Its really the only explanation, because I know I'm correct about my math.
 
 Update: Basically didn't get anything done today. Just mentally struggling these last few days. I'll add sieving the polynomial output tomorrow... that is straight forward enough.. then after that I'll figure out how to integrate sieving x+y (part 3) into that in the days after... and then I should slowly begin to see a more final version of my algorithm. It doesn't matter. I could just work nonstop, have it all finished by tomorrow, but then what? Atleast this way I have a few more days of peace... because eventually people will realize what happened, even if they dont yet.
+
+Update: Slept like shit. I'll see if I end up doing work today or not.. its basically finished anyway, the only component missing is sieving. All the important math and transformations are already in the uploaded PoC. Lets see.
+
+#### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
+To build: python3 setup.py build_ext --inplace</br>
+To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
+
+Prerequisites: </br>
+-Python (tested on 3.13)</br>
+-Numpy (tested on 1.26.2)</br>
+-Sympy</br>
+-cupy-cuda13x</br>
+-cython</br>
+-setuptools</br>
+-h5py</br>
+(please open an issues here if something doesn't work)</br></br>
+
+Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), since it gets a lot harder to access the GPU on a virtual machine.
+
+Update: While making this PoC, I suddenly had an idea, linking back to some things I tried earlier last spring. See below.
 
 #### To run debug.py" (Prints the linear and quadratic coefficients to solve for 0 in the integers, for use with my paper):</br></br>
 
