@@ -665,7 +665,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
             i=1
             while i < 2:
                 x=new_mod*i#x1+i
-                y_init=1
+                y_init=-((x**2-n)//x)-(lin_sieve_size//2)##To do: Needs to be adjusted if z != 1
                 interval=create_interval(primeslist,n,x,y_init,z)
                 o=0
                 while o < len(interval):
@@ -712,7 +712,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                                 factors.append(local_factors2)
                                 coefficients.append(poly_val*z)
                                 if g_debug == 1:
-                                    print("Smooths #: "+str(len(smooths))+" z: "+str(z)+" x: "+str(x)+" y: "+str(y)+" zx: "+str(factors_part1)+" zx+y "+str(factors_part2)+" poly_val*z "+str(factors_part3)+" final smooth: "+str(all_parts))
+                                    print("Smooths #: "+str(len(smooths))+" z: "+str(z)+" x: "+str(x)+" y: "+str(y)+" zx: "+str(factors_part1)+" zx+y "+str(factors_part2)+" poly_val*z "+str(factors_part3)+" final smooth: "+str(all_parts)+" intrvl ind: "+str(o))
                                 else: 
                                     print("Smooths #: "+str(len(smooths)))
                                 if len(smooths)>(base+2):
