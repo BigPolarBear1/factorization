@@ -26,6 +26,8 @@ Oh, and people may not see it yet, but I'm now sieving a linear coefficient, not
 
 Update: I dont know, just going at a very slow pace right now.. just needed to take it slow for a few days I guess. Goal for tomorrow is using a modulus for the step size. And then I can slowly begin to attack the final issue of sieving part 3 and 4 at the same time..  especially that will be important.. because then I can use smaller roots and larger linear coefficients (which will result in much smaller polynomial values also).. and thats when things should finally start lining up.
 
+Update: I implemented moduli for the polynomial value today. But we really need to sieve zx+y and the polynomial value together. I'll make it my mission to implement that over the weekend and upload as soon as that is achieved. Once that is done we'll have a really strong algorithm.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
