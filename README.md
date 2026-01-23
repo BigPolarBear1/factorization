@@ -28,6 +28,12 @@ Update: I dont know, just going at a very slow pace right now.. just needed to t
 
 Update: I implemented moduli for the polynomial value today. But we really need to sieve zx+y and the polynomial value together. I'll make it my mission to implement that over the weekend and upload as soon as that is achieved. Once that is done we'll have a really strong algorithm.
 
+You know, the more I look at this, the more I'm starting to think there is a very elegant solution to sieving this. Remember our main example from the paper:
+
+41^2-148\*41+4387 = 41^2+66\*41-4387
+
+So the factorizationof zx+y or 2zx+y... thats basically the derivative. Thats the coefficient on the other side. And I know how to calculate 0 solutions mod p for these linear coefficients and building a hashmap for that.. I have to dig in tomorrow.. there is a really straight forward way using a hashmap and these 0 solutions to attack this. I can see it abstractly in my head already. Perhaps this is how prehistoric man, on the mammoth steppe, would have attacked a problem in abscence of language, they would reason with abstractions. No words. Just abstractions in their brain without the attachment of language. I have been feeling nostalgic for the mammoth steppe lately and a simpler life. *sigh* 
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
