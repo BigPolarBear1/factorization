@@ -13,6 +13,8 @@ But no matter what we do zx+y must also factorize over the factor base. (and z a
 
 I guess if we start with some zx+y where we know factorization of z, x and zx+y. Next we set zx+y as modulus. Then we sieve the linear coefficient with this modulus (i.e zx+(y+modulus*1)).... so those values just ends up being a multiple of zx+y. Let me do some thinking. I dont think its important to have "known factors" for that polynomial values, because we have many different variables now that we can use to get that below a certain size. So I guess I really just need to focus my efforts on making sure zx+y factorizes.
 
+Update: Eureka! I have an idea. It is so easy to just add a linear offset now to smooth candidates and change their size. Oh this will be quite beautiful. I'll try to upload a PoC tomorrow.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
