@@ -17,6 +17,8 @@ Update: Eureka! I have an idea. It is so easy to just add a linear offset now to
 
 Update: I got it! This is actually very easy now.  I'll upload a PoC tomorrow. I already wrote the math in code just now. It works beautifully. I was right. People would have known I was right. Especially people with more math experience. Yet, this is how I'm treated. Just this fucking agony every day. 
 
+Last couple of days... its almost over now..
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
