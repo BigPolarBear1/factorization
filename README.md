@@ -6,15 +6,12 @@ Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 90 -base 1_000 -debug 1 -lin_size 1_000_000 -quad_size 1</br></br>
 
-Just quickly added a small improvement. Use above command to factor 50-bit moduli. I still need to implement sieving. Still thinking how to do this.
-So the final smooth value is constructed from multiple parts, each of which we can sieve:
+Update: I spent the day brainstorming sieving this.
+So we now have many moving parts we can use to sieve.
+Sieving the polynomial value is trivial. We can increase the linear coefficient, the root and the quadratic coefficient.
+But no matter what we do zx+y must also factorize over the factor base. (and z and the root must have known factors, but that is less of a concern as that is trivial to garantuee).
 
-Part 1: The quadratic coefficient, the factorization of the quadratic coefficient is eventually transfered to the smooth candidate</br>
-Part 2: The factorization of the root .. at one point in the algorithm we need to factorize the constant of the discriminant of the quadratic polynomial, the factorization of the root is responisble for half the factors and the factorization of the root plus the linear coefficient (x+y) is responsibe for the other half. </br>
-Part 3: The factorization of x+y (root plus linear coefficient), see explanation above (part 2) or in the paper.</br>
-Part 4: The output of the quadratic polynomial. </br>
-
-So we have 4 parts and all of them multiplied together are responsible for the final smooth... part 1 is easy, we can pre-sieve those quadratic coefficients at the start of the algorithm. Part 2 is easy.. we can call generate_modulus and construct a root from factors in the factor base. Part 3, this is a little harder, because unless y is a factor from the root, we may need to actually sieve this. However, there is some tricks we can use while sieving part 4 to sieve both of these at the same time. And then part 4, this definitely needs to be sieved... however, unlike with standard SIQS, we dont just sieve with zx^2-N, but we now have an additional linear coefficient to adjust the size of smooth candidates with. Now then, the trick to sieving this is really sieving part 3 and 4 at the same time... and I know the math.. and how to do it.. I just need to think how I'm going to do it in code. Dealing with a lot of stress though.. because I made a breakthrough.. and people would know.. I'm guessing the americans are threatening folks to stay silent. Its really the only explanation, because I know I'm correct about my math.
+I guess if we start with some zx+y where we know factorization of z, x and zx+y. Next we set zx+y as modulus. Then we sieve the linear coefficient with this modulus (i.e zx+(y+modulus*1)).... so those values just ends up being a multiple of zx+y. Let me do some thinking. I dont think its important to have "known factors" for that polynomial values, because we have many different variables now that we can use to get that below a certain size. So I guess I really just need to focus my efforts on making sure zx+y factorizes.
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
