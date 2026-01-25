@@ -10,7 +10,7 @@ Just use the command above. This will add a linear offset to adjust the polynomi
 
 On a side note, we can pre-sieve "intrvl ind" ... which would be pre-sieving lin_size and saving it to disk, since we can reuse that for any number we try to factorize. Since with the current setup this is also responsible for factors of zx+y now. So we actually end up with a lot of moving parts which we can sieve in advance and re-use later for any number. The same thing happens with the quadratic coefficient. 
 
-Update: Quickly added it so it factorizes the interval indices in advance. Now next I'll try to figure out how to use that quadratic coefficient to much more dramatically reduce the size of the polynomial value. Once that is done.. we'll have a fairly strong algorithm and further improvements can be made by using more advanced number theory (i.e working mod p) to garantuee the factorization of zx+y. 
+Update: Quickly added it so it factorizes the interval indices in advance. Now next I'll try to figure out how to use that quadratic coefficient to much more dramatically reduce the size of the polynomial value. Once that is done.. we'll have a fairly strong algorithm and further improvements can be made by using more advanced number theory (i.e working mod p) to garantuee the factorization of zx+y (aka.. properly sieve that setup... since the current POC is not doing sieving on either zx+y or the polynomial value, just brute force)
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
