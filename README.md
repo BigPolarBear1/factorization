@@ -12,6 +12,8 @@ On a side note, we can pre-sieve "intrvl ind" ... which would be pre-sieving lin
 
 Update: Quickly added it so it factorizes the interval indices in advance. Now next I'll try to figure out how to use that quadratic coefficient to much more dramatically reduce the size of the polynomial value. Once that is done.. we'll have a fairly strong algorithm and further improvements can be made by using more advanced number theory (i.e working mod p) to garantuee the factorization of zx+y (aka.. properly sieve that setup... since the current POC is not doing sieving on either zx+y or the polynomial value, just brute force)
 
+Anyway.. at no point has anyone tried to stop me. Or ask me to stop uploading my work. Just silence. Non stop silence, uneployment and hopelessness. Hence I have no other choice but to continue. It is insane. Because I know I'm right. Perhaps people want disaster. Perhaps disaster is preferable over acknowledging what I did.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
