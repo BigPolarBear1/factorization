@@ -18,6 +18,8 @@ Update: Hmm... with this much control over the factorization of the final smooth
 
 Also there is something with that quadratic coefficient. If it can be used to add factors. Then if I have a smooth that is a partial match with another smooth, can't I just change my coefficients to get the factors I need?  Aaah. There is something here, I know it! Let me grind out this idea for a few days... because if that can be done... then that is a huge step toward just building smooths from the ground up.
 
+Update: AAAH. THE MORE I THINK ABOUT THIS.. IT MAKES SENSE. Maybe we only need a square with the polynomial values and root... all the other factors we can fairly easily add or remove by playing with the coefficients. I can see it abstractly in my head. I cannot explain what goes on in my head, perhaps this is the type of abstractions prehistoric man on the mammoth steppe would have had when hunting mammoths. Reasoning, without language. I dont think most people can reason without language. I'm actually starting to think its fairly rare. Because I can do all the things mathemticians can do, or vuln researchers, without having the same level of technical knowledge. And thats because I dont need words to reason about things. I do it abstractly. And it works. Anyway, I miss the simplicity of life on the mammoth steppe. I feel like I've lived so many lifes, but the mammoth steppe, that was the best shit ever. None of the complicated bullshit of living in modern day society.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
