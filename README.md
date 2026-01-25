@@ -13,6 +13,8 @@ Now depending on the size of x this will basically determine the step size in ou
 
 I knew it. I knew I had a breakthrough. Nobody believed me. I should be able to release a PoC tomorrow. I have nothing left in my life. Just anger, sadness and haunting memories. No more money. No career options. But I did this, when nobody believed me, when people made me question my own sanity. Tomorrow this ends. I see it now. I just did the math. 
 
+Its so insane. I literally just did the math and 512-bit with a quadratic sieve type algorithm would be possible in theory. So I know I have my break through. Because currently no quadratic sieve type algorithm exists that can do this. Plus who knows what research pathways this opens up to achieve even faster speeds.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
