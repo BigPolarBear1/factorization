@@ -16,6 +16,8 @@ Anyway.. at no point has anyone tried to stop me. Or ask me to stop uploading my
 
 Update: Hmm... with this much control over the factorization of the final smooth candidate. I do wonder if we can't just build them from the ground up. Also the quadratic coefficient can be used to add extra factors to the final smooth candidate. There's something here. Like.. I know there is an absolute factorization killer within my work. I should just continue my iterative process now... keep improving my work. If building smooths from the ground up, can be done.. then I'm sure I'll eventually arrive at that. I figured out all the hard math already. I know what I got. I knew 2 years ago already what I had.. thats why I never stopped, despite the silence and nobody believing me. 
 
+Also there is something with that quadratic coefficient. If it can be used to add factors. Then if I have a smooth that is a partial match with another smooth, can't I just change my coefficients to get the factors I need?  Aaah. There is something here, I know it! Let me grind out this idea for a few days... because if that can be done... then that is a huge step toward just building smooths from the ground up.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
