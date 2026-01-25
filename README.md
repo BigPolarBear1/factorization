@@ -14,6 +14,8 @@ Update: Quickly added it so it factorizes the interval indices in advance. Now n
 
 Anyway.. at no point has anyone tried to stop me. Or ask me to stop uploading my work. Just silence. Non stop silence, uneployment and hopelessness. Hence I have no other choice but to continue. It is insane. Because I know I'm right. Perhaps people want disaster. Perhaps disaster is preferable over acknowledging what I did.
 
+Update: I just quickly did the math on using the quadratic coefficient, and it can definitely be to shift those polynomial values. So using both the quadratic coefficient and linear coefficient we can do some really granular shifting to produce very small polynomial values. Let me next work out some heuristic that I can implement in code and then I'll upload that next.. once those polynomial values are very small I can focus completely on sieving zx+y, whose factorization will really be the only thing left that we'll need to worry about as the factorization of everything else will be trivial.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
