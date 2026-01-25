@@ -437,20 +437,35 @@ cdef factorise_fast_quads(value,long long [::1] factor_base):
         i+=1
     return factors, value
 
-def filter_quads(qbase,n):
+def filter(qbase,n,size):
     ###Note: We look for quadratic coefficients that factor over the factor base but have no even exponents. This garantuees unique results
+    interval= np.zeros(size,dtype=np.int32)
+    length=qbase[0]
+    i=1
+    while i < length:
+        prime=qbase[i]
+        log=round(math.log2(prime))
+        interval[prime::prime]+=log
+        i+=1
+    
+    
     valid_quads=[]
     valid_quads_factors=[]
 
     roots=[]
     i=1
-    while i < quad_sieve_size+1:
-        quad_local_factors, quad_value = factorise_fast_quads(i,qbase) 
-        if quad_value != 1:
-            i+=1
-            continue
-        valid_quads.append(i)
-        valid_quads_factors.append(quad_local_factors)
+    while i < size:
+        if i > 999:
+            threshold=round(math.log2(i*0.70))
+        if i < 1000 or interval[i]>threshold:
+            quad_local_factors, quad_value = factorise_fast_quads(i,qbase) 
+           # print("checing")
+            if quad_value != 1:
+                i+=1
+                continue
+           # print("found")
+            valid_quads.append(i)
+            valid_quads_factors.append(quad_local_factors)
         i+=1
     return valid_quads,valid_quads_factors
 
@@ -627,10 +642,11 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
 
 
 
-
-    valid_quads,valid_quads_factors=filter_quads(primelist_f,n)
- 
-
+    print("[i]Filtering Quadratic Coefficients (quad_size) (to do: can be saved to disk for re-use)")
+    valid_quads,valid_quads_factors=filter(primelist_f,n,quad_sieve_size+1)
+    print("[i]Filtering interval indices (lin_size) (to do: can be saved to disk for re-use)")
+    valid_ind,valid_ind_factors=filter(primelist_f,n,lin_sieve_size+1)
+    print("[i]Entering attack loop")
     smooths=[]
     coefficients=[]
     factors=[]
@@ -646,7 +662,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
     too_close=5
     LOWER_BOUND_SIQS=1
     UPPER_BOUND_SIQS=4000
-    tnum=int(((n)**0.3) /1)#(lin_sieve_size))
+    tnum=int(((n)**0.25) /1)#(lin_sieve_size))
     seen=[]
     threshold = int(math.log2((lin_sieve_size)*math.sqrt(abs(n))) - thresvar)
     if threshold < 0:
@@ -656,6 +672,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
         new_mod,cfact,indexes=generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,bitlen(tnum),hmap,1)
         #print("new_mod: "+str(new_mod))
         if new_mod ==0:
+            print("exit")
             return 0,0
 
         zi=0
@@ -666,12 +683,13 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
             while i < 2:
                 x=new_mod*i#x1+i
                 
-                y_init=1#-((x**2-n)//x)-(lin_sieve_size//2)##To do: Needs to be adjusted if z != 1
+                y_init=1#0000#-((x**2-n)//x)-(lin_sieve_size//2)##To do: Needs to be adjusted if z != 1
                 zxy=z*x+y_init
                 #if g_debug ==1:
                    # print("initial zx+y: "+str(zxy))
-                o=1
-                while o < lin_sieve_size:
+                o1=1
+                while o1 < len(valid_ind):
+                    o=valid_ind[o1]
 
                     y=y_init+o*zxy
 
@@ -689,7 +707,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
   
                     z2=z*k
                     if test_poly_val==0 or k ==0:
-                        o+=1
+                        o1+=1
                         continue
                     local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(test_poly_val,primelist_f)
                     if value == 1:
@@ -733,7 +751,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                       
 
          
-                    o+=1
+                    o1+=1
                 i+=1
             zi+=1
     print("done?")
