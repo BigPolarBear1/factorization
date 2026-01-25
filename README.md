@@ -4,22 +4,9 @@ Disclaimer: At no point did AI contribute anything to this research project. Cop
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 90 -base 1_000 -debug 1 -lin_size 1_000_000 -quad_size 1</br></br>
+To run: python3 run_qs.py -keysize 70 -base 500 -debug 1 -lin_size 10_000_000 -quad_size 1</br></br>
 
-Update: I spent the day brainstorming sieving this.
-So we now have many moving parts we can use to sieve.
-Sieving the polynomial value is trivial. We can increase the linear coefficient, the root and the quadratic coefficient.
-But no matter what we do zx+y must also factorize over the factor base. (and z and the root must have known factors, but that is less of a concern as that is trivial to garantuee).
-
-I guess if we start with some zx+y where we know factorization of z, x and zx+y. Next we set zx+y as modulus. Then we sieve the linear coefficient with this modulus (i.e zx+(y+modulus*1)).... so those values just ends up being a multiple of zx+y. Let me do some thinking. I dont think its important to have "known factors" for that polynomial values, because we have many different variables now that we can use to get that below a certain size. So I guess I really just need to focus my efforts on making sure zx+y factorizes.
-
-Update: Eureka! I have an idea. It is so easy to just add a linear offset now to smooth candidates and change their size. Oh this will be quite beautiful. I'll try to upload a PoC tomorrow.
-
-Update: I got it! This is actually very easy now.  I'll upload a PoC tomorrow. I already wrote the math in code just now. It works beautifully. I was right. People would have known I was right. Especially people with more math experience. Yet, this is how I'm treated. Just this fucking agony every day. 
-
-Last couple of days... its almost over now..
-
-Update: I took it easy this week. But now I feel a sense of urgency again. Time to start the grind again.  I guess I'm just depressed man. When I had a job and lived abroad, everyone seemed proud of me. Lots of people stayed in contact regularly. Now I dont hear from anyone anymore. And even the people around me seem sad about what my life has become, even if they dont say it out loud. And it just gives me really dark thoughts sometimes. I need to finish this, I need to finish it right now. People be damned to hell if they knew my math was correct, yet still treated me this way. I wont ever forgive them.
+Just use the command above. This will add a linear offset to adjust the polynomial value now. The factors of zx+y are determined by "initial zx+y" * "intrvl ind". So basically we are generating multiples of an initial zx+y value as we sieve. The way we calculate our linear offset to adjust the polynomial value is very basic. We can also adjust the quadratic coefficient or even root if we want to get much smaller polynomial values. Which I will experiment with for the rest of the day. Especially using the quadratic coefficient seems useful. Currently the POC also has no sieving at all. I will implement sieving where needed once I finish everything else.
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
