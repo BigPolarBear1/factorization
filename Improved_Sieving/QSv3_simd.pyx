@@ -646,7 +646,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
     too_close=5
     LOWER_BOUND_SIQS=1
     UPPER_BOUND_SIQS=4000
-    tnum=int(((n)**0.50) /1)#(lin_sieve_size))
+    tnum=int(((n)**0.3) /1)#(lin_sieve_size))
     seen=[]
     threshold = int(math.log2((lin_sieve_size)*math.sqrt(abs(n))) - thresvar)
     if threshold < 0:
@@ -665,67 +665,78 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
             i=1
             while i < 2:
                 x=new_mod*i#x1+i
-                y_init=-((x**2-n)//x)-(lin_sieve_size//2)##To do: Needs to be adjusted if z != 1
-                interval=create_interval(primeslist,n,x,y_init,z)
-                o=0
-                while o < len(interval):
-                    if interval[o]<threshold:
-                        o+=1
-                        continue
+                
+                y_init=1#-((x**2-n)//x)-(lin_sieve_size//2)##To do: Needs to be adjusted if z != 1
+                zxy=z*x+y_init
+                #if g_debug ==1:
+                   # print("initial zx+y: "+str(zxy))
+                o=1
+                while o < lin_sieve_size:
 
-                    y=y_init+o#cfact[0]*i#math.isqrt(n*4)+o
+                    y=y_init+o*zxy
 
                     poly_val=z*x**2+y*x-n
+                    
+                    test=(poly_val*z)//(o*z*x)
+                    test_y_init=y_init-test
+                    test_zxy=z*x+test_y_init
+                    test_y=test_y_init+o*test_zxy
+                    test_poly_val=z*x**2+test_y*x-n
+                    test_zxy_curent=z*x+(test_y_init+o*test_zxy)
+                    
 
-
-                    k=((z*x**2+y*x)-poly_val)//n
+                    k=((z*x**2+test_y*x)-test_poly_val)//n
   
                     z2=z*k
-                    if poly_val==0 or k ==0:
+                    if test_poly_val==0 or k ==0:
                         o+=1
                         continue
-                    local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(poly_val,primelist_f)
+                    local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(test_poly_val,primelist_f)
                     if value == 1:
-                        disc1_squared=y**2+4*(n*k*z+(poly_val*z))
+                        disc1_squared=test_y**2+4*(n*k*z+(test_poly_val*z))
                         disc1=math.isqrt(disc1_squared)
                         if disc1**2 != disc1_squared:
                             print("fatal error")
 
-                        poly_val2=(n*k*z+(poly_val*z))  #note: factorization for this is y+disc1 and y-disc1
+                        poly_val2=(n*k*z+(test_poly_val*z))  #note: factorization for this is y+disc1 and y-disc1
                         factors_part1=z*x
-                        factors_part2=z*x+y
-                        factors_part3=poly_val*z
+                        factors_part2=z*x+test_y
+                        factors_part3=test_poly_val*z
                         all_parts=factors_part1*factors_part2*factors_part3
-                        if all_parts != poly_val2*poly_val*z:
+                        if all_parts != poly_val2*test_poly_val*z:
                             print("fatal error")
                         if (4*poly_val2)%((2*z*x))!=0:
                             print("error")
 
-                        if (4*poly_val2)%(2*(z*x+y))!=0:
+                        if (4*poly_val2)%(2*(z*x+test_y))!=0:
                             print("error2")
                           #  print("error: "+str(4*poly_val2)+" z: "+str(z)+" x: "+str(x)+" y: "+str(y)+" 2zx: "+str(2*z*x)+" "+str((4*poly_val2)/(2*z*x)))
-                        local_factors2, value2,seen_primes2,seen_primes_indexes2 = factorise_fast(poly_val2*poly_val*z,primelist_f)
+                        local_factors2, value2,seen_primes2,seen_primes_indexes2 = factorise_fast(poly_val2*test_poly_val*z,primelist_f)
                         if value2 == 1:
-                            if poly_val*z not in coefficients and poly_val2*poly_val*z not in smooths:
-                            
-                                smooths.append(poly_val2*poly_val*z)
+                            if test_poly_val*z not in coefficients and poly_val2*poly_val*z not in smooths:
+
+                                smooths.append(poly_val2*test_poly_val*z)
                                 factors.append(local_factors2)
-                                coefficients.append(poly_val*z)
+                                coefficients.append(test_poly_val*z)
+                                test_zxy_curent=z*x+(test_y_init+o*test_zxy)
                                 if g_debug == 1:
-                                    print("Smooths #: "+str(len(smooths))+" z: "+str(z)+" x: "+str(x)+" y: "+str(y)+" zx: "+str(factors_part1)+" zx+y "+str(factors_part2)+" poly_val*z "+str(factors_part3)+" final smooth: "+str(all_parts)+" intrvl ind: "+str(o))
+
+
+                                    print("Smooths #: "+str(len(smooths))+" z: "+str(z)+" x: "+str(x)+" old y: "+str(y)+" new y: "+str(test_y)+" zx: "+str(factors_part1)+" zx+y "+str(factors_part2)+" initial zx+y: "+str(test_zxy)+" poly_val*z "+str(factors_part3)+" final smooth: "+str(all_parts)+" intrvl ind: "+str(o))#+" test_poly_val: "+str(bitlen(test_poly_val))+" test_zxy: "+str(test_zxy)+" test_zxy_current: "+str(test_zxy_curent))
                                 else: 
                                     print("Smooths #: "+str(len(smooths)))
                                 if len(smooths)>(base+2):
                                     f1,f2=QS(n,primelist,smooths,coefficients,factors)
                                     if f1 !=0:
                                       sys.exit()
-                              #  break
+                              
                       
 
          
                     o+=1
                 i+=1
             zi+=1
+    print("done?")
     return      
 
 
