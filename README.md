@@ -6,8 +6,7 @@ Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 70 -base 500 -debug 1 -lin_size 10_000_000 -quad_size 1</br></br>
 
-Update: Hmm. Actually we may only need a square with the polynomial value. I'm noticing an interesting pattern in the factorization of x and x+y whose result for the quadratic x^2+yx-N all have the same polynomial value.
-There something there. Let me think.
+Update: Actually the linear shifting I'm doing in the uploaded PoC is a really good idea. I also have an idea. We should be able to sieve that linear shifting using that hashmap thingy. Let me begin working toward that now.
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
