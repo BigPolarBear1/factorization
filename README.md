@@ -12,6 +12,16 @@ Update: Oh yea.. I should calculate my hashmap like I used to do in the very beg
 
 Update: I'll upload a newer version in the coming days. So I got some code now (not uploaded yet) which will precalculate the roots and linear coefficient which produce a solution of 0 mod p with the quadratic (not just the discriminant like the uploaded PoC does in solve_roots()). Then I can index that by root residue... and it will give me information about the residues of x+y and the factors of the polynomial values. Then that construction should allow me to finally finish the algorithm properly. Anyway, got to run 30k tomorrow all day to go to therapy and back, because the belgian justice system thinks I'm insane or some shit. I feel like people have been trying really hard into gaslighting me that something is wrong with me and that I should stop doing math. And sometimes, this also create a lot of self-doubt... you know "what if i've just lost it" .. and that then brings forth a lot of dark thoughts. But I know I got it now.. and I know I was right about my math and that everything thats going on, is just people being shitheads.
 
+UPDATE: OH OFCOURSE. That x+y thats just the other factor.
+
+Ie:
+
+41^2+66*\41-4387 = 0      z+y = 107
+107^2-66\*107-4387 = 0    z+y = 41 
+
+So z+y just produce that other factor. Hence z+y is the root for the quadratics with the sign for the coefficient flipped. 
+And there we go.... there we go. Let me add that to the paper tonight because that does give us some much better clues how to finish the algorithm.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
