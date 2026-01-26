@@ -16,8 +16,8 @@ UPDATE: OH OFCOURSE. That x+y thats just the other factor.
 
 Ie:
 
-41^2+66*\41-4387 = 0      z+y = 107
-107^2-66\*107-4387 = 0    z+y = 41 
+41^2+66\*41-4387 = 0      x+y = 107
+107^2-66\*107-4387 = 0    x+y = 41 
 
 So z+y just produce that other factor. Hence z+y is the root for the quadratics with the sign for the coefficient flipped. 
 And there we go.... there we go. Let me add that to the paper tonight because that does give us some much better clues how to finish the algorithm.
