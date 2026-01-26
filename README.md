@@ -8,6 +8,8 @@ To run: python3 run_qs.py -keysize 70 -base 500 -debug 1 -lin_size 10_000_000 -q
 
 Update: Actually the linear shifting I'm doing in the uploaded PoC is a really good idea. I also have an idea. We should be able to sieve that linear shifting using that hashmap thingy. Let me begin working toward that now.
 
+Update: Oh yea.. I should calculate my hashmap like I used to do in the very beginning. Not just where the discriminant yields a 0 solution mod p.. but also quadratic residues.. because for each of those will exist a quadratic that is 0 mod p. Then go from there. 
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
