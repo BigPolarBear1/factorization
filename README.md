@@ -10,6 +10,8 @@ Update: Actually the linear shifting I'm doing in the uploaded PoC is a really g
 
 Update: Oh yea.. I should calculate my hashmap like I used to do in the very beginning. Not just where the discriminant yields a 0 solution mod p.. but also quadratic residues.. because for each of those will exist a quadratic that is 0 mod p. Then go from there. 
 
+Update: I'll upload a newer version in the coming days. So I got some code now (not uploaded yet) which will precalculate the roots and linear coefficient which produce a solution of 0 mod p with the quadratic (not just the discriminant like the uploaded PoC does in solve_roots()). Then I can index that by root residue... and it will give me information about the residues of x+y and the factors of the polynomial values. Then that construction should allow me to finally finish the algorithm properly. Anyway, got to run 30k tomorrow all day to go to therapy and back, because the belgian justice system thinks I'm insane or some shit. I feel like people have been trying really hard into gaslighting me that something is wrong with me and that I should stop doing math. And sometimes, this also create a lot of self-doubt... you know "what if i've just lost it" .. and that then brings forth a lot of dark thoughts. But I know I got it now.. and I know I was right about my math and that everything thats going on, is just people being shitheads.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
