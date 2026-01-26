@@ -22,6 +22,8 @@ Ie:
 So z+y just produce that other factor. Hence z+y is the root for the quadratics with the sign for the coefficient flipped. 
 And there we go.... there we go. Let me add that to the paper tonight because that does give us some much better clues how to finish the algorithm.
 
+SO basically we need to find two roots (for zx^2+yx-Nk and zx^2-yx-Nk) for the same linear coefficient, both of which must factorize over the factor base and produce a small polynomial value.. and we can change the linear coefficient to basically add a linear offset to the polynomial value. Its actually extremely elegant. I should have all the info now to produce an awesome PoC before the end of the week. I will make it my mission to do this. I am so tired.. when I worked at microsoft, everyone seemed happy for me, people kept reaching out all the time. Nobody talks to me anymore. And a lot of people seem to think I've lost my mind. I cant live like this anymore. To feel like a dissappointment. This ends this week. This will be the week this nightmare finally ends. I have everything now, I can do it. 
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
