@@ -19,12 +19,12 @@ Ie:
 41^2+66\*41-4387 = 0      x+y = 107
 107^2-66\*107-4387 = 0    x+y = 41 
 
-So z+y just produce that other factor. Hence z+y is the root for the quadratics with the sign for the coefficient flipped. 
+So x+y just produce that other factor. Hence x+y is the root for the quadratics with the sign for the coefficient flipped. 
 And there we go.... there we go. Let me add that to the paper tonight because that does give us some much better clues how to finish the algorithm.
 
 SO basically we need to find two roots (for zx^2+yx-Nk and zx^2-yx-Nk) for the same linear coefficient, both of which must factorize over the factor base and produce a small polynomial value.. and we can change the linear coefficient to basically add a linear offset to the polynomial value. Its actually extremely elegant. I should have all the info now to produce an awesome PoC before the end of the week. I will make it my mission to do this. I am so tired.. when I worked at microsoft, everyone seemed happy for me, people kept reaching out all the time. Nobody talks to me anymore. And a lot of people seem to think I've lost my mind. I cant live like this anymore. To feel like a dissappointment. This ends this week. This will be the week this nightmare finally ends. I have everything now, I can do it. 
 
-Update: Today was therapy and running 30k and then crashing out in the evening. I did do some further thinking, and I have a pretty definitive idea now on how to setup sieving. So tomorrow, its time to end this, I'm going to start making real real progress on this. If anyone has anything to say before I go down that path... better do it in the coming hours because the moment I wake up tomorrow... shit is going to escalate soon, I can promise you that. I know what I got and I know I'm right, and I am tired of this humiliation. This ends tomorrow.
+Update: Today was therapy and running 30k and then crashing out in the evening. I did do some further thinking, and I have a pretty definitive idea now on how to setup sieving. So tomorrow, its time to end this, I'm going to start making real progress on this. If anyone has anything to say before I go down that path... better do it in the coming hours because the moment I wake up tomorrow... shit is going to escalate soon, I can promise you that. I know what I got and I know I'm right, and I am tired of this humiliation. This ends tomorrow.
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
