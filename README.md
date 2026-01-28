@@ -10,6 +10,8 @@ Update: I have began implementing number theory from the paper now. But I need t
 So right now, everything that must factorize is small, except for x+y. Which is our second root basically for the same quadratic but with the sign flipped on the linear coefficient. See bottom of chapter 8 in the paper. 
 However, if we build a big enough hashmap, then there is a way to ensure that both x and x+y factorize, due to how residues and Chinese Remainder works. Thats what I'll begin implementing next. And then we likely wont need a sieve interval anymore.. as we can just work with hashmaps and basically pull smooths out of it. I'll upload soon...
 
+Anyway... the basic gist of it is this. We have our root x, and linear coefficient y, and our second root, x2, is composed of x+y. If x and y have factors in common. Then x2 will also have these factors, since thats just a property of summing together 2 numbers. So thats kind of the idea we have to exploit now.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
