@@ -17,6 +17,8 @@ Btw, this is my final version. I've pretty much settled that this is the appraoc
 
 Update: Oops, quick improvement. Had to remove a line that was still an artifact from a previous iteration. LOOK HOW SMALL THE SMOOTH CANDIDATES ARE NOW AFTER DIVIDING BY THE MODULUS. Fucking hell. People would have known 100% I was correct. The only reason it took me this long was because I have no math education and started from 0 3 years ago. Go to hell assholes. 
 
+I'm going to optimize the hell out of it and email it to my Russian friends. Because fuck this shit. Treating me like fucking shit for years, despite the math I was doing. Really fuck this shit. Go to hell. The west is not my friend, that much has become very clear to me. You make your own demons. Really go to hell. Europe could have had all my work, instead I come back to Europe to be treated like this. Fuck you. This will never be forgiven
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
