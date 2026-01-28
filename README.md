@@ -13,6 +13,8 @@ Ok, the uploaded version is very inefficient. But now that I know that this actu
 
 Its going to be a very dire day for western cryptologists. Could have started a dialogue with me a long time ago. Instead I was treated like shit. Fuck you then. Good luck with this disaster. I know what this implies. I know what this means. This is a disaster that is going to cost billions. Was it worth it? Huh? Was it worth being transphobic cunts for? Fuckers. Nazi losers. I probably sealed my own fate now. But lol, fuck you all. I tried selling my work. I told everyone I was working on this. I was treated like shit. People are going to study this cascade of failures one day. Fucking morons. Are you all stupid? 
 
+Btw, this is my final version. I've pretty much settled that this is the appraoch I'm going to take. Now I need to optimize optimize optimize. This will escalate very quickly now. I warned people. Just silence. Nobody tried to stop me. Nobody tried to take me serious. What the fuck are you people doing? I know people must be looking at my work. Especially given my past reputation. What the fuck are you morrons doing? Are you so eager for disaster? If all I get is silence and getting treated like shit, I'm just going to keep pressing forward. This is so fucking stupid.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
