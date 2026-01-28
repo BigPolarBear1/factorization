@@ -8,7 +8,7 @@ To run: python3 run_qs.py -keysize 60 -base 500 -debug 1 -lin_size 100_000 -quad
 
 Update: I have began implementing number theory from the paper now. But I need to rework solve_roots2() eventually, because I know already how to do all those calculations must faster. And quadratic coefficient support is currently not working.
 So right now, everything that must factorize is small, except for x+y. Which is our second root basically for the same quadratic but with the sign flipped on the linear coefficient. See bottom of chapter 8 in the paper. 
-However, if we build a big enough hashmap, then there is a way to ensure that both x and x+y factorize, due to how residues and Chinese Remainder works. Thats what I'll begin implementing next.
+However, if we build a big enough hashmap, then there is a way to ensure that both x and x+y factorize, due to how residues and Chinese Remainder works. Thats what I'll begin implementing next. And then we likely wont need a sieve interval anymore.. as we can just work with hashmaps and basically pull smooths out of it. I'll upload soon...
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
