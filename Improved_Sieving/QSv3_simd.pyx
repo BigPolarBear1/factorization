@@ -808,6 +808,10 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
             i=1
             while i < 1_000_000_000:
                 x=round(n**0.50)+i#new_mod*i#x1+i
+                local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(x,primelist_f)
+                if value != 1:
+                    i+=1
+                    continue
                 collected=retrieve(hmap,primeslist,x)
 
                 mod=1
@@ -831,10 +835,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                 if (x**2+lin*x-n)%mod!=0:
                     print("fatal error")
                     sys.exit()
-                local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(x,primelist_f)
-                if value != 1:
-                    i+=1
-                    continue
+
      
                 y=lin
                 x2=y+x
