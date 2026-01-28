@@ -12,6 +12,8 @@ However, if we build a big enough hashmap, then there is a way to ensure that bo
 
 Anyway... the basic gist of it is this. We have our root x, and linear coefficient y, and our second root, x2, is composed of x+y. If x and y have factors in common. Then x2 will also have these factors, since thats just a property of summing together 2 numbers. So thats kind of the idea we have to exploit now. Its really straightforward now to finish it, atleast from a purely mathematical point of view. The main challenge, for me atleast, is writing this in code in a way that works well. Give me a fewy days to figure this out.. Won't take long now.
 
+UPDATE: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH. FUCK. GOD DAMNIT. FUCK. With this setup, we just pull from the hashmap where the linear coefficient is 0 mod p.. then that way.. only the root must factorize. What the fuck. I know I explored similar ideas when just using the discriminant.. but setting it up like this, this actually works lol. Fuck. FUCK. I'm going to get drone striked over night by cowardly americans hahahaha. 
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
