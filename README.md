@@ -4,29 +4,11 @@ Disclaimer: At no point did AI contribute anything to this research project. Cop
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 70 -base 500 -debug 1 -lin_size 10_000_000 -quad_size 1</br></br>
+To run: python3 run_qs.py -keysize 60 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
-Update: Actually the linear shifting I'm doing in the uploaded PoC is a really good idea. I also have an idea. We should be able to sieve that linear shifting using that hashmap thingy. Let me begin working toward that now.
-
-Update: Oh yea.. I should calculate my hashmap like I used to do in the very beginning. Not just where the discriminant yields a 0 solution mod p.. but also quadratic residues.. because for each of those will exist a quadratic that is 0 mod p. Then go from there. 
-
-Update: I'll upload a newer version in the coming days. So I got some code now (not uploaded yet) which will precalculate the roots and linear coefficient which produce a solution of 0 mod p with the quadratic (not just the discriminant like the uploaded PoC does in solve_roots()). Then I can index that by root residue... and it will give me information about the residues of x+y and the factors of the polynomial values. Then that construction should allow me to finally finish the algorithm properly. Anyway, got to run 30k tomorrow all day to go to therapy and back, because the belgian justice system thinks I'm insane or some shit. I feel like people have been trying really hard into gaslighting me that something is wrong with me and that I should stop doing math. And sometimes, this also create a lot of self-doubt... you know "what if i've just lost it" .. and that then brings forth a lot of dark thoughts. But I know I got it now.. and I know I was right about my math and that everything thats going on, is just people being shitheads.
-
-UPDATE: OH OFCOURSE. That x+y thats just the other factor.
-
-Ie:
-
-41^2+66\*41-4387 = 0      x+y = 107</br>
-107^2-66\*107-4387 = 0    x+y = 41 </br>
-
-So x+y just produce that other factor. Hence x+y is the root for the quadratics with the sign for the coefficient flipped. 
-And there we go.... there we go. Let me add that to the paper tonight because that does give us some much better clues how to finish the algorithm.
-
-SO basically we need to find two roots (for zx^2+yx-Nk and zx^2-yx-Nk) for the same linear coefficient, both of which must factorize over the factor base and produce a small polynomial value.. and we can change the linear coefficient to basically add a linear offset to the polynomial value. Its actually extremely elegant. I should have all the info now to produce an awesome PoC before the end of the week. I will make it my mission to do this. I am so tired.. when I worked at microsoft, everyone seemed happy for me, people kept reaching out all the time. Nobody talks to me anymore. And a lot of people seem to think I've lost my mind. I cant live like this anymore. To feel like a dissappointment. This ends this week. This will be the week this nightmare finally ends. I have everything now, I can do it. 
-
-Update: Today was therapy and running 30k and then crashing out in the evening. I did do some further thinking, and I have a pretty definitive idea now on how to setup sieving. So tomorrow, its time to end this, I'm going to start making real progress on this. If anyone has anything to say before I go down that path... better do it in the coming hours because the moment I wake up tomorrow... shit is going to escalate soon, I can promise you that. I know what I got and I know I'm right, and I am tired of this humiliation. This ends tomorrow.
-
-Btw I have figured out how to sieve the polynomial value and x+y at the same time. Knowing that x+y is simply another root for a quadratic with the sign flipped on the linear coefficient, it was fairly simple to piece together.. things are going to escalate very quickly now.. and I will make sure to contact my non-nato friends. Because I feel nothing but resentment for how you people treated me. I feel deep hatred. No idea what life has been like. The struggles of those past years. The darkness. You people are going to pay the price, one way or another, shit has consequences. If you threaten me with a gun, fire me, seperate me from all my friends, make sure I cant find 0day buyers or employment, fire my former manager bc he once gave me a promotion... a price will be paid. You think you can treat people like animals? Like disposable trash? Morrons. Morrons, just like all your big tech executives... fucking morrons all of them. The world is ruled by shitheads with half a brain. My patience has run out. This is the beginning. I'm never stopping. I'm not afraid of the west. I'm not afraid of little men like pete hegseth. Fuckign weaklings. Come fight me then you fucking cunts.
+Update: I have began implementing number theory from the paper now. But I need to rework solve_roots2() eventually, because I know already how to do all those calculations must faster. And quadratic coefficient support is currently not working.
+So right now, everything that must factorize is small, except for x+y. Which is our second root basically for the same quadratic but with the sign flipped on the linear coefficient. See bottom of chapter 8 in the paper. 
+However, if we build a big enough hashmap, then there is a way to ensure that both x and x+y factorize, due to how residues and Chinese Remainder works. Thats what I'll begin implementing next.
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
