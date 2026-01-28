@@ -809,14 +809,16 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
             while i < 100000000:
                 x=round(n**0.20)+i#new_mod*i#x1+i
                 collected=retrieve(hmap,primeslist,x)
+
                 mod=1
                 colist=[]
                 q=0
                 while q < len(collected):
-                    if mod*collected[q][0] > round(n**0.40):
-                        break
-                    mod*=collected[q][0]
-                    colist.extend(collected[q])
+                    if collected[q][1][0] == 0:
+                        if mod*collected[q][0] > round(n**0.40):
+                            break
+                        mod*=collected[q][0]
+                        colist.extend(collected[q])
                     q+=1
 
                 colist=get_partials(mod,colist)
@@ -842,15 +844,11 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                     print("error")
                     sys.exit()
 
-                center=-(poly_val//(x*mod))
-                center-=lin_sieve_size//2
-                x2+=center*mod
-                y+=center*mod
                 o1=0
-                while o1 < lin_sieve_size:
+                while o1 < 1:
          
-                    x2+=mod#9139
-                    y+=mod#1
+                  #  x2+=mod#9139
+                  #  y+=mod#1
                     if x2-y != x:
                         print("error")
                         sys.exit()      
