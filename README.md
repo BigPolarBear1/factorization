@@ -11,6 +11,8 @@ I can pull smooths from a hashmap now!
 
 Ok, the uploaded version is very inefficient. But now that I know that this actually works, i'll upload improvements rapidly. I know I explored similar ideas previously.. but just the way I'm setting everything up now, finally makes it work. Like getting hit by lightning. Eureka. 
 
+Its going to be a very dire day for western cryptologists. Could have started a dialogue with me a long time ago. Instead I was treated like shit. Fuck you then. Good luck with this disaster. I know what this implies. I know what this means. This is a disaster that is going to cost billions. Was it worth it? Huh? Was it worth being transphobic cunts for? Fuckers. Nazi losers.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
