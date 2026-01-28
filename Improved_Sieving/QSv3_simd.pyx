@@ -762,10 +762,10 @@ def get_partials(mod,list1):
     return new_list
 
 cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_prime_bound,primeslist2,small_primeslist):
-  #  i=0
-  #  while i < len(hmap):
-  #      print("prime: "+str(primeslist[i])+" "+str(hmap[i]))
-   #     i+=1
+    #i=0
+    #while i < len(hmap):
+       # print("prime: "+str(primeslist[i])+" "+str(hmap[i]))
+       # i+=1
 
 
     primelist_f=copy.copy(primeslist)
@@ -806,8 +806,8 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
           
             z=valid_quads[zi]
             i=1
-            while i < 100000000:
-                x=round(n**0.20)+i#new_mod*i#x1+i
+            while i < 1_000_000_000:
+                x=round(n**0.50)+i#new_mod*i#x1+i
                 collected=retrieve(hmap,primeslist,x)
 
                 mod=1
@@ -815,12 +815,12 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                 q=0
                 while q < len(collected):
                     if collected[q][1][0] == 0:
-                        if mod*collected[q][0] > round(n**0.40):
-                            break
                         mod*=collected[q][0]
                         colist.extend(collected[q])
                     q+=1
-
+                if mod ==1:
+                    i+=1
+                    continue
                 colist=get_partials(mod,colist)
                 lin=0
                 q=0
