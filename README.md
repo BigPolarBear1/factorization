@@ -6,13 +6,10 @@ Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 60 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
-Update: I have began implementing number theory from the paper now. But I need to rework solve_roots2() eventually, because I know already how to do all those calculations must faster. And quadratic coefficient support is currently not working.
-So right now, everything that must factorize is small, except for x+y. Which is our second root basically for the same quadratic but with the sign flipped on the linear coefficient. See bottom of chapter 8 in the paper. 
-However, if we build a big enough hashmap, then there is a way to ensure that both x and x+y factorize, due to how residues and Chinese Remainder works. Thats what I'll begin implementing next. And then we likely wont need a sieve interval anymore.. as we can just work with hashmaps and basically pull smooths out of it. I'll upload soon...
+Update: I DID IT! It just hit me. When setting it up like this, we can just use the 0 solutions. With this setup, its literally just a matter of building a large enough hashmap in advance. 
+I can pull smooths from a hashmap now!
 
-Anyway... the basic gist of it is this. We have our root x, and linear coefficient y, and our second root, x2, is composed of x+y. If x and y have factors in common. Then x2 will also have these factors, since thats just a property of summing together 2 numbers. So thats kind of the idea we have to exploit now. Its really straightforward now to finish it, atleast from a purely mathematical point of view. The main challenge, for me atleast, is writing this in code in a way that works well. Give me a fewy days to figure this out.. Won't take long now.
-
-UPDATE: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH. FUCK. GOD DAMNIT. FUCK. With this setup, we just pull from the hashmap where the linear coefficient is 0 mod p.. then that way.. only the root must factorize. What the fuck. I know I explored similar ideas when just using the discriminant.. but setting it up like this, this actually works lol. Fuck. FUCK. I'm going to get drone striked over night by cowardly americans hahahaha. 
+Ok, the uploaded version is very inefficient. But now that I know that this actually works, i'll upload improvements rapidly. I know I explored similar ideas previously.. but just the way I'm setting everything up now, finally makes it work. Like getting hit by lightning. Eureka. 
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
