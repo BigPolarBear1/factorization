@@ -365,7 +365,55 @@ def solve_quadratic_congruence(a, b, c, p):
         return [x1,x2]
 
 
+def solve_roots(prime,n): 
+    #hmap_p={}
+    s=1  
+    while jacobi((-s*n)%prime,prime)!=1:
+        s+=1
+    z_div=modinv(s,prime)  
+    dist=(n*z_div)%prime
+    dist=(-dist)%prime
+    main_root=tonelli(dist,prime)
+    if main_root**2%prime != dist:
+        print("what the fuck")
+    if (s*main_root**2+n)%prime !=0:
+        print("fatal error123: "+str(prime)+" s: "+str(s)+" root: "+str(main_root))
+        time.sleep(10000000)
+    try:
+     #   size=prime*2+1
+     #   if size > quad_sieve_size*2:
+     #       size= quad_sieve_size*2+1
+        size=3
+        temp_hmap = array.array('I',[0]*size) ##Got to make sure the allocation size doesn't overflow.... 
+        temp_hmap[0]=1
 
+        s_inv=modinv(s*z_div,prime)
+        if s_inv == None or jacobi(s_inv,prime)!=1:
+            print("should this ever happen?")
+            return temp_hmap
+        root_mult=tonelli(s_inv,prime)
+        new_root=((main_root*root_mult))%prime
+        if (s*new_root**2+n)%prime !=0:
+            print("error2")
+       # new_co=(2*s*new_root)%prime
+       # if (new_co**2+n*4*s)%prime !=0:
+           # print("error")
+      #  if (s*new_root**2-new_co*new_root+n)%prime !=0: ###To do: For debug delete later
+           # print("error")
+        if new_root > prime // 2:
+            new_root=(prime-new_root)%prime  
+        print("s: "+str(s)+" new_root: "+str(new_root)+" prime: "+str(prime))
+        end=temp_hmap[0]
+        temp_hmap[end]=s
+        if bitlen(new_root)>32:
+            print("fatal error, increase element size of array in solve_roots")
+            sys.exit()
+        temp_hmap[end+1]=new_root
+        temp_hmap[0]+=2
+        s+=1   
+    except Exception as e:
+        print(e)
+    return temp_hmap
 
 
 def solve_roots2(prime,n):
@@ -395,6 +443,8 @@ def solve_roots2(prime,n):
                         else:
                             y1l =[0]
                         for y1 in y1l:
+                         #   if y1 !=0:
+                         #       continue
                             xl=solve_quadratic_congruence(z, y1, -n, prime)
                             for x in xl:
                                 if (z*x**2+y1*x-n)%prime !=0:
@@ -427,7 +477,11 @@ def solve_roots2(prime,n):
                         else:
                             y1l =[0]
                         for y1 in y1l:
+                       #     if y1 !=0:
+                       #         continue
+                            
                             xl=solve_quadratic_congruence(z, y1, -n, prime)
+                       #     print(" xl: "+str(xl)+" y1: "+str(y1)+" y0: "+str(root)+" prime: "+str(prime))
                             for x in xl:
                                 if (z*x**2+y1*x-n)%prime !=0:
                                     print("super fatal error")
@@ -449,6 +503,7 @@ def create_hashmap(n,primeslist):
     hmap2=[]
     while i < len(primeslist):
         hmap_p=solve_roots2(primeslist[i],n)
+     #   solve_roots(primeslist[i],n)
         hmap.append(hmap_p)
         hmap2.append([])
         i+=1
@@ -762,10 +817,10 @@ def get_partials(mod,list1):
     return new_list
 
 cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_prime_bound,primeslist2,small_primeslist):
-    #i=0
-    #while i < len(hmap):
-       # print("prime: "+str(primeslist[i])+" "+str(hmap[i]))
-       # i+=1
+   # i=0
+   # while i < len(hmap):
+   #     print("prime: "+str(primeslist[i])+" "+str(hmap[i]))
+   #     i+=1
 
 
     primelist_f=copy.copy(primeslist)
@@ -807,7 +862,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
             z=valid_quads[zi]
             i=1
             while i < 1_000_000_000:
-                x=round(n**0.50)+i#new_mod*i#x1+i
+                x=round(n**0.40)+i#new_mod*i#x1+i
                 local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(x,primelist_f)
                 if value != 1:
                     i+=1
@@ -839,17 +894,24 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
      
                 y=lin
                 x2=y+x
+                x2_o=x2
                 poly_val=z*x**2+y*x-n
+                print("mod: "+str(mod)+" poly_val: "+str(poly_val/mod))
                 polyval2=z*x2**2-y*x2-n
                 if poly_val != polyval2:
                     print("error")
                     sys.exit()
-
+                y_o=y
                 o1=0
-                while o1 < 1:
+
+                center=-(poly_val//(x*mod))
+                center-=lin_sieve_size//2
+                x2_o+=center*mod
+                y_o+=center*mod
+                while o1 < lin_sieve_size:
          
-                  #  x2+=mod#9139
-                  #  y+=mod#1
+                    x2=x2_o+mod*o1#9139
+                    y=y_o+mod*o1#1
                     if x2-y != x:
                         print("error")
                         sys.exit()      
