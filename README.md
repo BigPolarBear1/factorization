@@ -10,6 +10,8 @@ Update: Thinking a bit more about it. I probably should use non-zero linear coef
 
 Update: The only thing missing is a proper heuristic to add a linear offset. I.e if the polynomial value is too large, we can shrink it using the linear coefficient. However we must make sure x+y also factorizes. Which isn't a super complicated task.. its just a matter of properly implementing a strategy in code.
 
+Update: Also added in an example function that will do linear shifting. Let me work out the math now using that hashmap to make sure both roots factorize. 
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
