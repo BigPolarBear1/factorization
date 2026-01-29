@@ -23,6 +23,7 @@ Update: I was messing with some numbers. Observe this sequence:
 
 So using k (see chapter 8 in the paper) we can achieve some really good control over the polynomial values. Oh yea, I think I have an idea now. 
 
+Update: Oh yea. That k variable is very useful. Damn. Should have seen that earlier. The thing is, this will actually let us sieve the polynomial value and x+y properly. Damnit. I got to move fast on this tomorrow. 
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
