@@ -6,17 +6,7 @@ Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 70 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
-Update: Thinking a bit more about it. I probably should use non-zero linear coefficients as well. So just re-added that. Let me think
-
-Update: The only thing missing is a proper heuristic to add a linear offset. I.e if the polynomial value is too large, we can shrink it using the linear coefficient. However we must make sure x+y also factorizes. Which isn't a super complicated task.. its just a matter of properly implementing a strategy in code.
-
-Update: Also added in an example function that will do linear shifting. Let me work out the math now using that hashmap to make sure both roots factorize. 
-
-Update: Oh yea, I can just pull smooths out of a hashmap. So we could just query roots in our hashmap and pull all 0 solutions. But then we are doing regular quadratic sieve. However, we dont need to restrict ourselves to 0 solutions.. any common x+y residue that isnt going to change when Chinese Remaindering everything together can be used. It doesnt matter if we end up with two small roots that factor over the factor base.. as long as then the modulus is large enough to sufficiently reduce the polynomial value. And by not restricting ourselves to just 0 solutions... we can make this work... because if you would restrict yourself to 0 solutions, then you would need a very large factor base.
-So we just query our hashmap with a root, and then within that subset, we query for the second root (or x+y, see bottom chapter 8 in the paper).
-Plus I can build a sieve interval for that.. query the hashmap for a root... get all results then build an interval where the interval steps represent x+y (the other root). if we must, we can even use a modulus here for the step size. Yea, that might work. 
-
-Update: Quickly added a most basic sieve interval for the linear coefficient. I just realized something. As I increment the root, the way its setup now, there will be a lot of overlap with the x+y values..  even though they will be producing different polynomial values.. but I can now sieve those x+y values in advance... that will take care of that atleast. 
+Update: Setting this up correctly is a b*tch. I wonder if instead of same linear coefficient different roots, for the factorization of the constant in the discriminant, perhaps I can do same root different linear coefficient... because thats kind of what I was doing in the earlier chapter of my paper.. so it could be possible. That would be a lot easier.
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
