@@ -10,6 +10,8 @@ Update: Bah, I'm going to switch it up. Just two small roots. Then we only need 
 
 So just calculate an enormous factor base and then be strategic about the smooth factorization we try to find, so we can succeed with very few smooths. I know this works. I think this is probably the best way to approach it.
 
+Update: The more I think about this, the more I realize, that yes, finding smooths with a specific factorization is a lot more feasible now. Let me write a function for this tomorrow. And then the size of the factor base matters a whole lot less.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
