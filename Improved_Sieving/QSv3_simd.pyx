@@ -751,22 +751,14 @@ def solve_lin_con(a,b,m):
     #a,b,m = a//g,b//g,m//g
     return pow(a,-1,m)*b%m  
 
-def create_interval(primeslist,n,x,y,z):
-    poly_val=z*x**2+y*x-n
+def create_interval(primeslist,n,x,collected,z):
+
     interval= np.zeros(lin_sieve_size,dtype=np.uint16)
     i=0
-    while i < len(primeslist):
-        prime=primeslist[i]
-        if gcd(x,prime)!=1:
-            i+=1
-            continue
-        
-       # print(jacobi(x,prime))
-        s=solve_lin_con(x,-poly_val,prime)
+    while i < len(collected):
+        prime=collected[i][0]
         log=round(math.log2(prime))
-        if (z*x**2+(y+s)*x-n)%prime != 0:
-            print("fatal error: "+str(s)+" prime: "+str(prime))
-        interval[s::prime]+=log
+        interval[collected[i][1][0]::prime]+=log
         i+=1
     return interval
 
@@ -869,65 +861,71 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                     i+=1
                     continue
                 collected=retrieve(hmap,primeslist,x)
+                interval=create_interval(primeslist,n,x,collected,z)
 
-                mod=1
-                colist=[]
-                q=0
-                while q < len(collected):
-                    if collected[q][1][0] == 0:
-                        mod*=collected[q][0]
-                        colist.extend(collected[q])
-                    q+=1
-                if mod ==1:
-                    i+=1
-                    continue
-                colist=get_partials(mod,colist)
-                lin=0
-                q=0
-                while q < len(colist):
-                    lin+=colist[q+1][0]
-                    q+=2           
-                lin%=mod
-                if (x**2+lin*x-n)%mod!=0:
-                    print("fatal error")
-                    sys.exit()
+            #    print("collected: "+str(collected))
+                #mod=1
+                #colist=[]
+                #q=0
+                #while q < len(collected):
+                    #if collected[q][1][0] == 0:
+                 #   mod*=collected[q][0]
+                  #  colist.extend(collected[q])
+                   # q+=1
+               # if mod ==1:
+              #      i+=1
+                #    continue
+               # colist=get_partials(mod,colist)
+               # lin=0
+               # q=0
+               # while q < len(colist):
+                #    lin+=colist[q+1][0]
+                 #   q+=2           
+              #  lin%=mod
+               # if (x**2+lin*x-n)%mod!=0:
+                #    print("fatal error")
+                 #   sys.exit()
 
      
-                y=lin
-                x2=y+x
-                x2_o=x2
-                poly_val=z*x**2+y*x-n
-                print("mod: "+str(mod)+" poly_val: "+str(poly_val/mod))
-                polyval2=z*x2**2-y*x2-n
-                if poly_val != polyval2:
-                    print("error")
-                    sys.exit()
-                y_o=y
+             #   y=lin
+             #   x2=y+x
+             #   x2_o=x2
+             #   poly_val=z*x**2+y*x-n
+             #   print("mod: "+str(mod)+" poly_val: "+str(poly_val/mod))
+             #   polyval2=z*x2**2-y*x2-n
+             #   if poly_val != polyval2:
+              #      print("error")
+               #     sys.exit()
+            #    y_o=y
                 o1=0
 
-                center=-(poly_val//(x*mod))
-                center-=lin_sieve_size//2
-                x2_o+=center*mod
-                y_o+=center*mod
+             #   center=-(poly_val//(x*mod))
+             #   center-=lin_sieve_size//2
+             #   x2_o+=center*mod
+             #   y_o+=center*mod
                 while o1 < lin_sieve_size:
-         
-                    x2=x2_o+mod*o1#9139
-                    y=y_o+mod*o1#1
+                    if interval[o1] < keysize//2:
+                        o1+=1
+                        continue
+                  #  x2=x2_o+mod*o1#9139
+                    y=o1#1
+                    x2=x+y
                     if x2-y != x:
                         print("error")
                         sys.exit()      
                     
                     poly_val=z*x2**2-y*x2-n
                     old_poly_val=poly_val
-                    poly_val,y,shift=linear_shift(poly_val,x2,y,n,mod)
-                    new_x=x2-y
+                 #   poly_val,y,shift=linear_shift(poly_val,x2,y,n,mod)
+                    shift=0
+                    new_x=x#x2-y
                     local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(new_x,primelist_f)
                     if value != 1:
                         o1+=1
                         continue
-                    if poly_val%mod !=0:
-                        print("fatal error")
-                        sys.exit()
+                    #if poly_val%mod !=0:
+                      #  print("fatal error")
+                      #  sys.exit()
          
                     local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(x2,primelist_f)
                     if value != 1:
@@ -968,7 +966,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                                 factors.append(local_factors2)
                                 coefficients.append(poly_val*z)
                                 if g_debug == 1:
-                                    print("Smooths #: "+str(len(smooths))+" z: "+str(z)+" y: "+str(y)+" zx: "+str(factors_part1)+" zx2 "+str(x2)+" (poly_val*z)/mod "+str(factors_part3//mod)+" final smooth: "+str(all_parts)+" intrvl ind: "+str(o1)+" modulus: "+str(mod)+" old_poly_val: "+str(old_poly_val//mod)+" shift: "+str(shift))#+" seen_primes: "+str(valid_ind_factors[o1]))#+" seen_primes2: "+str(seen_primes2))#+" test_poly_val: "+str(bitlen(test_poly_val))+" test_zxy: "+str(test_zxy)+" test_zxy_current: "+str(test_zxy_curent))
+                                    print("Smooths #: "+str(len(smooths))+" z: "+str(z)+" y: "+str(y)+" zx: "+str(factors_part1)+" zx2 "+str(x2)+" (poly_val*z)/mod "+str(factors_part3)+" final smooth: "+str(all_parts)+" intrvl ind: "+str(o1)+" shift: "+str(shift))#+" seen_primes: "+str(valid_ind_factors[o1]))#+" seen_primes2: "+str(seen_primes2))#+" test_poly_val: "+str(bitlen(test_poly_val))+" test_zxy: "+str(test_zxy)+" test_zxy_current: "+str(test_zxy_curent))
                                 else: 
                                     print("Smooths #: "+str(len(smooths)))
                                 if len(smooths)>(base+2):
