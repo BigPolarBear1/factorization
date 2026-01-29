@@ -770,14 +770,15 @@ def create_interval(primeslist,n,x,y,z):
         i+=1
     return interval
 
-def linear_shift(poly_val,x,ind,y_init,n):
+def linear_shift(poly_val,x,y,n,mod):
     ##To do: ignores z for now.. I'm not sure yet if I want to use it in the final algorithm. We'll see.
-    shift=poly_val/((x*ind))
+    shift=poly_val/(x*mod)
     shift=round(shift)
-    new_y=(y_init-shift)*ind
-    new_y_init=(y_init-shift)
-    new_poly_val=x**2+new_y*x-n
-    return new_poly_val,new_y,new_y_init,shift
+    new_y=(y+shift*mod)
+    new_poly_val=x**2-new_y*x-n
+    if abs(new_poly_val)>abs(poly_val):
+        print("error, linear shift produced larger value: "+str(y)+" new_y: "+str(new_y)+" shift: "+str(shift)+" polyval: "+str(poly_val)+" new_poly_val: "+str(new_poly_val))
+    return new_poly_val,new_y,shift#,new_y_init,shift
 
 def retrieve(hmap,primeslist,x):
     collected=[]
@@ -862,7 +863,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
             z=valid_quads[zi]
             i=1
             while i < 1_000_000_000:
-                x=round(n**0.40)+i#new_mod*i#x1+i
+                x=round(n**0.50)+i#new_mod*i#x1+i
                 local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(x,primelist_f)
                 if value != 1:
                     i+=1
@@ -917,10 +918,17 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                         sys.exit()      
                     
                     poly_val=z*x2**2-y*x2-n
-
+                    old_poly_val=poly_val
+                    poly_val,y,shift=linear_shift(poly_val,x2,y,n,mod)
+                    new_x=x2-y
+                    local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(new_x,primelist_f)
+                    if value != 1:
+                        o1+=1
+                        continue
                     if poly_val%mod !=0:
                         print("fatal error")
                         sys.exit()
+         
                     local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(x2,primelist_f)
                     if value != 1:
                         o1+=1
@@ -939,19 +947,19 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                             print("fatal error")
 
                         poly_val2=(n*k*z+(poly_val*z))  #note: factorization for this is y+disc1 and y-disc1
-                        factors_part1=z*x
-                        factors_part2=z*x+y
-                        if factors_part2 != x2:
-                            print("wtf")
-                            sys.exit()
+                        factors_part1=z*new_x
+                        factors_part2=z*new_x+y
+                        #if factors_part2 != x2:
+                        #    print("wtf")
+                        #    sys.exit()
                         factors_part3=poly_val*z
                         all_parts=factors_part1*factors_part2*factors_part3
                         if all_parts != poly_val2*poly_val*z:
                             print("fatal error")
-                        if (4*poly_val2)%((2*z*x))!=0:
+                        if (4*poly_val2)%((2*z*new_x))!=0:
                             print("error")
 
-                        if (4*poly_val2)%(2*(z*x+y))!=0:
+                        if (4*poly_val2)%(2*(z*new_x+y))!=0:
                             print("error2")
                         local_factors2, value2,seen_primes2,seen_primes_indexes2 = factorise_fast(poly_val2*poly_val*z,primelist_f)
                         if value2 == 1:
@@ -960,7 +968,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                                 factors.append(local_factors2)
                                 coefficients.append(poly_val*z)
                                 if g_debug == 1:
-                                    print("Smooths #: "+str(len(smooths))+" z: "+str(z)+" y: "+str(y)+" zx: "+str(factors_part1)+" zx2 "+str(x2)+" (poly_val*z)/mod "+str(factors_part3//mod)+" final smooth: "+str(all_parts)+" intrvl ind: "+str(o1)+" modulus: "+str(mod))#+" seen_primes: "+str(valid_ind_factors[o1]))#+" seen_primes2: "+str(seen_primes2))#+" test_poly_val: "+str(bitlen(test_poly_val))+" test_zxy: "+str(test_zxy)+" test_zxy_current: "+str(test_zxy_curent))
+                                    print("Smooths #: "+str(len(smooths))+" z: "+str(z)+" y: "+str(y)+" zx: "+str(factors_part1)+" zx2 "+str(x2)+" (poly_val*z)/mod "+str(factors_part3//mod)+" final smooth: "+str(all_parts)+" intrvl ind: "+str(o1)+" modulus: "+str(mod)+" old_poly_val: "+str(old_poly_val//mod)+" shift: "+str(shift))#+" seen_primes: "+str(valid_ind_factors[o1]))#+" seen_primes2: "+str(seen_primes2))#+" test_poly_val: "+str(bitlen(test_poly_val))+" test_zxy: "+str(test_zxy)+" test_zxy_current: "+str(test_zxy_curent))
                                 else: 
                                     print("Smooths #: "+str(len(smooths)))
                                 if len(smooths)>(base+2):
