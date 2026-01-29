@@ -8,6 +8,8 @@ To run: python3 run_qs.py -keysize 70 -base 500 -debug 1 -lin_size 100_000 -quad
 
 Update: Bah, I'm going to switch it up. Just two small roots. Then we only need to worry about the factorization of the polynomial value. And we just work with the precalculated hashmap. Just pull smooths out of it. I know it can be done, i've done it previously. Plus I could probably try and find smooths with similar factorization this way. 
 
+So just calculate an enormous factor base and then be strategic about the smooth factorization we try to find, so we can succeed with very few smooths. I know this works. I think this is probably the best way to approach it.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
