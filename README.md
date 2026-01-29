@@ -17,7 +17,9 @@ Btw, this is my final version. I've pretty much settled that this is the appraoc
 
 Update: Oops, quick improvement. Had to remove a line that was still an artifact from a previous iteration. LOOK HOW SMALL THE SMOOTH CANDIDATES ARE NOW AFTER DIVIDING BY THE MODULUS. Fucking hell. People would have known 100% I was correct. The only reason it took me this long was because I have no math education and started from 0 3 years ago. Go to hell assholes. 
 
-I'm going to optimize the hell out of it and email it to my Russian friends. Because fuck this shit. Treating me like fucking shit for years, despite the math I was doing. Really fuck this shit. Go to hell. The west is not my friend, that much has become very clear to me. You make your own demons. Really go to hell. Europe could have had all my work, instead I come back to Europe to be treated like this. Fuck you. This will never be forgiven
+I'm going to optimize the hell out of it and email it to my Russian friends. Because fuck this shit. Treating me like fucking shit for years, despite the math I was doing. Really fuck this shit. Go to hell. The west is not my friend, that much has become very clear to me. You make your own demons. Really go to hell. Europe could have had all my work, instead I come back to Europe to be treated like this. Fuck you. This will never be forgiven.
+
+Btw, I know I'm right and I know people know I'm right, you fucking clowns. I SHOUTED FROM THE ROOFTOPS THAT I WAS WORKING ON FACTORIZATION AND WANTED TO SELL MY WORK. JUST SILENCE. You know, I see things in my head. And right now, I see the american government threatening people to stay silent. Fuck you all cowards. Nobody told me this. I just know it. I have a sixth sense. I know a lot things. They just appear into my head. You people made the wrong enemy. I wish you good luck, because you are destroying the west and any fighting chance it had. And I couldn't care less anymore, because you people deserve to lose if this is how you treat people.
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
