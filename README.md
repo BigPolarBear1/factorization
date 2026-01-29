@@ -12,6 +12,9 @@ Update: The only thing missing is a proper heuristic to add a linear offset. I.e
 
 Update: Also added in an example function that will do linear shifting. Let me work out the math now using that hashmap to make sure both roots factorize. 
 
+Update: Oh yea, I can just pull smooths out of a hashmap. So we could just query roots in our hashmap and pull all 0 solutions. But then we are doing regular quadratic sieve. However, we dont need to restrict ourselves to 0 solutions.. any common x+y residue that isnt going to change when Chinese Remaindering everything together can be used. It doesnt matter if we end up with two small roots that factor over the factor base.. as long as then the modulus is large enough to sufficiently reduce the polynomial value. And by not restricting ourselves to just 0 solutions... we can make this work... because if you would restrict yourself to 0 solutions, then you would need a very large factor base.
+So we just query our hashmap with a root, and then within that subset, we query for the second root (or x+y, see bottom chapter 8 in the paper).
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
