@@ -6,7 +6,7 @@ Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 70 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
-Update: Setting this up correctly is a b*tch. I wonder if instead of same linear coefficient different roots, for the factorization of the constant in the discriminant, perhaps I can do same root different linear coefficient... because thats kind of what I was doing in the earlier chapter of my paper.. so it could be possible. That would be a lot easier.
+\
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
