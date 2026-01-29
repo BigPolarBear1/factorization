@@ -12,6 +12,18 @@ So just calculate an enormous factor base and then be strategic about the smooth
 
 Update: The more I think about this, the more I realize, that yes, finding smooths with a specific factorization is a lot more feasible now. Let me write a function for this tomorrow. And then the size of the factor base matters a whole lot less.
 
+Update: I was messing with some numbers. Observe this sequence:
+
+175^2+1\*175-4387\*7 = 91</br>
+175^2+26\*175-4387\*8 = 79</br>
+175^2+51\*175-4387\*9 = 67</br>
+175^2+76\*175-4387\*10 = 55</br>
+175^2+101\*175-4387\*11 = 43</br>
+175^2+126\*175-4387\*12 = 31</br>
+
+So using k (see chapter 8 in the paper) we can achieve some really good control over the polynomial values. Oh yea, I think I have an idea now. 
+
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
