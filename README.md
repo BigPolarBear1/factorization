@@ -16,6 +16,8 @@ Update: Oh yea, I can just pull smooths out of a hashmap. So we could just query
 So we just query our hashmap with a root, and then within that subset, we query for the second root (or x+y, see bottom chapter 8 in the paper).
 Plus I can build a sieve interval for that.. query the hashmap for a root... get all results then build an interval where the interval steps represent x+y (the other root). if we must, we can even use a modulus here for the step size. Yea, that might work. 
 
+Update: Quickly added a most basic sieve interval for the linear coefficient. I just realized something. As I increment the root, the way its setup now, there will be a lot of overlap with the x+y values..  even though they will be producing different polynomial values.. but I can now sieve those x+y values in advance... that will take care of that atleast. 
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
