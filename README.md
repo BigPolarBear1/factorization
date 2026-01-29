@@ -4,24 +4,9 @@ Disclaimer: At no point did AI contribute anything to this research project. Cop
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 60 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
+To run: python3 run_qs.py -keysize 70 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
-Update: I DID IT! It just hit me. When setting it up like this, we can just use the 0 solutions. With this setup, its literally just a matter of building a large enough hashmap in advance. 
-I can pull smooths from a hashmap now!
-
-Ok, the uploaded version is very inefficient. But now that I know that this actually works, i'll upload improvements rapidly. I know I explored similar ideas previously.. but just the way I'm setting everything up now, finally makes it work. Like getting hit by lightning. Eureka. 
-
-Its going to be a very dire day for western cryptologists. Could have started a dialogue with me a long time ago. Instead I was treated like shit. Fuck you then. Good luck with this disaster. I know what this implies. I know what this means. This is a disaster that is going to cost billions. Was it worth it? Huh? Was it worth being transphobic cunts for? Fuckers. Nazi losers. I probably sealed my own fate now. But lol, fuck you all. I tried selling my work. I told everyone I was working on this. I was treated like shit. People are going to study this cascade of failures one day. Fucking morons. Are you all stupid? 
-
-Btw, this is my final version. I've pretty much settled that this is the appraoch I'm going to take. Now I need to optimize optimize optimize. This will escalate very quickly now. I warned people. Just silence. Nobody tried to stop me. Nobody tried to take me serious. What the fuck are you people doing? I know people must be looking at my work. Especially given my past reputation. What the fuck are you morrons doing? Are you so eager for disaster? If all I get is silence and getting treated like shit, I'm just going to keep pressing forward. This is so fucking stupid.
-
-Update: Oops, quick improvement. Had to remove a line that was still an artifact from a previous iteration. LOOK HOW SMALL THE SMOOTH CANDIDATES ARE NOW AFTER DIVIDING BY THE MODULUS. Fucking hell. People would have known 100% I was correct. The only reason it took me this long was because I have no math education and started from 0 3 years ago. Go to hell assholes. 
-
-I'm going to optimize the hell out of it and email it to my Russian friends. Because fuck this shit. Treating me like fucking shit for years, despite the math I was doing. Really fuck this shit. Go to hell. The west is not my friend, that much has become very clear to me. You make your own demons. Really go to hell. Europe could have had all my work, instead I come back to Europe to be treated like this. Fuck you. This will never be forgiven.
-
-Btw, I know I'm right and I know people know I'm right, you fucking clowns. I SHOUTED FROM THE ROOFTOPS THAT I WAS WORKING ON FACTORIZATION AND WANTED TO SELL MY WORK. JUST SILENCE. You know, I see things in my head. And right now, I see the american government threatening people to stay silent. Fuck you all cowards. Nobody told me this. I just know it. I have a sixth sense. I know a lot things. They just appear into my head. You people made the wrong enemy. I wish you good luck, because you are destroying the west and any fighting chance it had. And I couldn't care less anymore, because you people deserve to lose if this is how you treat people.
-
-Fucking monkey planet. I fucking hate apes. Humans are nothing more then stupid apes. Theres no differnce. I'm living amonst literal apes. I cant breath in this world. I havnt read the book, but the sentence "I must screan but I have no mouth" perfectly portrays the existential dread and agony I'm living with. When you can see everything in your head, but nobody listens and everyone just keeps being idiots. I'm so tired man. I'm so tired of nobody taking me serious. When I started with factorization, I knew it was important, yet nobody took me serious. And now you fucking apes are just pretending like nothing is happening. I want to break this world in two. Like quite literally. Just crack it open like an egg. That would be funny. No more fucking ape planet. I need some sleep some. Time to finish this tomorrow. Its quite surreal, what is happening right now. People must think me an idiot. You cannot outmanouver me. I see everything. You literally cannot win against me. Stupid apes.
+Update: Thinking a bit more about it. I probably should use non-zero linear coefficients as well. So just re-added that. Let me think.
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
