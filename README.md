@@ -27,8 +27,6 @@ Update: Oh yea. That k variable is very useful. Damn. Should have seen that earl
 
 Update: Awful day. Been having gut problems for months now. And this last week its really bad. Hard to focus on work like this. I'm wondering if its the fructose in this sports drink mix. I think I'm just going to radically change my diet. No more sports drinks. Just salt pills for electrolytes and (real) honey for carbs when I run longer distances. I'm starting to think the fitness industry is a scam. Anyway.. for the PoC.. you need to use this k variable (multiples of N) to change the polynomial value. This way you can also increase the linear coefficient in such a way that x+y keeps a consistent factorization. This was exactly what I needed. I'll upload a more mature PoC this weekend. 
 
-Gays, keep that MQ drone flying at altitude bc the sound of its propeller is very distinct. Noobs. You're welcome. 
-
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
