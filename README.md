@@ -17,7 +17,7 @@ Update: I had an idea just now. So the easiest way to approach it, is by doing s
 3^2+10\*3-4387  = -4,348				x+y = 13</br>
 3^2+(10+13\*10)\*3-4387 = -3958			x+y = 13\*11</br>
 3^2+(10+13\*120)\*3-4387 = 332			x+y = 13\*11\*11</br>
-3^2+(10+13\*1330)\*3-4387*12 = -735		x+y = 13\*11\*11\*11</br>
+3^2+(10+13\*1330)\*3-4387\*12 = -735		x+y = 13\*11\*11\*11</br>
 3^2+(10+13\*14640)\*3-4387*130 = 689		x+y = 13\*11\*11\*11\*11</br>
 
 So a setup like this will just repeadtly keep adding the same factor (11 here) to x+y. We can keep repeating this until the end of the universe basically. And since we dont care about the factorization of the k variable .. we can also keep increasing that until the end of the universe to keep the polynomial values small. The only thing missing from this setup is garantueeing that the polynomial values have similar factorization, but we already know how to do that using that hashmap. So that way.. we're going to end up with a bunch of smooths with similar factorization... like... extremely similar factorization. Which means we'll have an enourmous chance of finishing early. 
