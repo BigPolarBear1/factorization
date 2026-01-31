@@ -6,30 +6,9 @@ Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 70 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
-Update: Bah, I'm going to switch it up. Just two small roots. Then we only need to worry about the factorization of the polynomial value. And we just work with the precalculated hashmap. Just pull smooths out of it. I know it can be done, i've done it previously. Plus I could probably try and find smooths with similar factorization this way. 
+Update: Quickly added support for moduli in the polynomial value.  Next, for every root and linear coefficient combination where also x+y factorizes.. we should then also enumerate the k variable now. This will allow us to generate many near identical smooth candidates really quickly. 
 
-So just calculate an enormous factor base and then be strategic about the smooth factorization we try to find, so we can succeed with very few smooths. I know this works. I think this is probably the best way to approach it.
-
-Update: The more I think about this, the more I realize, that yes, finding smooths with a specific factorization is a lot more feasible now. Let me write a function for this tomorrow. And then the size of the factor base matters a whole lot less.
-
-Update: I was messing with some numbers. Observe this sequence:
-
-175^2+1\*175-4387\*7 = 91</br>
-175^2+26\*175-4387\*8 = 79</br>
-175^2+51\*175-4387\*9 = 67</br>
-175^2+76\*175-4387\*10 = 55</br>
-175^2+101\*175-4387\*11 = 43</br>
-175^2+126\*175-4387\*12 = 31</br>
-
-So using k (see chapter 8 in the paper) we can achieve some really good control over the polynomial values. Oh yea, I think I have an idea now. 
-
-Update: Oh yea. That k variable is very useful. Damn. Should have seen that earlier. The thing is, this will actually let us sieve the polynomial value and x+y properly. Damnit. I got to move fast on this tomorrow. 
-
-Update: Awful day. Been having gut problems for months now. And this last week its really bad. Hard to focus on work like this. I'm wondering if its the fructose in this sports drink mix. I think I'm just going to radically change my diet. No more sports drinks. Just salt pills for electrolytes and (real) honey for carbs when I run longer distances. I'm starting to think the fitness industry is a scam. Anyway.. for the PoC.. you need to use this k variable (multiples of N) to change the polynomial value. This way you can also increase the linear coefficient in such a way that x+y keeps a consistent factorization. This was exactly what I needed. I'll upload a more mature PoC this weekend. 
-
-Update: stressed. Gut problems have been insanely bad this week. I hope I can identify the cause by cutting out stuff from my diet. Else its not looking good. I never had issues like this in my entire life, just started suddenly a few months ago. My life has been so shit these last couple of years. I havnt seen my friends in 2 years. I havnt had an income in 2 years. Have been able to live life. Everything has been on pause. Just been stuck in this small room, broke, trying to finish this math. And I knew I had a breakthrough well over a year ago... it just took a very long time to piece it all together because when I started 3 years ago, I had 0 math knowledge, dropped out of highschool.. it took a while to grow enough to come full circle with my earlier research. And even now that it is all here, uploaded... just the same shit life. I need to optimize my work.. create a proper implementation that leverages the strengths of the math I figured out.. like using that k variable. Lets see tomorrow. I am becoming a very bitter person. And if these gut problems end up being something serious, yea, I dont think I'll ever forgive people for robbing me of these last few years then. 
-
-Update: Today seems slightly better. Perhaps the high fructose contents in this sports drink I was drinking every day was the issue. Everything still hurts like a f*cker, but atleast my belly isnt twice the size anymore. I guess my ancestors who lived on the Mammoth steppe, didn't eat a lot of fructose rich foods either. Perhaps berries, but those would have only grown for a few weeks every year. I must just be build differently then the apes who evovled from milder climates. Ofcourse I am a also polar bear, not an ape. 
+So remember, the final smooth factorization is made up from x, x+y and the polynomial value (ignoring quadratic coefficient z) .... so if we iterate k (multiples of N) we can add to the linear coefficient a value, such that the factorization of x+y stays largely the same and we then use the k variable to shrink the polynomial. So thats going to garantuee that all 3 parts, x,x+y and the polynomial value have consistent factorizations and we can also partially garantuee the factorization of the polynomial value and even use the hashmap to aid with that if we precalculate it for multiple quadratic coefficient (which just encodes that k variable).
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
