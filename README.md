@@ -10,6 +10,8 @@ Update: Quickly added support for moduli in the polynomial value.  Next, for eve
 
 So remember, the final smooth factorization is made up from x, x+y and the polynomial value (ignoring quadratic coefficient z) .... so if we iterate k (multiples of N) we can add to the linear coefficient a value, such that the factorization of x+y stays largely the same and we then use the k variable to shrink the polynomial (the amount by which it shrinks is dependent on N%x and the increase in the linear coefficient). So thats going to garantuee that all 3 parts, x,x+y and the polynomial value have consistent factorizations and we can also partially garantuee the factorization of the polynomial value and even use the hashmap to aid with that if we precalculate it for multiple quadratic coefficient (which just encodes that k variable).
 
+Next version I upload will be a first rough draft of that.. so spit out smooth candidates with similar factorization quicly by iterating the k variable in the quadratic zx^2+yx-Nk
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
