@@ -26,6 +26,8 @@ Lol. I am now 10000000% convinced about the novelty of my work. I had a breakthr
 
 Update: Added sieving mod N .. where we just add the factor 2 over and over again to the factorization of x+y. Tomorrow, I need to make sure that when k != 1, the polynomial values are still divisible by the modulus.. and that I know how to do already using the hashmap (thats nothing new, just building on the number theory i've already figured out) ... and then finally, the math to make polynomial values as small as possible to avoid introducing any new factors. Which sure is a lot easier to do using a linear coefficient like I am now.
 
+Update: I dont think this project is going to have a good ending. Maybe if a year ago, people had acknowledged what I was doing, made sure I had atleast someone to sell my work to, or get employment.. but now, I have ended up in an adversarial situation against the west, because they are nazi losers who hate transgender people. I'm now like the Japanese kamikazi pilot, I have found the biggest ship on the horizon, and I'm now doing my final dive. This will kill me, but I dont care, I am going to take the biggest fucking target down with me.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
