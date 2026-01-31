@@ -29,10 +29,12 @@ Update: Awful day. Been having gut problems for months now. And this last week i
 
 Update: stressed. Gut problems have been insanely bad this week. I hope I can identify the cause by cutting out stuff from my diet. Else its not looking good. I never had issues like this in my entire life, just started suddenly a few months ago. My life has been so shit these last couple of years. I havnt seen my friends in 2 years. I havnt had an income in 2 years. Have been able to live life. Everything has been on pause. Just been stuck in this small room, broke, trying to finish this math. And I knew I had a breakthrough well over a year ago... it just took a very long time to piece it all together because when I started 3 years ago, I had 0 math knowledge, dropped out of highschool.. it took a while to grow enough to come full circle with my earlier research. And even now that it is all here, uploaded... just the same shit life. I need to optimize my work.. create a proper implementation that leverages the strengths of the math I figured out.. like using that k variable. Lets see tomorrow. I am becoming a very bitter person. And if these gut problems end up being something serious, yea, I dont think I'll ever forgive people for robbing me of these last few years then. 
 
+Update: Today seems slightly better. Perhaps the high fructose contents in this sports drink I was drinking every day was the issue. Everything still hurts like a f*cker, but atleast my belly isnt twice the size anymore. I guess my ancestors who lived on the Mammoth steppe, didn't eat a lot of fructose rich foods either. Perhaps berries, but those would have only grown for a few weeks every year. I must just be build differently then the apes who evovled from milder climates. Ofcourse I am a also polar bear, not an ape. 
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
-
+ 
 Prerequisites: </br>
 -Python (tested on 3.13)</br>
 -Numpy (tested on 1.26.2)</br>
