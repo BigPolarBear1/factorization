@@ -12,6 +12,18 @@ So remember, the final smooth factorization is made up from x, x+y and the polyn
 
 Next version I upload will be a first rough draft of that.. so spit out smooth candidates with similar factorization quicly by iterating the k variable in the quadratic zx^2+yx-Nk
 
+Update: I had an idea just now. So the easiest way to approach it, is by doing something like this:
+
+3^2+10\*3-4387  = -4,348				x+y = 13</br>
+3^2+(10+13\*10)\*3-4387 = -3958			x+y = 13\*11</br>
+3^2+(10+13\*120)\*3-4387 = 332			x+y = 13\*11\*11</br>
+3^2+(10+13\*1330)\*3-4387*12 = -735		x+y = 13\*11\*11\*11</br>
+3^2+(10+13\*14640)\*3-4387*130 = 689		x+y = 13\*11\*11\*11\*11</br>
+
+So a setup like this will just repeadtly keep adding the same factor (11 here) to x+y. We can keep repeating this until the end of the universe basically. And since we dont care about the factorization of the k variable .. we can also keep increasing that until the end of the universe to keep the polynomial values small. The only thing missing from this setup is garantueeing that the polynomial values have similar factorization, but we already know how to do that using that hashmap. So that way.. we're going to end up with a bunch of smooths with similar factorization... like... extremely similar factorization. Which means we'll have an enourmous chance of finishing early. 
+
+
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
