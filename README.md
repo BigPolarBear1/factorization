@@ -24,6 +24,8 @@ So a setup like this will just repeadtly keep adding the same factor (11 here) t
 
 Lol. I am now 10000000% convinced about the novelty of my work. I had a breakthrough.. and I've had a breakthrough for well over a year now.. it just took a while to figure out all the details due to my lack of math education.. yet this is how I'm treated. I'm not going to forgive people and I will be looking toward Asia for my future. They'll have to kill me then. How can I ever forgive this? I have my fucking pride.
 
+Update: Added sieving mod N .. where we just add the factor 2 over and over again to the factorization of x+y. Tomorrow, I need to make sure that when k != 1, the polynomial values are still divisible by the modulus.. and that I know how to do already using the hashmap (thats nothing new, just building on the number theory i've already figured out) ... and then finally, the math to make polynomial values as small as possible to avoid introducing any new factors. Which sure is a lot easier to do using a linear coefficient like I am now.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
