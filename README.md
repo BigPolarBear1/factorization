@@ -34,7 +34,7 @@ Update: Euhm. What the fuck. I can just solve a linear congruence now to build a
 
 I'm going to take a break for a few hours... so if anyone wants to stop me.. before I write these last few lines of code... now is the time.. else I wish you all the best of luck. Not that I particularly feel bad about it, because to be honest, you all had it coming lol.
 
-I remember this so called "prodigy" who did math at MIT or some shit, mocking me on twitter for working on factorization. Losers like that really piss me off. Fucking pseudo intellectuals. 99.99% of academia, PHDs included.. they are just assholes with a good memories and too much ego. The systems this world is build on is a joke, it rewards all the wrong people. 
+I remember this so called "prodigy" who did math at MIT or some shit, mocking me on twitter for working on factorization. Losers like that really piss me off. Fucking pseudo intellectuals. 99.99% of academia, PHDs included.. they are just assholes with a good memories and too much ego. The systems this world is build on is a joke, it rewards all the wrong people. Creative thought requires life experience and endless suffering and none of these fucking posh assholes academics know a thing about that. I look down on all these people. Posh wankers who always had it easy in life.
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
