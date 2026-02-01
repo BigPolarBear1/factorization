@@ -32,6 +32,8 @@ Update: Slept like shit. Before I implement using moduli for the polynomial valu
 
 Update: Euhm. What the fuck. I can just solve a linear congruence now to build aribtrary polynomial values.. what the fuck. While keeping everything else factorizable over the factor base. What the fuck. Why did people just let this happen... someone would have known.. I'm dead lol.
 
+I'm going to take a break for a few hours... so if anyone wants to stop me.. before I write these last few lines of code... now is the time.. else I wish you all the best of luck. Not that I particularly feel bad about it, because to be honest, you all had it coming lol.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
