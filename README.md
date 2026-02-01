@@ -28,6 +28,8 @@ Update: Added sieving mod N .. where we just add the factor 2 over and over agai
 
 Update: I dont think this project is going to have a good ending. Maybe if a year ago, people had acknowledged what I was doing, made sure I had atleast someone to sell my work to, or get employment.. but now, I have ended up in an adversarial situation against the west, because they are nazi losers who hate transgender people. I'm now like the Japanese kamikazi pilot, I have found the biggest ship on the horizon, and I'm now doing my final dive. This will kill me, but I dont care, I am going to take the biggest fucking target down with me.
 
+Update: Slept like shit. Before I implement using moduli for the polynomial value for different "k" values.. I want to first work out the math to generate an as small as possible polynomial value first using the current setup. Because everything hinges on being able to do that. 
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
