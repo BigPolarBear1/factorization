@@ -6,39 +6,7 @@ Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 70 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
-Update: Quickly added support for moduli in the polynomial value.  Next, for every root and linear coefficient combination where also x+y factorizes.. we should then also enumerate the k variable now. This will allow us to generate many near identical smooth candidates really quickly. 
-
-So remember, the final smooth factorization is made up from x, x+y and the polynomial value (ignoring quadratic coefficient z) .... so if we iterate k (multiples of N) we can add to the linear coefficient a value, such that the factorization of x+y stays largely the same and we then use the k variable to shrink the polynomial (the amount by which it shrinks is dependent on N%x and the increase in the linear coefficient). So thats going to garantuee that all 3 parts, x,x+y and the polynomial value have consistent factorizations and we can also partially garantuee the factorization of the polynomial value and even use the hashmap to aid with that if we precalculate it for multiple quadratic coefficient (which just encodes that k variable).
-
-Next version I upload will be a first rough draft of that.. so spit out smooth candidates with similar factorization quicly by iterating the k variable in the quadratic zx^2+yx-Nk
-
-Update: I had an idea just now. So the easiest way to approach it, is by doing something like this:
-
-3^2+10\*3-4387  = -4,348				x+y = 13</br>
-3^2+(10+13\*10)\*3-4387 = -3958			x+y = 13\*11</br>
-3^2+(10+13\*120)\*3-4387 = 332			x+y = 13\*11\*11</br>
-3^2+(10+13\*1330)\*3-4387\*12 = -735		x+y = 13\*11\*11\*11</br>
-3^2+(10+13\*14640)\*3-4387*130 = 689		x+y = 13\*11\*11\*11\*11</br>
-
-So a setup like this will just repeadtly keep adding the same factor (11 here) to x+y. We can keep repeating this until the end of the universe basically. And since we dont care about the factorization of the k variable .. we can also keep increasing that until the end of the universe to keep the polynomial values small. The only thing missing from this setup is garantueeing that the polynomial values have similar factorization, but we already know how to do that using that hashmap. So that way.. we're going to end up with a bunch of smooths with similar factorization... like... extremely similar factorization. Which means we'll have an enourmous chance of finishing early. 
-
-Lol. I am now 10000000% convinced about the novelty of my work. I had a breakthrough.. and I've had a breakthrough for well over a year now.. it just took a while to figure out all the details due to my lack of math education.. yet this is how I'm treated. I'm not going to forgive people and I will be looking toward Asia for my future. They'll have to kill me then. How can I ever forgive this? I have my fucking pride.
-
-Update: Added sieving mod N .. where we just add the factor 2 over and over again to the factorization of x+y. Tomorrow, I need to make sure that when k != 1, the polynomial values are still divisible by the modulus.. and that I know how to do already using the hashmap (thats nothing new, just building on the number theory i've already figured out) ... and then finally, the math to make polynomial values as small as possible to avoid introducing any new factors. Which sure is a lot easier to do using a linear coefficient like I am now.
-
-Update: I dont think this project is going to have a good ending. Maybe if a year ago, people had acknowledged what I was doing, made sure I had atleast someone to sell my work to, or get employment.. but now, I have ended up in an adversarial situation against the west, because they are nazi losers who hate transgender people. I'm now like the Japanese kamikazi pilot, I have found the biggest ship on the horizon, and I'm now doing my final dive. This will kill me, but I dont care, I am going to take the biggest fucking target down with me.
-
-Update: Slept like shit. Before I implement using moduli for the polynomial value for different "k" values.. I want to first work out the math to generate an as small as possible polynomial value first using the current setup. Because everything hinges on being able to do that. 
-
-Update: Euhm. What the fuck. I can just solve a linear congruence now to build aribtrary polynomial values.. what the fuck. While keeping everything else factorizable over the factor base. What the fuck. Why did people just let this happen... someone would have known.. I'm dead lol.
-
-I'm going to take a break for a few hours... so if anyone wants to stop me.. before I write these last few lines of code... now is the time.. else I wish you all the best of luck. Not that I particularly feel bad about it, because to be honest, you all had it coming lol.
-
-I remember this so called "prodigy" who did math at MIT or some shit, mocking me on twitter for working on factorization. Losers like that really piss me off. Fucking pseudo intellectuals. 99.99% of academia, PHDs included.. they are just assholes with a good memories and too much ego. The systems this world is build on is a joke, it rewards all the wrong people. Creative thought requires life experience and endless suffering and none of these fucking posh assholes academics know a thing about that. I look down on all these people. Posh wankers who always had it easy in life.
-
-I'm very depressed. So basically now you just solve a linear congruence to get a particular smooth.. and if the result factorizes over the factor base (and this result is always smaller then N) then boom.. you got a smooth with near identical factors..... my gut is hurting so much today. Feels like inflammation or something. I do sometimes worry people may try to stop me from finishing my work and thus any health issues that come out of nowhere make me a bit worried.. although I doubt it.. and either way.. this is going to end today. I'm just so stressed man. I just wish someone would finally acknlowledge what I'm doing. Instead people are gaslighting me into thinking i've gone nuts. And Ive got the solution to finish the code now.. its going to get finished today. This entire situation is completely insane. I know the consequences. I hope all you assholes can sleep at night.
-
-I'm going to skip running today. I'm going to clean up my room and not think about math until 5pm (in 4 hours) ... then I am going to add a linear congruence to the code... and then I am going to bed.. 4 more hours to stop this. I mean.. its probably already too late anyway.. but this evening its definitely going to be too late. 
+Update: I added a linear congruence that will calculate linear coefficients for polynomial values that are multiples of the modulus. So the only thing that is left missing in the PoC is using this hashmap so that the x+y multiple we are generating has the correct factorization (it will add the factorization of s2 to it, the result of the linear congruence). 
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
