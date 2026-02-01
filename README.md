@@ -6,7 +6,7 @@ Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 70 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
-Update: I added a linear congruence that will calculate linear coefficients for polynomial values that are multiples of the modulus. So the only thing that is left missing in the PoC is using this hashmap so that the x+y multiple we are generating has the correct factorization (it will add the factorization of s2 to it, the result of the linear congruence). 
+Update: I added a linear congruence that will calculate linear coefficients for polynomial values that are multiples of the modulus. So the only thing that is left missing in the PoC is using this hashmap so that the x+y multiple we are generating has the correct factorization (it will add the factorization of s2 to it, the result of the linear congruence). And right now it is using the factorization of s2%n (line 948), but this can be s2-n or s2-n\*2 or s2-n\*3 and so on.. and if any of those factorize, we can use it, and even more, we can use the hashmap to get the factorization we want there.. but that is what i'll begin implementing now. I dont know man, it is a surreal feeling, knowing the scope of the disaster you are creating.. yet, all I wanted was for a single person to take my work serious. But nobody does... so I have no choice. Good luck. Will upload in the coming days. 
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
