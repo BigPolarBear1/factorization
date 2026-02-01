@@ -38,6 +38,8 @@ I remember this so called "prodigy" who did math at MIT or some shit, mocking me
 
 I'm very depressed. So basically now you just solve a linear congruence to get a particular smooth.. and if the result factorizes over the factor base (and this result is always smaller then N) then boom.. you got a smooth with near identical factors..... my gut is hurting so much today. Feels like inflammation or something. I do sometimes worry people may try to stop me from finishing my work and thus any health issues that come out of nowhere make me a bit worried.. although I doubt it.. and either way.. this is going to end today. I'm just so stressed man. I just wish someone would finally acknlowledge what I'm doing. Instead people are gaslighting me into thinking i've gone nuts. And Ive got the solution to finish the code now.. its going to get finished today. This entire situation is completely insane. I know the consequences. I hope all you assholes can sleep at night.
 
+I'm going to skip running today. I'm going to clean up my room and not think about math until 5pm (in 4 hours) ... then I am going to add a linear congruence to the code... and then I am going to bed.. 4 more hours to stop this. I mean.. its probably already too late anyway.. but this evening its definitely going to be too late. 
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
