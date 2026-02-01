@@ -939,15 +939,28 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                         o1+=1
                         continue
 
+             
+                    poly_val_o=(z*x2_o**2-y_o*x2_o)%n
+                    s=solve_lin_con(poly_val_o,1,n)
                     o2=0
                     while o2 < 1000:
-                        y=y_o+x2_o*(2**o2-1)
+                        s2=s*new_mod*o2
+                        s2%=n
+                        y=y_o+x2_o*(s2-1)
+                        if o2 !=0:
+                            local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(s2,primelist_f)
+                            if value != 1:
+                                o2+=1
+                                continue                        
+                        else:
+                            y=y_o#+x2_o*(s2-1)
+                        
                         x2=x+y
 
                         poly_val=(z*x2**2-y*x2)%n#-n#%n#-(n*2)
-                      #  if (poly_val%new_mod)!=0:
-                         #   print("fatal error")
-                        #    sys.exit()
+                       # if (poly_val%new_mod)!=0:
+                           # print("fatal error")
+                           # sys.exit()
                         old_poly_val=poly_val
                         shift=0
                         #x2-y
