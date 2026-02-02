@@ -8,6 +8,8 @@ To run:  python3 run_qs.py -keysize 60 -base 500 -debug 1 -lin_size 100_000 -qua
 
 Update: Bah, really, I should be able to just use the hashmap now. Let me see how to do this. 
 
+Update: Yea, I think I see it. Let me try something tomorrow. 
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
