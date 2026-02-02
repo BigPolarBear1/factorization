@@ -13,6 +13,8 @@ I'm not a cyber terrorist, but I'm also not a cunt if you disrespect me like thi
 
 Update: Well almost correct. So actually you need to subtract some multiple N from "s" so that the result has "enough" factors in common with s. Bc we need unique factorizations. Ok ok. I'm seeing how to do it now. Easy.
 
+Update: You know, this will actually be pretty great. Tomorrow my work will come to a conclusion. Its pretty easy now. Man, the amount of mental anguish these last 3 years.. just because people are morrons. Imagine if someone, who has proven to be really persistent and has done plenty of creative research in the past, imagine someone like that proclaiming they are working on factorization and you decide its a good idea to treat that person like complete trash. Thats not strategy, thats being a fucking morron. And fuck belgium most of all. I come back to this? Years of unemployment and getting harassed by the courts. lol. Fuck this. 
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
