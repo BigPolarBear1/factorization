@@ -15,6 +15,8 @@ Update: Well almost correct. So actually you need to subtract some multiple N fr
 
 Update: You know, this will actually be pretty great. Tomorrow my work will come to a conclusion. Its pretty easy now. Man, the amount of mental anguish these last 3 years.. just because people are morrons. Imagine if someone, who has proven to be really persistent and has done plenty of creative research in the past, imagine someone like that proclaiming they are working on factorization and you decide its a good idea to treat that person like complete trash. Thats not strategy, thats being a fucking morron. And fuck belgium most of all. I come back to this? Years of unemployment and getting harassed by the courts. lol. Fuck this. 
 
+Update: Just did some quick tests. And yes, this 100% works. Go to hell. People would have known. More experience math folks would have known had any of them looked at my work. Everything, from NOW until I begin setting factorization is records, its just implementation details. I have figured out all the pieces of the puzzle. Now it is optimization work and implementation details. 
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
