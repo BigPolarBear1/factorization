@@ -10,6 +10,9 @@ Update: Bah, really, I should be able to just use the hashmap now. Let me see ho
 
 Update: Yea, I think I see it. Let me try something tomorrow. 
 
+Update: You know, for the polynomial value. If we just consider squares there. Then we can completely ignore the factorization there and we just have to focus on the factorization of x+y and then we can also use that hashmap efficiently..because we can then consider x+y for any mod p<sup>e</sup> (where e is even). That will then give a very high degree of similar factorizations among smooth candidates. And as a matter of fact, we can probably then just pull smooths with near identical factorization directly out of the hashmap. Ok, let me correct my work tomorrow.. I made a bit of  a wrong detour in the last 2 days.. but thats fine.. that only deepened my understanding and steered me toward a more promising solution. I'm struggling hard mentally. Its just everything thats been going on, its too much. The worst is the self doubt, because I know I am right about the novelty of my work and the lack of people taking me serious can only mean two things, I either completely lost my mind or people are being told to keep silent. Both of which are awful realities to confront. And its making me extremely depressed. 
+
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
