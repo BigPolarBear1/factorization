@@ -21,6 +21,8 @@ Update: Added another loop at line 960 in construct_interval() .. now this s2 va
 
 There is probably also some simplifications that can be done in the PoC as there is quite a bit of steps involved. let me have a look. But everything is there. All the math is there. It proves everything. And faster versions will come online now in the coming days as I simplify and improve everything.
 
+ps: I have not lost my mind. This entire setup allows us to sieve linearly. We are literally just sieving that linear coefficient now and constructing smooth candidates from that. I will begin uploading improvements soon.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
