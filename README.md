@@ -6,11 +6,7 @@ Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 60 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
-This reduces to problem to finding the following variable s2 (line 962 s2=(s\*new_mod*(2\*\*o2))-n\*(o3_start-o3)), where s2 is factorizible.
-Finding this is solving a linear equation with two variables, namely s\*a-N\*b = s2, where a and b are variables and a needs to factorize as well, but not b.
-This isn't a hard problem to solve now. Infact. It is very easy. One way would be to build up possible solutions p-adically.
-
-I'll try and upload better versions in the coming days. Still having gut problems which are stressing me out. It started last summer. I'm hoping it was simply from too much fructose when I started running ultra marathon distances. Its just stressing me out, bc I also know the seriousness of the work I'm doing, even though everyone ignores it and I'm being treated like this... as a matter of fact, that just indicates hostile intend to me, because I know I'm right, and this entire situationis fucking absurd and I'm probably going to be dead before this is over. lol. fuck it. I will makes sure this work sees its completion, even if it kills me. I'm not a pussy loser like pete hegseth and those other fucking cronies. I piss on them.
+Update: Bah, really, I should be able to just use the hashmap now. Let me see how to do this. 
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
