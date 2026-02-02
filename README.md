@@ -19,6 +19,8 @@ Update: Just did some quick tests. And yes, this 100% works. Go to hell. People 
 
 Update: Added another loop at line 960 in construct_interval() .. now this s2 variable at line 962, this is the only thing introducing new factors. Hence we need to minimize introducing new factors here by sieving this and using a modulus. Its slow as hell right now bc its just bruteforce iterating those s2 values. I could just setup a sieve interval, easy. But I'm also thinking if I can just straight up calculate this using the hashmap. Because that would probably be more effective. Anyway.. just implementation details. All the math is there. Everything is there. This is as close to disclosure as you can get. And people would know. Now that I have worked out the exact strategy.. that crappy uploaded PoC is quickly going to become faster and faster. Plus the whole thing is that it is going to generate smooths with similar factorizations... hence we can use much larger factor bases. Whatever. I will keep grinding, and if nobody takes my work serious, then so be it. All that tells me is that this world deserves this disaster, if this is how you treat people.
 
+There is probably also some simplifications that can be done in the PoC as there is quite a bit of steps involved. let me have a look. But everything is there. All the math is there. It proves everything. And faster versions will come online now in the coming days as I simplify and improve everything.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
