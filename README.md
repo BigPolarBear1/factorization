@@ -11,7 +11,7 @@ Update: I added a linear congruence that will calculate linear coefficients for 
 Update: I was thinking, if I delete that line s2%=n and s also factorizes over the factor base.. then we get near identical smooth candidates. Then its just a matter of getting that s value to factorize. Hmm. I can figure that out for sure. That shouldnt be in the realm of the impossible. And in fact.... we can use much larger factor basis to get that s to factorize.. since once it factorizes, if my brain at 12:20am is understanding this correctly, should spit out near identical smooth candidates, so we wouldnt be constrained by using a very large factor base, since we'll have a super big chance to succeed with much fewer smooths. Something like that. Man, if that is it, people are going to be freaking out, Ill probably get droned striked. Hahahaha. If I die tonight, it was the american cowards. I'm not afraid. I did everything right. I tried to avoid this outcome. The fbi knew I was working on this way back in january 2024. 
 I'm not a cyber terrorist, but I'm also not a cunt if you disrespect me like this, so be it, I press on.
 
-Update: Well almost correct. So actually you need to subtract some multiple from "s" so that the result has "enough" factors in common with s. Bc we need unique factorizations. Ok ok. I'm seeing how to do it now. Easy.
+Update: Well almost correct. So actually you need to subtract some multiple N from "s" so that the result has "enough" factors in common with s. Bc we need unique factorizations. Ok ok. I'm seeing how to do it now. Easy.
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
