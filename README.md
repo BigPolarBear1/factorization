@@ -8,8 +8,6 @@ To run:  python3 run_qs.py -keysize 60 -base 500 -debug 1 -lin_size 100_000 -qua
 
 Update: Bah, really, I should be able to just use the hashmap now. Let me see how to do this. 
 
-Update: Yea, ignore the uploaded PoC for now. Those most recent additions from the last few days are not entirely correct. The math works. But we should also change up the root and rely more on the hashmap to find similar smooths. I'll implement a better version soon.
-
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
