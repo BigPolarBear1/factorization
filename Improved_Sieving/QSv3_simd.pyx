@@ -736,9 +736,9 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
     print("[i]Filtering Quadratic Coefficients (quad_size) (to do: can be saved to disk for re-use)")
     valid_quads,valid_quads_factors,qival=filter(primelist_f,n,1,quad_sieve_size)
     print("[i]Filtering interval indices (lin_size) (to do: can be saved to disk for re-use)")
-    start=1#round(n**0.25)
+    start=round(n**0.16)
 
-    valid_ind,valid_ind_factors,lival=filter(primelist_f,n,start,lin_sieve_size*2)
+    valid_ind,valid_ind_factors,lival=filter(primelist_f,n,1,lin_sieve_size*2)
     print("[i]Entering attack loop")
     smooths=[]
     coefficients=[]
@@ -782,7 +782,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
             z=valid_quads[zi]
             i=0
             while i < 100_000_000_000:
-                x=(start-i)**2#new_mod*i#x1+i
+                x=(start+i)**2#new_mod*i#x1+i
                # fail=0
                # col2=[]
                # b=0
