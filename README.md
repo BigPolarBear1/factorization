@@ -18,6 +18,8 @@ I'll begin working on step 2 first now. Rewrite solve_roots2() entirely. This ne
 
 It is funny, I know I am right.. and I know people must be looking at my work... yet this is how I'm treated. I'm going to Asia after this, I have my pride, I'm not a dog. I'm not going to stay in a country where I'm treated this way.
 
+Update: I have quickly minimized the code in solve_roots(), still needs to be much faster though. So I'll need to think. One thing I should probably do is have two processes, one (or multiple ones) which tries to find smooths and one which continuesly builds solutions for the factor base and writes them to disk. So that as time goes on, we'll have more and more solutions to pull from. But let me just implement p-adic lifting tomorrow to begin with. My goal for tomorrow will be to let it succeed with just a few smooths. It's something which I demonstrated successfully back in September.. but back then, I was only using 0 solutions for the linear coefficient. Now with this higher density of solutions, It should be much much much more powerful. We'll find out tomorrow.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
