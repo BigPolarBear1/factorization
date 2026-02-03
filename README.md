@@ -17,6 +17,7 @@ What I want to do is this:
 Next, we expand on this, we lift all the solutios in our hashmap to an even exponent. This then means that any smooth we find will likely only be composed of the factorization of x+y. And since we can query the hashmap for specific x+y values.. this then means we can do very targeted smooth finding. Which also means the size of the factor base matters less. The bigger the better actually. 
 
 Thats the idea. So potentially, if we look for x+y values that are also square in the hashmap.. we can succeed after just 1 smooth, even with very large numbers.
+The thing is, we could have also done this strategy, just using solutions where the linear coefficient is 0. Aka, what my quadratic sieve implementation below is doing. But setting it up like this, gives us many more possible solutions for each prime, which is much more powerful with this approach, especially if we end up lifting all the solutions to the 2nd power... because we'll still have a reasonable density of solutions with this setup where below this then becomes a problem.
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
