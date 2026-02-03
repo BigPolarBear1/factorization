@@ -16,6 +16,8 @@ To do:
 
 I'll begin working on step 2 first now. Rewrite solve_roots2() entirely. This needs to be lightning fast so we can fill up many gigabytes of solutions on the disk, hehehe. Then in theory when all of that is implemented, we would only need a handful of smooths to succeed, even for very large numbers. In addition we could even restrict ourselves to x+y values where x+y is square or some small multiple of a squar, there really isn't much reason to not do that. Then any smooths we find will be some small multiple of a square or a square. Either way, it will dramatically reduce the required amount of smooths.
 
+It is funny, I know I am right.. and I know people must be looking at my work... yet this is how I'm treated. I'm going to Asia after this, I have my pride, I'm not a dog. I'm not going to stay in a country where I'm treated this way.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
