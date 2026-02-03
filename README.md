@@ -4,22 +4,15 @@ Disclaimer: At no point did AI contribute anything to this research project. Cop
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 60 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
+To run:  python3 run_qs.py -keysize 50 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
-Update: Removed a bunch of code. Just resetting. So the current setup is just going to create smooth candidates where the factors are the polynomial value and the factorization of o1+1 (which is the index of the loop iterating the linear coefficient). The factorization of x cancels out because it is square, so we ignore it, and the factorization of x+(y+(y+x*o1)) also cancels out because we set y to be x, hence we just end up generating squares there too. But anyway, that doesn't really matter.
+Update: Made some more progress toward just using the hashmap to pull smooths from it. This is slow, so use on 50 bit like above or it will take a long time. This is by design as my work isn't yet finished.
 
-What I want to do is this:
+To do:
 
-1. Generate some x, where the factorization of x is square.
-2. Pull all information from the hashmap for this root residue.
-3. Now try to find some x+y of known factorization that appears in a lot of primes from the information we collected in step 2. If we find it in enough primes, we probably have a smooth.
-
-Next, we expand on this, we lift all the solutios in our hashmap to an even exponent. This then means that any smooth we find will likely only be composed of the factorization of x+y. And since we can query the hashmap for specific x+y values.. this then means we can do very targeted smooth finding. Which also means the size of the factor base matters less. The bigger the better actually. 
-
-Thats the idea. So potentially, if we look for x+y values that are also square in the hashmap.. we can succeed after just 1 smooth, even with very large numbers.
-The thing is, we could have also done this strategy, just using solutions where the linear coefficient is 0. Aka, what my quadratic sieve implementation below is doing. But setting it up like this, gives us many more possible solutions for each prime, which is much more powerful with this approach, especially if we end up lifting all the solutions to the 2nd power... because we'll still have a reasonable density of solutions with this setup where below this then becomes a problem.
-
-Anyway.. once this is finished.. I'm out of here. I'm going to Asia. I want nothing to do with the west, and literally nothing can convince me otherwise. Not after years of being treated like shit, despite the fact that people would have known about the novelty of my work. Go to hell. 
+1. We need to lift all the solutions in the hashmap to the second power. Then this way, whenever we find a smooth candidate, odds are that the polynomial value will be square, or some small multiple of a square.
+   Since we decide x+y ourselves, we can thus do targeted hunting for exact factorizations. And because of this, the size of the factor base wont matter at all, and we can massively increase the size.
+2. Building the factor base is too slow. I already know how to do these calculations much faster.. but its just tedious, but I should get to it now. We want to build solutions for all the k values (multiples of N).. because when we lift solutions, by also taking into account solutions for every multiple of N, we'll retain a good density of solutions per prime. Which will help with the strategy proposed in step 1. 
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
