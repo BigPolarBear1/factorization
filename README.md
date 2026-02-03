@@ -19,7 +19,7 @@ Next, we expand on this, we lift all the solutios in our hashmap to an even expo
 Thats the idea. So potentially, if we look for x+y values that are also square in the hashmap.. we can succeed after just 1 smooth, even with very large numbers.
 The thing is, we could have also done this strategy, just using solutions where the linear coefficient is 0. Aka, what my quadratic sieve implementation below is doing. But setting it up like this, gives us many more possible solutions for each prime, which is much more powerful with this approach, especially if we end up lifting all the solutions to the 2nd power... because we'll still have a reasonable density of solutions with this setup where below this then becomes a problem.
 
-Anyway.. once this is finished.. I'm out of here. I'm going to Asia. I wont nothing to do with the west, and literally nothing can convince me otherwise. Not after years of being treated like shit, despite the fact that people would have known about the novelty of my work. Go to hell. 
+Anyway.. once this is finished.. I'm out of here. I'm going to Asia. I want nothing to do with the west, and literally nothing can convince me otherwise. Not after years of being treated like shit, despite the fact that people would have known about the novelty of my work. Go to hell. 
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
