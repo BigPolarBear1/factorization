@@ -342,7 +342,6 @@ def solve_quadratic_congruence(a, b, c, p):
         b_div_2 = (ba * modinv(2, p)) % p
         alpha = (pow(b_div_2, 2, p) - ca) % p
         if jacobi(alpha,p)==-1:
-            print("fatal")
             return -1
         if jacobi(alpha,p)==0:
             ##To do: Sort out the number theory for this
@@ -364,147 +363,41 @@ def solve_quadratic_congruence(a, b, c, p):
 
         return [x1,x2]
 
-
-def solve_roots(prime,n): 
-    #hmap_p={}
-    s=1  
-    while jacobi((-s*n)%prime,prime)!=1:
-        s+=1
-    z_div=modinv(s,prime)  
-    dist=(n*z_div)%prime
-    dist=(-dist)%prime
-    main_root=tonelli(dist,prime)
-    if main_root**2%prime != dist:
-        print("what the fuck")
-    if (s*main_root**2+n)%prime !=0:
-        print("fatal error123: "+str(prime)+" s: "+str(s)+" root: "+str(main_root))
-        time.sleep(10000000)
-    try:
-     #   size=prime*2+1
-     #   if size > quad_sieve_size*2:
-     #       size= quad_sieve_size*2+1
-        size=3
-        temp_hmap = array.array('I',[0]*size) ##Got to make sure the allocation size doesn't overflow.... 
-        temp_hmap[0]=1
-
-        s_inv=modinv(s*z_div,prime)
-        if s_inv == None or jacobi(s_inv,prime)!=1:
-            print("should this ever happen?")
-            return temp_hmap
-        root_mult=tonelli(s_inv,prime)
-        new_root=((main_root*root_mult))%prime
-        if (s*new_root**2+n)%prime !=0:
-            print("error2")
-       # new_co=(2*s*new_root)%prime
-       # if (new_co**2+n*4*s)%prime !=0:
-           # print("error")
-      #  if (s*new_root**2-new_co*new_root+n)%prime !=0: ###To do: For debug delete later
-           # print("error")
-        if new_root > prime // 2:
-            new_root=(prime-new_root)%prime  
-        print("s: "+str(s)+" new_root: "+str(new_root)+" prime: "+str(prime))
-        end=temp_hmap[0]
-        temp_hmap[end]=s
-        if bitlen(new_root)>32:
-            print("fatal error, increase element size of array in solve_roots")
-            sys.exit()
-        temp_hmap[end+1]=new_root
-        temp_hmap[0]+=2
-        s+=1   
-    except Exception as e:
-        print(e)
-    return temp_hmap
-
-
-def solve_roots2(prime,n):
-    ##To do: Need to completely rework this, too slow and I know how to do it faster.
-    ##To do: I should verify it is not missing any solutions...
+def solve_roots(prime,n):
+    #to do: I can probably speed this up quite a bit more.. 
     hmap_p={}
-    iN=0
-    while iN < prime:
-        ja= jacobi(iN,prime )
-
-        if ja ==1:
-            root=tonelli(iN,prime)
-
-              #  time.sleep(10000)
-            if root > prime // 2:
-                root=-root%prime
-            roots=[root]#,(-root)%prime]
-            z=1
-            while z <prime and z < quad_sieve_size+1:
-                for root in roots:
-                    res=(root**2-n*4*z)%prime
-
-                    if jacobi(res,prime) != -1:
-                        if jacobi(res,prime) == 1:
-                            y1=tonelli(res,prime)
-                            y1l=[y1,-y1%prime]
-                        else:
-                            y1l =[0]
-                        for y1 in y1l:
-                         #   if y1 !=0:
-                         #       continue
-                            xl=solve_quadratic_congruence(1, y1, -n*z, prime)
-                            for x in xl:
-                                if (x**2+y1*x-n*z)%prime !=0:
-                                    print("super fatal error")
-                                deriv=(2*1*x+y1)%prime
-                                if (x**2-deriv*x+n*z)%prime !=0:
-                                    print("error")
-                                try:
-                                    c=hmap_p[str(x)]
-                                    if (root**2-n*4*z)%prime != y1**2%prime:
-                                        print("fatal error: ")
-                                    c.append([y1,z])
-                                except Exception as e:
-                                    if (root**2-n*4*z)%prime != y1**2%prime:
-                                        print("fatal error: ")
-                                    c=hmap_p[str(x)]=[[y1,z]]
-                                if jacobi == 0:
-                                    print("wtf")
-                z+=1
-        if ja ==0:  
-            roots=[0]
-            z=1
-            while z <prime and z < quad_sieve_size+1:
-                for root in roots:
-                    res=(root**2-n*4*z)%prime
-                    if jacobi(res,prime) != -1:
-                        if jacobi(res,prime) == 1:
-                            y1=tonelli(res,prime)
-                            y1l=[y1,-y1%prime]
-                        else:
-                            y1l =[0]
-                        for y1 in y1l:
-                       #     if y1 !=0:
-                       #         continue
-                            
-                            xl=solve_quadratic_congruence(1, y1, -n*z, prime)
-                       #     print(" xl: "+str(xl)+" y1: "+str(y1)+" y0: "+str(root)+" prime: "+str(prime))
-                            for x in xl:
-                                if (x**2+y1*x-n*z)%prime !=0:
-                                    print("super fatal error")
-                                deriv=(2*1*x+y1)%prime
-                                if (x**2-deriv*x+n*z)%prime !=0:
-                                    print("error")
-                                try:
-                                    c=hmap_p[str(x)]
-                                    c.append([y1,z])
-                                except Exception as e:
-                                    c=hmap_p[str(x)]=[[y1,z]]
-                z+=1
-        iN+=1  
+    y=0
+    while y < prime:
+        k=1
+        while k < prime and k < quad_sieve_size+1:
+            xl=solve_quadratic_congruence(1, y, -n*k, prime)
+          #  print("x1: "+str(xl)+" y: "+str(y)+" k: "+str(k)+" prime: "+str(prime))
+            if xl !=-1:
+                for x in xl:
+                    if (x**2+y*x-n*k)%prime !=0:
+                        print("super fatal error")
+                    deriv=(2*1*x+y)%prime
+                    if (x**2-deriv*x+n*k)%prime !=0:
+                        print("error")
+                    try:
+                        c=hmap_p[str(x)]
+                        c.append([y,k])
+                    except Exception as e:
+                        c=hmap_p[str(x)]=[[y,k]]
+                    if jacobi == 0:
+                        print("wtf")
+            k+=1
+        y+=1
     return hmap_p
-
-
 
 def create_hashmap(n,primeslist):
     i=0
     hmap=[]
     hmap2=[]
     while i < len(primeslist):
-        hmap_p=solve_roots2(primeslist[i],n)
+
+        hmap_p=solve_roots(primeslist[i],n)
+
      #   solve_roots(primeslist[i],n)
         hmap.append(hmap_p)
         hmap2.append([])
