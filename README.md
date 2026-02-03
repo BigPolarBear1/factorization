@@ -14,6 +14,8 @@ To do:
    Since we decide x+y ourselves, we can thus do targeted hunting for exact factorizations. And because of this, the size of the factor base wont matter at all, and we can massively increase the size.
 2. Building the factor base is too slow. I already know how to do these calculations much faster.. but its just tedious, but I should get to it now. We want to build solutions for all the k values (multiples of N).. because when we lift solutions, by also taking into account solutions for every multiple of N, we'll retain a good density of solutions per prime. Which will help with the strategy proposed in step 1. 
 
+I'll begin working on step 2 first now. Rewrite solve_roots2() entirely. This needs to be lightning fast so we can fill up many gigabytes of solutions on the disk, hehehe.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
