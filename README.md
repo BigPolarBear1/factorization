@@ -6,7 +6,9 @@ Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:   python3 run_qs.py -keysize 30 -base 30 -debug 1 -lin_size 20 -quad_size 10</br></br>
 
+Just run it on 30 bit using the command above. It should find smooths whose factorization is now mostly determined by x+y. Which in this PoC we are just setting to be lin_size, hence most smooth factorizations will have primes between 1 and 20 if using lin_size 20. This enables us to succeed with fairly few smooths. ofcourse choosing which x+y to check is an area for improvement, as once we find a smooth, we should probably set x+y to be its odd exponent factors and check for those. But anyway, this is a first extremely rough draft. Now we begin optimizing and improving. So in theory, the size of the factor base does not matter at all anymore now. Hence speedingup these calculations is what I'll focus next on. Once that is as good as it can be, I'll improve the selection of which x+y values to check for based on smooths we have found so far. 
 
+This should have been my last dip in performance... now upwards and onwards... 
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
