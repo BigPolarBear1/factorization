@@ -12,6 +12,8 @@ This should have been my last dip in performance... now upwards and onwards...
 
 In addition there also probably is some linear algebra tricks to help select x+y values and k (multiples of N) values... but first things first.. building that factor base quickly..
 
+Update: I'll add hensel's lifting lemma to solve_roots() tomorrow. Thats my goal for tomorrow (thursday). That should see a dramatic increase in computing the factor base. I havnt yet implemented hensel's lifting lemma for polynomials with non-zero linear coefficient... but it shouldn't be very hard, plus there is code examples online that do just that. I think once that is implemented, that part will probably be as optimized as can be math wise. Then after that I'll see coding wise what can be done there. 
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
