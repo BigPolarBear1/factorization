@@ -172,7 +172,7 @@ def QS(n,factor_list,sm,xlist,flist):#,jsymbols,testl,primeslist2,disc1_squared_
     if f1 != 0:
         print("[SUCCESS]Factors are: "+str(f1)+" and "+str(f2))
         return f1,f2   
-    print("[FAILURE]No factors found")
+   # print("[FAILURE]No factors found")
     return 0,0
 
 def extract_factors(N, relations, roots, null_space):#,disc_sr_list,pval_list,pflist):
@@ -363,6 +363,18 @@ def solve_quadratic_congruence(a, b, c, p):
 
         return [x1,x2]
 
+def lift_root(r,prime,n,quad_co,exp):
+    z_inv=modinv(quad_co,prime**exp)
+    c=(-quad_co*n)%prime**exp
+    temp_r=r*quad_co
+    zz=2*temp_r
+    zz=pow(zz,-1,prime)
+    x=((c-temp_r**2)//prime)%prime
+    y=(x*zz)%prime
+    new_r=(temp_r+y*prime)%prime**exp
+    root2=(new_r*z_inv)%prime**exp
+    return root2        
+
 def solve_roots(prime,n):
     #to do: I can probably speed this up quite a bit more.. 
     hmap_p={}
@@ -371,21 +383,29 @@ def solve_roots(prime,n):
         k=1
         while k < prime and k < quad_sieve_size+1:
             xl=solve_quadratic_congruence(1, y, -n*k, prime)
-          #  print("x1: "+str(xl)+" y: "+str(y)+" k: "+str(k)+" prime: "+str(prime))
+
+                
+
+            
+            
             if xl !=-1:
                 for x in xl:
-                    if (x**2+y*x-n*k)%prime !=0:
-                        print("super fatal error")
-                    deriv=(2*1*x+y)%prime
-                    if (x**2-deriv*x+n*k)%prime !=0:
-                        print("error")
-                    try:
-                        c=hmap_p[str(x)]
-                        c.append([y,k])
-                    except Exception as e:
-                        c=hmap_p[str(x)]=[[y,k]]
-                    if jacobi == 0:
-                        print("wtf")
+                    y2=y
+                    while y2 < prime**2:
+                        x2=x
+                        while x2 < prime**2:
+                           # print("x1: "+str(x)+" y: "+str(y)+" k: "+str(k)+" prime: "+str(prime))
+                            if (x2**2+y2*x2-n*k)%prime**2==0:
+            
+                                try:
+                                    c=hmap_p[str(x2)]
+                                    c.append([y2,k])
+                                except Exception as e:
+                                    c=hmap_p[str(x2)]=[[y2,k]]
+
+                            x2+=prime
+                        y2+=prime
+                
             k+=1
         y+=1
     return hmap_p
@@ -681,7 +701,7 @@ def retrieve(hmap,primeslist,x,lin):
 
     i=0
     while i < len(hmap):
-        prime=primeslist[i]
+        prime=primeslist[i]**2
         try:
             c=hmap[i][str(x%prime)]
             r=0
@@ -722,8 +742,8 @@ def get_partials(mod,list1):
 cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_prime_bound,primeslist2,small_primeslist):
    # i=0
    # while i < len(hmap):
-   #     print("prime: "+str(primeslist[i])+" "+str(hmap[i]))
-   #     i+=1
+       # print("prime: "+str(primeslist[i])+" "+str(hmap[i]))
+       # i+=1
 
 
     primelist_f=copy.copy(primeslist)
@@ -736,7 +756,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
     print("[i]Filtering Quadratic Coefficients (quad_size) (to do: can be saved to disk for re-use)")
     valid_quads,valid_quads_factors,qival=filter(primelist_f,n,1,quad_sieve_size)
     print("[i]Filtering interval indices (lin_size) (to do: can be saved to disk for re-use)")
-    start=round(n**0.16)
+    start=1#round(n**0.20)
 
     valid_ind,valid_ind_factors,lival=filter(primelist_f,n,1,lin_sieve_size*2)
     print("[i]Entering attack loop")
@@ -750,7 +770,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
     x1=1
     y0=1
     o=1
-
+    sfound=0
     close_range=10
     too_close=5
     LOWER_BOUND_SIQS=1
@@ -811,17 +831,12 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                 #if (x**2+lin*x-n)%new_mod != 0:
                 #    print("fatal error: "+str(lin)+" indexes: "+str(indexes))
                 #    sys.exit()
-                local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(x,primelist_f)
-                if value != 1:
-                    i+=1
-                    continue
+                #local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(x,primelist_f)
+               # if value != 1:
+                  #  i+=1
+                  #  continue
 
-                lin=x
-                local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(x+lin,primelist_f)
-                if value != 1:
-                    i+=1
-                    continue
-
+                
                     
                 
                 o=0
@@ -829,11 +844,11 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                     if lival[o]!=1:
                         o+=1
                         continue
-                    y=lin+(x+lin)*o
+                    y=(o+1)-x
 
                     collected=retrieve(hmap,primeslist,x,y)
                     x2=x+y
-                    if x2 != (x+lin)*(o+1):
+                    if x2 != (o+1):
                         print("something went wrong")
 
 
@@ -884,21 +899,24 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                             if (4*poly_val2)%(2*(z*x+y))!=0:
                                 print("error2")
                             local_factors2, value2,seen_primes2,seen_primes_indexes2 = factorise_fast(poly_val2*poly_val*z,primelist_f)
-                            if value2 == 1:
+                            test=math.isqrt(value2)
+                            if value2 == 1 or test**2==value2:
                                 if poly_val*z not in coefficients and local_factors2 not in factors:
                                     smooths.append(poly_val2*poly_val*z)
                                     factors.append(local_factors2)
                                     coefficients.append(poly_val*z)
+                                    sfound+=1
                                     if g_debug == 1:
-                                        print("Smooths #: "+str(len(smooths))+" y: "+str(y)+" zx: "+str(factors_part1)+" zx2 "+str(x2)+" (poly_val*z): "+str(factors_part3)+" final smooth: "+str(all_parts)+" intrvl ind: "+str(o1)+" Factors: "+str(local_factors2)+" k: "+str(k)+" o: "+str(o))#+" seen_primes: "+str(valid_ind_factors[o1]))#+" seen_primes2: "+str(seen_primes2))#+" test_poly_val: "+str(bitlen(test_poly_val))+" test_zxy: "+str(test_zxy)+" test_zxy_current: "+str(test_zxy_curent))
+                                        print("Smooths #: "+str(len(smooths))+" y: "+str(y)+" zx: "+str(factors_part1)+" zx2 "+str(x2)+" (poly_val*z): "+str(factors_part3)+" final smooth: "+str(all_parts)+" intrvl ind: "+str(o)+" Factors: "+str(local_factors2)+" k: "+str(k))#+" seen_primes: "+str(valid_ind_factors[o1]))#+" seen_primes2: "+str(seen_primes2))#+" test_poly_val: "+str(bitlen(test_poly_val))+" test_zxy: "+str(test_zxy)+" test_zxy_current: "+str(test_zxy_curent))
                                     else: 
                                         print("Smooths #: "+str(len(smooths)))
-                                    if len(smooths)>(base+2):
+                                    if sfound >2:
                                         f1,f2=QS(n,primelist,smooths,coefficients,factors)
                                         if f1 !=0:
                                             sys.exit()
+                                        sfound=0
                             else:
-                                print("FATAL ERROR, THIS ONE SHOULD NEVER FAIL BECAUSE z,x,x2 AND poly_val MUST FACTORIZE WHEN ARRIVING HERE:"+str(value2)+" k: "+str(k))
+                                print("FATAL ERROR, THIS ONE SHOULD NEVER FAIL BECAUSE z,x,x2 AND poly_val MUST FACTORIZE WHEN ARRIVING HERE:"+str(value2)+" k: "+str(k)+" poly_val: "+str(poly_val)+" o: "+str(o)+" xy: "+str(x2)+" x: "+str(x))
                                 sys.exit()
                     
 
