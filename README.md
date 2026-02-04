@@ -4,21 +4,9 @@ Disclaimer: At no point did AI contribute anything to this research project. Cop
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 50 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
+To run:   python3 run_qs.py -keysize 30 -base 30 -debug 1 -lin_size 20 -quad_size 10</br></br>
 
-Update: Made some more progress toward just using the hashmap to pull smooths from it. This is slow, so use on 50 bit like above or it will take a long time. This is by design as my work isn't yet finished.
 
-To do:
-
-1. We need to lift all the solutions in the hashmap to the second power. Then this way, whenever we find a smooth candidate, odds are that the polynomial value will be square, or some small multiple of a square.
-   Since we decide x+y ourselves, we can thus do targeted hunting for exact factorizations. And because of this, the size of the factor base wont matter at all, and we can massively increase the size.
-2. Building the factor base is too slow. I already know how to do these calculations much faster.. but its just tedious, but I should get to it now. We want to build solutions for all the k values (multiples of N).. because when we lift solutions, by also taking into account solutions for every multiple of N, we'll retain a good density of solutions per prime. Which will help with the strategy proposed in step 1. 
-
-I'll begin working on step 2 first now. Rewrite solve_roots2() entirely. This needs to be lightning fast so we can fill up many gigabytes of solutions on the disk, hehehe. Then in theory when all of that is implemented, we would only need a handful of smooths to succeed, even for very large numbers. In addition we could even restrict ourselves to x+y values where x+y is square or some small multiple of a squar, there really isn't much reason to not do that. Then any smooths we find will be some small multiple of a square or a square. Either way, it will dramatically reduce the required amount of smooths.
-
-It is funny, I know I am right.. and I know people must be looking at my work... yet this is how I'm treated. I'm going to Asia after this, I have my pride, I'm not a dog. I'm not going to stay in a country where I'm treated this way.
-
-Update: I have quickly minimized the code in solve_roots(), still needs to be much faster though. So I'll need to think. One thing I should probably do is have two processes, one (or multiple ones) which tries to find smooths and one which continuesly builds solutions for the factor base and writes them to disk. So that as time goes on, we'll have more and more solutions to pull from. But let me just implement p-adic lifting tomorrow to begin with. My goal for tomorrow will be to let it succeed with just a few smooths. It's something which I demonstrated successfully back in September.. but back then, I was only using 0 solutions for the linear coefficient. Now with this higher density of solutions, It should be much much much more powerful. We'll find out tomorrow.
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
