@@ -1,6 +1,6 @@
 #!python
 #cython: language_level=3
-# cython: profile=False
+# cython: profile=True
 # cython: overflowcheck=False
 ###Author: Essbee Vanhoutte
 ###WORK IN PROGRESS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -369,7 +369,12 @@ def lift_root(z,y,n, root, p, exp):
     return new_root
 
 def solve_roots(prime,n):
-    hmap_p={}
+    hmap_p=[]
+    k=0
+    while k < prime and k < quad_sieve_size+1:
+        hmap_p.append(array.array('q',[0]*prime**2))
+        k+=1
+   
     y=0
     while y < prime:
         k=1
@@ -383,11 +388,7 @@ def solve_roots(prime,n):
                 for root in roots:
                     x = lift_root(1,y2,n*k,root,prime,1)
                     if (x**2+y2*x-n*k)%prime**2==0:
-                        try:
-                            c=hmap_p[str(x)]
-                            c.append([y2,k])
-                        except Exception as e:
-                            c=hmap_p[str(x)]=[[y2,k]]
+                        hmap_p[k][x]=y2
                 y2+=prime
             k+=1
         y+=1
@@ -672,17 +673,11 @@ def retrieve(hmap,primeslist,x,lin):
     i=0
     while i < len(hmap):
         prime=primeslist[i]**2
-        try:
-            c=hmap[i][str(x%prime)]
-            r=0
-            while r < len(c):
-                if (c[r][0]+x)%prime ==xy%prime:
-                    collected.extend([prime,c[r]])
-
-                r+=1
-        except Exception as e:
-            i+=1
-            continue
+        c=1
+        while c <  len(hmap[i]):
+            if (hmap[i][c][x%prime]+x)%prime == xy%prime:
+                collected.extend([prime,c])
+            c+=1
         i+=1
 
     return collected
@@ -829,9 +824,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                         total=1
                         poly_val=(z*x2**2-y*x2)-n*o1
                         while g < len(collected):
-                            if collected[g+1][1]==o1%collected[g]:
-                                found.append(collected[g])
-                                found.append(collected[g+1])
+                            if collected[g+1]==o1%collected[g]:
                                 total*=collected[g]
                             g+=2
                         if total < abs((poly_val)**0.8):
@@ -917,9 +910,9 @@ def get_primes(start,stop):
     return list(sympy.sieve.primerange(start,stop))
 
 @cython.profile(False)
-def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_size,sbase):
+def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_size):
     global key,keysize,workers,g_debug,base,key,quad_sieve_size,small_base,lin_sieve_size
-    key,keysize,workers,g_debug,base,quad_sieve_size,small_base,lin_sieve_size=l_key,l_keysize,l_workers,l_debug,l_base,l_quad_sieve_size,sbase,l_lin_sieve_size
+    key,keysize,workers,g_debug,base,quad_sieve_size,lin_sieve_size=l_key,l_keysize,l_workers,l_debug,l_base,l_quad_sieve_size,l_lin_sieve_size
     start = default_timer() 
 
     if g_p !=0 and g_q !=0 and g_enable_custom_factors == 1:
