@@ -668,7 +668,7 @@ def find_xy(primeslist,n,x,collected,z,lin):
 
 def retrieve(hmap,primeslist,x,lin):
     xy=x+lin
-    collected=[]
+    collected=[1]*(quad_sieve_size+1)
 
     i=0
     while i < len(hmap):
@@ -676,7 +676,8 @@ def retrieve(hmap,primeslist,x,lin):
         c=1
         while c <  len(hmap[i]):
             if (hmap[i][c][x%prime]+x)%prime == xy%prime:
-                collected.extend([prime,c])
+                collected[c]*=prime
+             #   collected.extend([prime,c])
             c+=1
         i+=1
 
@@ -767,43 +768,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
             z=valid_quads[zi]
             i=0
             while i < 100_000_000_000:
-                x=(start+i)**2#new_mod*i#x1+i
-               # fail=0
-               # col2=[]
-               # b=0
-               # while b < len(col):
-               #     try:
-               #         prime=primeslist[indexes[b]]
-               #         c=hmap[indexes[b]][str(x%prime)]
-               #         col2.extend([prime,[c[0][1]]])
-               #     except Exception as e:
-               #         fail=1
-               #         break
-               #     b+=1
-               # if fail ==1:
-               #     i+=1
-               #     continue 
-
-                #col2=get_partials(new_mod,col2)
-
-                #lin=0
-                #b=0
-                #while b < len(col2):
-                #   lin+=col2[b+1][0]
-                #    b+=2
-
-                #lin%=new_mod
-                #if (x**2+lin*x-n)%new_mod != 0:
-                #    print("fatal error: "+str(lin)+" indexes: "+str(indexes))
-                #    sys.exit()
-                #local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(x,primelist_f)
-               # if value != 1:
-                  #  i+=1
-                  #  continue
-
-                
-                    
-                
+                x=(start+i)**2#new_mod*i#x1+i               
                 o=0
                 while o < lin_sieve_size:
                     if lival[o]!=1:
@@ -817,16 +782,13 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                         print("something went wrong")
 
 
-                    o1=0
+                    o1=1
                     while o1 < quad_sieve_size+1:
                         found=[]
                         g=0
                         total=1
                         poly_val=(z*x2**2-y*x2)-n*o1
-                        while g < len(collected):
-                            if collected[g+1]==o1%collected[g]:
-                                total*=collected[g]
-                            g+=2
+                        total=collected[o1]
                         if total < abs((poly_val)**0.8):
                             o1+=1
                             continue
@@ -864,7 +826,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                             local_factors2, value2,seen_primes2,seen_primes_indexes2 = factorise_fast(poly_val2*poly_val*z,primelist_f)
                             test=math.isqrt(value2)
                             if value2 == 1 or test**2==value2:
-                                if poly_val*z not in coefficients and local_factors2 not in factors:
+                                if poly_val*z not in coefficients:# and local_factors2 not in factors:
                                     smooths.append(poly_val2*poly_val*z)
                                     factors.append(local_factors2)
                                     coefficients.append(poly_val*z)
