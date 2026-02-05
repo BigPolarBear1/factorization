@@ -6,7 +6,7 @@ Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:   python3 run_qs.py -keysize 50 -base 200 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
-Update: Bah, looking some deeper into this. Because we have a higher density of solutions per prime, and because we are able to use a linear coefficient, we should be able to get faster speeds with less primes then regular quadratic sieve. Because thats just how in theory that math should work. 
+Update: Bah, looking some deeper into this. Because we have a higher density of solutions per prime, and because we are able to use a linear coefficient, we should be able to get faster speeds with less primes then regular quadratic sieve. Because thats just how in theory that math should work. And until I can achieve those superior speeds, I shouldn't worry too much about p-adic lifting and finding similar smooths. Thats just "bells and whistles" to add later if everything else works well.
 
 So we can use x+y to linearly shift the polynomials value. The PoC that I just uploaded demonstrates this: y=((o+1)*(10**mult))-x , this will multiply x+y by 10 after each loop. Basically shifting the polynomial value by an amount depending on the size of the root. I just need to improve this linear shifting. This should work. Let me have a deeper look at this. It just about finding some multiplier, which we know the factorization off, which is going to bring all smooth candidates closer to 0. Its not rocket science. And since this is just one number, used for the entire sieve interval.. we could probably just calculate what the most ideal multiplier would be, and then find one close by that factors over the factor base.
 
