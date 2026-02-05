@@ -4,23 +4,11 @@ Disclaimer: At no point did AI contribute anything to this research project. Cop
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:   python3 run_qs.py -keysize 30 -base 30 -debug 1 -lin_size 20 -quad_size 10</br></br>
+To run:   python3 run_qs.py -keysize 50 -base 200 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
-Just run it on 30 bit using the command above. It should find smooths whose factorization is now mostly determined by x+y. Which in this PoC we are just setting to be lin_size, hence most smooth factorizations will have primes between 1 and 20 if using lin_size 20. This enables us to succeed with fairly few smooths. ofcourse choosing which x+y to check is an area for improvement, as once we find a smooth, we should probably set x+y to be its odd exponent factors and check for those. But anyway, this is a first extremely rough draft. Now we begin optimizing and improving. So in theory, the size of the factor base does not matter at all anymore now. Hence speedingup these calculations is what I'll focus next on. Once that is as good as it can be, I'll improve the selection of which x+y values to check for based on smooths we have found so far. 
+Update: Bah, looking some deeper into this. Because we have a higher density of solutions per prime, and because we are able to use a linear coefficient, we should be able to get faster speeds with less primes then regular quadratic sieve. Because thats just how in theory that math should work. 
 
-This should have been my last dip in performance... now upwards and onwards... 
-
-In addition there also probably is some linear algebra tricks to help select x+y values and k (multiples of N) values... but first things first.. building that factor base quickly..
-
-Update: I'll add hensel's lifting lemma to solve_roots() tomorrow. Thats my goal for tomorrow (thursday). That should see a dramatic increase in computing the factor base. I havnt yet implemented hensel's lifting lemma for polynomials with non-zero linear coefficient... but it shouldn't be very hard, plus there is code examples online that do just that. I think once that is implemented, that part will probably be as optimized as can be math wise. Then after that I'll see coding wise what can be done there. Oh and also computing the results for different k values, I can probably derive those results like I do in CUDA_QS_Variant.. I dont need to do everything all over again there.
-
-Update: Added hensel's lifting and removed the hashmap in favor of 1d lists. Building hmap is still very slow. But it doesn't matter that much for now. Let me now make sure we select linear coefficients such that the polynomial value is as small as possible. Because there is no reason to do it random like we do now, when we can use it to generate small polynomial values..
-
-Update: Hmm. Let me do some thinking. The thing is, that k value (multiple of N for the constant), we dont care about its factorization. Hence we can use that to add or subtract N as much as we want, until eternity. Thats a useful tool. I should center my strategy around that. Then whats left is selecting an x and x+y, with a factorization that is know, which has enough hits in the precalculated datastructure (hmap) to garantuee a smooth. Let me do some thinking. Because this x and x+y can be huge values, we dont care, as long as they factorize.. as long for some k value, they have enough hits in hmap. And this k value can be anything and the factorization doesn't matter. Common. Its on the tip of my tongue now. Give me a day or two to work this out.
-
-Update: You know, what I should do is find an x+y value, which has a large occurance in hmap, regardless of the k value. Because we can increase x to get the polynomial value closer to 0 if k is very large. Or visa-versa find an x with a large occurance and then increase x+y, which does give us more control. But either way, thats definitely a better approach then just the bruteforce way the code is doing and only taking into consideration k value < quad_size.. thats not really playing into the strengths of all the number theory we're using. Anyway, going to run in the dark in the woods. 
-
-Update: If we have a singular root, then lifting seems to fail. Its not an urgent fix, it just means we'll be missing some solutions here and there. Anyway.. I'm an idiot, I know how to approach this PoC.
+So we can use x+y to linearly shift the polynomials value. The PoC that I just uploaded demonstrates this: y=((o+1)*(10**mult))-x , this will multiply x+y by 10 after each loop. Basically shifting the polynomial value by an amount depending on the size of the root. I just need to improve this linear shifting. This should work. Let me have a deeper look at this. It just about finding some multiplier, which we know the factorization off, which is going to bring all smooth candidates closer to 0. Its not rocket science. And since this is just one number, used for the entire sieve interval.. we could probably just calculate what the most ideal multiplier would be, and then find one close by that factors over the factor base.
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
