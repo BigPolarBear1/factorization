@@ -10,6 +10,8 @@ Update: Bah, looking some deeper into this. Because we have a higher density of 
 
 So we can use x+y to linearly shift the polynomials value. The PoC that I just uploaded demonstrates this: y=((o+1)*(10**mult))-x , this will multiply x+y by 10 after each loop. Basically shifting the polynomial value by an amount depending on the size of the root. I just need to improve this linear shifting. This should work. Let me have a deeper look at this. It just about finding some multiplier, which we know the factorization off, which is going to bring all smooth candidates closer to 0. Its not rocket science. And since this is just one number, used for the entire sieve interval.. we could probably just calculate what the most ideal multiplier would be, and then find one close by that factors over the factor base.
 
+Update: Oh yea, it just hit me. Ofcourse using that multiplier, we dont change the residue moduli whatever number we are mutiplying with. So that can be used to "keep" factors while shifting that entire thing. Ergh, there's something here, I got to get focused.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
