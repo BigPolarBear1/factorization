@@ -20,6 +20,8 @@ Update: Hmm. Let me do some thinking. The thing is, that k value (multiple of N 
 
 Update: You know, what I should do is find an x+y value, which has a large occurance in hmap, regardless of the k value. Because we can increase x to get the polynomial value closer to 0 if k is very large. Or visa-versa find an x with a large occurance and then increase x+y, which does give us more control. But either way, thats definitely a better approach then just the bruteforce way the code is doing and only taking into consideration k value < quad_size.. thats not really playing into the strengths of all the number theory we're using. Anyway, going to run in the dark in the woods. 
 
+Update: If we have a singular root, then lifting seems to fail. Its not an urgent fix, it just means we'll be missing some solutions here and there. Anyway.. I'm an idiot, I know how to approach this PoC.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
