@@ -6,8 +6,8 @@
 ###WORK IN PROGRESS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ###Improved QS Variant 
 
-##References: I have borrowed many of the optimizations from here: https://stackoverflow.com/questions/79330304/optimizing-sieving-code-in-the-self-initializing-quadratic-sieve-for-pypy
-
+##References: 
+##-I have borrowed many of the optimizations from here: https://stackoverflow.com/questions/79330304/optimizing-sieving-code-in-the-self-initializing-quadratic-sieve-for-pypy
 
 ###To build: python3 setup.py build_ext --inplace
 
@@ -354,58 +354,41 @@ def solve_quadratic_congruence(a, b, c, p):
 
             return [ret]
         y = tonelli(alpha, p)
-
         if y is None:
             return -1
-
         x1 = (y - b_div_2) % p
         x2 = (p - y - b_div_2) % p
-
         return [x1,x2]
 
-def lift_root(r,prime,n,quad_co,exp):
-    z_inv=modinv(quad_co,prime**exp)
-    c=(-quad_co*n)%prime**exp
-    temp_r=r*quad_co
-    zz=2*temp_r
-    zz=pow(zz,-1,prime)
-    x=((c-temp_r**2)//prime)%prime
-    y=(x*zz)%prime
-    new_r=(temp_r+y*prime)%prime**exp
-    root2=(new_r*z_inv)%prime**exp
-    return root2        
+def lift_root(z,y,n, root, p, exp):
+    r =(z*root**2+root*y-n)%p**(exp+1)
+    deriv = 2*z*root+y
+    inv = modinv(deriv, p)
+    t = ((-r//p**exp)*inv)%p
+    new_root = (root+t*p**exp)%p**(exp+1)
+    return new_root
 
 def solve_roots(prime,n):
-    #to do: I can probably speed this up quite a bit more.. 
     hmap_p={}
     y=0
     while y < prime:
         k=1
         while k < prime and k < quad_sieve_size+1:
-            xl=solve_quadratic_congruence(1, y, -n*k, prime)
-
-                
-
-            
-            
-            if xl !=-1:
-                for x in xl:
-                    y2=y
-                    while y2 < prime**2:
-                        x2=x
-                        while x2 < prime**2:
-                           # print("x1: "+str(x)+" y: "+str(y)+" k: "+str(k)+" prime: "+str(prime))
-                            if (x2**2+y2*x2-n*k)%prime**2==0:
-            
-                                try:
-                                    c=hmap_p[str(x2)]
-                                    c.append([y2,k])
-                                except Exception as e:
-                                    c=hmap_p[str(x2)]=[[y2,k]]
-
-                            x2+=prime
-                        y2+=prime
-                
+            roots=solve_quadratic_congruence(1, y, -n*k, prime)
+            if roots == -1:
+                k+=1
+                continue
+            y2=y
+            while y2 < prime**2:
+                for root in roots:
+                    x = lift_root(1,y2,n*k,root,prime,1)
+                    if (x**2+y2*x-n*k)%prime**2==0:
+                        try:
+                            c=hmap_p[str(x)]
+                            c.append([y2,k])
+                        except Exception as e:
+                            c=hmap_p[str(x)]=[[y2,k]]
+                y2+=prime
             k+=1
         y+=1
     return hmap_p
@@ -415,10 +398,7 @@ def create_hashmap(n,primeslist):
     hmap=[]
     hmap2=[]
     while i < len(primeslist):
-
         hmap_p=solve_roots(primeslist[i],n)
-
-     #   solve_roots(primeslist[i],n)
         hmap.append(hmap_p)
         hmap2.append([])
         i+=1
@@ -684,16 +664,6 @@ def find_xy(primeslist,n,x,collected,z,lin):
         prime=collected[i][0]
         i+=1
     return xy
-
-def linear_shift(poly_val,x,y,n,mod):
-    ##To do: ignores z for now.. I'm not sure yet if I want to use it in the final algorithm. We'll see.
-    shift=poly_val/(x*mod)
-    shift=round(shift)
-    new_y=(y+shift*mod)
-    new_poly_val=x**2-new_y*x-n
-    if abs(new_poly_val)>abs(poly_val):
-        print("error, linear shift produced larger value: "+str(y)+" new_y: "+str(new_y)+" shift: "+str(shift)+" polyval: "+str(poly_val)+" new_poly_val: "+str(new_poly_val))
-    return new_poly_val,new_y,shift#,new_y_init,shift
 
 def retrieve(hmap,primeslist,x,lin):
     xy=x+lin
