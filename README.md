@@ -14,6 +14,8 @@ In addition there also probably is some linear algebra tricks to help select x+y
 
 Update: I'll add hensel's lifting lemma to solve_roots() tomorrow. Thats my goal for tomorrow (thursday). That should see a dramatic increase in computing the factor base. I havnt yet implemented hensel's lifting lemma for polynomials with non-zero linear coefficient... but it shouldn't be very hard, plus there is code examples online that do just that. I think once that is implemented, that part will probably be as optimized as can be math wise. Then after that I'll see coding wise what can be done there. Oh and also computing the results for different k values, I can probably derive those results like I do in CUDA_QS_Variant.. I dont need to do everything all over again there.
 
+Update: Added hensel's lifting and removed the hashmap in favor of 1d lists. Building the hashmap is still very slow. But it doesn't matter that much for now. Let me now make sure we select linear coefficients such that the polynomial value is as small as possible. Because there is no reason to do it random like we do now, when we can use it to generate small polynomial values..
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
