@@ -70,4 +70,4 @@ if __name__ == "__main__":
 
  #   s = pstats.Stats("Profile.prof")
  #   s.strip_dirs().sort_stats("time").print_stats()
-    QSv3_simd.main(keysize,workers,debug,base,key,lin_size,quad_size,sbase)
+    QSv3_simd.main(keysize,workers,debug,base,key,lin_size,quad_size)
