@@ -385,7 +385,7 @@ def solve_roots(prime,n):
                 y+=1
                 continue
             y2=y
-            while y2 < prime**2:
+            while y2 < prime:
                 for root in roots:
                     x = root#lift_root(1,y2,n*k,root,prime,1)
                   #  if prime == 3:
