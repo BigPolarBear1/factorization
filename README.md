@@ -16,6 +16,8 @@ Update: I'll add hensel's lifting lemma to solve_roots() tomorrow. Thats my goal
 
 Update: Added hensel's lifting and removed the hashmap in favor of 1d lists. Building hmap is still very slow. But it doesn't matter that much for now. Let me now make sure we select linear coefficients such that the polynomial value is as small as possible. Because there is no reason to do it random like we do now, when we can use it to generate small polynomial values..
 
+Update: Hmm. Let me do some thinking. The thing is, that k value (multiple of N for the constant), we dont care about its factorization. Hence we can use that to add or subtract N as much as we want, until eternity. Thats a useful tool. I should center my strategy around that. Then whats left is selecting an x and x+y, with a factorization that is know, which has enough hits in the precalculated datastructure (hmap) to garantuee a smooth. Let me do some thinking. Because this x and x+y can be huge values, we dont care, as long as they factorize.. as long for some k value, they have enough hits in hmap. And this k value can be anything and the factorization doesn't matter. Common. Its on the tip of my tongue now. Give me a day or two to work this out.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
