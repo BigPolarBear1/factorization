@@ -18,6 +18,8 @@ Update: Added hensel's lifting and removed the hashmap in favor of 1d lists. Bui
 
 Update: Hmm. Let me do some thinking. The thing is, that k value (multiple of N for the constant), we dont care about its factorization. Hence we can use that to add or subtract N as much as we want, until eternity. Thats a useful tool. I should center my strategy around that. Then whats left is selecting an x and x+y, with a factorization that is know, which has enough hits in the precalculated datastructure (hmap) to garantuee a smooth. Let me do some thinking. Because this x and x+y can be huge values, we dont care, as long as they factorize.. as long for some k value, they have enough hits in hmap. And this k value can be anything and the factorization doesn't matter. Common. Its on the tip of my tongue now. Give me a day or two to work this out.
 
+Update: You know, what I should do is find an x+y value, which has a large occurance in hmap, regardless of the k value. Because we can increase x to get the polynomial value closer to 0 if k is very large. Or visa-versa find an x with a large occurance and then increase x+y, which does give us more control. But either way, thats definitely a better approach then just the bruteforce way the code is doing and only taking into consideration k value < quad_size.. thats not really playing into the strengths of all the number theory we're using. Anyway, going to run in the dark in the wood. 
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
