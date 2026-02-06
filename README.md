@@ -14,6 +14,8 @@ Update: My head hurts. I'm going through some really intense depression these la
 
 Oh... and that would also scale well if we build the factor base for multiple k values. Thinking about it in terms of "what do I need to multiply x+y" by is definitely the best approach. 
 
+I have two friends, including my former manager who have gone dark on their cellphone. It causes a lot of anxiety, because I dont talk much to any of my friends anymore, and nobody also reaches out anymore. This world is starting to feel like a really shitty place. 
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
