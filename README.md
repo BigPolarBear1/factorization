@@ -16,6 +16,8 @@ Oh... and that would also scale well if we build the factor base for multiple k 
 
 I have two friends, including my former manager who have gone dark on their cellphone. It causes a lot of anxiety, because I dont talk much to any of my friends anymore, and nobody also reaches out anymore. This world is starting to feel like a really shitty place. 
 
+Barely slept. Just mentally crashed. Going to take a break from math today and work on some other research project (which I intend to sell). I have nothing in my life. I am broke. I cant find work. I'm 36 next month. My entire life, I worked like nothing else mattered and I have nothing to show for it. And I can either go into the woods and hang myself, or I can keep going, keep grinding... and thats what I have to do. I have people interested in buying my work, I just got to deliver now. Just one more time need that spark of creativity, unearth a new goldmine.. and make the right choices this time around (which means, not ever work for the corporate world ever again, bc they will take everything from you and the people who supported you). I'm not going to die like this. I'm not going to die without any dignity at rock bottom. I'm going to die alone in the arctic one day on a mad expedition. I'm not some fucking cunt. Just got to keep going and never give up.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
