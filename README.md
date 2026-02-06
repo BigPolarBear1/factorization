@@ -12,6 +12,8 @@ So we can use x+y to linearly shift the polynomials value. The PoC that I just u
 
 Update: My head hurts. I'm going through some really intense depression these last few days. If I set x+y to be 1 (or whatever), then I can calculate by how much I need to multiply it to get a specific residue for any mod p. So basically that transforms it into finding some multiplier such that the result is a specific x+y such that we know that combined with x, the polynomial will generate a value divisible by p. That reduces it to finding a multiplier that I can factor and which occurs for enough primes. That allows me to sieve by multiplier. Which is closer to what I'm looking for. 
 
+Oh... and that would also scale well if we build the factor base for multiple k values. Thinking about it in terms of "what do I need to multiply x+y" by is definitely the best approach. 
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
