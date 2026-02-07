@@ -18,6 +18,11 @@ So we can have large linear coefficients if we set start_xy to a big value. As l
 So first things first... solve_roots also needs to calculate the quadratic coefficients. Then we can just quickly add a loop for the quadratic coefficients to the PoC to establish a very first rough draft, then go from there and improve things.
 It was good I took a break yesterday.. it really does give some more perspective to take a step back for a day. You know, the thing I hate the most, is the absolute silence.. I have either lost my mind, and people think I'm crazy and nobody wants to talk to me anymore.. or I have my breakthrough, and people know it, and they are freaking out because if true, it would literally be one of the biggest disasters in the internet's history.
 
+TO DO: 
+
+1. ADD QUADRATIC COEFFICIENTS TO THE POC AGAIN, BECAUSE ITS THE COMBINATION WITH THE LINEAR COEFFICIENT THAT IS GOING TO GIVE US SUPERIOR CONTROL OVER THE SIZE OF SMOOTH CANDIDATES!!!!!!!!!!!
+2. DISSAPPEAR INTO THE ARCTIC BC HUMANS ARE CUNTS AND YOU CAN ALL GO TO HELL.
+
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
