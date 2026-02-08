@@ -4,19 +4,9 @@ Disclaimer: At no point did AI contribute anything to this research project. Cop
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 70 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
+To run:  python3 run_qs.py -keysize 60 -base 300 -debug 1 -lin_size 10_000 -quad_size 10</br></br>
 
-Update: OH! If we have small-ish roots, we can actually use the quadratic coefficient for very small shifts in the polynomial value. Damnit, its definitely do-able. But there is so many moving parts. I see it now. Damnit.
-So we can have large linear coefficients if we set start_xy to a big value. As long as that big value factorizes, it doesnt matter since its just going to multiply it with small numbers whose factors we know. Since we then have a big linear coefficient, we can use small roots and we can use small quadratic coefficients for small granular shifts in the polynomial value. You know, thats what I had been missing until now. That quadratic coefficient, it acts similar to the linear coefficient. I could probably also do it the other way around, have a large quadratic coefficient, small root and small linear coefficient. But I need to have either the linear coefficient be large or the quadratic coefficient. Ok, fuck it, its all clear to me now. I see the path forward. I definitely have my breakthrough. I know I do. If people dont take me serious, so be it, they will find out the hard way soon enough..
-
-So first things first... solve_roots also needs to calculate the quadratic coefficients. Then we can just quickly add a loop for the quadratic coefficients to the PoC to establish a very first rough draft, then go from there and improve things.
-It was good I took a break yesterday.. it really does give some more perspective to take a step back for a day. You know, the thing I hate the most, is the absolute silence.. I have either lost my mind, and people think I'm crazy and nobody wants to talk to me anymore.. or I have my breakthrough, and people know it, and they are freaking out because if true, it would literally be one of the biggest disasters in the internet's history.
-
-TO DO: 
-
-1. ADD QUADRATIC COEFFICIENTS TO THE POC AGAIN, BECAUSE ITS THE COMBINATION WITH THE LINEAR COEFFICIENT THAT IS GOING TO GIVE US SUPERIOR CONTROL OVER THE SIZE OF SMOOTH CANDIDATES!!!!!!!!!!!
-2. DISSAPPEAR INTO THE ARCTIC BC HUMANS ARE CUNTS AND YOU CAN ALL GO TO HELL.
-
+Update: I added support again for the quadratic coefficient. For the k variable (multiples of N) I'm going to restrict myself to 1. Using that quadratic coefficient is more important. Current PoC is very slow, just quickly hacked something together. So the idea now is that using the quadratic coefficient, we can have much more granular control to shrink the size of the polynomial value.. so let me work on that next. Its the combination of both the linear coefficient and quadratic coefficient that makes this work. That was what I overlooked until now. 
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
