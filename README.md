@@ -17,6 +17,10 @@ Update: I want to experiment with something really quick. What if I do this:
 Then I have the factorization of x as one part in my linear algebra step, the factorization of the polynomial value as one part and then the jacobi symbols for zx+y. 
 I know I've been trying to find that link to NFS for a while... let me try this again. I really just need to find a way to substitute one part of this entire setup with jacobi symbols... fuck it, I'll make this my goal for next week. 
 
+Oh yea.. you know since zx+y basically represents another root for a quadratic with the sign flipped on the linear coefficient..  I should be able to get jacobi symbols out of that. Ah fuck it, its definitely possible. I substitute zx+y with jacobi symbols (or some other part of this setup) and within a day I'll have an algorithm setting records. 
+
+Anyway, I'll begin tomorrow. 
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
