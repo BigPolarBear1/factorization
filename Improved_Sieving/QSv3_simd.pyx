@@ -380,7 +380,7 @@ def solve_roots(prime,n):
     while k < prime and k < quad_sieve_size+1:
         y=0
         while y < prime:
-            roots=solve_quadratic_congruence(1, y, -n*k, prime)
+            roots=solve_quadratic_congruence(k, y, -n, prime)
             if roots == -1:
                 y+=1
                 continue
@@ -390,8 +390,8 @@ def solve_roots(prime,n):
                     x = root#lift_root(1,y2,n*k,root,prime,1)
                   #  if prime == 3:
                       #  print("roots: "+str(roots)+" y: "+str(y2)+" k: "+str(k)+" x: "+str(x))
-                    if (x**2+y2*x-n*k)%prime==0:#**2==0: ##To do: Bug here if we have a single root from solve_quadratic_congruence..
-                        hmap_p[k-1][x]=x+y2
+                    if (k*x**2+y2*x-n)%prime==0:#**2==0: ##To do: Bug here if we have a single root from solve_quadratic_congruence..
+                        hmap_p[k-1][x]=(k*x)+y2
                 y2+=prime
             y+=1
         k+=1
@@ -669,8 +669,8 @@ def find_xy(primeslist,n,x,collected,z,lin):
         i+=1
     return xy
 
-def retrieve(hmap,primeslist,x,lin):
-    xy=x+lin
+def retrieve(hmap,primeslist,x,lin,n):
+
     collected=[1]*(quad_sieve_size+1)
     mult_list=[]
     interval=array.array("i",[0]*lin_sieve_size)
@@ -685,9 +685,15 @@ def retrieve(hmap,primeslist,x,lin):
         log=round(math.log2(prime))
         c=1
         while c <  len(hmap[i])+1:
-            if xy%prime !=0:
-                mul=solve_lin_con(xy,hmap[i][c-1][x%prime],prime)
-                t=mul
+            z=c
+            xy=(z*x)+lin
+            if (z*x)%prime !=0 and xy%prime !=0:
+                mul=solve_lin_con(xy,hmap[i][c-1][(x)%prime],prime)
+                t=mul   
+                y=(xy*mul)-x*z
+                if (z*x**2+y*x-n)%prime !=0:
+                    print("fatal error: "+str(z)+" p: "+str(prime)+" x: "+str(x))
+                    sys.exit()
                 while t < lin_sieve_size:
                     mult_list[c-1][t]+=log
                     t+=prime
@@ -737,11 +743,11 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
     primelist.insert(0,2) ##To do: remove when we fix lifting for powers of 2
     primelist.insert(0,-1)
     print("[i]Filtering Quadratic Coefficients (quad_size) (to do: can be saved to disk for re-use)")
-    valid_quads,valid_quads_factors,qival=filter(primelist_f,n,1,quad_sieve_size)
+    valid_quads,valid_quads_factors,qival=filter(primelist_f,n,1,quad_sieve_size+1)
     print("[i]Filtering interval indices (lin_size) (to do: can be saved to disk for re-use)")
-    start=1#round(n**0.35)
+    start=round(n**0.10)
 
-    valid_ind,valid_ind_factors,lival=filter(primelist_f,n,1,lin_sieve_size*2)
+    valid_ind,valid_ind_factors,lival=filter(primelist_f,n,1,lin_sieve_size+1)
     print("[i]Entering attack loop")
     smooths=[]
     coefficients=[]
@@ -779,86 +785,95 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
        #     col.append(hmap[idx])
        #     i+=1
 
-        zi=0
-        while zi < 1:
-          
-            z=valid_quads[zi]
-            i=0
-            while i < 1000_000:
-                x=(start+i)**2#new_mod*i#x1+i 
-                start_xy=1
-                start_y=start_xy-x 
-                mult_list=retrieve(hmap,primeslist,x,start_y)          
-                q=0
-                while q < len(mult_list):  
-                    o=1
-                    while o < lin_sieve_size:
-                        k=q+1
-                        if mult_list[q][o]<((round(math.log2(k))+keysize)//2) or lival[o-1] !=1:
-                            o+=1
-                            continue
+        i=1
+        while i < lin_sieve_size:
+            if lival[i-1] !=1:
+                i+=1
+                continue
+            x=i#(start+i)
+            start_xy=1
+            start_y=start_xy-x 
+            mult_list=retrieve(hmap,primeslist,x,start_y,n)          
+            q=0
+            while q < len(mult_list):  
+                if q not in valid_quads:
+                    q+=1
+                    continue
 
-                        y=(start_xy*o)-x
-                        x2=x+y
+                z=q+1
+                xy=start_y+x*z
+                local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(xy,primelist_f)
+                if value != 1:
+                    q+=1
+                    continue
+                o=1
+                while o < lin_sieve_size:
+                    k=1#q+1
 
-                        found=[]
-                        g=0
-                        total=1
-                        poly_val=(z*x2**2-y*x2)-n*(q+1)
+                    y=(xy*o)-(x*z)
+                   # y=(start_xy*o)-(x*z)
+                    poly_val=(z*x**2+y*x)-n*k
+                    if mult_list[q][o]<bitlen(poly_val)*0.8 or lival[o-1] !=1:
+                        o+=1
+                        continue
+                    
+
+   
+
+                    found=[]
+                    g=0
+                    total=1
+                    
                        
   
-                        if poly_val==0 or k ==0:
-                            o+=1
-                            continue
-                        local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(poly_val,primelist_f)
-                        if value == 1:
-                            disc1_squared=y**2+4*(n*k*z+(poly_val*z))
-                            disc1=math.isqrt(disc1_squared)
-                            if disc1**2 != disc1_squared:
-                                print("fatal error")
-
-                            poly_val2=(n*k*z+(poly_val*z))  #note: factorization for this is y+disc1 and y-disc1
-                            if poly_val2 != x*x2:
-                                print("fatal error")
-                            factors_part1=z*x
-                            factors_part2=z*x+y
-                            #if factors_part2 != x2:
-                            #    print("wtf")
-                            #    sys.exit()
-                            factors_part3=poly_val*z
-                            all_parts=factors_part1*factors_part2*factors_part3
-                            if all_parts != poly_val2*poly_val*z:
-                                print("fatal error")
-                            #   print(new_x)
-                            if (4*poly_val2)%((2*z*x))!=0:
-                                print("error")
-
-                            if (4*poly_val2)%(2*(z*x+y))!=0:
-                                print("error2")
-                            local_factors2, value2,seen_primes2,seen_primes_indexes2 = factorise_fast(poly_val2*poly_val*z,primelist_f)
-                            test=math.isqrt(value2)
-                            if value2 == 1 or test**2==value2:
-                                if poly_val*z not in coefficients and local_factors2 not in factors:
-                                    smooths.append(poly_val2*poly_val*z)
-                                    factors.append(local_factors2)
-                                    coefficients.append(poly_val*z)
-                                    sfound+=1
-                                    if g_debug == 1:
-                                        print("Smooths #: "+str(len(smooths))+" y: "+str(y)+" zx: "+str(factors_part1)+" zx2 "+str(x2)+" (poly_val*z): "+str(factors_part3)+" final smooth: "+str(all_parts)+" intrvl ind: "+str(o)+" Factors: "+str(local_factors2)+" k: "+str(k))#+" seen_primes: "+str(valid_ind_factors[o1]))#+" seen_primes2: "+str(seen_primes2))#+" test_poly_val: "+str(bitlen(test_poly_val))+" test_zxy: "+str(test_zxy)+" test_zxy_current: "+str(test_zxy_curent))
-                                    else: 
-                                        print("Smooths #: "+str(len(smooths)))
-                                    if sfound >base:
-                                        f1,f2=QS(n,primelist,smooths,coefficients,factors)
-                                        if f1 !=0:
-                                            sys.exit()
-                                        sfound=0
-                            else:
-                                print("FATAL ERROR, THIS ONE SHOULD NEVER FAIL BECAUSE z,x,x2 AND poly_val MUST FACTORIZE WHEN ARRIVING HERE:"+str(value2)+" k: "+str(k)+" poly_val: "+str(poly_val)+" o: "+str(o)+" xy: "+str(x2)+" x: "+str(x))
-                                sys.exit()
+                    if poly_val==0 or k ==0:
                         o+=1
-                    q+=1
-                i+=1
-            zi+=1
+                        continue
+                    local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(poly_val,primelist_f)
+                    if value == 1:
+                        disc1_squared=y**2+4*(n*k*z+(poly_val*z))
+                        disc1=math.isqrt(disc1_squared)
+                        if disc1**2 != disc1_squared:
+                            print("fatal error")
+
+                        poly_val2=(n*k*z+(poly_val*z))  #note: factorization for this is y+disc1 and y-disc1
+
+                        factors_part1=z*x
+                        factors_part2=z*x+y
+                        factors_part3=poly_val*z
+                        all_parts=factors_part1*factors_part2*factors_part3
+                        if all_parts != poly_val2*poly_val*z:
+                            print("fatal error")
+                        if (4*poly_val2)%((2*z*x))!=0:
+                            print("error")
+
+                        if (4*poly_val2)%(2*(z*x+y))!=0:
+                            print("error2")
+                        local_factors2, value2,seen_primes2,seen_primes_indexes2 = factorise_fast(poly_val2*poly_val*z,primelist_f)
+                        test=math.isqrt(value2)
+                        if value2 == 1 or test**2==value2:
+                            if poly_val*z not in coefficients and local_factors2 not in factors:
+                                smooths.append(poly_val2*poly_val*z)
+                                factors.append(local_factors2)
+                                coefficients.append(poly_val*z)
+                                sfound+=1
+                                if g_debug == 1:
+                                    print("Smooths #: "+str(len(smooths))+" y: "+str(y)+" zx: "+str(factors_part1)+" zx2 "+str(z*x+y)+" (poly_val*z): "+str(factors_part3)+" final smooth: "+str(all_parts)+" intrvl ind: "+str(o)+" Factors: "+str(local_factors2)+" z: "+str(z))#+" seen_primes: "+str(valid_ind_factors[o1]))#+" seen_primes2: "+str(seen_primes2))#+" test_poly_val: "+str(bitlen(test_poly_val))+" test_zxy: "+str(test_zxy)+" test_zxy_current: "+str(test_zxy_curent))
+                                else: 
+                                    print("Smooths #: "+str(len(smooths)))
+                                if sfound >base:
+                                    f1,f2=QS(n,primelist,smooths,coefficients,factors)
+                                    if f1 !=0:
+                                        sys.exit()
+                                    sfound=0
+                        else:
+                            print("FATAL ERROR, THIS ONE SHOULD NEVER FAIL BECAUSE z,x,x2 AND poly_val MUST FACTORIZE WHEN ARRIVING HERE:"+str(value2)+" k: "+str(k)+" poly_val: "+str(poly_val)+" o: "+str(o)+" x: "+str(x)+" xy: "+str(xy))
+                            sys.exit()
+
+                    o+=1
+                q+=1
+            i+=1
+
         return
     return      
 
