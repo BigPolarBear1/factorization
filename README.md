@@ -8,6 +8,15 @@ To run:  python3 run_qs.py -keysize 60 -base 300 -debug 1 -lin_size 10_000 -quad
 
 Update: I added support again for the quadratic coefficient. For the k variable (multiples of N) I'm going to restrict myself to 1. Using that quadratic coefficient is more important. Current PoC is very slow, just quickly hacked something together. So the idea now is that using the quadratic coefficient, we can have much more granular control to shrink the size of the polynomial value.. so let me work on that next. Its the combination of both the linear coefficient and quadratic coefficient that makes this work. That was what I overlooked until now. 
 
+Update: I want to experiment with something really quick. What if I do this:
+
+1. x must factorize
+2. the polynomial value must factorize
+3. zx+y we will just represent as jacobi symbols
+
+Then I have the factorization of x as one part in my linear algebra step, the factorization of the polynomial value as one part and then the jacobi symbols for zx+y. 
+I know I've been trying to find that link to NFS for a while... let me try this again. I really just need to find a way to substitute one part of this entire setup with jacobi symbols... fuck it, I'll make this my goal for next week. 
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
