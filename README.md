@@ -12,6 +12,8 @@ Update: Thinking about it some more.. I could just reduce the entire quadratic m
 
 Those events in 2023 and the hopelessness, social isolation and unemployement in the years after have permanently changed me as a person. And if I had the money, I would go live by myself in nature somewhere (preferably the arctic) and never interact with humans ever again. I would teach myself all the survival skills I need, and just quit the human world and be that mean fucker you dont want to come across. I have seen enough misery and ugliness in this shit world and I cant take it anymore.
 
+I'll try tomorrow to sieve everything mod m.. thats something i've tried earlier in my research, but I think with the way I'm doing it now, I may be able to actually pull it off. I'm struggling hard mentally. I wish I could just take a break from work and just run ultra marathons every day. Like just be in the woods all day running. I especially like the woods when its cold outside. Reminds me of my hikes in the arctic and scotland. Simpler times. But I cant. I have no future, I'm not getting any younger, I need to keep grinding. Sometimes it feels like all this shit is crushing my sanity, breaking me and the only thing I know what to do is to keep going, because the alternative is to go into the woods and hang myself. This world is so fucking shit man. 
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
