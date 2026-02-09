@@ -8,6 +8,8 @@ To run:  python3 run_qs.py -keysize 60 -base 500 -debug 1 -lin_size 10_000 -quad
 
 Update: Oops, so I replaced zx+y with jacobi symbols, but after running some further tests, this is working simply bc we are using small zx+y values, so we end up with lots of zx+y values of similar factorization.... and when that happens, yes, you can just use jacobi symbols. Being aware of this limitation does give me some clues... I guess zx+y should be mostly factors from the factor base. Let me do some experimenting to see what works and what doesn't work, then I can further develop this idea of using jacobi symbols.
 
+So I got something that works now.. even though it still has limitations I'm not happy with, but we can use it to analyse the exact conditions required for these jacobi symbols to work. Its a foothold.. I just know there is something there. Everything about this setup is so similar to what NFS is doing.. I just know I should be able to do something similar. 
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
