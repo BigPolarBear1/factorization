@@ -4,24 +4,15 @@ Disclaimer: At no point did AI contribute anything to this research project. Cop
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 60 -base 300 -debug 1 -lin_size 10_000 -quad_size 10</br></br>
+To run:  python3 run_qs.py -keysize 60 -base 500 -debug 1 -lin_size 10_000 -quad_size 10</br></br>
 
-Update: I added support again for the quadratic coefficient. For the k variable (multiples of N) I'm going to restrict myself to 1. Using that quadratic coefficient is more important. Current PoC is very slow, just quickly hacked something together. So the idea now is that using the quadratic coefficient, we can have much more granular control to shrink the size of the polynomial value.. so let me work on that next. Its the combination of both the linear coefficient and quadratic coefficient that makes this work. That was what I overlooked until now. 
+Update: Euhm, what the fok? I replaced the factorization of zx+y with jacobi symbols. And this time the amount of jacobi symbols scales with the size of the the factor base (-base) where-as with all my past attempts it scaled exponentially with the keysize. So wtf, this is working now.
 
-Update: I want to experiment with something really quick. What if I do this:
+The uploaded PoC showcases this, its quickly hacked together though. Its just using jacobi symbols instead of factorizing zx+y. 
 
-1. x must factorize
-2. the polynomial value must factorize
-3. zx+y we will just represent as jacobi symbols
+There may even be a way to reduce the amount of required jacobi symbols, and do something like NFS, use finite fields to construct the solution, although if they have to be the size of the factor base, its really not  a big deal.
 
-Then I have the factorization of x as one part in my linear algebra step, the factorization of the polynomial value as one part and then the jacobi symbols for zx+y. 
-I know I've been trying to find that link to NFS for a while... let me try this again. I really just need to find a way to substitute one part of this entire setup with jacobi symbols... fuck it, I'll make this my goal for next week. 
-
-Oh yea.. you know since zx+y basically represents another root for a quadratic with the sign flipped on the linear coefficient..  I should be able to get jacobi symbols out of that. Ah fuck it, its definitely possible. I substitute zx+y with jacobi symbols (or some other part of this setup) and within a day I'll have an algorithm setting records. 
-
-Anyway, I'll begin tomorrow. 
-
-Update: struggling big time with depression. Its hard to keep going. Its been 3 years now. Just grinding out factorization. Having no income. No job oppurtunities, nobody who reaches out anymore. Social isolation. And I just feel hate and rage. For everything that has happened. If someone could arrange a job in China, I would go. As long as I kow it is legit, and not potentially one of those infosec stalkers harassing and trolling me (fucking losers btw). Anyway.. I think I can do it now, use jacobi symbols... the moment I succeed, this nightmare will be over and I can get a good job in Asia, because I sure as hell want nothing to do with these fucking western losers. Fucking elitist losers. If I ever meet western infosec people, I will end them. And If I ever meet microsoft people, I will also end them. Nobody did or said anything when they came after my manager with lies, the only person in this shit industry who ever supported me and believed in me. Fuck them all. I hope everyone in western tech just drops dead.
+Damnit, I am stressed. Going to take a break and go for a run first... after that I'll clean up the PoC and double check everything to make sure these results are actually legit and I'm not accidently cheating somewhere in my PoC.
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
