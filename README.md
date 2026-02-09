@@ -6,15 +6,7 @@ Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 60 -base 500 -debug 1 -lin_size 10_000 -quad_size 10</br></br>
 
-Update: Euhm, what the fok? I replaced the factorization of zx+y with jacobi symbols. And this time the amount of jacobi symbols scales with the size of the the factor base (-base) where-as with all my past attempts it scaled exponentially with the keysize. So wtf, this is working now.
-
-The uploaded PoC showcases this, its quickly hacked together though. Its just using jacobi symbols instead of factorizing zx+y. 
-
-There may even be a way to reduce the amount of required jacobi symbols, and do something like NFS, use finite fields to construct the solution, although if they have to be the size of the factor base, its really not  a big deal.
-
-Damnit, I am stressed. Going to take a break and go for a run first... after that I'll clean up the PoC and double check everything to make sure these results are actually legit and I'm not accidently cheating somewhere in my PoC.
-
-Bad day for western cryptologists everywhere. Lol. Get destroyed by a polar bear losers.
+Update: Oops, so I replaced zx+y with jacobi symbols, but after running some further tests, this is working simply bc we are using small zx+y values, so we end up with lots of zx+y values of similar factorization.... and when that happens, yes, you can just use jacobi symbols. Being aware of this limitation does give me some clues... I guess zx+y should be mostly factors from the factor base. Let me do some experimenting to see what works and what doesn't work, then I can further develop this idea of using jacobi symbols.
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
