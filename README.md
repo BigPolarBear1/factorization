@@ -21,6 +21,8 @@ Oh yea.. you know since zx+y basically represents another root for a quadratic w
 
 Anyway, I'll begin tomorrow. 
 
+Update: struggling big time with depression. Its hard to keep going. Its been 3 years now. Just grinding out factorization. Having no income. No job oppurtunities, nobody who reaches out anymore. Social isolation. And I just feel hate and rage. For everything that has happened. If someone could arrange a job in China, I would go. As long as I kow it is legit, and not potentially one of those infosec stalkers harassing and trolling me (fucking losers btw). Anyway.. I think I can do it now, use jacobi symbols... the moment I succeed, this nightmare will be over and I can get a good job in Asia, because I sure as hell want nothing to do with these fucking western losers. Fucking elitist losers. If I ever meet western infosec people, I will end them. And If I ever meet microsoft people, I will also end them. Nobody did or said anything when they came after my manager with lies, the only person in this shit industry who ever supported me and believed in me. Fuck them all. I hope everyone in western tech just drops dead.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
