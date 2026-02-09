@@ -10,6 +10,8 @@ Update: Oops, so I replaced zx+y with jacobi symbols, but after running some fur
 
 So I got something that works now.. even though it still has limitations I'm not happy with, but we can use it to analyse the exact conditions required for these jacobi symbols to work. Its a foothold.. I just know there is something there. Everything about this setup is so similar to what NFS is doing.. I just know I should be able to do something similar. 
 
+Update: You know, maybe rather then generating a root and then trying different coefficients.. perhaps it would make more sense to do it the other way around. Generate coefficients and then just sieve the roots. That might make it easier to ensure zx+y factorizes. Let me go for a run and try some things this evening. I'm not entirely sure if I'll end up using jacobi symbols. Lets see.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
