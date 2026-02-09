@@ -14,6 +14,8 @@ There may even be a way to reduce the amount of required jacobi symbols, and do 
 
 Damnit, I am stressed. Going to take a break and go for a run first... after that I'll clean up the PoC and double check everything to make sure these results are actually legit and I'm not accidently cheating somewhere in my PoC.
 
+Bad day for western cryptologists everywhere. Lol. Get destroyed by a polar bear losers.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
