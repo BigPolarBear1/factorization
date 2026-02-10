@@ -14,6 +14,21 @@ Those events in 2023 and the hopelessness, social isolation and unemployement in
 
 I'll try tomorrow to sieve everything mod m.. thats something i've tried earlier in my research, but I think with the way I'm doing it now, I may be able to actually pull it off. I'm struggling hard mentally. I wish I could just take a break from work and just run ultra marathons every day. Like just be in the woods all day running. I especially like the woods when its cold outside. Reminds me of my hikes in the arctic and scotland. Simpler times. But I cant. I have no future, I'm not getting any younger, I need to keep grinding. Sometimes it feels like all this shit is crushing my sanity, breaking me and the only thing I know what to do is to keep going, because the alternative is to go into the woods and hang myself. This world is so fucking shit man. 
 
+Update: Oh yea, I just remembered something, this thing about using the polynomial value as modulus that I had found a month ago:
+
+So if N = 4387:
+
+We create the following discriminants for polynomial values, 0, 65,128,189,248: </br>
+
+148^2-4\*(4387+248) = 58^2 and 66^2 = 58^2 mod 248</br>
+148^2-4\*(4387+189) = 60^2 and 66^2 = 60^2 mod 189</br>
+148^2-4\*(4387+128) = 62^2 and 66^2 = 62^2 mod 128</br>
+148^2-4\*(4387+65) = 64^2 and 66^2 = 64^2 mod 65</br>
+148^2-4\*(4387) = 66^2</br>
+
+This is actually quite interesting. There is definitely a way to work mod m ... and do something similar to NFS. Fuck it, lets go hard on this tomorrow. So close to figuring it out now. I'm not going to quit right before a big breakthrough. lol. I know that is what people want.. but they can just fucking pay me for my work if they want me to stop putting shit on github.
+
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
