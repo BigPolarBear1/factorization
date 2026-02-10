@@ -28,6 +28,7 @@ We create the following discriminants for polynomial values, 0, 65,128,189,248: 
 
 This is actually quite interesting. There is definitely a way to work mod m ... and do something similar to NFS. Fuck it, lets go hard on this tomorrow. So close to figuring it out now. I'm not going to quit right before a big breakthrough. lol. I know that is what people want.. but they can just fucking pay me for my work if they want me to stop putting shit on github.
 
+Update: Oh, something just lit up in my head. Let me get some progress on this tomorrow now. I'm pretty sure I know how it can be done. Using the polynomial value as modulus, that is indeed the correct intuition.. because modulo the polynomial value, the discriminant is aligned with N. Yea yea yea... easy, I got this. 
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
