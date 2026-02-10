@@ -6,7 +6,7 @@ Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 60 -base 500 -debug 1 -lin_size 10_000 -quad_size 10</br></br>
 
-Update: Wait wait, just had an interesting thought. So the uploaded PoC finds a  square for the polynomial value and a square for zx*(zx+y). Maybe I can further simplify zx*(zx+y). What if we just use a single x for the entire run of the algorithm? Thats what NFS does too. Can I then somehow reduce it to zx+y instead of zx*(zx+y)? So that we just find a square with zx+y like NFS does? Actually, using the same root, that would be pretty close to my earlier writings in the paper.. where we have to different coefficients with a shared root and using the linear coefficients to take the GCD. Oh damn. I think I missed something obvious.... 
+Update: Bah. Trying to figure out how to best sieve this is giving me an headache. Let me just modulo reduce the entire thing with a large prime and see if i can still get it to work. Then I can go from there. 
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
