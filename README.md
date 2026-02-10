@@ -8,7 +8,7 @@ To run:  python3 run_qs.py -keysize 60 -base 500 -debug 1 -lin_size 10_000 -quad
 
 Update: Ergh. I had an idea. Actually, maybe I can just drop the N in zx^2+y\*x-N. Because that z also encodes multiples of N. Let me do some thinking. Too many ideas today. I'll go for a run. 
 
-Dropping the N in zx^2+y\*x-N so we just sieve with zx^2+y\*x is by far the best idea I've had in weeks. So I'm going to focus on that exclusively now. I dont see why it wouldnt be possible since z also encodes multiples of N. I just got to make sure all the residues of my roots and linear coefficient are correct by using the hashmap with the factorization of the polynomial value. I suddenly have this feel of "And just like that, it suddenly all fell into place".. ergh... I'll go for a run first... got to get my miles in.
+Dropping the N in zx^2+y\*x-N so we just sieve with zx^2+y\*x is by far the best idea I've had in weeks. So I'm going to focus on that exclusively now. I dont see why it wouldnt be possible since z also encodes multiples of N. I just got to make sure all the residues of my roots and linear coefficient are correct by using the hashmap with the factorization of the polynomial value. I suddenly have this feeling of "And just like that, it suddenly all fell into place".. ergh... I'll go for a run first... got to get my miles in.
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
