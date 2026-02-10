@@ -6,7 +6,7 @@ Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 60 -base 500 -debug 1 -lin_size 10_000 -quad_size 10</br></br>
 
-Update: Bah. Trying to figure out how to best sieve this is giving me an headache. Let me just modulo reduce the entire thing with a large prime and see if i can still get it to work. Then I can go from there. 
+Update: Ergh. I had an idea. Actually, maybe I can just drop the N in zx^2+y*x-N. Because that z also encodes multiples of N. Let me do some thinking. Too many ideas today. I'll go for a run. 
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
