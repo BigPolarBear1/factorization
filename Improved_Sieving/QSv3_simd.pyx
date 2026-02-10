@@ -36,7 +36,7 @@ workers=1 #max amount of parallel processes to use
 quad_co_per_worker=1 #Amount of quadratic coefficients to check. Keep as small as possible.
 base=1_000
 small_base=1000
-qbase=10
+qbase=1
 quad_sieve_size=10
 g_debug=0 #0 = No debug, 1 = Debug, 2 = A lot of debug
 g_lift_lim=0.5
@@ -160,44 +160,52 @@ def gcd(a,b): # Euclid's algorithm ##To do: Use a version without recursion?
     else:
         return gcd(b,a)
         
-def QS(n,factor_list,sm,xlist,flist):#,jsymbols,testl,primeslist2,disc1_squared_list):#,disc_sr_list,pval_list,pflist):
+def QS(n,factor_list,sm,xlist,flist,xy_list,xy_f_list,x_list,x_f_list,primeslist2):#,jsymbols,testl,primeslist2,disc1_squared_list):#,disc_sr_list,pval_list,pflist):
     g_max_smooths=base+2#+qbase
     if len(sm) > g_max_smooths*10000000: 
         del sm[g_max_smooths:]
         del xlist[g_max_smooths:]
         del flist[g_max_smooths:]  
-    M2 = build_matrix(factor_list, sm, flist)#,pflist)
+    M2 = build_matrix(factor_list, sm, flist,xy_f_list,x_f_list,primeslist2)#,pflist)
     null_space=solve_bits(M2,factor_list,len(sm))
-    f1,f2=extract_factors(n, sm, xlist, null_space)#,disc_sr_list,pval_list,pflist)
+    f1,f2=extract_factors(n, sm, xlist, null_space,xy_list,x_list)#,disc_sr_list,pval_list,pflist)
     if f1 != 0:
         print("[SUCCESS]Factors are: "+str(f1)+" and "+str(f2))
         return f1,f2   
    # print("[FAILURE]No factors found")
     return 0,0
 
-def extract_factors(N, relations, roots, null_space):#,disc_sr_list,pval_list,pflist):
+def extract_factors(N, relations, roots, null_space,xy_list,x_list):#,disc_sr_list,pval_list,pflist):
     n = len(relations)
     for vector in null_space:
         prod_left = 1
         prod_right = 1
         pval=1
         disc_sr=1
+        xy=1
+        x=1
         for idx in range(len(relations)):
             bit = vector & 1
             vector = vector >> 1
             if bit == 1:
                 prod_left *= roots[idx]
                 prod_right *= relations[idx]
-               # print("adding to smooth:  "+str(relations[idx]))
+             #   xy*=xy_list[idx]
+                x*=x_list[idx]
+                print("polyval:  "+str(relations[idx])+" disc constant "+str(x_list[idx]))
             idx += 1
-        sqrt_right = math.isqrt(prod_right)
-        sqrt_left = prod_left
+        prod_right=x
+        sqrt_right = math.isqrt(x)
+        sqrt_left = math.isqrt(prod_left)#prod_left
+        if sqrt_left**2 != prod_left:
+            print("horrible error")
+        print(" polyval sqrt: "+str(sqrt_left)+" disc constant sqrt: "+str(sqrt_right))#+" zx*zxy: "+str(x))
         ###Debug shit, remove for final version
-        sqr1=prod_left**2%N 
+        sqr1=prod_left%N 
         sqr2=prod_right%N
         if sqrt_right**2 != prod_right:
             print("not a square in the integers")
-            time.sleep(10000)
+         #   time.sleep(10000)
 
         if sqr1 != sqr2:
             print("ERROR ERROR")
@@ -252,17 +260,37 @@ def solve_bits(matrix,factor_base,length):
             break
     return nulls
 
-def build_matrix(factor_base, smooth_nums, factors):#,pflist):
+def build_matrix(factor_base, smooth_nums, factors,xy_f_list,x_f_list,primeslist2):#,pflist):
     fb_map = {val: i for i, val in enumerate(factor_base)}
 
     ind=1
 
-    M2=[0]*(base+2)#+2+qbase)
+    M2=[0]*((base+2)*2)#+qbase)#+2+qbase)
     for i in range(len(smooth_nums)):
         for fac in factors[i]:
             idx = fb_map[fac]
             M2[idx] |= ind
         ind = ind + ind       
+
+  #  offset=(base+2)-1
+  #  ind=1
+    
+ #   for i in range(len(xy_f_list)):
+ #       j=0
+ #       while j < len(xy_f_list[i]):
+ #           fac=xy_f_list[i][j]
+ #           if fac == -1 or fac ==0:
+ #               M2[j+offset] |= ind
+ #           j+=1
+ #       ind = ind + ind
+
+    offset=(base+2)-1
+    ind=1
+    for i in range(len(x_f_list)):
+        for fac in x_f_list[i]:
+            idx = fb_map[fac]
+            M2[idx+offset] |= ind
+        ind = ind + ind
     return M2
 
 @cython.profile(False)
@@ -738,6 +766,10 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
     primelist_f=copy.copy(primeslist)
     primelist_f.insert(0,len(primelist_f)+1)
     primelist_f=array.array('q',primelist_f)
+
+    primelist2_f=copy.copy(primeslist2)
+    primelist2_f.insert(0,len(primelist2_f)+1)
+    primelist2_f=array.array('q',primelist2_f)
     cdef Py_ssize_t size
     primelist=copy.copy(primeslist)
     primelist.insert(0,2) ##To do: remove when we fix lifting for powers of 2
@@ -745,7 +777,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
     print("[i]Filtering Quadratic Coefficients (quad_size) (to do: can be saved to disk for re-use)")
     valid_quads,valid_quads_factors,qival=filter(primelist_f,n,1,quad_sieve_size+1)
     print("[i]Filtering interval indices (lin_size) (to do: can be saved to disk for re-use)")
-    start=round(n**0.10)
+    start=round(n**0.25)
 
     valid_ind,valid_ind_factors,lival=filter(primelist_f,n,1,lin_sieve_size+1)
     print("[i]Entering attack loop")
@@ -755,7 +787,10 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
     jsymbols=[]
     testl=[]
     disc1_squared_list=[]
-
+    xy_list=[]
+    xy_f_list=[]
+    x_list=[]
+    x_f_list=[]
     x1=1
     y0=1
     o=1
@@ -764,7 +799,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
     too_close=5
     LOWER_BOUND_SIQS=1
     UPPER_BOUND_SIQS=4000
-    tnum=int(((n)**0.5) / lin_sieve_size)
+   # tnum=int(((n)**0.6) / lin_sieve_size)
     seen=[]
     threshold = int(math.log2((lin_sieve_size)*math.sqrt(abs(n))) - thresvar)
     if threshold < 0:
@@ -786,12 +821,13 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
        #     i+=1
 
         i=1
-        while i < lin_sieve_size:
-            if lival[i-1] !=1:
+        while i < 1000_0000_000:
+            local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(start+i,primelist_f)
+            if value != 1:
                 i+=1
                 continue
-            x=i#(start+i)
-            start_xy=1
+            x=start+i
+            start_xy=2**(round(keysize*0.60))
             start_y=start_xy-x 
             mult_list=retrieve(hmap,primeslist,x,start_y,n)          
             q=0
@@ -813,12 +849,13 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                     y=(xy*o)-(x*z)
                    # y=(start_xy*o)-(x*z)
                     poly_val=(z*x**2+y*x)-n*k
-                    if mult_list[q][o]<bitlen(poly_val)*0.8 or lival[o-1] !=1:
+
+                    if mult_list[q][o]<bitlen(poly_val)*0.6 or lival[o-1] !=1:
                         o+=1
                         continue
                     
 
-   
+                 #   print("checking")
 
                     found=[]
                     g=0
@@ -849,26 +886,43 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
 
                         if (4*poly_val2)%(2*(z*x+y))!=0:
                             print("error2")
-                        local_factors2, value2,seen_primes2,seen_primes_indexes2 = factorise_fast(poly_val2*poly_val*z,primelist_f)
+                        local_factors2, value2,seen_primes2,seen_primes_indexes2 = factorise_fast(poly_val*z,primelist_f)
                         test=math.isqrt(value2)
                         if value2 == 1 or test**2==value2:
-                            if poly_val*z not in coefficients and local_factors2 not in factors:
-                                smooths.append(poly_val2*poly_val*z)
+                            if poly_val*z not in coefficients:# and local_factors2 not in factors:
+                                smooths.append(poly_val*z)
                                 factors.append(local_factors2)
                                 coefficients.append(poly_val*z)
+                                symbols=[]
+                                r=0
+                                while r < len(primeslist2):
+                                    symbols.append(jacobi(z*x+y,primeslist2[r]))
+
+                                    r+=1
+
+                                local_factors4, value4,seen_primes4,seen_primes_indexes4 = factorise_fast(poly_val2,primelist_f)
+                                if value4 !=1:
+                                    print("super fatal error2")
+                                    sys.exit()
+                                xy_list.append(z*x+y)
+                                xy_f_list.append(symbols)
+                                x_list.append(poly_val2)
+                                x_f_list.append(local_factors4)
                                 sfound+=1
                                 if g_debug == 1:
                                     print("Smooths #: "+str(len(smooths))+" y: "+str(y)+" zx: "+str(factors_part1)+" zx2 "+str(z*x+y)+" (poly_val*z): "+str(factors_part3)+" final smooth: "+str(all_parts)+" intrvl ind: "+str(o)+" Factors: "+str(local_factors2)+" z: "+str(z))#+" seen_primes: "+str(valid_ind_factors[o1]))#+" seen_primes2: "+str(seen_primes2))#+" test_poly_val: "+str(bitlen(test_poly_val))+" test_zxy: "+str(test_zxy)+" test_zxy_current: "+str(test_zxy_curent))
                                 else: 
                                     print("Smooths #: "+str(len(smooths)))
-                                if sfound >base:
-                                    f1,f2=QS(n,primelist,smooths,coefficients,factors)
+                                if sfound >(base+2)*2:#+qbase:
+                                    f1,f2=QS(n,primelist,smooths,coefficients,factors,xy_list,xy_f_list,x_list,x_f_list,primeslist2)
                                     if f1 !=0:
                                         sys.exit()
                                     sfound=0
                         else:
                             print("FATAL ERROR, THIS ONE SHOULD NEVER FAIL BECAUSE z,x,x2 AND poly_val MUST FACTORIZE WHEN ARRIVING HERE:"+str(value2)+" k: "+str(k)+" poly_val: "+str(poly_val)+" o: "+str(o)+" x: "+str(x)+" xy: "+str(xy))
                             sys.exit()
+                   ## else:
+                     ##   print("wtf")
 
                     o+=1
                 q+=1
@@ -898,7 +952,7 @@ def get_primes(start,stop):
 
 @cython.profile(False)
 def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_size):
-    global key,keysize,workers,g_debug,base,key,quad_sieve_size,small_base,lin_sieve_size
+    global key,keysize,workers,g_debug,base,key,quad_sieve_size,small_base,lin_sieve_size,qbase
     key,keysize,workers,g_debug,base,quad_sieve_size,lin_sieve_size=l_key,l_keysize,l_workers,l_debug,l_base,l_quad_sieve_size,l_lin_sieve_size
     start = default_timer() 
 
@@ -926,6 +980,7 @@ def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_
     print("[i]Modulus length: ",bitlen(n))
     count = 0
     num=n
+   # qbase=base
     while num !=0:
         num//=10
         count+=1
