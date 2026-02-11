@@ -6,11 +6,21 @@ Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 60 -base 500 -debug 1 -lin_size 10_000 -quad_size 10</br></br>
 
-Update: Ergh. I had an idea. Actually, maybe I can just drop the N in zx^2+y\*x-N. Because that z also encodes multiples of N. Let me do some thinking. Too many ideas today. I'll go for a run. 
+Update: I was grinding some more numbers.
 
-Dropping the N in zx^2+y\*x-N so we just sieve with zx^2+y\*x is by far the best idea I've had in weeks. So I'm going to focus on that exclusively now. I dont see why it wouldnt be possible since z also encodes multiples of N. I just got to make sure all the residues of my roots and linear coefficient are correct by using the hashmap with the factorization of the polynomial value. I suddenly have this feeling of "And just like that, it suddenly all fell into place".. ergh... I'll go for a run first... got to get my miles in.
+For example if we have 20^2+33\*20-4387 = -3327
+We can rewrite this as: 20^2+33\*20+3327 = 4387
+Now the constant in the discriminant is calculated like this: 20^2+33\*20 = 1060
 
-Update: AHA! EUREKA! So you remember in the paper when we take the derivative to get the other linear coefficient, i.e: 2\*41+66 = 148. Now the thing about taking the derivative is that it drops the constant term, aka, it drops N. Yet, we can still check if the other linear coefficient produces has a valid mapping in the hashmap. Wait wait, I'm onto something here, heheheehehehehehehhehhee. And we also know that the linear coefficient and its derivative represent both of the squares when taking the discriminant. And the distance between both of these squares in the discriminant is influenced by the polynomial value of the full quadratic, so there is a relation there. Starting to become cohesive now. Tomorrow! Prepare yourselves! I am going to sieve factorization like nobody in the world has ever seen before! Aside from perhaps the nazi cryptologist who is seeing all his secrets evaporate bc the current american administration are shithead nazis. I piss on nazis. Always pretending to be tough. Come fight me you pussy cunts.
+And we see 33^2+4\*(4387-3327) = 73^2 where 4387-3327 = 1060 (obviously). 
+
+Now a polynomial of this format: x^2+33\*x+3327 is irreducible and we know x=20 produces N (4387).
+Since we have an irreducible polynomial we can apply number field sieve. 
+And as a matter of fact, this should also help predicting the factorization of polynomial values. 
+
+Ergh. 
+
+I hate myself right now. I should have seen this a year ago already. I absolutely hate myself right now. Time to get moving on this.
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
