@@ -24,6 +24,8 @@ I hate myself right now. I should have seen this a year ago already. I absolutel
 
 Update: Quickly added it to the bottom of chapter 8 in the paper. I already have some python code for the NFS algorithm.. so I'm going to move fast on this. All I wanted was for someone to take me serious. Nobody did. Even now, just silence. I cant find a job. I cant get anywhere in life. I'm going to finish my work now.. and when all this is over, I hope you people can sleep at night.
 
+You know, since I have a fairly good grasp of all the math I've spent 3 years figuring out.. I am also fairly confident that as I go into my final chapter of my research project, I can probably get the NFS algorithm to work using multiple quadratic polynomials.. so that we can switch polynomials if finding smooths becomes an issue. Ah, it will be easy. This will basically be my victory lap. Alright gays. You all knew this was coming, I hope you're ready now. Next time you see activity here, it will be with NFS added to the existing code. Or maybe I will give my non-nato friends a heads-up... it's fifty-fifty depending on my mood. I'm not in a great mood lately. Good luck shitheads.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
