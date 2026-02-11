@@ -4,26 +4,11 @@ Disclaimer: At no point did AI contribute anything to this research project. Cop
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 60 -base 500 -debug 1 -lin_size 10_000 -quad_size 10</br></br>
+To run:  python3 run_qs.py -keysize 50 -base 300 -debug 1 -lin_size 10_000 -quad_size 20</br></br>
+!!!! NFS related code is borrowed from: https://github.com/basilegithub/General-number-field-sieve-Python (note: Very impressively written, helped me big time, thanks)
 
-Update: I was grinding some more numbers.
+Update: I have really quickly copy pasted NFS into my algorithm. Just to set myself up to start performing some analysis and see how I can begin improving everything. I'll restrict myself to second degree polynomials for now, since that is what I'm familiar with. But either way, this works, but now to fun part begins.. properly integrating NFS into my findings completely. Not just find a single irreducable polynomial and call into NFS()... because that is just a bit lame. Anyway.. just uploaded my work in progress.. I'll begin uploading better version (less of a copy-paste butcher job) shortly...
 
-For example if we have 20^2+33\*20-4387 = -3327
-We can rewrite this as: 20^2+33\*20+3327 = 4387
-Now the constant in the discriminant is calculated like this: 20^2+33\*20 = 1060
-
-And we see 33^2+4\*(4387-3327) = 73^2 where 4387-3327 = 1060 (obviously). 
-
-Now a polynomial of this format: x^2+33\*x+3327 is irreducible and we know x=20 produces N (4387).
-Since we have an irreducible polynomial we can apply number field sieve. 
-And as a matter of fact, this should also help predicting the factorization of polynomial values. 
-
-UPDATE: I started integrating NFS into my PoC now. As part of that I also had a look at Kleinjung's polynomial selection method.
-And actually, I see the correlation with my own work. The step where we choose two polynomials whose resultant is N, that's basically our quadratic and zx+y. That's actually really great to have that correlation there. So I can very quickly produce polynomial pairs of the second degree to plug into NFS where we use the 2 polynomial variant. So next I will finish this code.. just use my code as a way to generate polynomial pairs.. after that I'll begin doing some analysis to see if I can use my work to improve the NFS algorithm. If not, no big deal... I'll gain an indepth understanding of NFS, now that I can relate it with my own findings, and in either case, that brings me a step closer to a breakthrough. I remember when I started, many people laughed at me. Especially people who had the privilege of higher education. But none of those people have what I have, and thats why I'm going to succeed.
-
-Its also funny my shithead stalkers have gone quiet. Guess my work isnt so funny now huh? Fucking shitheads. Infosec is literally mostly just stalkers and trolls. 
-
-I literally dont care. I'm never quitting. 3 years ago, I couldn't do basic algebra due to dropping out of highschool. Now I'm doing all of this. If people want my work they can pay me. But I'm not stopping. I dont care if I have to live in complete poverty and social isolation. I'm never quitting until I'm dead. I will succeed, I dont care, and when I do, all you fuckers will be living in my shadow. Hahahaha. Fuck you losers.
 
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
