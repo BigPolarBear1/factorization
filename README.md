@@ -23,6 +23,8 @@ And actually, I see the correlation with my own work. The step where we choose t
 
 Its also funny my shithead stalkers have gone quiet. Guess my work isnt so funny now huh? Fucking shitheads. Infosec is literally mostly just stalkers and trolls. 
 
+I literally dont care. I'm never quitting. 3 years ago, I couldn't do basic algebra due to dropping out of highschool. Now I'm doing all of this. If people want my work they can pay me. But I'm not stopping. I dont care if I have to live in complete poverty and social isolation. I'm never quitting until I'm dead. I will succeed, I dont care, and when I do, all you fuckers will be living in my shadow. Hahahaha. Fuck you losers.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
