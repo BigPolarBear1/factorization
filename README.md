@@ -22,6 +22,8 @@ Ergh.
 
 I hate myself right now. I should have seen this a year ago already. I absolutely hate myself right now. Time to get moving on this.
 
+Update: Quickly added it to the bottom of chapter 8 in the paper. I already have some python code for the NFS algorithm.. so I'm going to move fast on this. All I wanted was for someone to take me serious. Nobody did. Even now, just silence. I cant find a job. I cant get anywhere in life. I'm going to finish my work now.. and when all this is over, I hope you people can sleep at night.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
