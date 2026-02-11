@@ -21,6 +21,8 @@ And as a matter of fact, this should also help predicting the factorization of p
 UPDATE: I started integrating NFS into my PoC now. As part of that I also had a look at Kleinjung's polynomial selection method.
 And actually, I see the correlation with my own work. The step where we choose two polynomials whose resultant is N, that's basically our quadratic and zx+y. That's actually really great to have that correlation there. So I can very quickly produce polynomial pairs of the second degree to plug into NFS where we use the 2 polynomial variant. So next I will finish this code.. just use my code as a way to generate polynomial pairs.. after that I'll begin doing some analysis to see if I can use my work to improve the NFS algorithm. If not, no big deal... I'll gain an indepth understanding of NFS, now that I can relate it with my own findings, and in either case, that brings me a step closer to a breakthrough. I remember when I started, many people laughed at me. Especially people who had the privilege of higher education. But none of those people have what I have, and thats why I'm going to succeed.
 
+It also funny my shithead stalkers have gone quiet. Guess my work isnt so funny now huh? Fucking shitheads. Infosec is literally mostly just stalkers and trolls. 
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
