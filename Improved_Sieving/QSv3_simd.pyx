@@ -153,92 +153,6 @@ def generateKey(keySize):
     return (publicKey, privateKey,phi,p,q)
 ##END KEY GEN##
 
-# batch smooth test using a product tree
-# more efficient than testing for smoothness every candidate : should be prefered
-# Note that in this function, we test for smoothness abs(candidates), see QS.sieve_and_batch_smooth function
-# Source: https://cr.yp.to/factorization/smoothparts-20040510.pdf (Bernstein)
-    
-def batch_smooth_test(candidates, prod_primes, cst_1, cst_2, div):
-    L = len(candidates)
-    #print("candidates: "+str(candidates))
-    # compute the smallest e such that 2**(2**e) >= max(candidates), ie e = int(log2(log2(max(candidates)))
-    e = 0
-    tmp = 2
-    tmp_max = max([abs(candidate[1])//div for candidate in candidates] + [abs(candidate[3]) for candidate in candidates])
-    while tmp < tmp_max:
-        tmp = tmp*tmp
-        e += 1
-        
-    # build the product tree
-    tmp = [abs(candidate[1])//div for candidate in candidates] + [abs(candidate[3]) for candidate in candidates]
-    prod_tree = [tmp]
-    
-    while len(prod_tree[-1]) > 1:
-        line = [0]*(len(prod_tree[-1])>>1)
-
-        for i in range(1, len(prod_tree[-1]), 2):
-            tmp = prod_tree[-1][i]*prod_tree[-1][i-1]
-            if tmp <= prod_primes: line[i>>1] = tmp
-            else: line[i>>1] = prod_primes+1
-
-        if len(prod_tree[-1]) & 1: line.append(prod_tree[-1][-1])
-        prod_tree.append(line)
-    
-    # update the product tree by computing the adequate remainders
-
-    prod_tree[-1][0] = prod_primes%prod_tree[-1][0]
-    for i in range(len(prod_tree)-1):
-        for j in range(len(prod_tree[-i-1])-1):
-            prod_tree[-i-2][(j<<1)] = prod_tree[-i-1][j]%prod_tree[-i-2][j<<1]
-            prod_tree[-i-2][(j<<1)+1] = prod_tree[-i-1][j]%prod_tree[-i-2][(j<<1)+1]
-
-        tmp = len(prod_tree[-i-1])-1
-        prod_tree[-i-2][tmp<<1] = prod_tree[-i-1][tmp]%prod_tree[-i-2][tmp<<1]
-        if (tmp<<1)+1 < len(prod_tree[-i-2]):
-            prod_tree[-i-2][(tmp<<1)+1] = prod_tree[-i-1][tmp]%prod_tree[-i-2][(tmp<<1)+1]
-
-    # test for smoothness
-    smooth = [0]*L
-    for i in range(L):
-        tmp = 0
-        j_1, j_2 = prod_tree[0][i], prod_tree[0][L+i]
-        while (j_1 or j_2) and tmp < e:
-            j_1 = (j_1*j_1)%(abs(candidates[i][1]//div))
-            j_2 = (j_2*j_2)%abs(candidates[i][3])
-            tmp += 1
-
-        if not j_1 and not j_2: smooth[i] = [True, 1, 1, 1, 1]
-
-        else:
-            tmp_1 = (abs(candidates[i][1])//div)//math.gcd(abs(candidates[i][1]//div), j_1)
-            tmp_2 = abs(candidates[i][3])//math.gcd(abs(candidates[i][3]), j_2)
-            
-            if tmp_1 > 1 and tmp_2 > 1: smooth[i] = [False, 1, 1, 1, 1]
-
-            elif tmp_1 > 1:
-                if tmp_1 < cst_1:
-                    smooth[i] = [True, 1, tmp_1, 1, 1]
-                elif tmp_1 < cst_2 and fermat_primality(tmp_1):
-                    tmp_1 = pollard_rho(tmp_1)
-                    smooth[i] = [True, min(tmp_1), max(tmp_1), 1, 1]
-                else:
-                    smooth[i] = [False, 1, 1, 1, 1]
-
-            elif tmp_2 > 1:
-                if tmp_2 < cst_1:
-                    smooth[i] = [True, 1, 1, 1, tmp_2]
-                elif tmp_2 < cst_2 and fermat_primality(tmp_2):
-                    tmp_2 = pollard_rho(tmp_2)
-                    smooth[i] = [True, 1, 1, min(tmp_2), max(tmp_2)]
-                else:
-                    smooth[i] = [False, 1, 1, 1, 1]
-
-
-
-            else: smooth[i] = [False, 1, 1, 1, 1]
-            
-    return smooth
-
 # Naive smoothness test: trial division by every prime in the base  
 # Note that in this function, we test for smoothness (candidate) and not abs(candidate), see QS.sieve_and_smooth
 def trial(pair, primes, const1, const2, div):
@@ -524,38 +438,6 @@ def is_prime(n):
 # Returns true is the number is not prime
 def fermat_primality(n): return pow(2, n-1, n)-1
 
-def dickman(x, table):
-    k,res = math.ceil(x),0
-    delta = k-x
-    if k-1 > len(table): table = get_dickman_table(k)
-    tmp = 1
-    for i in range(len(table[k-2])):
-        res += table[k-2][i]*tmp
-        tmp *= delta
-
-    return res, table
-
-def get_dickman_table(k):
-    coeffs = [[1-math.log(2)]+[1/(i*(1<<i)) for i in range(1, 30)]]
-    for i in range(3, k+1):
-        new = [0]*30
-        for u in range(1, 30):
-            c = 0
-            for j in range(u): c += coeffs[-1][j]/(u*pow(i, u-j))
-            new[u] = c
-
-        c = 0
-        for j in range(1, len(new)): c += new[j-1]/(j+1)
-        new[0] = c/(i-1)
-        coeffs.append(new)
-
-    return coeffs
-    
-def my_norm(z):
-    if z.real == 0: return math.ceil(abs(z.imag))
-    if z.imag == 0: return math.ceil(abs(z.real))
-
-    return math.isqrt(math.ceil(abs(z.imag))**2 + math.ceil(abs(z.real))**2)+1
 
 def fac(n):
     res = 1
@@ -1761,25 +1643,7 @@ def roots(g, p):
 def quadratic_residue(poly, f, p):
     return power(poly, f, p, (pow(p, len(f)-1)-1)>>1)[0]
     
-def get_complex_roots(f):
-    rho = 0
-    for i in range(1, len(f)): rho += abs(f[i])
-    rho /= abs(f[0])
-    rho = max(1,rho)
-    d = len(f)-1
-    roots = []
-    for i in range(d): roots.append(rho*pow(math.cos(2*math.pi/d)+math.sin(2*math.pi/d)*1j, i))
-    next_roots = [None]*d
 
-    for _ in range(1000):
-        for i in range(d):
-            prod = f[0]
-            for k in range(d):
-                if k != i: prod *= (roots[i]-roots[k])
-            next_roots[i] = roots[i]-evaluate(f, roots[i])/prod
-        roots = [i for i in next_roots]
-    return roots
-    
 ## Operations between two polynomials
     
 def poly_prod(a, b):
@@ -1899,60 +1763,11 @@ def eval_F(x, y, f, d):
     tmp += f[d]*tmp2
 
     return tmp
-    
-def eval_G(x, y, m):
-    return x-y*m    
+
 ## NFS functions
 
-# This file contains all the functions required to do the polynomial selection step
-def minimise_Lnom(f, s, B, m0, m1):
-    k, res = 1, get_Lnorm(poly_prod(f,f),s,B)
-    while k > 0:
-        flag = False
-        F = shift(f, -k)
-        tmp = get_Lnorm(poly_prod(F, F), s, B)
-        if tmp < res:
-            res, f, k, flag, m0 = tmp, [i for i in F], k<<1, True, m0+k*m1
-
-        F = shift(f, k)
-        tmp = get_Lnorm(poly_prod(F, F), s, B)
-        if tmp < res:
-            res, f, k, flag, m0 = tmp, [i for i in F], k<<1, True, m0-k*m1
-        if not flag: k >>= 1
-
-    return f, m0
     
-def evaluate_polynomial_quality(f_x, B, m0, m1, primes):
-    _, s = get_sieve_region(f_x, B)
 
-    if len(f_x) > 2:
-
-        if (s*abs(f_x[-3])-abs(f_x[-2]))//m0 > 0:
-            f_x = root_sieve2(f_x, [m1,-m0], primes[:150], (s*abs(f_x[-3])-abs(f_x[-2]))//m0, (s*s*abs(f_x[-3])-abs(f_x[-1]))//m0)
-            _, s = get_sieve_region(f_x, B)
-            f_x, m0 = minimise_Lnom(f_x, s, B, m0, m1)
-
-        elif (s*abs(f_x[-2])-abs(f_x[-1]))//m0 > 0:
-            f_x = root_sieve(f_x, [m1,-m0], primes[:150], (s*abs(f_x[-2])-abs(f_x[-1]))//m0)
-            _, s = get_sieve_region(f_x, B)
-            f_x, m0 = minimise_Lnom(f_x, s, B, m0, m1)
-
-    M, s = get_sieve_region(f_x, B)
-    table = get_dickman_table(20)
-
-    alpha = alpha_score(f_x, primes[:350])
-    E_score = get_Escore(f_x, [m1, -m0], alpha[0], B, M, round(B/math.sqrt(s)), table)
-    E_score_2 = get_Epscore(f_x, [m1, -m0], alpha, B, M, round(B/math.sqrt(s)), table)
-    L_norm = get_Lnorm(poly_prod(f_x, f_x), s, B)
-
-    print("f(x) = "+str(f_x)+"    g(x) = "+str([m1, -m0]))
-    print("alpha = "+str(alpha[0]))
-    print("E-score = "+str(E_score))
-    print("E-score 2 = "+str(E_score_2))
-    print("L²-norm = "+str(L_norm))
-    print("skew = "+str(s)+"\n")
-    
-    return f_x, m0, M
     
 def get_sieve_region(f, B):
     F = poly_prod(f, f)
@@ -2004,138 +1819,6 @@ def get_Lnorm(F, s, B):
 
     return math.log(abs(res))/2
 
-def get_Escore(f, g, alpha, B, x_limit, y_limit, table):
-    n = 32
-    log_B = math.log(B)
-    
-    x, w = leggauss(n)  # nodes & weights on [-1, 1]
-    a, b = 0, math.pi
-    xm = 0.5 * (b - a) * x + 0.5 * (b + a)
-    wm = 0.5 * (b - a) * w
-
-    res = 0
-    for i in range(n):
-        angle = xm[i]
-        X = x_limit*math.cos(angle)
-        Y = (y_limit-1)*math.sin(angle)+1
-        res1, table = dickman((math.log(abs(eval_F(X, Y, f, len(f)-1)))-alpha)/log_B, table)
-        res2, table = dickman((math.log(abs(eval_F(X, Y, g, len(g)-1))))/log_B, table)
-        res += wm[i]*res1*res2
-
-    return res
-
-def get_Epscore(f, g, alpha, B, x_limit, y_limit, table):
-    k,l,c = alpha[1],alpha[2],alpha[3]
-
-    n = 16
-    log_B = math.log(B)
-
-    # Gauss–Legendre for mu in [c, c + 5c]
-    mu_nodes, mu_weights = leggauss(n)
-    a_mu, b_mu = c, 6*c
-    mu_x = 0.5*(b_mu-a_mu)*mu_nodes + 0.5*(b_mu+a_mu)
-    mu_w = 0.5*(b_mu-a_mu)*mu_weights
-
-    # Gauss–Legendre for theta in [0, π]
-    th_nodes, th_weights = leggauss(n)
-    a_th, b_th = 0, math.pi
-    th_x = 0.5*(b_th-a_th)*th_nodes + 0.5*(b_th+a_th)
-    th_w = 0.5*(b_th-a_th)*th_weights
-
-    res = 0
-    for i in range(n):
-        Y = non_central(k, l, mu_x[i])
-        for j in range(n):
-            angle = th_x[j]
-            X_eval = x_limit*math.cos(angle)
-            Y_eval = (y_limit-1)*math.sin(angle)+1
-            res1, table = dickman((math.log(abs(eval_F(X_eval, Y_eval, f, len(f)-1)))-(mu_x[i]-c))/log_B, table)
-            res2, table = dickman((math.log(abs(eval_F(X_eval, Y_eval, g, len(g)-1))))/log_B, table)
-            res += mu_w[i]*th_w[j]*res1*res2*Y
-
-    return res
-
-def alpha_score(f, primes):
-    E, F = 0, 0
-    evals = [0]*primes[-1]
-    tmp = [0]*len(f)
-    for j in range(len(f)): tmp[j] = evaluate(f, j)
-    for q in range(1, len(f)):
-        for k in range(len(f)-1, q-1, -1): tmp[k] -= tmp[k-1]
-
-    eval = tmp[0]
-    for k in range(primes[-1]):
-        evals[k] = eval
-        eval += tmp[1]
-        for q in range(1, len(f)-1): tmp[q] += tmp[q+1]
-
-    f_prime = get_derivative(f)
-    upto = len(f)+10
-    baseline_term = 0
-    for p in primes:
-        log_p = math.log(p)
-        baseline_term += log_p/(p-1)
-        Ep,Fp = 0,0
-        ramified_roots = []
-        ramified = False
-        for r in range(p):
-            if not evals[r]%p:
-                if not eval_mod(f_prime, r, p):
-                    ramified = True
-                    ramified_roots.append(r)
-                    Ep += 1/p
-                    Fp += 1/p
-                else:
-                    Ep += 1/(p-1)
-                    Fp += (p+1)/((p-1)**2)
-
-        if ramified:
-            tmp2 = p
-            for i in range(2, upto):
-                new = []
-                for r in ramified_roots:
-                    if not eval_mod(f, r, tmp2*p):
-                        for k in range(p): new.append(r+k*tmp2)
-                        Ep += 1/tmp2
-                        Fp += (2*i-1)/tmp2
-                tmp2 *= p
-                ramified_roots = new.copy()
-
-            Ep += len(ramified_roots)/(pow(p, upto-2)*(p-1))
-            Fp += len(ramified_roots)*(upto*upto+2*upto/(p-1)+(p+1)/((p-1)**2))/tmp2
-
-        if not f[0]%p:
-            frev = f[::-1]
-            fdrev = get_derivative(frev)
-            if eval_mod(fdrev,0,p):
-                Ep += 1/(p-1)
-                Fp += (p+1)/((p-1)**2)
-            else:
-                Ep += 1/p
-                Fp += 1/p
-                ramified_roots = [0]
-                tmp2 = p
-                for i in range(2, upto):
-                    new = []
-                    for r in ramified_roots:
-                        if not eval_mod(frev, r, tmp2*p):
-                            for k in range(p): new.append(r+k*tmp2)
-                            Ep += 1/tmp2
-                            Fp += (2*i-1)/tmp2
-                    tmp2 *= p
-                    ramified_roots = new.copy()
-
-                Ep += len(ramified_roots)/(pow(p, upto-2)*(p-1))
-                Fp += len(ramified_roots)*(upto*upto+2*upto/(p-1)+(p+1)/((p-1)**2))/tmp2
-                
-        tmpE, tmpF = p*Ep/(p+1), p*Fp/(p+1)
-        E += tmpE*log_p
-        F += (tmpF-tmpE*tmpE)*log_p*log_p
-        
-    k = 2*E-F/2
-    lbd = F/2-E
-    return E-baseline_term, k, lbd, baseline_term
-    
 def root_sieve(f, g, primes, U):
     array = [0]*(U<<1)
     for p in primes:
@@ -2158,36 +1841,6 @@ def root_sieve(f, g, primes, U):
 
     f[-1] += u*g[-1]
     f[-2] += u*g[-2]
-
-    return f
-
-def root_sieve2(f, g, primes, U, V):
-    array = [[0 for _ in range(V<<1)] for __ in range(U<<1)]
-    for p in primes:
-        k = 1
-        P = p
-        while P < primes[-1]:
-            for x in range(P):
-                eval1, eval2 = eval_mod(f, x, P), eval_mod(g, x, P)
-                for u in range(P):
-                    if eval2%p:
-                        v = -(u*x+eval1*invmod(eval2, P))%P
-                        for i in range((u+U)%P, len(array), P):
-                            for j in range((v+V)%P, len(array[0]), P): array[i][j] += math.log(p)/(pow(p, k-1)*(p+1))
-            k += 1
-            P *= p
-
-    max, maxu, maxv = array[0][0], 0, 0
-    for i in range(U<<1):
-        for j in range(V<<1):
-            if array[i][j] > max: max, maxu, maxv = array[i][j], i, j
-
-    u, v = maxu-U, maxv-V
-    print(u, v)
-
-    f[-1] += v*g[-1]
-    f[-2] += v*g[-2]+u*g[-1]
-    f[-3] += u*g[-2]
 
     return f
         
@@ -2231,24 +1884,6 @@ def initialize_3(n, f_x, f_prime, const1, leading_coeff):
         
     return Q, k
     
-def create_smooth_primes_base(B):
-    m = math.isqrt(B)+1
-    
-    liste = [True, False]*(B>>1)
-    base=[2]
-    
-    for k in (k for k in range (3, m, 2) if liste[k-1]):
-        base.append(k)
-        for i in range (k*k, B, k<<1):
-            liste[i-1]=False
-
-    for k in (k for k in range (m, B) if liste[k-1]):
-        base.append(k)
-
-    return base 
-
-
-
 def coefficients(P):
     Pc = []
     for i in range(P.degree(), -1, -1):
@@ -2307,7 +1942,9 @@ def NFS(n,z,y,x,polyval,m1_a,primeslist):
     f_x=[z,y,-polyval]
     m0=-m1_a
     m1=z
-    f_x, m0, M = evaluate_polynomial_quality(f_x, B, m0, m1, primes)
+    M, s = get_sieve_region(f_x, B)
+    print("f(x) = "+str(f_x)+"    g(x) = "+str([m1, -m0]))
+  #  f_x, m0, M = evaluate_polynomial_quality(f_x, B, m0, m1, primes)
    # M=2000
     print("poly search completed, parameters : m0 = "+str(m0)+" ; m1 = "+str(m1)+" ; d = "+str(d)+" M: "+str(M))
     leading_coeff = f_x[0]
@@ -3256,6 +2893,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                                 rx=resultant(p1,q1)
                               #  print("rx: ",rx)
                                 if rx%n == 0:# and z > 10:
+                                    print("[i]Calling into NFS with z: "+str(z)+" y: "+str(y)+" x: "+str(x)+" poly_val: "+str(poly_val)+" z*x+y: "+str(m1)+" resultant: "+str(rx))
                                     NFS(n,z,y,x,poly_val,m1,primelist)
                                 else:
                                     print("error")
