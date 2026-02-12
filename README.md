@@ -1,7 +1,5 @@
 Disclaimer: At no point did AI contribute anything to this research project. Copilot can't even calculate basic congruences without making mistakes. People who think AI can do novel math research are delusional. I did not use AI for the paper, and I did not use AI for any of the code. I attacked this problem, from the very basics 3 years ago, slowly burrowing deeper and deeper. I know people will say lies because they will never let a person like me win. Not when it comes to something as important as this. Because that would literally go against all the bullshit propaganda the far right has been spreading for years. Also, this could have been avoided. Its a disaster of your own making. 
 
-Disclaimer2: The initial findings of reprensenting polynomial roots as residue of p and q mod N and the linear coefficient as p+q .. that I achieved through analysis by literally building up my understanding from the ground up without being influenced by existing literature. All of that comes out of my own mind. People will say lies because they cant accept this strategic failure. Nobody cares about truth anymore, but here it is anyway. I have nothing to lose and I will go where I'm welcomed. Remember that.
-
 #### To run from folder "Improved_Sieving" (NFS variant.. but in the process of adding the NFS part now that I figured out how to generate irreducable polynomials):</br></br>
 
 Note: Experimental WORK IN PROGRESS.</br>
