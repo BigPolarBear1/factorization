@@ -2136,209 +2136,6 @@ def alpha_score(f, primes):
     lbd = F/2-E
     return E-baseline_term, k, lbd, baseline_term
     
-def local_opt(f, g, B):
-    m0, m1 = -g[1], g[0]
-
-    d = len(f)-1
-    if d <= 5:
-        poly = []
-        for i in range(3): poly.append(f[i]*binom(2-i, d-i))
-        poly = poly_prod(poly, poly)
-        poly2 = get_derivative(poly)
-        zeros = get_complex_roots(poly2)
-        min,mink = f[2]**2,0
-        for r in zeros:
-            if r.imag == 0:
-                if evaluate(poly, math.ceil(r.real)) < min:
-                    min, mink = evaluate(poly, math.ceil(r.real)), math.ceil(r.real)
-                if evaluate(poly, math.floor(r.real)) < min:
-                    min, mink = evaluate(poly, math.floor(r.real)), math.floor(r.real)
-    else:
-        poly = []
-        for i in range(4): poly.append(f[i]*binom(3-i, d-i))
-        zero = get_complex_roots(poly)
-        min, mink = abs(f[3]), 0
-        for r in zero:
-            if r.imag == 0:
-                if abs(evaluate(poly, math.ceil(r.real))) < min:
-                    min, mink = abs(evaluate(poly, math.ceil(r.real))), math.ceil(r.real)
-                if abs(evaluate(poly, math.floor(r.real))) < min:
-                    min, mink = abs(evaluate(poly, math.floor(r.real))), math.floor(r.real)
-
-    f = shift(f, mink)
-    m0 -= mink*m1
-
-    k, u, v, iteration = 1, 1, 1, 0
-    _, s = get_sieve_region(f, B)
-    min_n = get_Lnorm(poly_prod(f, f), s, B)
-    while iteration < 500 and (k > 0 or u > 0 or v > 0):
-        F = shift(f, -k)
-        tmp = get_Lnorm(poly_prod(F, F), s, B)
-        flag = False
-        if tmp < min_n: f, min_n, k, flag, m0 = F.copy(), tmp, k<<1, True, m0+k*m1
-
-        F = shift(f, k)
-        tmp = get_Lnorm(poly_prod(F, F), s, B)
-        if tmp < min_n: f, min_n, k, flag, m0 = F.copy(), tmp, k<<1, True, m0-k*m1
-        if flag and not u: u = 1
-        if flag and not v: v = 1
-        elif not flag: k >>= 1
-
-        if u:
-            flag = False
-            F = f.copy()
-            F[-3] += u*m1
-            F[-2] -= u*m0
-            tmp = get_Lnorm(poly_prod(F, F), s, B)
-            if tmp < min_n: f, min_n, u, flag = F.copy(), tmp, u<<1, True
-
-            F = f.copy()
-            F[-3] -= u*m1
-            F[-2] += u*m0
-            tmp = get_Lnorm(poly_prod(F, F), s, B)
-            if tmp < min_n: f, min_n, u, flag = F.copy(), tmp, u<<1, True
-            if flag and not k: k = 1
-            if flag and not v: v = 1
-            elif not flag: u >>= 1
-
-        if v:
-            flag = False
-            F = f.copy()
-            F[-2] += v*m1
-            F[-1] -= v*m0
-            tmp = get_Lnorm(poly_prod(F, F), s, B)
-            if tmp < min_n: f, min_n, v, flag = F.copy(), tmp, v<<1, True
-
-            F = f.copy()
-            F[-2] -= v*m1
-            F[-1] += v*m0
-            tmp = get_Lnorm(poly_prod(F, F), s, B)
-            if tmp < min_n: f, min_n, v, flag = F.copy(), tmp, v<<1, True
-            if flag and not k: k = 1
-            if flag and not u: u = 1
-            elif not flag: v >>= 1
-
-        iteration += 1
-        _, s = get_sieve_region(f, B)
-
-    return f, m0
-
-def prime_combinations_with_indices(Q, l, B):
-    n = len(Q)
-    indices = [0] * l  # reuse buffer
-
-    def backtrack(start, depth, product):
-        if depth == l:
-            yield tuple(indices)
-            return
-        for i in range(start, n - (l - depth) + 1):
-            p = Q[i]
-            if product * p >= B:
-                break  # sorted Q means all further i will be too large
-            indices[depth] = i
-            yield from backtrack(i + 1, depth + 1, product * p)
-
-    yield from backtrack(0, 0, 1)
-
-def compute_e(m0, root_used, NB_ROOTS, prod, a_d, n, d):
-    e = []
-    tmp_m = m_mu(m0, root_used, [0]*NB_ROOTS, NB_ROOTS)
-    base = poly(tmp_m, prod, a_d, n, d)[1]%prod
-    for i in range(NB_ROOTS):
-        line = [0]*d
-        for j in range(d):
-            if not i:
-                tmp_m = m_mu(m0, root_used, [j]+[0]*(NB_ROOTS-1), NB_ROOTS)
-                line[j] = poly(tmp_m, prod, a_d, n, d)[1]%prod
-            elif j:
-                tmp_m = m_mu(m0, root_used, [0]*i+[j]+[0]*(NB_ROOTS-i-1), NB_ROOTS)
-                line[j] = (poly(tmp_m, prod, a_d, n, d)[1]-base)%prod
-        e.append(line)
-
-    return e
-
-def compute_f(n, a_d, m0, d, prod, root_used, NB_ROOTS, e):
-    f0 = (n-a_d*pow(m0, d))/(prod*prod*pow(m0, d-1))
-    f = []
-
-    for i in range(NB_ROOTS):
-        line = [0]*d
-        for j in range(d):
-            line[j] = -(a_d*d*root_used[i][j]/pow(prod, 2)+e[i][j]/prod)
-        f.append(line)
-
-    return f, f0
-
-def create_first_array(NB_ROOTS, f0, f, d):
-    vec = [0]*(NB_ROOTS>>1)
-    array1 = []
-
-    while vec[-1] < d:
-        U = (f0 + sum([f[j][vec[j]] for j in range(NB_ROOTS>>1)]))%1
-
-        if not len(array1) or U > array1[-1][0]: array1.append([U, [i for i in vec]])
-        else:
-            tmp_a = 0
-            tmp_b = len(array1)-1
-            tmp = (tmp_a+tmp_b)>>1
-            while tmp_a <= tmp_b:
-                if array1[tmp][0] > U: tmp_b = tmp-1
-                else: tmp_a = tmp+1
-                tmp = (tmp_a+tmp_b)>>1
-            array1.insert(tmp_a, [U, [i for i in vec]])
-        vec[0] += 1
-        for j in range(len(vec)-1):
-            if vec[j] == d:
-                vec[j] = 0
-                vec[j+1] += 1
-            else: break
-
-    return array1
-
-def create_second_array(NB_ROOTS, len_vec, d, f):
-    vect = [0]*(NB_ROOTS-len_vec)
-    array2 = []
-    while vect[-1] < d:
-        U = -sum([f[len_vec+j][vect[j]] for j in range(len(vect))])%1
-
-        if not len(array2) or U > array2[-1][0]: array2.append([U, [i for i in vect]])
-        else:
-            tmp_a = 0
-            tmp_b = len(array2)-1
-            tmp = (tmp_a+tmp_b)>>1
-            while tmp_a <= tmp_b:
-                if array2[tmp][0] > U: tmp_b = tmp-1
-                else: tmp_a = tmp+1
-                tmp = (tmp_a+tmp_b)>>1
-            array2.insert(tmp_a, [U, [i for i in vect]])
-        vect[0] += 1
-        for j in range(len(vect)-1):
-            if vect[j] == d:
-                vect[j] = 0
-                vect[j+1] += 1
-            else: break
-
-    return array2
-
-def m_mu(m0,roots,vec,l):
-    return m0 + sum([roots[i][vec[i]] for i in range(l)])
-
-def poly(m0, m1, a_d, n, d):
-    c = [a_d]
-    r = [n]
-    for i in range(d-1, -1, -1):
-        r.append((r[-1]-c[-1]*pow(m0, i+1))//m1)
-        delta = -r[-1]*m1*invmod(m1,pow(m0, i))%(m1*pow(m0, i))
-        c.append((r[-1]+delta)//pow(m0, i))
-    for i in range(1, len(c)):
-        if c[i] > m0//2:
-            c[i] -= m0
-            c[i-1] += m1
-        elif c[i] < -m0//2:
-            c[i] += m0
-            c[i-1] -= m1
-    return c
-
 def root_sieve(f, g, primes, U):
     array = [0]*(U<<1)
     for p in primes:
@@ -2393,164 +2190,7 @@ def root_sieve2(f, g, primes, U, V):
     f[-3] += u*g[-2]
 
     return f
-
-
-def poly_search(n, primes, nb_roots, prime_bound, c, M, d, NB_POLY_COARSE_EVAL, NB_POLY_PRECISE_EVAL):
-    print("Starting polynomial search")
-
-
-    return Kleinjung_poly_search(n, primes, nb_roots, prime_bound, c, M, d, NB_POLY_COARSE_EVAL,
-                                     NB_POLY_PRECISE_EVAL)
-
-
-# Kleinjung first polynomial search algorithm
-def Kleinjung_poly_search(n, primes, NB_ROOTS, PRIME_BOUND, MULTIPLIER, M, d, NB_POLY_COARSE_EVAL, NB_POLY_PRECISE_EVAL):
-    t1 = datetime.now()
-    P = []
-    polys = []
-    for p in primes:
-        if p > PRIME_BOUND: break
-        if p%d == 1: P.append(p)
-    a_d = MULTIPLIER
-    if d >= 4: admax = round(pow(pow(M, 2*d-2)/n, 1/(d-3)))
-    else: admax = M
-
-    cpt = 0
-    avg = 0
-    while a_d < admax and cpt < NB_POLY_COARSE_EVAL:
-        tmp = a_d
-        for p in primes:
-            while not tmp%p: tmp//= p
-
-        if tmp > 1: # If a_d is not primes[-1] smooth
-            a_d += MULTIPLIER
-            continue
-
-        mw = math.ceil(pow(n/a_d, 1/d))
-        ad1max = round(M*M/mw)
-        if d > 2: ad2max = pow(pow(M, 2*d-6)/pow(mw, d-4), 1/(d-2))
-        else: ad2max = M
-
-        Q = []
-        roots = []
-        for p in P:
-            if not a_d%p: continue
-
-            f = [a_d]+[0]*d
-            f[-1] = (-n)%p # Construct polynomial a_d*x^d - n (mod r)
-            root = find_roots_poly(f, p)
-            if len(root) > 0:
-                Q.append(p)
-                roots.append(root)
-      #  print("roots: ",roots)
-        if len(roots) >= NB_ROOTS:
-
-            combinations = prime_combinations_with_indices(Q, NB_ROOTS, ad1max)
-
-            for set in combinations:
-                Q_used = []
-                prod = 1
-                for i in range(NB_ROOTS):
-                    Q_used.append(Q[set[i]])
-                    prod *= Q[set[i]]
-
-                root_used = [roots[set[i]] for i in range(NB_ROOTS)]
-                for i in range(NB_ROOTS): # Do some CRT
-                    x = prod//Q_used[i]
-                    tmp2 = x*invmod(x, Q_used[i])
-                    for j in range(d): 
-                        root_used[i][j] = root_used[i][j]*tmp2%prod
-
-                m0 = mw+(-mw)%prod
-                e = compute_e(m0, root_used, NB_ROOTS, prod, a_d, n, d)
-                f, f0 = compute_f(n, a_d, m0, d, prod, root_used, NB_ROOTS, e)
-
-                epsilon = ad2max/m0
-                array1 = create_first_array(NB_ROOTS, f0, f, d)
-                len_vec = NB_ROOTS>>1
-                array2 = create_second_array(NB_ROOTS, len_vec, d, f)
-                
-                min = 0
-                for j in range(len(array2)):
-                    while min < len(array1) and array2[j][0]-epsilon > array1[min][0]: min += 1
-                    if min == len(array1): break
-                    z = min
-                    while z < len(array1) and abs(array2[j][0]-array1[z][0]) < epsilon:
-                       # print("root_used: ",root_used)
-                        tmp = [poly(m_mu(m0, root_used, array1[z][1]+array2[j][1], NB_ROOTS), prod, a_d, n, d),
-                               m_mu(m0, root_used, array1[z][1]+array2[j][1], NB_ROOTS),
-                               prod]
-                        cpt += 1
-    
-                        tmp[0], tmp[1] = local_opt(tmp[0], [prod,-tmp[1]], primes[-1])
-                        _, s = get_sieve_region(tmp[0], primes[-1])
-                        L_score = get_Lnorm(poly_prod(tmp[0], tmp[0]), s, primes[-1])
-                        avg += L_score
-                        if not len(polys):
-                            tmp.append(L_score)
-                            polys.append(tmp)
-                        else:
-                            if L_score < polys[-1][3]:
-                                tmp.append(L_score)
-                                a = 0
-                                b = len(polys)-1
-                                tmpu = (a+b)>>1
-                                while a <= b:
-                                    if polys[tmpu][3] < L_score: a = tmpu+1
-                                    else: b = tmpu-1
-                                    tmpu = (a+b)>>1
-                                polys.insert(a, tmp)
-                            elif len(polys) < NB_POLY_PRECISE_EVAL:
-                                tmp.append(L_score)
-                                polys.append(tmp)
-                            if len(polys) > NB_POLY_PRECISE_EVAL: del polys[-1]
-
-                        if cpt >= NB_POLY_COARSE_EVAL:
-
-                            t2 = datetime.now()
-                            print("")
-                            print("Polynomial search done in "+format_duration(t2-t1)+".\n")
-                            print(str(cpt)+" polynomials created, "+str(len(polys))+" kept for ranking")
-                            print("Average L2 score = "+str(avg/cpt))
-                            print("Ranking polynomials")
-
-                            return select_best_poly_candidate(polys, primes)
-
-                        z += 1
-        a_d += MULTIPLIER
-
-def select_best_poly_candidate(polys, primes):
-  #  print("polys: ",polys)
-    best_poly = None
-    best_E = None
-    table = get_dickman_table(10)
-
-    for i in range(len(polys)):
-        x_limit,s = get_sieve_region(polys[i][0], primes[-1])
-        alpha = alpha_score(polys[i][0], primes[:300])
-        polys[i].append(alpha)
-        E_score = get_Epscore(polys[i][0], [polys[i][2], -polys[i][1]], alpha, primes[-1], x_limit, round(primes[-1]/math.sqrt(s)), table)
-        if best_E == None or E_score > best_E:
-            best_poly = polys[i]
-            best_E = E_score
-
-    return best_poly
-
-def practical_d(n):
-    min,mind = None,None
-    for d in range(2, 10):
-        f = d*math.log(d)+math.sqrt(pow(d*math.log(d), 2)+4*math.log(n)*math.log(math.log(n)/(d+1))/d+1)
-        if min == None or f < min: min, mind = f, d
-    return mind
-    
-def initialize(n):
-    
-    d = int(pow(3*math.log(n)/math.log(math.log(n)), 1/3))
-    first_B = int(math.exp(pow((8/9)*math.log(n), 1/3)*pow(math.log(math.log(n)), 2/3)))
-    B = 10*first_B#//10
-    
-    return d, B
-    
+        
 def initialize_2(f_x, m1, d, primes, leading_coeff):
     pairs_used, R_p, logs, tmp = [], [], [], 10*d
     divide_leading, pow_div = [], []
@@ -2640,6 +2280,7 @@ def resultant(P, Q):
 
 
 def NFS(n,z,y,x,polyval,m1_a,primeslist):
+    print("starting")
     LARGE_PRIME_CONST=10000
     BLOCK_SIZE=8
     NB_POLY_COARSE_EVAL=100
@@ -2649,9 +2290,10 @@ def NFS(n,z,y,x,polyval,m1_a,primeslist):
     MULTIPLIER=1
     
     n = int(n)
-    d, B = initialize(n)
+
     d=2
-    primes = create_smooth_primes_base(B)
+    B=primeslist[-1]#1_000
+    primes =primeslist# create_smooth_primes_base(B)
     for p in primes:
         if not n%p: return p, n//p
 
@@ -3483,11 +3125,11 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
     cdef Py_ssize_t size
     primelist=copy.copy(primeslist)
     primelist.insert(0,2) ##To do: remove when we fix lifting for powers of 2
-    primelist.insert(0,-1)
+    #primelist.insert(0,-1)
     print("[i]Filtering Quadratic Coefficients (quad_size) (to do: can be saved to disk for re-use)")
     valid_quads,valid_quads_factors,qival=filter(primelist_f,n,1,quad_sieve_size+1)
     print("[i]Filtering interval indices (lin_size) (to do: can be saved to disk for re-use)")
-    start=round(n**0.25)
+    start=1#round(n**0.25)
 
     valid_ind,valid_ind_factors,lival=filter(primelist_f,n,1,lin_sieve_size+1)
     print("[i]Entering attack loop")
@@ -3612,12 +3254,14 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                                 q1 =Poly(z*x_test+(z*x+y),x_test)
                                 m1=(z*x+y)
                                 rx=resultant(p1,q1)
-                                print("rx: ",rx)
+                              #  print("rx: ",rx)
                                 if rx%n == 0:# and z > 10:
                                     NFS(n,z,y,x,poly_val,m1,primelist)
-                                smooths.append((poly_val*z)%(n-1))
-                                factors.append(local_factors2)
-                                coefficients.append((poly_val*z)%(n-1))
+                                else:
+                                    print("error")
+                              #  smooths.append((poly_val*z)%(n-1))
+                              #  factors.append(local_factors2)
+                              #  coefficients.append((poly_val*z)%(n-1))
                               #  symbols=[]
                               #  r=0
                                # while r < len(primeslist2):
@@ -3626,20 +3270,20 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                                   #  r+=1
                                   #  print("super fatal error2")
                                   #  sys.exit()
-                                xy_list.append(z*x+y)
-                                xy_f_list.append(symbols)
-                                x_list.append(poly_val2)
-                                x_f_list.append(local_factors4)
-                                sfound+=1
-                                if g_debug == 1:
-                                    print("Smooths #: "+str(len(smooths))+" y: "+str(y)+" zx: "+str(factors_part1)+" zx2 "+str(z*x+y)+" (poly_val*z): "+str(factors_part3)+" final smooth: "+str(all_parts)+" intrvl ind: "+str(o)+" Factors: "+str(local_factors2)+" z: "+str(z))#+" seen_primes: "+str(valid_ind_factors[o1]))#+" seen_primes2: "+str(seen_primes2))#+" test_poly_val: "+str(bitlen(test_poly_val))+" test_zxy: "+str(test_zxy)+" test_zxy_current: "+str(test_zxy_curent))
-                                else: 
-                                    print("Smooths #: "+str(len(smooths)))
-                                if sfound >(base+2)*2:#+qbase:
-                                    f1,f2=QS(n,primelist,smooths,coefficients,factors,xy_list,xy_f_list,x_list,x_f_list,primeslist2)
-                                    if f1 !=0:
-                                        sys.exit()
-                                    sfound=0
+                              #  xy_list.append(z*x+y)
+                              #  xy_f_list.append(symbols)
+                              #  x_list.append(poly_val2)
+                              #  x_f_list.append(local_factors4)
+                              #  sfound+=1
+                             #   if g_debug == 1:
+                               #     print("Smooths #: "+str(len(smooths))+" y: "+str(y)+" zx: "+str(factors_part1)+" zx2 "+str(z*x+y)+" (poly_val*z): "+str(factors_part3)+" final smooth: "+str(all_parts)+" intrvl ind: "+str(o)+" Factors: "+str(local_factors2)+" z: "+str(z))#+" seen_primes: "+str(valid_ind_factors[o1]))#+" seen_primes2: "+str(seen_primes2))#+" test_poly_val: "+str(bitlen(test_poly_val))+" test_zxy: "+str(test_zxy)+" test_zxy_current: "+str(test_zxy_curent))
+                               # else: 
+                               #     print("Smooths #: "+str(len(smooths)))
+                            #    if sfound >(base+2)*2:#+qbase:
+                                 #   f1,f2=QS(n,primelist,smooths,coefficients,factors,xy_list,xy_f_list,x_list,x_f_list,primeslist2)
+                                 #   if f1 !=0:
+                                      #  sys.exit()
+                                 #   sfound=0
                         else:
                             print("FATAL ERROR, THIS ONE SHOULD NEVER FAIL BECAUSE z,x,x2 AND poly_val MUST FACTORIZE WHEN ARRIVING HERE:"+str(value2)+" k: "+str(k)+" poly_val: "+str(poly_val)+" o: "+str(o)+" x: "+str(x)+" xy: "+str(xy))
                            # sys.exit()
