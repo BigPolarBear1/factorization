@@ -4,7 +4,7 @@ Disclaimer: At no point did AI contribute anything to this research project. Cop
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 50 -base 300 -debug 1 -lin_size 10_000 -quad_size 20</br></br>
+To run:  python3 run_qs.py -keysize 50 -base 2_000 -debug 1 -lin_size 1000 -quad_size 1</br></br>
 !!!! NFS related code is borrowed from: https://github.com/basilegithub/General-number-field-sieve-Python (note: Very impressively written, helped me big time, thanks)
 
 Update: I have really quickly copy pasted NFS into my algorithm. Just to set myself up to start performing some analysis and see how I can begin improving everything. I'll restrict myself to second degree polynomials for now, since that is what I'm familiar with. But either way, this works, but now to fun part begins.. properly integrating NFS into my findings completely. Not just find a single irreducable polynomial and call into NFS()... because that is just a bit lame. Anyway.. just uploaded my work in progress.. I'll begin uploading better version (less of a copy-paste butcher job) shortly...
