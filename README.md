@@ -16,7 +16,10 @@ To do:
 1. I want to get rid of NFS_Sieve() ... I need to modify my sieving logic in construct_interval() (btw, I need to fix my function names) so that it does functionally the same but using many different polynomial pairs (where a pair is the quadratic and a linear polynomial zx+(zx+y) whose resultant = 0 mod N), rather then just one like the uploaded PoC currently does.
 2. To achieve step one, I first need to study the square root over a finite field step in NFS_Solve() and figure out the number theory to see how that would work with what I was already doing in my older iterations (See link to old version without NFS above).
 
+
 Once I figure out 2, I should be able to fairly quickly implement 1. Anyway.. its a marathon, not a sprint. I know I'm nearly there now. All this endless suffering and social isolation for years will have been worth it soon.
+
+Note: You can solve the example from the paper (N=4387) using python3 run_qs.py -key 4387 -base 30 -debug 1 -lin_size 1000 -quad_size 1, what I'll be doing next is to just trace this example and see how both the rational and algebraic square roots are constructed (well, rational side is easy, I know that alreayd, its mainly the algebraic square root being a little elusive). I'll Just pen and paper trace it the hard way, then I should be very quickly able to connect the dots with everything I've already figured out... now if I had math education I could probably just read some math papers and figure it out.. but I'm playing math research on the hardest difficulty, ahahaha.
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
