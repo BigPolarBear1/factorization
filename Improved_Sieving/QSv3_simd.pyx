@@ -597,7 +597,8 @@ def sieve(length, f_x, rational_base, algebraic_base, m0, m1, b, logs, offset, l
         eval2 = -length*m1-b*m0
         a = -length
         tmp = [0]*len(tmp_poly)
-        for j in range(len(tmp_poly)): tmp[j] = evaluate(tmp_poly, -length+j)
+        for j in range(len(tmp_poly)): 
+            tmp[j] = evaluate(tmp_poly, -length+j)
         for q in range(1, len(tmp_poly)):
             for k in range(len(tmp_poly)-1, q-1, -1): tmp[k] -= tmp[k-1]
 
@@ -635,7 +636,7 @@ def sieve(length, f_x, rational_base, algebraic_base, m0, m1, b, logs, offset, l
             eval2 += m1<<1
             eval1 += tmp[1]
             for q in range(1, len(tmp_poly)-1): tmp[q] += tmp[q+1]
-    return pairs
+    return pairs,tmp_poly
 def square_root(f, N, p, m0, m1, leading, bound):
     d = len(f)-1
     root = compute_root_mod_Newton(N, f, p)
@@ -759,16 +760,19 @@ def create_solution(pairs, null_space, n, len_primes, primes, f_x, m0, m1, inert
     S = 0
     
     x = f_prime_eval
-    x = x*create_rational(null_space, n, len_primes, primes, pairs)%n
-    
+    rat=create_rational(null_space, n, len_primes, primes, pairs)
+    x = x*rat%n
+    hit=0
     rational_square = [i for i in f_prime_sq]
     for k in range(len(null_space)):
         if null_space[k]:
+            hit+=1
             rational_square = div_poly(poly_prod(rational_square, pairs[k][0]), f_x)
             S += pairs[k][6]
-            
-    x = x*pow(leading, S>>1, n)%n
-            
+    
+    lead=pow(leading, S>>1, n)  
+    x = x*lead%n
+    print("Rational info f_prime_eval: "+str(f_prime_eval)+" rat: "+str(rat)+" lead: "+str(lead)+" final: "+str(x)+" nullspace len: "+str(hit)+" S: "+str(S))          
     coeff_bound = [fd*pow(f_norm, len(f_x)-1-i)*pow(2*(leading*u)*f_norm, S>>1) for i in range(len(f_x)-1)]
     
     y = square_root(f_x, rational_square, inert, m0, m1, leading, max(coeff_bound))
@@ -792,7 +796,8 @@ def create_rational(null_space, n, len_primes, primes, pairs):
                     tmp2 += 1
                 vec[p] += tmp2
 
-    for i in range(len_primes): x = x*pow(primes[i], vec[i]>>1, n)%n
+    for i in range(len_primes): 
+        x = x*pow(primes[i], vec[i]>>1, n)%n
 
     return x
     
@@ -1443,7 +1448,7 @@ def find_relations(f_x, leading_coeff, g, primes, R_p, Q, B_prime, divide_leadin
                     div *= p
                     tmp *= p
         
-        pairs = sieve(M, f_x, primes, R_p, m0, m1, b, logs, offset, leading_coeff, div)
+        pairs,tmp_poly = sieve(M, f_x, primes, R_p, m0, m1, b, logs, offset, leading_coeff, div) ##to do: returning tmp_poly for debug purposes.Remove later
         for i, pair in enumerate(pairs):
             z = trial(pair, primes, const1, const2, div)
             if z[0]:
@@ -1451,6 +1456,8 @@ def find_relations(f_x, leading_coeff, g, primes, R_p, Q, B_prime, divide_leadin
                 for p in divide_leading: 
                     tmp.append(not pair[5][0]%p)
                 if z[2] == 1 and z[4] == 1:
+                    if g_debug ==1:
+                        print("Found smooth: "+str(pair)+" div: "+str(div)+" b: "+str(b)+" tmp_poly: "+str(tmp_poly))
                     lfound+=1
                     pairs_used.append(tmp)
                     full_found += 1
@@ -1793,31 +1800,6 @@ def get_Lnorm(F, s, B):
         current_Y *= base_Y
 
     return math.log(abs(res))/2
-
-def root_sieve(f, g, primes, U):
-    array = [0]*(U<<1)
-    for p in primes:
-        k = 1
-        P = p
-        while P < primes[-1]:
-            for x in range(P):
-                eval1, eval2 = eval_mod(f, x, P), eval_mod(g, x, P)
-                for u in range(P):
-                    if (eval1+u*eval2)%P == 0:
-                        for z in range((u+U)%P, len(array), P): array[z] += math.log(p)/(pow(p, k-1)*(p+1))
-            k += 1
-            P *= p
-
-    max,maxi = array[0],0
-    for i in range(1, len(array)):
-        if array[i] > max: max, maxi = array[i], i
-    u = maxi-U
-    print(u)
-
-    f[-1] += u*g[-1]
-    f[-2] += u*g[-2]
-
-    return f
         
 def initialize_2(f_x, m1, d, primes, leading_coeff):
     pairs_used, R_p, logs, tmp = [], [], [], 10*d
@@ -1888,34 +1870,26 @@ def sylvester(P, Q):
 def resultant(P, Q):
     return sylvester(P,Q).det()
 
-
-def NFS(n,z,y,x,polyval,m1_a,primeslist):
+def NFS_sieve(n,z,y,x,polyval,m1_a,primeslist):
     print("starting")
     LARGE_PRIME_CONST=10000
-    BLOCK_SIZE=8
-    NB_POLY_COARSE_EVAL=100
-    NB_POLY_PRECISE_EVAL=10
-    PRIME_BOUND=300
-    NB_ROOTS=2
-    MULTIPLIER=1
+    
     
     n = int(n)
     d=2
     B=primeslist[-1]
     primes =primeslist
-    for p in primes:
-        if not n%p: return p, n//p
-
     prod_primes = math.prod(primes)
     const1, const2 = LARGE_PRIME_CONST*primes[-1], LARGE_PRIME_CONST*primes[-1]*primes[-1]
     f_x=[z,y,-polyval]
+    f_prime = get_derivative(f_x)
     m0=-m1_a
     m1=z
     M, s = get_sieve_region(f_x, B)
     print("f(x) = "+str(f_x)+"    g(x) = "+str([m1, -m0]))
     print("poly search completed, parameters : m0 = "+str(m0)+" ; m1 = "+str(m1)+" ; d = "+str(d)+" M: "+str(M))
     leading_coeff = f_x[0]
-    f_prime = get_derivative(f_x)
+
     g = [1, f_x[1]]
     x_test = symbols('x_test')
     if d==3:
@@ -1928,17 +1902,7 @@ def NFS(n,z,y,x,polyval,m1_a,primeslist):
     for i in range(2, len(f_x)): 
        # print(str(f_x[i])+" pow(leading_coeff, i-1): "+str(pow(leading_coeff, i-1))+" leading_coeff: "+str(leading_coeff))
         g.append(f_x[i]*pow(leading_coeff, i-1))
-    g_prime = get_derivative(g)
-    g_prime_sq,g_prime_eval = div_poly(poly_prod(g_prime, g_prime), g), pow(leading_coeff, d-2, n)*eval_F(m0, m1, f_prime, d-1)%n
-    inert_set = []
-    for p in primes:
-       # print("m1: "+str(m1%p)+" p: "+str(p)+" leading coeff: "+str(leading_coeff%p)+" irreducibility: "+str(irreducibility(g, p))+" g: "+str(g))
-        if m1%p and leading_coeff%p and irreducibility(g, p): 
-            
-            inert_set.append(p)
-    if len(inert_set)==0:
-        print("fail")
-        sys.exit()
+
     pairs_used, R_p, logs, divide_leading, pow_div, B_prime = initialize_2(f_x, m1, d, primes, leading_coeff)
    
     Q, k = initialize_3(n, f_x, f_prime, B, leading_coeff)
@@ -1946,7 +1910,29 @@ def NFS(n,z,y,x,polyval,m1_a,primeslist):
     print("components of factor base : ("+str(len(primes))+","+str(B_prime)+","+str(k)+","+str(len(divide_leading))+")")
     print("starting with "+str(len(pairs_used))+" free relations")
     pairs_used, V = find_relations(f_x, leading_coeff, g, primes, R_p, Q, B_prime, divide_leading,prod_primes, pow_div, pairs_used, const1, const2, logs, m0, m1,M)
-   # print("Pairs_used: "+str(pairs_used)+" divide_leading: "+str(divide_leading))
+    return pairs_used,R_p,Q,divide_leading,V,g,M
+
+def NFS_solve(n,z,y,x,polyval,m1_a,primeslist,pairs_used,R_p,Q,divide_leading,V,g,M):
+    m0=-m1_a
+    m1=z
+    d=2
+    f_x=[z,y,-polyval]
+    leading_coeff = f_x[0]
+
+    f_prime = get_derivative(f_x)
+    BLOCK_SIZE=8
+    inert_set = []
+    primes=primeslist
+    for p in primes:
+       # print("m1: "+str(m1%p)+" p: "+str(p)+" leading coeff: "+str(leading_coeff%p)+" irreducibility: "+str(irreducibility(g, p))+" g: "+str(g))
+        if m1%p and leading_coeff%p and irreducibility(g, p): 
+            
+            inert_set.append(p)
+
+
+    g_prime = get_derivative(g)
+    g_prime_sq,g_prime_eval = div_poly(poly_prod(g_prime, g_prime), g), pow(leading_coeff, d-2, n)*eval_F(m0, m1, f_prime, d-1)%n
+
     print("sieving complete, building matrix...")
     matrix = build_sparse_matrix(pairs_used, primes, R_p, Q, divide_leading)
     matrix = transpose_sparse(matrix, V)
@@ -2550,34 +2536,22 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                     continue
                 o=1
                 while o < lin_sieve_size:
-                    k=1#q+1
-
+                    k=1
                     y=(xy*o)-(x*z)
-                   # y=(start_xy*o)-(x*z)
                     poly_val=(z*x**2+y*x-n)%(n-1)
-                  #  k=((z*x**2+y*x)-poly_val)//n
                     k=1
                     if mult_list[q][o]<bitlen(poly_val)*0.6 or lival[o-1] !=1:
                         o+=1
                         continue
-                    
-
-                 #   print("checking")
-
                     found=[]
                     g=0
                     total=1
-                    
-                       
-  
                     if poly_val==0 or k ==0:
                         o+=1
                         continue
                     local_factors, value,seen_primes,seen_primes_indexes = factorise_fast((poly_val*z)%(n-1),primelist_f)
                     if value == 1:
-
                         poly_val2=(n*k*z+(poly_val*z))  #note: factorization for this is y+disc1 and y-disc1
-
                         factors_part1=z*x
                         factors_part2=z*x+y
                         factors_part3=poly_val*z
@@ -2585,7 +2559,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                         local_factors2, value2,seen_primes2,seen_primes_indexes2 = factorise_fast((poly_val*z)%(n-1),primelist_f)
                         test=math.isqrt(value2)
                         if value2 == 1 or test**2==value2:
-                            if (poly_val*z)%(n-1) not in coefficients and (poly_val*z)%(n-1) != poly_val2:# and local_factors2 not in factors:
+                            if (poly_val*z)%(n-1) != poly_val2:# and local_factors2 not in factors:
 
 
                                 local_factors4, value4,seen_primes4,seen_primes_indexes4 = factorise_fast((poly_val2),primelist_f)
@@ -2599,8 +2573,9 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                                 rx=resultant(p1,q1)
                               #  print("rx: ",rx)
                                 if rx%n == 0:# and z > 10:
+                                    pairs_used,R_p,Q,divide_leading,V,g,M=NFS_sieve(n,z,y,x,poly_val,m1,primelist)
                                     print("[i]Calling into NFS with z: "+str(z)+" y: "+str(y)+" x: "+str(x)+" poly_val: "+str(poly_val)+" z*x+y: "+str(m1)+" resultant: "+str(rx))
-                                    NFS(n,z,y,x,poly_val,m1,primelist)
+                                    NFS_solve(n,z,y,x,poly_val,m1,primelist,pairs_used,R_p,Q,divide_leading,V,g,M)
                                 else:
                                     print("error")
                         else:
