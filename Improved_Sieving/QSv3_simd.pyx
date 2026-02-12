@@ -635,7 +635,6 @@ def sieve(length, f_x, rational_base, algebraic_base, m0, m1, b, logs, offset, l
             eval2 += m1<<1
             eval1 += tmp[1]
             for q in range(1, len(tmp_poly)-1): tmp[q] += tmp[q+1]
- #   print("pairs: ",pairs)
     return pairs
 def square_root(f, N, p, m0, m1, leading, bound):
     d = len(f)-1
@@ -1430,16 +1429,9 @@ def find_relations(f_x, leading_coeff, g, primes, R_p, Q, B_prime, divide_leadin
     offset = 15+math.log2(const1)
     cycle_len = [0]*10
     
-    V = 3 + len(primes) + B_prime + len(Q) + len(divide_leading)
-    
-    print("sieving...")
-    print("need to find at least "+str(V+10)+" relations\n")
-    
-    time_1 = datetime.now()
-    
+    V = 3 + len(primes) + B_prime + len(Q) + len(divide_leading)    
     b = 1
-        
-   # print('\r'+"0/("+str(V)+"+10) relations found")
+    lfound=0
     while len(pairs_used) < V+10:
         
         div = 1
@@ -1452,47 +1444,32 @@ def find_relations(f_x, leading_coeff, g, primes, R_p, Q, B_prime, divide_leadin
                     tmp *= p
         
         pairs = sieve(M, f_x, primes, R_p, m0, m1, b, logs, offset, leading_coeff, div)
-
-
-      #  smooth = batch_smooth_test(pairs, prod_primes, const1, const2, div)
-
         for i, pair in enumerate(pairs):
             z = trial(pair, primes, const1, const2, div)
-         #   z = smooth[i]
-
             if z[0]:
                 tmp = [u for u in pair]
                 for p in divide_leading: 
                     tmp.append(not pair[5][0]%p)
                 if z[2] == 1 and z[4] == 1:
+                    lfound+=1
                     pairs_used.append(tmp)
                     full_found += 1
 
-                elif z[4] > 1 and z[2] == 1:
-                    pairs_used, fp, graph_fp, size_fp, parent_fp, cycle_len, full_found, partial_found_fp = handle_large_fp(tmp, z, pairs_used, fp, graph_fp, size_fp, parent_fp, g, divide_leading,
-                                                                                                                            cycle_len, full_found, partial_found_fp)
 
-                elif z[4] == 1 and z[2] > 1:
-                    pairs_used, pf, graph_pf, size_pf, parent_pf, cycle_len, full_found, partial_found_pf = handle_large_pf(tmp, z, pairs_used, pf, graph_pf, size_pf, parent_pf, g, divide_leading,
-                                                                                                                            cycle_len, full_found, partial_found_pf)
+                ##To do: Re-enable large prime variation later on..
+              #  elif z[4] > 1 and z[2] == 1:
+                  #  pairs_used, fp, graph_fp, size_fp, parent_fp, cycle_len, full_found, partial_found_fp = handle_large_fp(tmp, z, pairs_used, fp, graph_fp, size_fp, parent_fp, g, divide_leading,
+               #                                                                                                             cycle_len, full_found, partial_found_fp)
 
-        print('\r'+"b = "+str(b)+" "+str(len(pairs_used))+"/("+str(V)+"+10) ; full relations = "+str(full_found)+" | partial found fp = "+str(partial_found_fp)+" ("+str(size_fp)+") | partial found pf = "+str(partial_found_pf)+" ("+str(size_pf)+")")
-        b += 1
-        
-    print("\n")
-    
-    time_2 = datetime.now()
-    
-    print("sieving done in "+format_duration(time_2-time_1)+".\n")
-    print("Distribution of cycle length:")
-    print("1-cycle: "+str(full_found))
-  #  for i in range(9):
-    #    print(str(i+2)+"-cycle: "+str(cycle_len[i]))
-    print("11+-cycle: "+str(cycle_len[-1])+"\n")
-    print(str(partial_found_fp)+" partial relations fp found")
-    print(str(partial_found_pf)+" partial relations pf found")
-                
+           #     elif z[4] == 1 and z[2] > 1:
+              #      pairs_used, pf, graph_pf, size_pf, parent_pf, cycle_len, full_found, partial_found_pf = handle_large_pf(tmp, z, pairs_used, pf, graph_pf, size_pf, parent_pf, g, divide_leading,
+             #                                                                                                               cycle_len, full_found, partial_found_pf)
+        if lfound > 50:
+            print(str(len(pairs_used))+"/"+str(V+10))# ; full relations = "+str(full_found)+" | partial found fp = "+str(partial_found_fp)+" ("+str(size_fp)+") | partial found pf = "+str(partial_found_pf)+" ("+str(size_pf)+")")
+            lfound=0
+        b += 1                
     return pairs_used, V
+
 def coefficients(n, m, d):
     tmp1, tmp2 = n, 1
     coeff = [0]*(d+1)
@@ -1505,8 +1482,6 @@ def coefficients(n, m, d):
         tmp2 *= m
     return coeff
 
-## Operations on one polynomial
-    
 def get_derivative(f):
     res = [0]*(len(f)-1)
     for i in range(len(f)-1):
@@ -1925,27 +1900,19 @@ def NFS(n,z,y,x,polyval,m1_a,primeslist):
     MULTIPLIER=1
     
     n = int(n)
-
     d=2
-    B=primeslist[-1]#1_000
-    primes =primeslist# create_smooth_primes_base(B)
+    B=primeslist[-1]
+    primes =primeslist
     for p in primes:
         if not n%p: return p, n//p
 
     prod_primes = math.prod(primes)
     const1, const2 = LARGE_PRIME_CONST*primes[-1], LARGE_PRIME_CONST*primes[-1]*primes[-1]
-
-  #  f_x,m0,m1,tmp,_ = poly_search(n, primes, NB_ROOTS, PRIME_BOUND, MULTIPLIER,
-   #                                                             int(pow(n, 1/(d+1))), d, NB_POLY_COARSE_EVAL,
-    #                                                             NB_POLY_PRECISE_EVAL)
-
     f_x=[z,y,-polyval]
     m0=-m1_a
     m1=z
     M, s = get_sieve_region(f_x, B)
     print("f(x) = "+str(f_x)+"    g(x) = "+str([m1, -m0]))
-  #  f_x, m0, M = evaluate_polynomial_quality(f_x, B, m0, m1, primes)
-   # M=2000
     print("poly search completed, parameters : m0 = "+str(m0)+" ; m1 = "+str(m1)+" ; d = "+str(d)+" M: "+str(M))
     leading_coeff = f_x[0]
     f_prime = get_derivative(f_x)
@@ -1958,15 +1925,9 @@ def NFS(n,z,y,x,polyval,m1_a,primeslist):
     else:
         p=None
     q =Poly(m1*x_test-m0,x_test)
-   # rx=resultant(p,q)
-   # print("Resultant: ",rx)
-  #  if rx%n !=0:
-     #   print("Catastrophic error")
-      #  sys.exit()
     for i in range(2, len(f_x)): 
        # print(str(f_x[i])+" pow(leading_coeff, i-1): "+str(pow(leading_coeff, i-1))+" leading_coeff: "+str(leading_coeff))
         g.append(f_x[i]*pow(leading_coeff, i-1))
-    #print("g: "+str(g))
     g_prime = get_derivative(g)
     g_prime_sq,g_prime_eval = div_poly(poly_prod(g_prime, g_prime), g), pow(leading_coeff, d-2, n)*eval_F(m0, m1, f_prime, d-1)%n
     inert_set = []
@@ -1979,13 +1940,13 @@ def NFS(n,z,y,x,polyval,m1_a,primeslist):
         print("fail")
         sys.exit()
     pairs_used, R_p, logs, divide_leading, pow_div, B_prime = initialize_2(f_x, m1, d, primes, leading_coeff)
-        
+   
     Q, k = initialize_3(n, f_x, f_prime, B, leading_coeff)
-        
+   # print("R factor base: "+str(R_p)+" Q factor base: "+str(Q))     
     print("components of factor base : ("+str(len(primes))+","+str(B_prime)+","+str(k)+","+str(len(divide_leading))+")")
     print("starting with "+str(len(pairs_used))+" free relations")
     pairs_used, V = find_relations(f_x, leading_coeff, g, primes, R_p, Q, B_prime, divide_leading,prod_primes, pow_div, pairs_used, const1, const2, logs, m0, m1,M)
-    print("")
+   # print("Pairs_used: "+str(pairs_used)+" divide_leading: "+str(divide_leading))
     print("sieving complete, building matrix...")
     matrix = build_sparse_matrix(pairs_used, primes, R_p, Q, divide_leading)
     matrix = transpose_sparse(matrix, V)
@@ -2003,96 +1964,6 @@ def NFS(n,z,y,x,polyval,m1_a,primeslist):
                                                              m0, m1, leading_coeff, inert_set, M,
                                                              time_1)
             if flag: return res
-
-
-
-
-
-
-
-
-##Key gen function ##
-def power2(x, y, p):
-    res = 1;
-    x = x % p;
-    while (y > 0):
-        if (y & 1):
-            res = (res * x) % p;
-        y = y>>1; # y = y/2
-        x = (x * x) % p;
-    return res;
-
-def miillerTest(d, n):
-    a = 2 + random.randint(1, n - 4);
-    x = power2(a, d, n);
-    if (x == 1 or x == n - 1):
-        return True;
-    while (d != n - 1):
-        x = (x * x) % n;
-        d *= 2;
-        if (x == 1):
-            return False;
-        if (x == n - 1):
-            return True;
-    # Return composite
-    return False;
-
-def isPrime( n, k):
-    if (n <= 1 or n == 4):
-        return False;
-    if (n <= 3):
-        return True;
-    d = n - 1;
-    while (d % 2 == 0):
-        d //= 2;
-    for i in range(k):
-        if (miillerTest(d, n) == False):
-            return False;
-    return True;
-
-def generateLargePrime(keysize = 1024):
-    while True:
-        num = random.randrange(2**(keysize-1), 2**(keysize))
-        if isPrime(num,4):
-            return num
-
-def findModInverse(a, m):
-    if gcd(a, m) != 1:
-        return None
-    u1, u2, u3 = 1, 0, a
-    v1, v2, v3 = 0, 1, m
-    while v3 != 0:
-        q = u3 // v3
-        v1, v2, v3, u1, u2, u3 = (u1 - q * v1), (u2 - q * v2), (u3 - q * v3), v1, v2, v3
-    return u1 % m
-   
-
-def generateKey(keySize):
-    while True:
-        p = generateLargePrime(keySize)
-        print("[i]Prime p: "+str(p))
-        q=p
-        while q==p:
-            q = generateLargePrime(keySize)
-        print("[i]Prime q: "+str(q))
-        n = p * q
-        print("[i]Modulus (p*q): "+str(n))
-        count=65537
-        e =count
-        if gcd(e, (p - 1) * (q - 1)) == 1:
-            break
-
-    phi=(p - 1) * (q - 1)
-    d = findModInverse(e, (p - 1) * (q - 1))
-    publicKey = (n, e)
-    privateKey = (n, d)
-    print('[i]Public key - modulus: '+str(publicKey[0])+' public exponent: '+str(publicKey[1]))
-    print('[i]Private key - modulus: '+str(privateKey[0])+' private exponent: '+str(privateKey[1]))
-    return (publicKey, privateKey,phi,p,q)
-##END KEY GEN##
-
-
-
 
 cdef modinv(n,p):
     p2=p
@@ -2120,139 +1991,6 @@ def gcd(a,b): # Euclid's algorithm ##To do: Use a version without recursion?
     else:
         return gcd(b,a)
         
-def QS(n,factor_list,sm,xlist,flist,xy_list,xy_f_list,x_list,x_f_list,primeslist2):#,jsymbols,testl,primeslist2,disc1_squared_list):#,disc_sr_list,pval_list,pflist):
-    g_max_smooths=base+2#+qbase
-    if len(sm) > g_max_smooths*10000000: 
-        del sm[g_max_smooths:]
-        del xlist[g_max_smooths:]
-        del flist[g_max_smooths:]  
-    M2 = build_matrix(factor_list, sm, flist,xy_f_list,x_f_list,primeslist2)#,pflist)
-    null_space=solve_bits(M2,factor_list,len(sm))
-    f1,f2=extract_factors(n, sm, xlist, null_space,xy_list,x_list)#,disc_sr_list,pval_list,pflist)
-    if f1 != 0:
-        print("[SUCCESS]Factors are: "+str(f1)+" and "+str(f2))
-        return f1,f2   
-   # print("[FAILURE]No factors found")
-    return 0,0
-
-def extract_factors(N, relations, roots, null_space,xy_list,x_list):#,disc_sr_list,pval_list,pflist):
-    n = len(relations)
-    for vector in null_space:
-        prod_left = 1
-        prod_right = 1
-        pval=1
-        disc_sr=1
-        xy=1
-        x=1
-        for idx in range(len(relations)):
-            bit = vector & 1
-            vector = vector >> 1
-            if bit == 1:
-                prod_left *= roots[idx]
-                prod_right *= relations[idx]
-             #   xy*=xy_list[idx]
-                x*=x_list[idx]
-                print("polyval:  "+str(relations[idx])+" disc constant "+str(x_list[idx]))
-            idx += 1
-        prod_right=x
-        sqrt_right = math.isqrt(x)
-        sqrt_left = math.isqrt(prod_left)#prod_left
-        if sqrt_left**2 != prod_left:
-            print("horrible error")
-        print(" polyval sqrt: "+str(sqrt_left)+" disc constant sqrt: "+str(sqrt_right))#+" zx*zxy: "+str(x))
-        ###Debug shit, remove for final version
-        sqr1=prod_left%N 
-        sqr2=prod_right%N
-        if sqrt_right**2 != prod_right:
-            print("not a square in the integers")
-         #   time.sleep(10000)
-
-        if sqr1 != sqr2:
-            print("ERROR ERROR")
-            time.sleep(10000)
-        ###End debug shit#########
-        sqrt_left = sqrt_left % N
-        sqrt_right = sqrt_right % N
-        factor_candidate = gcd(N, abs(sqrt_right+sqrt_left))
-
-
-        if factor_candidate not in (1, N):
-         #   print(str(factor_candidate)+" sm: "+str(sqrt_right)+" root: "+str(sqrt_left))
-            other_factor = N // factor_candidate
-            return factor_candidate, other_factor
-
-    return 0, 0
-
-def solve_bits(matrix,factor_base,length):
-    n=length#len(factor_base)*1#base+2
-    lsmap = {lsb: 1 << lsb for lsb in range(n+10000)}
-    m = len(matrix)
-    marks = []
-    cur = -1
-    mark_mask = 0
-    for row in matrix:
-        if cur % 100 == 0:
-            print("", end=f"{cur, m}\r")
-        cur += 1
-        lsb = (row & -row).bit_length() - 1
-        if lsb == -1:
-            continue
-        marks.append(n - lsb - 1)
-        mark_mask |= 1 << lsb
-        for i in range(m):
-            if matrix[i] & lsmap[lsb] and i != cur:
-                matrix[i] ^= row
-    marks.sort()
-    # NULL SPACE EXTRACTION
-    nulls = []
-    free_cols = [col for col in range(n) if col not in marks]
-    k = 0
-    for col in free_cols:
-        shift2 = n - col - 1
-        val = 1 << shift2
-        fin = val
-        for v in matrix:
-            if v & val:
-                fin |= v & mark_mask
-        nulls.append(fin)
-        k += 1
-        if k == 10000000000: 
-            break
-    return nulls
-
-def build_matrix(factor_base, smooth_nums, factors,xy_f_list,x_f_list,primeslist2):#,pflist):
-    fb_map = {val: i for i, val in enumerate(factor_base)}
-
-    ind=1
-
-    M2=[0]*((base+2)*2)#+qbase)#+2+qbase)
-    for i in range(len(smooth_nums)):
-        for fac in factors[i]:
-            idx = fb_map[fac]
-            M2[idx] |= ind
-        ind = ind + ind       
-
-  #  offset=(base+2)-1
-  #  ind=1
-    
- #   for i in range(len(xy_f_list)):
- #       j=0
- #       while j < len(xy_f_list[i]):
- #           fac=xy_f_list[i][j]
- #           if fac == -1 or fac ==0:
- #               M2[j+offset] |= ind
- #           j+=1
- #       ind = ind + ind
-
-    offset=(base+2)-1
-    ind=1
-    for i in range(len(x_f_list)):
-        for fac in x_f_list[i]:
-            idx = fb_map[fac]
-            M2[idx+offset] |= ind
-        ind = ind + ind
-    return M2
-
 @cython.profile(False)
 def launch(n,primeslist1,primeslist2,small_primeslist):
     manager=multiprocessing.Manager()
@@ -2271,7 +2009,6 @@ def launch(n,primeslist1,primeslist2,small_primeslist):
     find_comb(n,hmap,hmap2,primeslist1,primeslist2,small_primeslist)
 
     return 
-
 
 cdef tonelli(long long n, long long p):  # tonelli-shanks to solve modular square root: x^2 = n (mod p)
     if jacobi(n,p)!=1:
@@ -2783,32 +2520,12 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
     x1=1
     y0=1
     o=1
-    sfound=0
-    close_range=10
-    too_close=5
-    LOWER_BOUND_SIQS=1
-    UPPER_BOUND_SIQS=4000
-   # tnum=int(((n)**0.6) / lin_sieve_size)
+
     seen=[]
     threshold = int(math.log2((lin_sieve_size)*math.sqrt(abs(n))) - thresvar)
     if threshold < 0:
         threshold = 1
     while 1:
-       # new_mod,cfact,indexes=generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,bitlen(tnum),hmap,1)
-       # if new_mod ==0:
-       #     return 0,0
-       # col=[]
-       # i=0
-       # while i < len(indexes):
-       #     idx=indexes[i]
-       #     if primeslist[idx] != cfact[i]:
-       #         print("fatal error")
-       #         sys.exit()
-
-       #     prime=primeslist[idx]
-       #     col.append(hmap[idx])
-       #     i+=1
-
         i=1
         while i < 1000_0000_000:
             local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(start+i,primelist_f)
@@ -2858,10 +2575,6 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                         continue
                     local_factors, value,seen_primes,seen_primes_indexes = factorise_fast((poly_val*z)%(n-1),primelist_f)
                     if value == 1:
-                       # disc1_squared=(y**2+4*(n*k*z+(poly_val*z)))%(n-1)
-                       # disc1=math.isqrt(disc1_squared)
-                       # if disc1**2 != disc1_squared:
-                         #   print("fatal error ergh")
 
                         poly_val2=(n*k*z+(poly_val*z))  #note: factorization for this is y+disc1 and y-disc1
 
@@ -2869,13 +2582,6 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                         factors_part2=z*x+y
                         factors_part3=poly_val*z
                         all_parts=factors_part1*factors_part2*factors_part3
-                     #   if all_parts != (poly_val2*poly_val*z)%(n-1):
-                       #     print("fatal error qq")
-                   #     if (4*poly_val2)%((2*z*x))!=0:
-                       #     print("error")
-
-                    #    if (4*poly_val2)%(2*(z*x+y))!=0:
-                         #   print("error2")
                         local_factors2, value2,seen_primes2,seen_primes_indexes2 = factorise_fast((poly_val*z)%(n-1),primelist_f)
                         test=math.isqrt(value2)
                         if value2 == 1 or test**2==value2:
@@ -2897,45 +2603,14 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                                     NFS(n,z,y,x,poly_val,m1,primelist)
                                 else:
                                     print("error")
-                              #  smooths.append((poly_val*z)%(n-1))
-                              #  factors.append(local_factors2)
-                              #  coefficients.append((poly_val*z)%(n-1))
-                              #  symbols=[]
-                              #  r=0
-                               # while r < len(primeslist2):
-                                  #  symbols.append(jacobi(z*x+y,primeslist2[r]))
-
-                                  #  r+=1
-                                  #  print("super fatal error2")
-                                  #  sys.exit()
-                              #  xy_list.append(z*x+y)
-                              #  xy_f_list.append(symbols)
-                              #  x_list.append(poly_val2)
-                              #  x_f_list.append(local_factors4)
-                              #  sfound+=1
-                             #   if g_debug == 1:
-                               #     print("Smooths #: "+str(len(smooths))+" y: "+str(y)+" zx: "+str(factors_part1)+" zx2 "+str(z*x+y)+" (poly_val*z): "+str(factors_part3)+" final smooth: "+str(all_parts)+" intrvl ind: "+str(o)+" Factors: "+str(local_factors2)+" z: "+str(z))#+" seen_primes: "+str(valid_ind_factors[o1]))#+" seen_primes2: "+str(seen_primes2))#+" test_poly_val: "+str(bitlen(test_poly_val))+" test_zxy: "+str(test_zxy)+" test_zxy_current: "+str(test_zxy_curent))
-                               # else: 
-                               #     print("Smooths #: "+str(len(smooths)))
-                            #    if sfound >(base+2)*2:#+qbase:
-                                 #   f1,f2=QS(n,primelist,smooths,coefficients,factors,xy_list,xy_f_list,x_list,x_f_list,primeslist2)
-                                 #   if f1 !=0:
-                                      #  sys.exit()
-                                 #   sfound=0
                         else:
                             print("FATAL ERROR, THIS ONE SHOULD NEVER FAIL BECAUSE z,x,x2 AND poly_val MUST FACTORIZE WHEN ARRIVING HERE:"+str(value2)+" k: "+str(k)+" poly_val: "+str(poly_val)+" o: "+str(o)+" x: "+str(x)+" xy: "+str(xy))
-                           # sys.exit()
-                   ## else:
-                     ##   print("wtf")
-
                     o+=1
                 q+=1
             i+=1
 
         return
     return      
-
-
 
 def find_comb(n,hmap,hmap2,primeslist1,primeslist2,small_primeslist):
 
