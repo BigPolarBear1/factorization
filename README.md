@@ -17,6 +17,8 @@ Anyway, my goal for the coming days now will just be doing analysis, take this e
 
 Update: Removed a lot of the fancy features in the NFS implementation. Will start doing my analysis now to see how to properly integrate this into my own work... this can take a couple of days (or weeks?).. but I'll get there eventually. Goal is to use multiple polynomial pairs (not just one pair like it does now) to sieve and perform linear algebra on all of  their generated smooths... I think I've gathered enough pieces of the puzzle to pull it off... lets see.
 
+Update: The more I start taking apart NFS, the more I see how this actually relates with what I was doing already in the non-NFS version. Its funny how those findings seem to converge to the same thing. I had the same thing happen a year ago. I build everything from 0 without taking inspiration from public literature by performing analysis (pay me and I'll gladly explain the steps I used in that initial analysis).. yet it still happened to converge to fermat's factorization method.. because thats just such an important feature of the structure of semi-primes. I dont know, I know what i've got... and I'm not stopping... if people so eagerly want to pretend nothing is happening.. then thats fine.. I just wanted employment (or atleast some income) and respect for the people who supported me (like my former manager who msft retaliated against for supporting me). I asked so little, when so much was at stake. We do truely live in an idiocracy. Oh well.
+
 #### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
