@@ -18,7 +18,7 @@ To do:
 
 Once I figure out 2, I should be able to fairly quickly implement 1. Anyway.. its a marathon, not a sprint. I know I'm nearly there now. All this endless suffering and social isolation for years will have been worth it soon.
 
-#### (Outdated, check Improved_Sieving instead) To run from folder "CUDA_QS_variant":</br></br>
+#### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
  
