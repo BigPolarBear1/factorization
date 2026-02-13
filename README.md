@@ -27,6 +27,8 @@ Update: So with NFS.. the factorization of the root doesn't matter as long as zx
 
 Update: Damnit, all my computers have become super glitchy lately. Fix your shitty firmware implant nazi losers. Anyway. Another idea I had was to just select a quadratic polynomial which maximizes the amount of free relations... which is easy using that precalculated hashmap. But I'll investigate that later if all else fails.
 
+Update: Ok, I've been looking at this square root over a finite field code for a while now. I'll start implementing something tomorrow, the way I think it might work, to sieve with multiple quadratics (or multiple pairs of f(x) and g(x) to be precise). The moment that works.. its over. I'll be able to conclude 3 years of research and learning math from 0 as a highschool dropout. Although, long term, it will never really be over until I find a polynomial time algorithm, ahahhahaa.
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
