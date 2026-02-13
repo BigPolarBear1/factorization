@@ -7,7 +7,7 @@ To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 50 -base 2_000 -debug 1 -lin_size 1000 -quad_size 1</br></br>
 !!!! NFS related code is borrowed from: https://github.com/basilegithub/General-number-field-sieve-Python (note: Very impressively written, helped me big time, thanks)
 
-Old version without NFS: https://github.com/BigPolarBear1/factorization/tree/ae2cfac49eb73d94a12fa6e010e1f3aab4ebc707/Improved_Sieving (run: python3 run_qs.py -keysize 50 -base 300 -debug 1 -lin_size 10_000 -quad_size 10)
+Old version without NFS (although its doing things very similar as NFS does and I'm hoping to merge both approaches now): https://github.com/BigPolarBear1/factorization/tree/ae2cfac49eb73d94a12fa6e010e1f3aab4ebc707/Improved_Sieving (run: python3 run_qs.py -keysize 50 -base 300 -debug 1 -lin_size 10_000 -quad_size 10)
 
 Update: I have begun integrating NFS into my algorithm. The uploaded PoC is still a very rough and ugly copy-paste job. 
 
