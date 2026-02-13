@@ -21,7 +21,9 @@ To do:
 
 I'll see how much of the NFS algorithm I can successfully integrate into my work. And if I can find a way to gain an advantage somehow over existing algorithms.
 
-Update: I quickly fixed it so it can also iterate the b variable. So since I can sieve this the same way NFS sieves.. whats to stop me from also getting free relations / smooths like NFS does? I'll study that next.. figure out how that works... because that could potentially be really great with what I'm doing if it also works.
+Update: I quickly fixed it so it can also iterate the b variable.
+
+Update: So with NFS.. the factorization of the root doesn't matter as long as zx+y factorizes (which is basically a root with the sign on the linear coefficient flipped). If I'm correct. But NFS can grab that root by taking a square root over a finite field. Atleast thats how I'm currently abstracting it in my head. Let me start investigating tomorrow if there is any way to get something similar working with multiple quadratics. Not having to worry about the factorization of either x or zx+y is really important if we want to achieve good sieving. 
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
