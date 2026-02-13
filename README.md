@@ -17,7 +17,7 @@ To do:
 3. Optimize sieving parameters (easy)
 4. Figure out if the traditional setup where we end up taking a square root over a finite field would yield an advantage. And if so, can we do it while sieving many different quadratics? (less easy)
 
-I'll see how much of the NFS algorithm I can successfully integrate into my work. And if I can find a way to gain an advantage somehow over existing algoritms.
+I'll see how much of the NFS algorithm I can successfully integrate into my work. And if I can find a way to gain an advantage somehow over existing algorithms.
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
