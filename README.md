@@ -16,6 +16,7 @@ To do:
 2. Instead of using zx^2+yx-N = poly_val , change it to use zx^2+yx+poly_val = N? Or atleast make sure we are working with irreducible quadratics. (easy)
 3. Optimize sieving parameters (easy)
 4. Figure out if the traditional setup where we end up taking a square root over a finite field would yield an advantage. And if so, can we do it while sieving many different quadratics? (less easy)
+5. Fix variable and functio names so they actually make sense to other people and not just me. I end up re-using a lot of things bc of my iterative research method, but other people wont have a clue whats going on unless they trace the input line by line.
 
 I'll see how much of the NFS algorithm I can successfully integrate into my work. And if I can find a way to gain an advantage somehow over existing algorithms.
 
