@@ -20,6 +20,8 @@ Update: I have began analysing the NFS implementation and trying to relate it to
 
 I'll upload as soon as I figure it out.. thats the last thing I need to figure out now.. and if at all possible.. it is a matter of time until I figure it out.. 
 
+Update: I spent a couple hours today taking apart NFS's method of sieving and relating it to my own work. So what I'm going to do first is replace the sieving logic in https://github.com/BigPolarBear1/factorization/tree/main/improved_sieving_noNFS with NFS's sieving logic (and then I'll remove that other repo). That's my goal for today.  Then after that I can worry about square roots over finite fields and all that stuff. Depression is pretty bad lately. Just got to keep setting small achievable goals and keep inching forward. 
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
