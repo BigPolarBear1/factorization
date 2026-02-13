@@ -806,7 +806,7 @@ def new_coeffs(f, x):
     tmp[-1] *= b
     return tmp
     
-def sieve(length, f_x, rational_base, algebraic_base, m0, m1, b, leading):
+def sieve(length, f_x, rational_base, algebraic_base, m0, m1, b, leading,offset):
     ##Code borrowed from: https://github.com/basilegithub/General-number-field-sieve-Python
  
     pairs = []
@@ -819,11 +819,13 @@ def sieve(length, f_x, rational_base, algebraic_base, m0, m1, b, leading):
 
         if m1%p:
             root = (tmp_len+b*m0*modinv(m1, p))%p
-            for i in range(root, len(sieve_array), p): sieve_array[i] += log
+            for i in range(root, len(sieve_array), p): 
+                sieve_array[i] += log
 
         for r in algebraic_base[q]:
             root = (tmp_len+b*r)%p
-            for i in range(root, len(sieve_array), p): sieve_array[i] += log
+            for i in range(root, len(sieve_array), p): 
+                sieve_array[i] += log
 
     if b&1:
      #   print("hit")
@@ -844,7 +846,7 @@ def sieve(length, f_x, rational_base, algebraic_base, m0, m1, b, leading):
             if a and math.gcd(a, b) == 1 and eval2:
                 eval = abs(eval1*eval2)
                # print("eval: ",eval)
-                if eval != 0 and sieve_array[k]:# > eval.bit_length()-offset:
+                if eval != 0 and sieve_array[k] > eval.bit_length()-offset:
                     pairs.append([[-b, a*leading], eval1, [[1 ,1]], eval2, [1], [-b,a], 1])
             a += 1
             eval2 += m1
@@ -870,7 +872,7 @@ def sieve(length, f_x, rational_base, algebraic_base, m0, m1, b, leading):
         for k in range(init, len(sieve_array), 2):
             if math.gcd(a, b) == 1 and eval2:
                 eval = abs(eval1*eval2)
-                if eval != 0 and sieve_array[k]:# > eval.bit_length()-offset:
+                if eval != 0 and sieve_array[k] > eval.bit_length()-offset:
                   #  if b == 366:
                      #   print("ADDING eval2: "+str(eval2)+" a: "+str(a)+" m1: "+str(m1)+" b: "+str(b)+" m0: "+str(m0))
 
@@ -880,7 +882,7 @@ def sieve(length, f_x, rational_base, algebraic_base, m0, m1, b, leading):
             eval1 += tmp[1]
             for q in range(1, len(tmp_poly)-1): 
                 tmp[q] += tmp[q+1]
-    return pairs
+    return pairs,tmp_poly
 
 def trial(pair, primes, div):
     large1 = 1
@@ -912,7 +914,66 @@ def trial(pair, primes, div):
         return False, 1, 1, 1, 1
         
     return True, 1, 1, 1, 1
+
+def poly_prod(a, b):
+    res = [0]*(max(len(a), len(b))+min(len(a), len(b))-1)
+
+    for i in range(len(a)):
+        for j in range(len(b)):
+            res[i+j] += a[i]*b[j]
+
+    return res
+
+def get_Lnorm(F, s, B):
+    sqrt = math.sqrt(s)
+    n = len(F)
     
+    base_X, base_Y = B*sqrt/2, 1+B/sqrt
+    current_X, current_Y = pow(base_X, n), base_Y
+    base_X, base_Y = base_X*base_X, base_Y*base_Y
+
+    res = 0.0
+
+    for i in range(0, n, 2):
+        res += (2*current_X)*F[i]*(current_Y-1)/((i+1)*(n-i))
+        current_X /= base_X
+        current_Y *= base_Y
+
+    return math.log(abs(res))/2
+
+def get_sieve_region(f, B):
+    F = poly_prod(f, f)
+    d = len(f)-1
+    ratios = [math.log(1e-7+abs(f[i+1]/(1+abs(f[i])))) for i in range(d)]
+    s = 2*int(math.exp(sum(ratios)/d)) # skew factor
+    k = 1 # shift
+    best_norm = None
+
+    while k > 0:
+        updated = False
+
+        if s-k > 0:
+            norm = get_Lnorm(F, s-k, B)
+            if best_norm == None or norm < best_norm:
+                s = s-k
+                k <<= 1
+                best_norm = norm
+                updated = True
+
+        if s+k < B:
+            norm = get_Lnorm(F, s+k, B)
+            if best_norm == None or norm < best_norm:
+                s = s+k
+                k <<= 1
+                best_norm = norm
+                updated = True
+
+        if not updated: k >>= 1
+
+    x = round(B*math.sqrt(s))
+
+    return x, s
+
 cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_prime_bound,primeslist2,small_primeslist):
    # i=0
   #  while i < len(hmap):
@@ -956,6 +1017,8 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
     too_close=5
     LOWER_BOUND_SIQS=1
     UPPER_BOUND_SIQS=4000
+    LARGE_PRIME_CONST=1000
+    const1, const2 = LARGE_PRIME_CONST*primeslist[-1], LARGE_PRIME_CONST*primeslist[-1]*primeslist[-1]
    # tnum=int(((n)**0.6) / lin_sieve_size)
     seen=[]
     threshold = int(math.log2((lin_sieve_size)*math.sqrt(abs(n))) - thresvar)
@@ -991,53 +1054,62 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                     algebraic_base.append([]) 
                 i+=1
             divide_leading=[]
+            B=primeslist[-1]
+        #    M, s = get_sieve_region(f_x, B)
+            M=100_000
             b=1
-            pairs=sieve(1000, f_x, primeslist, algebraic_base, m0, m1,b, z)
-            pairs_used=[]
-            for i, pair in enumerate(pairs):
-                z1 = trial(pair, primeslist, 1)
-                if z1[0]:
-                    tmp = [u for u in pair]
-                    for p in divide_leading: 
-                        tmp.append(not pair[5][0]%p)
-                    if z1[2] == 1 and z1[4] == 1:
+            while b < 10:
+                #print("b: "+str(b)+" M: "+str(M))
+                offset = 15+math.log2(const1)
+                pairs,tmp_poly=sieve(M, f_x, primeslist, algebraic_base, m0, m1,b, z,offset)
+                pairs_used=[]
+                for i, pair in enumerate(pairs):
+                    z1 = trial(pair, primeslist, 1)
+                    if z1[0]:
+                        tmp = [u for u in pair]
+                        for p in divide_leading: 
+                            tmp.append(not pair[5][0]%p)
+                        if z1[2] == 1 and z1[4] == 1:
                       #  if g_debug ==1:
                          #   print("Found smooth: "+str(pair)+" b: "+str(b))#+" tmp_poly: "+str(tmp_poly))
-                        pairs_used.append(tmp)
-            i=0
-            while i < len(pairs_used):
+                            pairs_used.append(tmp)
+                i=0
+                while i < len(pairs_used):
 
-                poly_val=z*pairs_used[i][5][1]**2+y*pairs_used[i][5][1]-n
-                if poly_val != pairs_used[i][1]:
-                    print("error: "+str(poly_val)+" pairs_used[i][1]: "+str(pairs_used[i][1]))
-                    sys.exit()
-                local_factors2, value2,seen_primes2,seen_primes_indexes2 = factorise_fast(poly_val*z,primelist_f)
-                if value2 !=1:
-                    print("fatal")
-                    i+=1
-                    continue
+                    poly_val=pairs_used[i][1]#z*pairs_used[i][5][1]**2+y*pairs_used[i][5][1]-n
+              #  if poly_val != pairs_used[i][1]:
+                #    print("error: "+str(poly_val)+" pairs_used[i][1]: "+str(pairs_used[i][1]))
+                 #   sys.exit()
+                    local_factors2, value2,seen_primes2,seen_primes_indexes2 = factorise_fast(poly_val*z,primelist_f)
+                    if value2 !=1:
+                        print("fatal")
+                        i+=1
+                        continue
 
                 ##To do: a doesn't always factorize
-                poly_val2=z*pairs_used[i][5][1]*(z*pairs_used[i][5][1]+y)
-                local_factors4, value4,seen_primes4,seen_primes_indexes4 = factorise_fast(poly_val2,primelist_f)
-                if value4 !=1:
-                    i+=1
-                    continue
-                if pairs_used[i][1]*z in smooths:
-                    i+=1
-                    continue
-                smooths.append(poly_val*z)
-                factors.append(local_factors2)
+                    poly_val2=z*pairs_used[i][5][1]*(z*pairs_used[i][5][1]+tmp_poly[1])
+                    local_factors4, value4,seen_primes4,seen_primes_indexes4 = factorise_fast(poly_val2,primelist_f)
+                    if value4 !=1:
+                        i+=1
+                        continue
+                    if pairs_used[i][1]*z in smooths:
+                        i+=1
+                        continue
+                    smooths.append(poly_val*z)
+                    factors.append(local_factors2)
 
-                x_list.append(poly_val2)
-                x_f_list.append(local_factors4)
-                sfound+=1
+                    x_list.append(poly_val2)
+                    x_f_list.append(local_factors4)
+                    sfound+=1
+                    
+                    if sfound >(base+2)*2:#+qbase:
+                        f1,f2=QS(n,primelist,smooths,factors,x_list,x_f_list)
+                        if f1 !=0:
+                            sys.exit()
+                    
+                    i+=1
                 print("Smooths found: "+str(sfound)+" / "+str((base+2)*2))
-                if sfound >(base+2)*2:#+qbase:
-                    f1,f2=QS(n,primelist,smooths,factors,x_list,x_f_list)
-                    if f1 !=0:
-                        sys.exit()
-                i+=1
+                b+=1
            # print("pairs_used: ",pairs_used)
             y+=1
         z+=1
