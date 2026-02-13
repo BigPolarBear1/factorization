@@ -17,6 +17,7 @@ To do:
 3. Optimize sieving parameters (easy)
 4. Figure out if the traditional setup where we end up taking a square root over a finite field would yield an advantage. And if so, can we do it while sieving many different quadratics? (less easy)
 5. Fix variable and function names so they actually make sense to other people and not just me. I end up re-using a lot of things bc of my iterative research method, but other people wont have a clue whats going on unless they trace the input line by line.
+6. Can I translate my findings to higher degree polynomials? (Aka sieve with many different polynomials in the 3rd degree).
 
 I'll see how much of the NFS algorithm I can successfully integrate into my work. And if I can find a way to gain an advantage somehow over existing algorithms.
 
