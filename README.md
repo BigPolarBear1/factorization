@@ -1,26 +1,22 @@
 Disclaimer: At no point did AI contribute anything to this research project. Copilot can't even calculate basic congruences without making mistakes. People who think AI can do novel math research are delusional. I did not use AI for the paper, and I did not use AI for any of the code. I attacked this problem, from the very basics 3 years ago, slowly burrowing deeper and deeper. I know people will say lies because they will never let a person like me win. Not when it comes to something as important as this. Because that would literally go against all the bullshit propaganda the far right has been spreading for years. Also, this could have been avoided. Its a disaster of your own making. 
 
-#### To run from folder "Improved_Sieving" (NFS variant.. but in the process of adding the NFS part now that I figured out how to generate irreducable polynomials):</br></br>
+#### To run from folder "NFS_Variant" (Will be adding more NFS related code in the coming days/weeks):</br></br>
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 50 -base 2_000 -debug 1 -lin_size 1000 -quad_size 1</br></br>
-!!!! NFS related code is borrowed from: https://github.com/basilegithub/General-number-field-sieve-Python (note: Very impressively written, helped me big time, thanks)
+To run: python3 run_qs.py -keysize 50 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
-Old version without NFS (although its doing things very similar as NFS does and I'm hoping to merge both approaches now): https://github.com/BigPolarBear1/factorization/tree/main/improved_sieving_noNFS (run: python3 run_qs.py -keysize 50 -base 300 -debug 1 -lin_size 10_000 -quad_size 10)
+NFS related code is borrowed from (sieve(), trial()): https://github.com/basilegithub/General-number-field-sieve-Python (note: Very impressively written, helped me big time, thanks)
 
-Update: I have begun integrating NFS into my algorithm. The uploaded PoC is still a very rough and ugly copy-paste job. 
+I've replaced the sieving portion in my PoC with the sieve function of the NFS algorithm. 
 
 To do:
 
-1. I want to get rid of NFS_Sieve() ... I need to modify my sieving logic in construct_interval() (btw, I need to fix my function names) so that it does functionally the same but using many different polynomial pairs (where a pair is the quadratic and a linear polynomial zx+(zx+y) whose resultant = 0 mod N), rather then just one like the uploaded PoC currently does.
-2. To achieve step one, I first need to study the square root over a finite field step in NFS_Solve() and figure out the number theory to see how that would work with what I was already doing in my older iterations (See link to old version without NFS above).
+1. Fix quadratic coefficients. (easy)
+2. Instead of using zx^2+yx-N = poly_val , change it to use zx^2+yx+poly_val = N? Or atleast make sure we are working with irreducible quadratics. (easy)
+3. Figure out if the traditional setup where we end up taking a square root over a finite field would yield an advantage. And if so, can we do it while sieving many different quadratics? (less easy)
 
-Update: I have began analysing the NFS implementation and trying to relate it to my own work (as shown here without the NFS code, but doing something similar: https://github.com/BigPolarBear1/factorization/tree/main/improved_sieving_noNFS). So the way NFS sieves, its basically the same as what I was already doing. Its the exact same principles. Thats a good thing that I stumbled upon that independently. Now because my implementation is using multiple quadratic polynomials and NFS is restricted to a single polynomial, the big question is ofcourse, can I modify the NFS implementation and use my own work to also get that working with multiple polynomials (I mean cycle through polynomials while sieving)? Because that way we could potentially see an enourmous speed boost and solve a very big bottleneck with the NFS algorithm...
-
-I'll upload as soon as I figure it out.. thats the last thing I need to figure out now.. and if at all possible.. it is a matter of time until I figure it out.. 
-
-Update: I spent a couple hours today taking apart NFS's method of sieving and relating it to my own work. So what I'm going to do first is replace the sieving logic in https://github.com/BigPolarBear1/factorization/tree/main/improved_sieving_noNFS with NFS's sieving logic (and then I'll remove that other repo). That's my goal for today.  Then after that I can worry about square roots over finite fields and all that stuff. Depression is pretty bad lately. Just got to keep setting small achievable goals and keep inching forward. 
+I'll see how much of the NFS algorithm I can successfully integrate into my work. And if I can find a way to gain an advantage somehow over existing algoritms.
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
