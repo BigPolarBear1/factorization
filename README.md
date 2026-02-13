@@ -21,6 +21,8 @@ To do:
 
 I'll see how much of the NFS algorithm I can successfully integrate into my work. And if I can find a way to gain an advantage somehow over existing algorithms.
 
+Update: I quickly fixed it so it can also iterate the b variable. So since I can sieve this the same way NFS sieves.. whats to stop me from also getting free relations / smooths like NFS does? I'll study that next.. figure out how that works... because that could potentially be really great with what I'm doing if it also works.
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
