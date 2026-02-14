@@ -33,6 +33,8 @@ Update: Hmm. I think tomorrow, let me just make my quadratics irreducible, i.e t
 
 Update: Overactive brain. Had a quick look. And if we use irreducible polynomials instead.. it really doesn't matter, because the discriminant is going to stay the same so atleast when it comes to the discriminant, it will functionally stay the same. I think I have an idea for tomorrow then.
 
+Update: The fuck am I saying. using zx^2+yx-N and zx+y is irreducible too. Let me think.
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
