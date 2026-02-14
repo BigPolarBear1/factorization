@@ -14,7 +14,7 @@ I guess f(x) = zx^2+yx-N and g(x) = zx+y are also two irreducible polynomials wh
 
 So what I want to achieve is this:
 
-Sieve with zx^2+yx-N and g(x) = zx+y. 
+Sieve with f(x) = zx^2+yx-N and g(x) = zx+y. 
 And sieve with multiple such pairs.
 And I also want to omit having to factorize x. Either by taking a square root over a finite field or something different. Because if I can omit that factorization, based on what I was doing in the last months, I know I will have found a breakthrough and I would be able to prove I did immediatly. 
 
