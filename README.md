@@ -24,6 +24,8 @@ Update: Depression. Some criminal piece of shit seems to be black mailing a brot
 
 Update: I'll continue taking this NFS PoC apart... and trying to figure out, if at all possible, what the preconditions would be to combine sieving results from multiple quadratics. Because we could sieve with different quadratics who have the same discriminant for example.. there might be a way to do it. I'm stressed. I really need an income. The situation is pretty dire.
 
+Update: Got damnit man. I should be able now to do NFS by  sieving with many quadratics... AS LONG AS THEIR DISCRIMINANT IS THE SAME.... because I've worked out all the number theory of what all of that relates. I just got to figure out the implementation details. I'm so fucking depressed man. If there ever will be better times, I dont think i'll ever be a happy person ever again. These last few years have left me completely dead inside. 
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
