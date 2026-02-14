@@ -12,6 +12,12 @@ I've replaced the sieving portion in my PoC with the sieve function of the NFS a
 
 I guess f(x) = zx^2+yx-N and g(x) = zx+y are also two irreducible polynomials whose resultant = N, overcomplicating shit in my head. I wonder if it matters if we use a smaller constant in the quadratic but larger in the linear polynomial.. its probaly equivelant. Let me just continue my work today. Work toward implementing something better in my PoC. So right now we need the factorization of z,x, zx+y and the polynomial value. However NFS only needs the factorization of z,zx+y and the polynomial value and it can figure out what value that root should be by taking a square root over a finite field. Atleast thats how I'm currently abstracting it in my head. Lets see.
 
+So what I want to achieve is this:
+
+Sieve with zx^2+yx-N and g(x) = zx+y. 
+And sieve with multiple such pairs.
+And I also want to omit having to factorize x. Either by taking a square root over a finite field or something different. Because if I can omit that factorization, based on what I was doing in the last months, I know I will have found a breakthrough and I would be able to prove I did immediatly. 
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
