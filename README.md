@@ -8,7 +8,7 @@ To run: python3 run_qs.py -keysize 50 -base 500 -debug 1 -lin_size 100_000 -quad
 
 NFS related code is borrowed from (sieve(), trial()): https://github.com/basilegithub/General-number-field-sieve-Python (note: Very impressively written, helped me big time, thanks)
 
-I've replaced the sieving portion in my PoC with the sieve function of the NFS algorithm.
+I've replaced the sieving portion in my PoC with the sieve function of the NFS algorithm. Need to fix the use of multiple quadratic coefficients again. But will do later.
 
 I guess f(x) = zx^2+yx-N and g(x) = zx+y are also two irreducible polynomials whose resultant = N, overcomplicating shit in my head. I wonder if it matters if we use a smaller constant in the quadratic but larger in the linear polynomial.. its probaly equivelant. Let me just continue my work today. Work toward implementing something better in my PoC. So right now we need the factorization of z,x, zx+y and the polynomial value. However NFS only needs the factorization of z,zx+y and the polynomial value and it can figure out what value that root should be by taking a square root over a finite field. Atleast thats how I'm currently abstracting it in my head. Lets see.
 
