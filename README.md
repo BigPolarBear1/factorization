@@ -6,7 +6,7 @@ Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 50 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
-NFS related code is borrowed from (sieve(), trial()): https://github.com/basilegithub/General-number-field-sieve-Python (note: Very impressively written, helped me big time, thanks)
+NFS related code is borrowed from (sieve(), trial(), quadratic character related code): https://github.com/basilegithub/General-number-field-sieve-Python (note: Very impressively written, helped me big time, thanks)
 
 I've replaced the sieving portion in my PoC with the sieve function of the NFS algorithm. Need to fix the use of multiple quadratic coefficients again. But will do later.
 
@@ -17,6 +17,8 @@ So what I want to achieve is this:
 Sieve with f(x) = zx^2+yx-N and g(x) = zx+y. 
 And sieve with multiple such pairs.
 And I also want to omit having to factorize x. Either by taking a square root over a finite field or something different. Because if I can omit that factorization, based on what I was doing in the last months, I know I will have found a breakthrough and I would be able to prove I did immediatly. 
+
+Update: Alright, the linear algebra step now has 4 parts. zx, zx+y, poly_val and the quadratic character (restricting to z = 1 for now, else that also needs to factorize). I copied the quadratic character related code from the NFS PoC (see link above), but I'll rewrite that eventually with simpler calculations if we're only going to use quadratics. So what I need to do next, is drop that zx part. I can do this :).
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
