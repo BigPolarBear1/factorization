@@ -31,6 +31,8 @@ Update: Ok, I've been looking at this square root over a finite field code for a
 
 Update: Hmm. I think tomorrow, let me just make my quadratics irreducible, i.e turn them into a pair zx^2+y*x-poly_val = n and zx+(zx+y) whose resultant is N. Can I still get my current setup working? I'll make that my goal for tomorrow. Because if that does work and I figure out how to do it.. then adding in that square root over a finite field step will be a lot easier. Hmm. If I cant get that to work, I might try lifting my algebraic factor base and retry some of my ealier ideas of succeeding with just a few smooths, but applied to the NFS algorithm. I dont know man... its research, just got to keep generating ideas and trying them out.. eventually something sticks and I advance with my work. I probably look like an insane person if someone reads this github lol. It's become a bit of a diary too.. I've been living in complete social isolation for years. I havnt seen the friends I used to have in the PNW in many years bc of what microsoft did... and thats not going to change for many more years to come... I may not ever see them again. Sometimes it is very difficult coping mentally.
 
+Update: Overactive brain. Had a quick look. And if we use irreducible polynomials instead.. it really doesn't matter, because the discriminant is going to stay the same so atleast when it comes to the discriminant, it will functionally stay the same. I think I have an idea for tomorrow then.
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
