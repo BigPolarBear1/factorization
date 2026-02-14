@@ -20,6 +20,8 @@ And I also want to omit having to factorize x. Either by taking a square root ov
 
 Update: Alright, the linear algebra step now has 4 parts. zx, zx+y, poly_val and the quadratic character (restricting to z = 1 for now, else that also needs to factorize). I copied the quadratic character related code from the NFS PoC (see link above), but I'll rewrite that eventually with simpler calculations if we're only going to use quadratics. So what I need to do next, is drop that zx part. I can do this :).
 
+Update: Depression. Some criminal piece of shit seems to be black mailing a brother of my father and its making everyone miserable. Belgian city is so shit. Half of it is a narco state, and the other half of it is elitist shitheads. I dont want to be in this country anymore. I really want to leave here. This belgian nightmare, I've wasted so much of my life here getting nowhere. Its the worst place in the world. Even getting threatened with guns in the US was less worse then living in this shit country.
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
