@@ -22,6 +22,8 @@ Update: Alright, the linear algebra step now has 4 parts. zx, zx+y, poly_val and
 
 Update: Depression. Some criminal piece of shit seems to be black mailing a brother of my father and its making everyone miserable. Belgian society is so shit. Half of it is a narco state, and the other half of it is elitist shitheads. I dont want to be in this country anymore. I really want to leave here. This belgian nightmare, I've wasted so much of my life here getting nowhere. Its the worst place in the world. Even getting threatened with guns in the US was less worse then living in this shit country.
 
+Update: I'll continue taking this NFS PoC apart... and trying to figure out, if at all possible, what the preconditions would be to combine sieving results from multiple quadratics. Because we could sieve with different quadratics who have the same discriminant for example.. there might be a way to do it. I'm stressed. I really need an income. The situation is pretty dire.
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
