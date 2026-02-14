@@ -4,27 +4,17 @@ Disclaimer: At no point did AI contribute anything to this research project. Cop
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 50 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
+To run: python3 run_qs.py -keysize 50 -base 1000 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
-NFS related code is borrowed from (sieve(), trial(), quadratic character related code): https://github.com/basilegithub/General-number-field-sieve-Python (note: Very impressively written, helped me big time, thanks)
-
-I've replaced the sieving portion in my PoC with the sieve function of the NFS algorithm. Need to fix the use of multiple quadratic coefficients again. But will do later.
-
-I guess f(x) = zx^2+yx-N and g(x) = zx+y are also two irreducible polynomials whose resultant = N, overcomplicating shit in my head. I wonder if it matters if we use a smaller constant in the quadratic but larger in the linear polynomial.. its probaly equivelant. Let me just continue my work today. Work toward implementing something better in my PoC. So right now we need the factorization of z,x, zx+y and the polynomial value. However NFS only needs the factorization of z,zx+y and the polynomial value and it can figure out what value that root should be by taking a square root over a finite field. Atleast thats how I'm currently abstracting it in my head. Lets see.
-
-So what I want to achieve is this:
-
-Sieve with f(x) = zx^2+yx-N and g(x) = zx+y. 
-And sieve with multiple such pairs.
-And I also want to omit having to factorize x. Either by taking a square root over a finite field or something different. Because if I can omit that factorization, based on what I was doing in the last months, I know I will have found a breakthrough and I would be able to prove I did immediatly. 
-
-Update: Alright, the linear algebra step now has 4 parts. zx, zx+y, poly_val and the quadratic character (restricting to z = 1 for now, else that also needs to factorize). I copied the quadratic character related code from the NFS PoC (see link above), but I'll rewrite that eventually with simpler calculations if we're only going to use quadratics. So what I need to do next, is drop that zx part. I can do this :).
+NFS related code is borrowed from: https://github.com/basilegithub/General-number-field-sieve-Python (note: Very impressively written, helped me big time, thanks)
 
 Update: Depression. Some criminal piece of shit seems to be black mailing a brother of my father and its making everyone miserable. Belgian society is so shit. Half of it is a narco state, and the other half of it is elitist shitheads. I dont want to be in this country anymore. I really want to leave here. This belgian nightmare, I've wasted so much of my life here getting nowhere. Its the worst place in the world. Even getting threatened with guns in the US was less worse then living in this shit country.
 
 Update: I'll continue taking this NFS PoC apart... and trying to figure out, if at all possible, what the preconditions would be to combine sieving results from multiple quadratics. Because we could sieve with different quadratics who have the same discriminant for example.. there might be a way to do it. I'm stressed. I really need an income. The situation is pretty dire.
 
 Update: Got damnit man. I should be able now to do NFS by  sieving with many quadratics... AS LONG AS THEIR DISCRIMINANT IS THE SAME.... because I've worked out all the number theory of what all of that relates. I just got to figure out the implementation details. I'm so fucking depressed man. If there ever will be better times, I dont think i'll ever be a happy person ever again. These last few years have left me completely dead inside. 
+
+Update: Uploaded a version again which uses the NFS approach. I realized that that b variable basically changes the linear coefficient. AND because I know all the math behind manipulation these coefficients (see chapter 8 in the paper) .. I should now be able to construct an NFS PoC that sieves using quadratic with different coefficient (including the quadratic / leading coefficient). And we can use the hashmap to know in advance which ones will sieve well. I think the end is drawing near now.. seems pretty clear cut what I have to implement now.. I'll do it in the coming. Just really depressed. I just want to be employed again, so my parents can be proud. Like when they came to visit me in Vancouver when I was living there. I'm like the loser of the family right now. I have a lot of dark thoughts lately. I also havnt seen my friends from the PNW in years.. and I'm starting to think I'll probably never see them again because of what microsoft did.
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
