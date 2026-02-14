@@ -8,32 +8,9 @@ To run: python3 run_qs.py -keysize 50 -base 500 -debug 1 -lin_size 100_000 -quad
 
 NFS related code is borrowed from (sieve(), trial()): https://github.com/basilegithub/General-number-field-sieve-Python (note: Very impressively written, helped me big time, thanks)
 
-I've replaced the sieving portion in my PoC with the sieve function of the NFS algorithm. 
+I've replaced the sieving portion in my PoC with the sieve function of the NFS algorithm.
 
-To do:
-
-1. Fix quadratic coefficients. (easy)
-2. Instead of using zx^2+yx-N = poly_val , change it to use zx^2+yx+poly_val = N? Or atleast make sure we are working with irreducible quadratics. (easy)
-3. Optimize sieving parameters (easy)
-4. Figure out if the traditional setup where we end up taking a square root over a finite field would yield an advantage. And if so, can we do it while sieving many different quadratics? (less easy)
-5. Fix variable and function names so they actually make sense to other people and not just me. I end up re-using a lot of things bc of my iterative research method, but other people wont have a clue whats going on unless they trace the input line by line.
-6. Can I translate my findings to higher degree polynomials? (Aka sieve with many different polynomials in the 3rd degree etc).
-
-I'll see how much of the NFS algorithm I can successfully integrate into my work. And if I can find a way to gain an advantage somehow over existing algorithms.
-
-Update: I quickly fixed it so it can also iterate the b variable.
-
-Update: So with NFS.. the factorization of the root doesn't matter as long as zx+y factorizes (which is basically a root with the sign on the linear coefficient flipped). If I'm correct. But NFS can grab that root by taking a square root over a finite field. Atleast thats how I'm currently abstracting it in my head. Let me start investigating tomorrow if there is any way to get something similar working with multiple quadratics. Not having to worry about the factorization of either x or zx+y is really important if we want to achieve good sieving. Alright... this will be my sole focus for the coming days. I understand the sieving now (as you can see by my uploaded implementation) .. now I need to remove the condition of having to factorize the root by taking a square root over a finite field, plus to gain an advantage over NFS, we need to somehow be able to do this with multiple quadratics/polynomials (not just one like NFS does). So close now. My spirit is high now and I'm eager to obliterate the factorization problem in the coming days, hahahahahahhaa. Fuck you all!
-
-Update: Damnit, all my computers have become super glitchy lately. Fix your shitty firmware implant nazi losers. Anyway. Another idea I had was to just select a quadratic polynomial which maximizes the amount of free relations... which is easy using that precalculated hashmap. But I'll investigate that later if all else fails.
-
-Update: Ok, I've been looking at this square root over a finite field code for a while now. I'll start implementing something tomorrow, the way I think it might work, to sieve with multiple quadratics (or multiple pairs of f(x) and g(x) to be precise). The moment that works.. its over. I'll be able to conclude 3 years of research and learning math from 0 as a highschool dropout. Although, long term, it will never really be over until I find a polynomial time algorithm, ahahhahaa.
-
-Update: Hmm. I think tomorrow, let me just make my quadratics irreducible, i.e turn them into a pair zx^2+y*x-poly_val = n and zx+(zx+y) whose resultant is N. Can I still get my current setup working? I'll make that my goal for tomorrow. Because if that does work and I figure out how to do it.. then adding in that square root over a finite field step will be a lot easier. Hmm. If I cant get that to work, I might try lifting my algebraic factor base and retry some of my ealier ideas of succeeding with just a few smooths, but applied to the NFS algorithm. I dont know man... its research, just got to keep generating ideas and trying them out.. eventually something sticks and I advance with my work. I probably look like an insane person if someone reads this github lol. It's become a bit of a diary too.. I've been living in complete social isolation for years. I havnt seen the friends I used to have in the PNW in many years bc of what microsoft did... and thats not going to change for many more years to come... I may not ever see them again. Sometimes it is very difficult coping mentally.
-
-Update: Overactive brain. Had a quick look. And if we use irreducible polynomials instead.. it really doesn't matter, because the discriminant is going to stay the same so atleast when it comes to the discriminant, it will functionally stay the same. I think I have an idea for tomorrow then.
-
-Update: The fuck am I saying. using zx^2+yx-N and zx+y is irreducible too. Let me think.
+I guess f(x) = zx^2+yx-N and g(x) = zx+y are also two irreducible polynomials whose resultant = N, overcomplicating shit in my head. I wonder if it matters if we use a smaller constant in the quadratic but larger in the linear polynomial.. its probaly equivelant. Let me just continue my work today. Work toward implementing something better in my PoC. So right now we need the factorization of z,x, zx+y and the polynomial value. However NFS only needs the factorization of z,zx+y and the polynomial value and it can figure out what value that root should be by taking a square root over a finite field. Atleast thats how I'm currently abstracting it in my head. Lets see.
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
