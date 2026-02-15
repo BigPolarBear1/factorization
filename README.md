@@ -12,6 +12,8 @@ This code is a work in progress. I'm trying to merge some of my findings from ht
 
 To run from NFS_Variant_simple, which is an intermediate step between QS and NFS: python3 run_qs.py -keysize 50 -base 300 -debug 1 -lin_size 100_000 -quad_size 10
 
+I will continue working on this in the weekends. But I dont know how long it is going to take. I want to be able to sieve using different quadratic coefficients in the NFS implementation like I'm doing in my _simple version and CUDA_QS_Variant. Because together with the precalculated hashmap, that would allow for very strong sieving. But I dont know how long that could take to implement, if at all possible. Could be days, or could be weeks. I a broke, I havnt seen my friends in years because of what Microsoft did. I have nothing here in belgium. And every day, the dark thoughts become stronger and stronger and stronger. And if I dont do a hail mary now and hope to find a good 0day exploit that I can sell.. so I can maybe go hike in the arctic, find some peace again... I'm just going to end it, because there is absolutely nothing worth living in my life anymore. Everything was destroyed. Thats just how it is, and thats just the kind of world we live in. It doesn't matter all the work I have done in my career. People were jealous from the start. From my very first bugs.. I was an intruder into an elitist industry.. and they managed to remove me again, I never belonged in this industry.
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
