@@ -23,6 +23,8 @@ Btw, I know stalkers would be reporting this repo over and over again, everytime
 
 Anyway, incase all my suspicions are correct, then I know you will see this: Hello nsa fuckers. Fuck you shitheads. Quit your jobs. And the FBI too. Punch you in your stupid faces shitheads.
 
+What does it matter. I know this will work, sieving with many different quadratics. I dont care what people think. I know what I got. I dont care that so many people laughed at me in the last few years for doing this. I dont care about the silence for years. The desperation. The inability to find employment. Because I'm at the threshold now. I'm going to make history and everything can go to fucking hell. What a shit world this is anyway. Btw, I piss on western intelligence. You could have avoided this so easily. Yet all you incompetent shitheads losers let it escalate right up to this point. Dont ever cross my path. You will die. Dumbass shitheads. Quit your jobs. Go do something that requires less intelligence, bc you are all clearly lacking in that department. HAHAHA> Fucking losers.
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
