@@ -13,7 +13,7 @@ This code is a work in progress. I'm trying to merge some of my findings from ht
 To run from NFS_Variant_simple, which is an intermediate step between QS and NFS: python3 run_qs.py -keysize 50 -base 300 -debug 1 -lin_size 100_000 -quad_size 10
 
 Update: Just run NFS_Variant using python3 run_qs.py -keysize 14 -base 100 -debug 1 -lin_size 100 -quad_size 1, it may or may not succeed, if it fails generate another number. I basically just removed the linear algebra step for now. 
-So we could just use the hashmap and lift all the solution to even powers to find these cases. But the easier idea would just be to add the linear algebra step again, but rather then restricting ourselves to sieving only multiples of a single polynomial.. I want to be able to sieve much more then that.. now to do that when we multiply polynomial values and zx+y together... we must reconstruct a polynomoial for the product and use that to take a square root over a finite field.. it shouldn't be too hard, because I have worked out all that number theory. 
+So we could just use the hashmap and lift all the solutions to even powers to find these cases. But the easier idea would just be to add the linear algebra step again, but rather then restricting ourselves to sieving only multiples of a single polynomial.. I want to be able to sieve much more then that.. now to do that when we multiply polynomial values and zx+y together... we must reconstruct a polynomoial for the product and use that to take a square root over a finite field.. it shouldn't be too hard, because I have worked out all that number theory. 
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
