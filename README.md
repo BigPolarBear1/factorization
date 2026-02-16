@@ -4,7 +4,7 @@ Disclaimer: At no point did AI contribute anything to this research project. Cop
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 50 -base 1000 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
+To run: python3 run_qs.py -keysize 14 -base 100 -debug 1 -lin_size 100 -quad_size 1</br></br>
 
 NFS related code is borrowed from: https://github.com/basilegithub/General-number-field-sieve-Python (note: Very impressively written, helped me big time, thanks)
 
@@ -12,11 +12,8 @@ This code is a work in progress. I'm trying to merge some of my findings from ht
 
 To run from NFS_Variant_simple, which is an intermediate step between QS and NFS: python3 run_qs.py -keysize 50 -base 300 -debug 1 -lin_size 100_000 -quad_size 10
 
-I will continue working on this in the weekends. But I dont know how long it is going to take. I want to be able to sieve using different quadratic coefficients in the NFS implementation like I'm doing in my _simple version and CUDA_QS_Variant. Because together with the precalculated hashmap, that would allow for very strong sieving. But I dont know how long that could take to implement, if at all possible. Could be days, or could be weeks. I am broke, I havnt seen my friends in years because of what Microsoft did. I have nothing here in belgium. And every day, the dark thoughts become stronger and stronger and stronger. And if I dont do a hail mary now and hope to find a good 0day exploit that I can sell.. so I can maybe go hike in the arctic, find some peace again... I'm just going to end it, because there is absolutely nothing worth living in my life anymore. Everything was destroyed. Thats just how it is, and thats just the kind of world we live in. It doesn't matter all the work I have done in my career. People were jealous from the start. From my very first bugs.. I was an intruder into an elitist industry.. and they managed to remove me again, I never belonged in this industry.
-
-I started this project a little less then 3 years ago. I didn't know basic algebra. Never finished highschool. I've learned a lot. I dont care what people think. Most people wouldn't have the courage to do what I did, like some mediocre dipship with a university degree and 6 figure salary with less CVEs then me, pointing fingers and laughing. Thats the type of shit world we live in. You cant get anywhere with determination alone. Everything is politics. They even went after the only person to ever support me in this industry and ruined his career as well after he worked at microsoft for 27 years while portraying me as absolutely incompetent. And there is not a single person in this entire world who spoke up, because everyone wanted to see me fail from the start, like those loser stalkers who had stalked and harassed me for 7 years. And thats just the truth of it. Thats the type of world this is. Just an endless meat grinder, destroying hopes and dreams and devouring people alive.
-
-UPDATE: OH SHIT. Wait a minute. I couldn't fall asleep. And I suddenly got struck by lightning. So when using NFS, if the factorization of the root doesn't matter. Then whats stopping me now from just lifting all my solutions in the hashmap to even powers and just grabbing cases where the polynomial value and zx+y is square and doing a square root over a finite field. RIGHT? WHATS TO STOP ME? NOTHING IS!! HOLY FUCK. FUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUCK! I GOT IT! I need to sleep first.
+Update: Just run NFS_Variant using python3 run_qs.py -keysize 14 -base 100 -debug 1 -lin_size 100 -quad_size 1, it may or may not succeed, if it fails generate another number. I basically just removed the linear algebra step for now. 
+So we could just use the hashmap and lift all the solution to even powers to find these case. But the easier idea would just be to add the linear algebra step again, but rather then restricting ourselves to sieving only multiples of a single polynomial.. I want to be able to sieve much more then that.. now to do that when we multiply polynomial values and zx+y together... we must reconstruct a polynomoial for the product and use that to take a square root over a finite field.. it shouldn't be too hard, because I have worked out all that number theory. 
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
