@@ -4,7 +4,7 @@ Disclaimer: At no point did AI contribute anything to this research project. Cop
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 14 -base 100 -debug 1 -lin_size 100 -quad_size 1</br></br>
+To run: python3 run_qs.py -keysize 14 -base 30 -debug 1 -lin_size 100 -quad_size 10</br></br>
 
 NFS related code is borrowed from: https://github.com/basilegithub/General-number-field-sieve-Python (note: Very impressively written, helped me big time, thanks)
 
@@ -12,7 +12,7 @@ This code is a work in progress. I'm trying to merge some of my findings from ht
 
 To run from NFS_Variant_simple, which is an intermediate step between QS and NFS: python3 run_qs.py -keysize 50 -base 300 -debug 1 -lin_size 100_000 -quad_size 10
 
-Update: Just run NFS_Variant using python3 run_qs.py -keysize 14 -base 100 -debug 1 -lin_size 100 -quad_size 1, it may or may not succeed, if it fails generate another number. I basically just removed the linear algebra step for now. 
+Update: Just run NFS_Variant using python3 run_qs.py -keysize 14 -base 30 -debug 1 -lin_size 100 -quad_size 10, it may or may not succeed, if it fails generate another number. I basically just removed the linear algebra step for now. 
 So we could just use the hashmap and lift all the solutions to even powers to find these cases. But the easier idea would just be to add the linear algebra step again, but rather then restricting ourselves to sieving only multiples of a single polynomial.. I want to be able to sieve much more then that.. now to do that when we multiply polynomial values and zx+y together... we must reconstruct a polynomoial for the product and use that to take a square root over a finite field.. it shouldn't be too hard, because I have worked out all that number theory. Plus it works already with NFS_Variant_Simple, so I dont see why I wouldn't be able to pull it off with this setup as well. Let me begin tomorrow, hopefully this wont take more then a few days. 
 
 Update: Crippling depression. Until my code is done, there will always be that doubt  "what if I'm wrong" .. I struggle with dark thoughts every day, and lately they have been becoming very intense. If I cant innovate on the NFS algorithm.. its over, my life will literally be over. And eveything I experienced. The things I experienced in the US, getting harassed, threatened with a gun outside my apartment, they way microsoft retaliated against my manager for defending me while portraying me as incompetent.. it deeply changed me as a person. I dont think I'll ever be the same again. Seen so much ugliness in this shit world. Its really becoming insanely difficult to keep pushing forward. Anyway.. I started properly investigating what I found earlier. There is cases where we can combine different quadratics, which are not multiples of eachother with linear algebra. Cases where the symbols in the quadratic character base dont get affected after multiplying. I'm still trying to figure out the exact details, I think I somewhat got it though. If I can pull that off, thats going to be great. Just really depressed man. I enjoy the days I'm angry and pissed, because it sure beats the days when I'm feeling like this.
