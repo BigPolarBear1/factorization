@@ -19,6 +19,16 @@ Update: Crippling depression. Until my code is done, there will always be that d
 
 I havnt seen my friends in years bc of what microsoft did. I'm going to kill myself if this doesnt work now. I'm tried man. Getting nowhere in life. Being broke. Just nothing. Its been years since i've last seen any friends. Nobody even reaches out anymore. Just wasting away the years. Just no respect for anything I have done in my career. Just pissed all over everything I have ever done. Microsoft even want back to downgrade some of my bugs (even though I had black on white PoCs proving otherwise) to I would assume retroactively justify them portraying me as incompetent. This is the world we live in. What a nightmare.
 
+Update: I spent all day looking at this math. Let me begin working on what I now I can achieve for sure. 
+
+To do:
+
+1. Index a hashmap by zx+y, zx+y must be square, return by the hashmap will be the possible z,x,y values.
+2. All solutions in the hashmap should be lifted to even exponents. This way we can quicly calculate if the polynomial value will also be square
+3. Step 1 and 2 allows us to really quickly pull relations from the hashmap where zx+y is square and the polynomial value is square. Then the last thing will be the using the rest of the factor base as a quadratic character base.
+
+Now this I can code in one day easily. Let me just start with that. 
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
