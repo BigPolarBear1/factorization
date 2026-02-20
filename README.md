@@ -29,6 +29,8 @@ To do:
 
 Now this I can code in one day easily. Let me just start with that. 
 
+Update: Depression. It is so many years ago now. I think, rollerskating with my teamlead around the seawall in Vancouver, or drinking beers on the beach. And all the other people I got to know there.. that was the peak of my life. All feels so distant now. I can barely even remember the faces of all these people. My life is over. I'm finished. I tried man. I dont care what they will say. What those people at microsoft will say. late 2023 was the worst time in my life. I was threatened with a gun, I got shouted at, called a "p*do" while outside running just minding my own business. In addition to stress of having to deal with the fact I had to leave all my friends behind and come back to a country where I have felt stuck and alone my entire life. I dont think a lot of people would have handled that with a lot of grace. Anyway, its over, bye.
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
