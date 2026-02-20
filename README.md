@@ -8,7 +8,7 @@ To run: python3 run_qs.py -keysize 50 -base 300 -debug 1 -lin_size 100_000 -quad
 
 NFS related code is borrowed from (Mainly sieve(), just to demonstrate we can sieve the same way): https://github.com/basilegithub/General-number-field-sieve-Python (note: Very impressively written, helped me big time, thanks)
 
-I was trying to port some of my insights to the number field sieve algorithm. NFS_Variant_Simple is an intermediate step between QS and NFS. I suspect it may be possible to use the number field sieve approach while sieving many different polynomials rather then just a single polynomial and its multiples. Or at the very least different quadratic coefficient since it relates the multiples of the constant (see CUDA_QS_Variant which tries to leverage different Quadratic Coefficients).
+I was trying to port some of my insights to the number field sieve algorithm. NFS_Variant_Simple is an intermediate step between QS and NFS. I suspect it may be possible to use the number field sieve approach while sieving many different polynomials rather then just a single polynomial and its multiples. Or at the very least different quadratic coefficients since it relates to multiples of the constant (see CUDA_QS_Variant which tries to leverage different Quadratic Coefficients).
 
 But it needs more work. I'm very close to figuring it all out. But I cant do it anymore, living like this. Everyday I am tormented by memories of better days. Rollerskating with my former teamlead around the seawall in Vancouver, best days of my life. Places and people I can now not see anymore. Distant memories of better times.. I am stuck. I cant find employment. And its looking like there is only one way out of this now. 
 
