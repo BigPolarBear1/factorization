@@ -6,7 +6,7 @@ Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 50 -base 300 -debug 1 -lin_size 100_000 -quad_size 10</br></br>
 
-NFS related code is borrowed from (Main sieve(), just to demonstrate we can sieve the same way): https://github.com/basilegithub/General-number-field-sieve-Python (note: Very impressively written, helped me big time, thanks)
+NFS related code is borrowed from (Mainly sieve(), just to demonstrate we can sieve the same way): https://github.com/basilegithub/General-number-field-sieve-Python (note: Very impressively written, helped me big time, thanks)
 
 I was trying to port some of my insights to the number field sieve algorithm. NFS_Variant_Simple is an intermediate step between QS and NFS. I suspect it may be possible to use the number field sieve approach while sieving many different polynomials rather then just a single polynomial and its multiples.
 
