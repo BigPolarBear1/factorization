@@ -13,6 +13,7 @@ I was trying to port some of my insights to the number field sieve algorithm. NF
 Update: Uploaded NFS_WIP, run with: python3 run_qs.py -keysize 14 -base 50 -debug 1 -lin_size 100 -quad_size 10  
 This is work in progress. I'm still trying to figure out the math to get it to sieve many different polynomials. Mainly by changing the quadratic coefficient, because we already know how we can translate that to multiples of N. The current PoC currently just sieves different quadratics where the constant is multiples of N until it finds one where x+y is square, the polynomial value is square and everything in the quadratic character base is square... then it takes a square root over a finite field. I'm now trying to figure out how to get some linear algebra working again while sieving all these different polynomials. I know it can be done and I know I have a good foothold already into a breakthrough. Almost there now.
 
+Update: I'm being an idiot.... its actually very simple now to finish my work. Just trying to make things more difficult then they actually are inside my head lol. *sigh* Let me begin constructing my final version now. Thats the problem with my brain.. it creates all these wildly abstract and complicated thoughts.. and sometimes I just need to do the easy and straightforward thing thats already right infront of me.
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
