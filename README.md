@@ -17,6 +17,8 @@ Update: I'm being an idiot.... its actually very simple now to finish my work. J
 
 Update: Making some good progress today. Going to take a break now, go running and then continue.. going to sieve this the same way basically that I'm sieving CUDA_QS_Variant.. but adjusted a little so it works with number field sieve.... plus because we have a higher density of solutions per prime... we'll be able to find many smooths with similar factorization now easily. The ideas I explored in Quadratic Sieve were great.. but I had to apply them to the number field sieve algorithm instead.
 
+Update: Actually let me swap tomorrow's rest day with today and go running tomorrow instead, since it will be summer weather tomorrow for the first time this year (18 degree celsius). I'll take a short break though and continue working soon. Its going to be great once this PoC is fully implemented.
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
