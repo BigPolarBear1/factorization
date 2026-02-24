@@ -15,6 +15,8 @@ This is work in progress. I'm still trying to figure out the math to get it to s
 
 Update: I'm being an idiot.... its actually very simple now to finish my work. Just trying to make things more difficult then they actually are inside my head lol. *sigh* Let me begin constructing my final version now. Thats the problem with my brain.. it creates all these wildly abstract and complicated thoughts.. and sometimes I just need to do the easy and straightforward thing thats already right infront of me.
 
+Update: Making some good progress today. Going to take a break now, go running and then continue.. going to sieve this the same way basically that I'm sieving CUDA_QS_Variant.. but adjusted a little so it works with number field sieve.... plus because we have a higher density of solutions per prime... we'll be able to find many smooths with similar factorization now easily. The ideas I explored in Quadratic Sieve were great.. but I had to apply them to the number field sieve algorithm instead.
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
