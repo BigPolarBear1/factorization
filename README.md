@@ -17,6 +17,8 @@ Right now it can sieve quadratics similar to QS. However, what I need to do next
 
 Like, I know that "b" parameter, which is basically multiples of a polynomial i.e x^2+yx-n becomes x^2+(y\*2)\*x-n\*4 if b = 2, it basically represents the quadratic coefficient.. thats easy.. that part I know... but I'm still exploring what I can and cannot do with that knowledge.
 
+Update: Great, quickly also made it so it can sieve using different b values. Tomorrow I'm going to remove that b-value related code and replace it with quadratic coefficients and the hashmap.
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
