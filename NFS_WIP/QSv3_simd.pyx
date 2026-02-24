@@ -580,7 +580,7 @@ def sieve(length, f_x, rational_base, algebraic_base, m0, m1, b, logs, offset, l
     tmp_poly = new_coeffs(f_x, b)
     sieve_len=length
     pairs=[]
-   
+    x=(x*b)%mod
     sieve_array = [0]*sieve_len
     sieve_array_neg = [0]*sieve_len
     y=f_x[1]
@@ -590,10 +590,10 @@ def sieve(length, f_x, rational_base, algebraic_base, m0, m1, b, logs, offset, l
         log = logs[q]
 
         for r in algebraic_base[q]:
-            r=r*b
+            r=(r*b)%p
             
-            s=solve_lin_con(mod,r-(x*b),p)
-            root=(x*b)+s*mod
+            s=solve_lin_con(mod,r-x,p)
+            root=x+s*mod
             if (root**2+(y*b)*root-n*b**2)%(mod*p)!=0:
                 print("fataaaaal")
 
@@ -610,14 +610,15 @@ def sieve(length, f_x, rational_base, algebraic_base, m0, m1, b, logs, offset, l
     i=0
     while i < len(sieve_array):
         if sieve_array[i] > keysize*0.7: ##TO DO: FIX THRESHOLD
-            a=(x*b)+i*mod
-            eval1=a**2+(y*b)*a-n*b**2
+            a=x+i*mod
+            eval1=a**2+(y*b)*a-n*(b**2)
             if eval1%mod !=0:
                 print("error")
             eval2=a+(y*b)
-          #  a=x+i*mod
-            if eval1!=0 and eval2!=0:
-                pairs.append([[-1, a*leading], eval1, [[1 ,1]], eval2, [1], [-1,a], 1])
+
+
+            if eval1!=0 and eval2!=0  and math.gcd(a, b) == 1:
+                pairs.append([[-b, a*leading], eval1, [[1 ,1]], eval2, [1], [-b,a], 1])
 
 
         i+=1
@@ -625,14 +626,16 @@ def sieve(length, f_x, rational_base, algebraic_base, m0, m1, b, logs, offset, l
     i=0
     while i < len(sieve_array_neg):
         if sieve_array_neg[i] > keysize*0.7: ##TO DO: FIX THRESHOLD
-            a=(x*b)-i*mod
-            eval1=a**2+(y*b)*a-n*b**2
+            a=x-i*mod
+            eval1=a**2+(y*b)*a-n*(b**2)
             if eval1%mod !=0:
                 print("error")
             eval2=a+(y*b)
-       #     a=x-i*mod
-            if eval1!=0 and eval2!=0:
-                pairs.append([[-1, a*leading], eval1, [[1 ,1]], eval2, [1], [-1,a], 1])
+
+
+
+            if eval1!=0 and eval2!=0  and math.gcd(a, b) == 1:
+                pairs.append([[-b, a*leading], eval1, [[1 ,1]], eval2, [1], [-b,a], 1])
 
 
         i+=1   
@@ -689,7 +692,7 @@ def compute_root_mod_Newton(number, f, p):
     omega = power(n, f, p, (s+1)>>1)
     zeta = power(z, f, p, s)
     while True:
-      #  print("lbd: ",lbd)
+        print("lbd: ",lbd)
         if lbd == [0]*len(lbd): return [0]
         if lbd == [1]: return power(omega, f, p,pow(p, len(f)-1)-2)
         k = 0
@@ -1010,9 +1013,9 @@ def find_relations(f_x, leading_coeff, g, primes, R_p, Q, B_prime, divide_leadin
     graph_fp, graph_pf = {}, {}
     offset = 15+math.log2(const1)
  
-    b = mult
+    b = mult#+2
   
-    while b < 2:
+    while b < 10:
         
         div = 1
         for q in range(len(divide_leading)):
@@ -1031,6 +1034,8 @@ def find_relations(f_x, leading_coeff, g, primes, R_p, Q, B_prime, divide_leadin
                 for p in divide_leading: 
                     tmp.append(not pair[5][0]%p)
                 if z[2] == 1 and z[4] == 1:
+          
+
                     pairs_used.append(tmp)
                     full_found += 1
         b+=1
