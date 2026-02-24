@@ -19,6 +19,8 @@ Like, I know that "b" parameter, which is basically multiples of a polynomial i.
 
 Update: Great, quickly also made it so it can sieve using different b values. Tomorrow I'm going to remove that b-value related code and replace it with quadratic coefficients and the hashmap. I think tomorrow will be a good day.. I should be able to make good progress now with all of this ready to go.
 
+Update: I just checked the math and how it relates to that b-value. Easy. So easy. I will replace it with quadratic coefficients tomorrow. Its just as I assumed. So square quadratic coefficients, easy.. non-square quadratic coefficient, should be possible to, there is no reason for that not to work.. as long as the product is square after linear algebra. Thats it man. EASY! God damnit. It turned out to be so fucking easy. A few more days now.
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
