@@ -13,7 +13,7 @@ You can run the above command from either two. NFS_Variant_Simple is an intermed
 To do for NFS_WIP:
 
 This is still a work in progress. 
-Right now it can sieve quadratics similar to QS. However, what I need to do next is use the cases where we have a square quadratic coefficient (the b parameters in sieve() which is currently unused) and also sieve those... then after that we need to begin working to generated smooths with similar factorization and succeed at the linear algebra step much sooner... very much similar to what I tried in CUDA_QS_Variant.. but I had the realization that because we now have a much higher density of solutions per prime, this appraoch is actually feasible now.
+Right now it can sieve quadratics similar to QS. However, what I need to do next is use the cases where we have a square quadratic coefficient (the b parameters in sieve() which is currently unused) and also sieve those, or even potentially use arbitrary quadratic coefficients and get it to work like that, but I need to sort out the math for that.. let me start by removing as much of these NFS-related approaches as I can and replace them with what I know from my own work... then after that we need to begin working to generate smooths with similar factorization and succeed at the linear algebra step much sooner... very much similar to what I tried in CUDA_QS_Variant.. but I had the realization that because we now have a much higher density of solutions per prime, this appraoch is actually feasible now.
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
