@@ -15,7 +15,7 @@ To do for NFS_WIP:
 This is still a work in progress. 
 Right now it can sieve quadratics similar to QS. However, what I need to do next is use the cases where we have a square quadratic coefficient (the b parameters in sieve() which is currently unused) and also sieve those, or even potentially use arbitrary quadratic coefficients and get it to work like that, but I need to sort out the math for that.. let me start by removing as much of these NFS-related approaches as I can and replace them with what I know from my own work... then after that we need to begin working to generate smooths with similar factorization and succeed at the linear algebra step much sooner... very much similar to what I tried in CUDA_QS_Variant.. but I had the realization that because we now have a much higher density of solutions per prime, this appraoch is actually feasible now.
 
-Like, I know that "b" parameter, which is basically multiples of a polynomial i.e x^2+yx-n becomes x^2+(y\*2)\*x-n\*4 if b = 2, it basically presents the quadratic coefficient.. thats easy.. that part I know... but I'm still exploring what I can and cannot do with that knowledge.
+Like, I know that "b" parameter, which is basically multiples of a polynomial i.e x^2+yx-n becomes x^2+(y\*2)\*x-n\*4 if b = 2, it basically represents the quadratic coefficient.. thats easy.. that part I know... but I'm still exploring what I can and cannot do with that knowledge.
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
