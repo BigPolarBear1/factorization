@@ -551,16 +551,14 @@ def format_duration(delta):
     seconds = delta.seconds%60
     return str(delta.days)+" days, "+str(hours)+" hours, "+str(minutes)+" minutes, "+str(seconds)+" seconds"
 
-def sieve(length, f_x, rational_base, algebraic_base, b, logs, leading,div,x,mod,n):
-    ###TO DO: FIX LEADING COEFF AND ALL THAT
-    ###WIP
-    tmp_poly = new_coeffs(f_x, b)
+def sieve(length, f_x, rational_base, algebraic_base, b, logs,x,mod,n):
     sieve_len=length
     pairs=[]
     x=(x*b)%mod
     sieve_array = [0]*sieve_len
     sieve_array_neg = [0]*sieve_len
     y=f_x[1]
+    z=f_x[0]
     for q, p in enumerate(rational_base):
         if mod%p ==0:
             continue
@@ -571,9 +569,9 @@ def sieve(length, f_x, rational_base, algebraic_base, b, logs, leading,div,x,mod
             
             s=solve_lin_con(mod,r-x,p)
             root=x+s*mod
-            if (root**2+(y*b)*root-n*b**2)%(mod*p)!=0:
+            if (z*root**2+(y*b)*root-n*b**2)%(mod*p)!=0:
                 print("fataaaaal")
-
+                sys.exit()
             i=s
             while i < len(sieve_array):
                 sieve_array[s]+=log
@@ -588,14 +586,15 @@ def sieve(length, f_x, rational_base, algebraic_base, b, logs, leading,div,x,mod
     while i < len(sieve_array):
         if sieve_array[i] > keysize*0.7: ##TO DO: FIX THRESHOLD
             a=x+i*mod
-            eval1=a**2+(y*b)*a-n*(b**2)
+            eval1=z*a**2+(y*b)*a-n*(b**2)
             if eval1%mod !=0:
-                print("error")
-            eval2=a+(y*b)
+                print("error1")
+                sys.exit()
+            eval2=z*a+(y*b)
 
 
             if eval1!=0 and eval2!=0  and math.gcd(a, b) == 1:
-                pairs.append([[-b, a*leading], eval1, [[1 ,1]], eval2, [1], [-b,a], 1])
+                pairs.append([[-b, a*z], eval1, [[1 ,1]], eval2, [1], [-b,a], 1])
 
 
         i+=1
@@ -604,20 +603,21 @@ def sieve(length, f_x, rational_base, algebraic_base, b, logs, leading,div,x,mod
     while i < len(sieve_array_neg):
         if sieve_array_neg[i] > keysize*0.7: ##TO DO: FIX THRESHOLD
             a=x-i*mod
-            eval1=a**2+(y*b)*a-n*(b**2)
+            eval1=z*a**2+(y*b)*a-n*(b**2)
             if eval1%mod !=0:
-                print("error")
-            eval2=a+(y*b)
+                print("error2")
+                sys.exit()
+            eval2=z*a+(y*b)
 
 
 
             if eval1!=0 and eval2!=0  and math.gcd(a, b) == 1:
-                pairs.append([[-b, a*leading], eval1, [[1 ,1]], eval2, [1], [-b,a], 1])
+                pairs.append([[-b, a*z], eval1, [[1 ,1]], eval2, [1], [-b,a], 1])
 
 
         i+=1   
     
-    return pairs,tmp_poly
+    return pairs
 
 def square_root(f, N, p, m0, m1, leading, bound):
  #   print("Square_root info f: "+str(f)+" N: "+str(N)+" p: "+str(p)+" m0: "+str(m0)+" m1: "+str(m1)+" leading: "+str(leading)+" bound: "+str(bound))
@@ -981,13 +981,9 @@ def reduce_sparse_matrix(matrix, pairs):
     return matrix, pairs
                         
 ## Creation of polynomials
-def find_relations(f_x, leading_coeff, g, primes, R_p, Q, B_prime, divide_leading, prod_primes, pow_div, pairs_used,const1, const2, logs, M,mult,x,mod,n):
-
-    full_found = 0 
-    b = mult
-  
+def find_relations(f_x, g, primes, R_p, Q, B_prime, divide_leading, prod_primes, pow_div, pairs_used,const1, const2, logs, M,mult,x,mod,n):
+    b = mult  
     while b < 20:
-        
         div = 1
         for q in range(len(divide_leading)):
             p = divide_leading[q]
@@ -996,8 +992,7 @@ def find_relations(f_x, leading_coeff, g, primes, R_p, Q, B_prime, divide_leadin
                 while not b%tmp and tmp <= pow_div[q]:
                     div *= p
                     tmp *= p
-        
-        pairs,tmp_poly = sieve(M, f_x, primes, R_p, b, logs, leading_coeff, div,x,mod,n) ##to do: returning tmp_poly for debug purposes.Remove later
+        pairs = sieve(M, f_x, primes, R_p, b, logs,x,mod,n) ##to do: returning tmp_poly for debug purposes.Remove later
         for i, pair in enumerate(pairs):
             z = trial(pair, primes, const1, const2, div)
             if z[0]:
@@ -1007,7 +1002,7 @@ def find_relations(f_x, leading_coeff, g, primes, R_p, Q, B_prime, divide_leadin
                 if z[2] == 1 and z[4] == 1:
                   #  print("adding: "+str(tmp))
                     pairs_used.append(tmp)
-                    full_found += 1
+
         b+=1
                                                                                         #cycle_len, full_found, partial_found_pf)                  
     return pairs_used
@@ -1030,14 +1025,7 @@ def get_derivative(f):
         res[i] = (len(f)-1-i)*f[i]
     return res
     
-def new_coeffs(f, x):
-    b = 1
-    tmp = [i for i in f]
-    for i in range(len(f)-1):
-        tmp[i] *= b
-        b *= x
-    tmp[-1] *= b
-    return tmp
+
     
 def power(poly, f, p, exp):
     if exp == 1: return poly
@@ -1428,12 +1416,12 @@ def NFS_sieve(n,f_x,primeslist,mult,R_p,pairs_used,logs,pow_div,divide_leading,B
     
     f_prime = get_derivative(f_x)
     M=lin_sieve_size
-    leading_coeff = f_x[0]
+    z = f_x[0]
     g = [1, f_x[1]]
     for i in range(2, len(f_x)): 
-       g.append(f_x[i]*pow(leading_coeff, i-1))
-    Q, k = initialize_3(n, f_x, f_prime, B, leading_coeff)
-    pairs_used = find_relations(f_x, leading_coeff, g, primes, R_p, Q, B_prime, divide_leading,prod_primes, pow_div, pairs_used, const1, const2, logs,M,mult,x,mod,n)
+       g.append(f_x[i]*pow(z, i-1))
+    Q, k = initialize_3(n, f_x, f_prime, B, z)
+    pairs_used = find_relations(f_x, g, primes, R_p, Q, B_prime, divide_leading,prod_primes, pow_div, pairs_used, const1, const2, logs,M,mult,x,mod,n)
     return pairs_used,R_p,Q,divide_leading,g,M
 
 def NFS_solve(n,f_x,primeslist,pairs_used,R_p,Q,divide_leading,V,g,M,inert_set):
@@ -2065,7 +2053,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
     y_ind=0
     while y_ind<100_000_000:  ##This is shit... fix this.. 
         y=y_start+y_ind
-        f_x=[1,y,-n]
+        f_x=[z,y,-n]
         seen=[]
 
         d=2
@@ -2084,7 +2072,6 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                 prime=primeslist[ind]
                 l=hmap[ind][z-1]
                 collected.append(l)
-         #   print("prime: "+str(prime)+" l: "+str(l))
                 e+=1
 
             t=0
@@ -2106,8 +2093,6 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                 t+=1
             if hit == 1:
                 continue  
-
-        #    print(" y: "+str(y)+" x_list: "+str(x_list))
             enum=[]
             x_list=get_partials(mod,x_list)
             t=0
