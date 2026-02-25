@@ -1,49 +1,26 @@
 ##NFS related code is borrowed from: https://github.com/basilegithub/General-number-field-sieve-Python (note: Very impressively written, helped me big time, thanks)
 
 
-from sympy import symbols, Poly, Matrix
+
 import argparse
 import cProfile
 from numpy.polynomial.legendre import leggauss
-import math, os
+import os
 from datetime import datetime
 import random
-import sympy
-from itertools import chain
 import itertools
-import sys
-import argparse
 import multiprocessing
 import time
 import copy
 from timeit import default_timer
-import gc
-import array
 import numpy as np
-from datetime import datetime
-import sys
-from datetime import datetime
-import sys
-import math
 from scipy.linalg import det
 import math, sys
-from datetime import datetime
-import random
 import sympy
-from itertools import chain
-import itertools
-import sys
-import argparse
-import multiprocessing
-import time
-import copy
-from timeit import default_timer
-import math
 import gc
 from cpython cimport array
 import array
 cimport cython
-import numpy as np
 from sympy import symbols, Poly, Matrix
 
 
@@ -574,7 +551,7 @@ def format_duration(delta):
     seconds = delta.seconds%60
     return str(delta.days)+" days, "+str(hours)+" hours, "+str(minutes)+" minutes, "+str(seconds)+" seconds"
 
-def sieve(length, f_x, rational_base, algebraic_base, m0, m1, b, logs, offset, leading,div,x,mod,n):
+def sieve(length, f_x, rational_base, algebraic_base, b, logs, leading,div,x,mod,n):
     ###TO DO: FIX LEADING COEFF AND ALL THAT
     ###WIP
     tmp_poly = new_coeffs(f_x, b)
@@ -1004,18 +981,12 @@ def reduce_sparse_matrix(matrix, pairs):
     return matrix, pairs
                         
 ## Creation of polynomials
-def find_relations(f_x, leading_coeff, g, primes, R_p, Q, B_prime, divide_leading, prod_primes, pow_div, pairs_used,const1, const2, logs, m0, m1, M,mult,x,mod,n):
-    fp, pf = {}, {}
-    parent_fp, parent_pf = {}, {}
-    full_found = 0
-    partial_found_fp, partial_found_pf = 0, 0
-    size_fp, size_pf = 0, 0
-    graph_fp, graph_pf = {}, {}
-    offset = 15+math.log2(const1)
- 
-    b = mult#+2
+def find_relations(f_x, leading_coeff, g, primes, R_p, Q, B_prime, divide_leading, prod_primes, pow_div, pairs_used,const1, const2, logs, M,mult,x,mod,n):
+
+    full_found = 0 
+    b = mult
   
-    while b < 10:
+    while b < 20:
         
         div = 1
         for q in range(len(divide_leading)):
@@ -1026,7 +997,7 @@ def find_relations(f_x, leading_coeff, g, primes, R_p, Q, B_prime, divide_leadin
                     div *= p
                     tmp *= p
         
-        pairs,tmp_poly = sieve(M, f_x, primes, R_p, m0, m1, b, logs, offset, leading_coeff, div,x,mod,n) ##to do: returning tmp_poly for debug purposes.Remove later
+        pairs,tmp_poly = sieve(M, f_x, primes, R_p, b, logs, leading_coeff, div,x,mod,n) ##to do: returning tmp_poly for debug purposes.Remove later
         for i, pair in enumerate(pairs):
             z = trial(pair, primes, const1, const2, div)
             if z[0]:
@@ -1034,8 +1005,7 @@ def find_relations(f_x, leading_coeff, g, primes, R_p, Q, B_prime, divide_leadin
                 for p in divide_leading: 
                     tmp.append(not pair[5][0]%p)
                 if z[2] == 1 and z[4] == 1:
-          
-
+                  #  print("adding: "+str(tmp))
                     pairs_used.append(tmp)
                     full_found += 1
         b+=1
@@ -1457,15 +1427,13 @@ def NFS_sieve(n,f_x,primeslist,mult,R_p,pairs_used,logs,pow_div,divide_leading,B
     const1, const2 = LARGE_PRIME_CONST*primes[-1], LARGE_PRIME_CONST*primes[-1]*primes[-1]
     
     f_prime = get_derivative(f_x)
-    m0=-f_x[1]
-    m1=f_x[0]
     M=lin_sieve_size
     leading_coeff = f_x[0]
     g = [1, f_x[1]]
     for i in range(2, len(f_x)): 
        g.append(f_x[i]*pow(leading_coeff, i-1))
     Q, k = initialize_3(n, f_x, f_prime, B, leading_coeff)
-    pairs_used = find_relations(f_x, leading_coeff, g, primes, R_p, Q, B_prime, divide_leading,prod_primes, pow_div, pairs_used, const1, const2, logs, m0, m1,M,mult,x,mod,n)
+    pairs_used = find_relations(f_x, leading_coeff, g, primes, R_p, Q, B_prime, divide_leading,prod_primes, pow_div, pairs_used, const1, const2, logs,M,mult,x,mod,n)
     return pairs_used,R_p,Q,divide_leading,g,M
 
 def NFS_solve(n,f_x,primeslist,pairs_used,R_p,Q,divide_leading,V,g,M,inert_set):
