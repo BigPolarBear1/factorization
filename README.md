@@ -23,6 +23,8 @@ Update: I just checked the math and how it relates to that b-value. Easy. So eas
 
 Update: Began rewriting parts of the code so we can sieve using multiple (non-square) quadratic coefficients (i.e combine smooths from different quadratic coefficients in the linear algebra step). Very tired today... can take a couple of days.. but once that works... that's it.. breakthrough... 
 
+Update: Actually thinking about this some deeper.. I may also be able to sieve using different linear coefficients.. like in NFS_Variant_Simple.. I have an idea. 
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
