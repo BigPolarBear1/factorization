@@ -25,6 +25,8 @@ Update: Began rewriting parts of the code so we can sieve using multiple (non-sq
 
 Update: Actually thinking about this some deeper.. I may also be able to sieve using different linear coefficients.. like in NFS_Variant_Simple.. I have an idea. 
 
+Update: Bah, too tired today. I'll fix it tomorrow. I know how to manipulate all these coefficients and roots.. we can definitely sieve with any quadratic.. but I may need to add an extra linear algebra step.. basically to produce smooths of a certain shape to then add to the final linear algebra step. Something like that, let me think what makes sense to do. I need some sleep first. Just feeling like shit today. Life is just really stressing me out lately. 
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
