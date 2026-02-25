@@ -21,6 +21,8 @@ Update: Great, quickly also made it so it can sieve using different b values. To
 
 Update: I just checked the math and how it relates to that b-value. Easy. So easy. I will replace it with quadratic coefficients tomorrow. Its just as I assumed. So square quadratic coefficients, easy.. non-square quadratic coefficient, should be possible to, there is no reason for that not to work.. as long as the product is square after linear algebra. Thats it man. EASY! God damnit. It turned out to be so fucking easy. A few more days now.
 
+Update: Began rewriting parts of the code so we can sieve using multiple (non-square) quadratic coefficients (i.e combine smooths from different quadratic coefficients in the linear algebra step). Very tired today... can take a couple of days.. but once that works... that's it.. breakthrough... 
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
