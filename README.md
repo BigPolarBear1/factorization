@@ -19,6 +19,8 @@ Once we have enough of them... its just a matter of multiplying and dividing roo
 
 Let me begin writing some code tomorrow that attemps to do this.
 
+Yea that should work... i.e if we have zx^2+yx-4387 = 9, then it doens't matter what coefficients and roots we are using for zx^2+yx, we can always change them using the hashmap. So as long as we find cases like that where the polynomial value factors.. then finding among that similar coefficients should be trivial. Ofcourse we also need to take into account the factorization of zx+y but that should be manage-able. I like this approach. Feels right somehow. My head is going bad places lately, those days I lived in Vancouver and all the friends I knew there.. those days are never coming back. I wish I could go back in time and just relive those years over and over again. It all seems like a distant memory now. 
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
