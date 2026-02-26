@@ -12,20 +12,9 @@ You can run the above command from either two. NFS_Variant_Simple is an intermed
 
 To do for NFS_WIP:
 
-This is still a work in progress. 
-Right now it can sieve quadratics similar to QS. However, what I need to do next is use the cases where we have a square quadratic coefficient (the b parameters in sieve() which is currently unused) and also sieve those, or even potentially use arbitrary quadratic coefficients and get it to work like that, but I need to sort out the math for that.. let me start by removing as much of these NFS-related approaches as I can and replace them with what I know from my own work... then after that we need to begin working to generate smooths with similar factorization and succeed at the linear algebra step much sooner... very much similar to what I tried in CUDA_QS_Variant.. but I had the realization that because we now have a much higher density of solutions per prime, this appraoch is actually feasible now.
+UPDATE: I GOT IT! So I need to merge my findings from NFS_Variant_Simple with NFS_WIP. So right now NFS_WIP is bottlenecked by the fact that we must sieve with the same coefficients else we cannot combine smooths during the linear algebra step. HOWEVER... using my findings from NFS_Variant.. we see how we can transform smooths sieved with arbitrary coefficients to something of the shape x^2+N\*k. HOWEVER... we can use those exact same methods to transform smooths sieved with arbitary coefficients to something of the shape x^2+y\*x-N\*k ... where y is a coefficient of our choosing. 
 
-Like, I know that "b" parameter, which is basically multiples of a polynomial i.e x^2+yx-n becomes x^2+(y\*2)\*x-n\*4 if b = 2, it basically represents the quadratic coefficient.. thats easy.. that part I know... but I'm still exploring what I can and cannot do with that knowledge.
 
-Update: Great, quickly also made it so it can sieve using different b values. Tomorrow I'm going to remove that b-value related code and replace it with quadratic coefficients and the hashmap. I think tomorrow will be a good day.. I should be able to make good progress now with all of this ready to go.
-
-Update: I just checked the math and how it relates to that b-value. Easy. So easy. I will replace it with quadratic coefficients tomorrow. Its just as I assumed. So square quadratic coefficients, easy.. non-square quadratic coefficient, should be possible to, there is no reason for that not to work.. as long as the product is square after linear algebra. Thats it man. EASY! God damnit. It turned out to be so fucking easy. A few more days now.
-
-Update: Began rewriting parts of the code so we can sieve using multiple (non-square) quadratic coefficients (i.e combine smooths from different quadratic coefficients in the linear algebra step). Very tired today... can take a couple of days.. but once that works... that's it.. breakthrough... 
-
-Update: Actually thinking about this some deeper.. I may also be able to sieve using different linear coefficients.. like in NFS_Variant_Simple.. I have an idea. 
-
-Update: Bah, too tired today. I'll fix it tomorrow. I know how to manipulate all these coefficients and roots.. we can definitely sieve with any quadratic.. but I may need to add an extra linear algebra step.. basically to produce smooths of a certain shape to then add to the final linear algebra step. Something like that, let me think what makes sense to do. I need some sleep first. Just feeling like shit today. Life is just really stressing me out lately. 
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
