@@ -12,7 +12,7 @@ You can run the above command from either two. NFS_Variant_Simple is an intermed
 
 To do for NFS_WIP:
 
-UPDATE: I GOT IT! So I need to merge my findings from NFS_Variant_Simple with NFS_WIP. So right now NFS_WIP is bottlenecked by the fact that we must sieve with the same coefficients else we cannot combine smooths during the linear algebra step. HOWEVER... using my findings from NFS_Variant.. we see how we can transform smooths sieved with arbitrary coefficients to something of the shape x^2+N\*k. HOWEVER... we can use those exact same methods to transform smooths sieved with arbitary coefficients to something of the shape x^2+y\*x-N\*k ... where y is a coefficient of our choosing. 
+UPDATE: I GOT IT! So I need to merge my findings from NFS_Variant_Simple with NFS_WIP. So right now NFS_WIP is bottlenecked by the fact that we must sieve with the same coefficients else we cannot combine smooths during the linear algebra step. HOWEVER... using my findings from NFS_Variant.. we see how we can transform smooths sieved with arbitrary coefficients to something of the shape x^2+N\*k. HOWEVER... we can use those exact same methods to transform smooths sieved with arbitary coefficients to something of the shape x^2+y\*x-N\*k ... where y is a coefficient of our choosing. The exact same principles apply.. its easy actually.
 
 
 
