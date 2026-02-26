@@ -16,6 +16,8 @@ UPDATE: I GOT IT! So I need to merge my findings from NFS_Variant_Simple with NF
 
 Update: Oh and unlike NFS_Variant_Simple its really just the polynomial value which must be square, the factorization of the constant of the discriminant (+ an offset determined by the linear coefficient we are sieving for) must just be smooth over the factor base. It doesn't need to be square. Just stressed today. I'll finish it tomorrow. But anyway.. so what we can do now probably is have 2 linear algebra steps.. where the first linear algebra step is to combine sieving results from different coefficients into a shape where we can use it to  plug into the final linear algebra step, which is the one for NFS using a quadratic character base and all that. I knew it could be done.. none of this makes sense. People would have known I was right.. this literally doesn't make sense.
 
+Update: Wait, do I even need a non-zero linear coefficient to sucessfully take a square root over a finite field? If not.. .then its just straight up copy past from NFS_Variant_Simple.. that would be by far the easiest and most elegant solution... let me check... first however.. I'm going for a run. 
+
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
