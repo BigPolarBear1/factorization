@@ -24,6 +24,8 @@ Yea that should work... i.e if we have zx^2+yx-4387 = 9, then it doens't matter 
 UPDATE: I JUST CHECKED THE MATH. DUH. THAT WOULD WORK.. let me begin working on the implementation details. 
 If guess during the initial step we could just sieve 'a-N' where a is basically just zx^2+yx but we derive the set of possible roots and coefficients using the hashmap based on the factorization of the result. Once we have enough of these found with overlapping coefficients (roots dont matter) we just plug that into the linear algebra step for NFS and take a square root over a finite field.  Its actually quite simple and elegant. So the only thing left to do is a quick way that for a given 'a' (as in a-N), we must quickly find all possible roots and coefficients that generate a-N in the integers. I know its possible, because the maximum size of these roots and coefficients is dependent on the size of a. Probably could write a sieve interval type of approach for it.. just to demonstrate it works as a proof of concept.. then try to find a better way later..
 
+Update: Wait actually I see how to quickly calculate all permutations of possible coefficients and roots for a given polynomial value. Let me start by writing a function for it, easy enough.
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
