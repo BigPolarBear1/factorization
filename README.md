@@ -10,23 +10,8 @@ You can run the above command from either two. NFS_Variant_Simple is an intermed
 
 !!!NFS related code is borrowed from: https://github.com/basilegithub/General-number-field-sieve-Python (note: Very impressively written, helped me big time, thanks)
 
-To do for NFS_WIP:
-
-Update: I spent all day trying to figure out how I'm going to sieve arbitrary quadratic in NFS_WIP, similar to how I'm doing it in NFS_Variant_Simple. I think I've mostly figured it out now.
-
-So the first phase we will just sieve quadratics and find cases where the polynomial value factors over the factor base.
-Once we have enough of them... its just a matter of multiplying and dividing roots and coefficients until we find common coefficients that are shared among enough of these smooths we found. We should be able to use that precalculated hashmap for that in a way that makes algorithmically sense.
-
-Let me begin writing some code tomorrow that attemps to do this.
-
-Yea that should work... i.e if we have zx^2+yx-4387 = 9, then it doens't matter what coefficients and roots we are using for zx^2+yx, we can always change them using the hashmap. So as long as we find cases like that where the polynomial value factors.. then finding among that similar coefficients should be trivial. Ofcourse we also need to take into account the factorization of zx+y but that should be manage-able. I like this approach. Feels right somehow. My head is going bad places lately, those days I lived in Vancouver and all the friends I knew there.. those days are never coming back. I wish I could go back in time and just relive those years over and over again. It all seems like a distant memory now. 
-
-UPDATE: I JUST CHECKED THE MATH. DUH. THAT WOULD WORK.. let me begin working on the implementation details. 
-If guess during the initial step we could just sieve 'a-N' where a is basically just zx^2+yx but we derive the set of possible roots and coefficients using the hashmap based on the factorization of the result. Once we have enough of these found with overlapping coefficients (roots dont matter) we just plug that into the linear algebra step for NFS and take a square root over a finite field.  Its actually quite simple and elegant. So the only thing left to do is a quick way that for a given 'a' (as in a-N), we must quickly find all possible roots and coefficients that generate a-N in the integers. I know its possible, because the maximum size of these roots and coefficients is dependent on the size of a. Probably could write a sieve interval type of approach for it.. just to demonstrate it works as a proof of concept.. then try to find a better way later..
-
-Update: Wait actually I see how to quickly calculate all permutations of possible coefficients and roots for a given polynomial value. Let me start by writing a function for it, easy enough. its just the divisors of zx+y from which you can calculate all these permutations. All of this shit is connected... it is all suddenly coming full circle. God damnit man. Too slow.
-
-UPDATE: Yeap, you can construct all possible permutations of roots and coefficients simply based on the factorization of zx+y. I wrote some test code for it and it works. So its quite easy now to plug that into the number field sieve algorithm .. should be done this weekend. Going to take a break now and go running. Looks like my work will be finished in the coming days.. or atleast a first rough draft of the completed algorithm which will demonstrate sieving for NFS using different polynomials basically.
+Update: So I'm porting my findings from NFS_Variant_Simple into NFS_WIP. I figured out the math today (february 27th). And began writing some code.. I hope a first rough draft is ready this weekend.
+So the insight that I got from NFS_Variant_Simple is that if we perform trial factorization on something like this a-N = poly_val ... as long as poly_val factorizes we can use it. Because a can contain many different roots and coefficients of the shape zx^2+yx. And at the very minimum 1^2+(a-1)\*1 will be a valid solution. Any other roots can be found by factorizing 'a'. We control the size and factorization of a .. hence we can sieve for many different coefficients at the same time, while still being deliberate about the range of coefficients we are sieving for. Functionally this would be the same as running many instances of NFS using different polynomials in parallel for the same effort of only one instance.  This is definately a breakthrough.  I did it... I actually finally did it. I just got to bring it home now.
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
