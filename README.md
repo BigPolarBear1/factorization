@@ -26,7 +26,7 @@ If guess during the initial step we could just sieve 'a-N' where a is basically 
 
 Update: Wait actually I see how to quickly calculate all permutations of possible coefficients and roots for a given polynomial value. Let me start by writing a function for it, easy enough. its just the divisors of zx+y from which you can calculate all these permutations. All of this shit is connected... it is all suddenly coming full circle. God damnit man. Too slow.
 
-UPDATE: Yeap, you can construct all possible permutations of roots and coefficients simply based on the factorization of zx+y or (a-1) if we sieve with a-N. I wrote some test code for it and it works. So its quite easy now to plug that into the number field sieve algorithm .. should be done this weekend. Going to take a break now and go running. Looks like my work will be finished in the coming days.. or atleast a first rough draft of the completed algorithm which will demonstrate sieving for NFS using different polynomials basically.
+UPDATE: Yeap, you can construct all possible permutations of roots and coefficients simply based on the factorization of zx+y or (a-1 if we sieve with a-N). I wrote some test code for it and it works. So its quite easy now to plug that into the number field sieve algorithm .. should be done this weekend. Going to take a break now and go running. Looks like my work will be finished in the coming days.. or atleast a first rough draft of the completed algorithm which will demonstrate sieving for NFS using different polynomials basically.
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
