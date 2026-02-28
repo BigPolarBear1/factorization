@@ -13,6 +13,8 @@ You can run the above command from either two. NFS_Variant_Simple is an intermed
 Update: So I'm porting my findings from NFS_Variant_Simple into NFS_WIP. I figured out the math today (february 27th). And began writing some code.. I hope a first rough draft is ready this weekend.
 So the insight that I got from NFS_Variant_Simple is that if we perform trial factorization on something like this a-N = poly_val ... as long as poly_val factorizes we can use it. Because a can contain many different roots and coefficients of the shape zx^2+yx. And at the very minimum 1^2+(a-1)\*1 will be a valid solution. Any other roots can be found by factorizing 'a'. We control the size and factorization of a .. hence we can sieve for many different coefficients at the same time, while still being deliberate about the range of coefficients we are sieving for. Functionally this would be the same as running many instances of NFS using different polynomials in parallel for the same effort of only one instance.  This is definately a breakthrough.  I did it... I actually finally did it. I just got to bring it home now.
 
+Update: Finished a first initial proof of concept.. but now I will need to spent time improving it. I'll upload somewhere next week for sure. 
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
