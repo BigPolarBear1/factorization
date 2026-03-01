@@ -19,6 +19,8 @@ Update: And as an extension of the above.. I am fairly confident it is even poss
 
 Update: hehehehe... yea ofcourse you can multiply everything to a common coefficient easily. Its very straightforward. Alright... this is going to set the internet on fire very soon... 
 
+Update: I hope to finish my work next week. So right now I already have a working PoC (not yet uploaded) that just sieves a-N = poly_val and from 'a' deduces all possible coefficients and roots and saves them and then tries to run NFS on these results. Ofcourse this works only if we end up with a bunch of root solutions for the same coefficients. Ultimately what I need to do is multiply all these results so they all share a common coefficient. I did the math and I do believe it can be done... so tomorrow... I will do it.. once that works I should be ready to begin publishing my work for real.
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
