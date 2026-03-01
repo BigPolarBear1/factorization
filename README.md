@@ -15,6 +15,8 @@ So the insight that I got from NFS_Variant_Simple is that if we perform trial fa
 
 Update: Finished a first initial proof of concept.. but now I will need to spent time improving it. I'll upload somewhere next week for sure. 
 
+Update: And as an extension of the above.. I am fairly confident it is even possible to multiply sieving results to a common coefficient... such that we are not restricted by the coefficients that can be generated from 'a' (as in a-N = poly_val). That would be ideal to achieve.. as that would mean I could probably outperform existing NFS algorithms using quadratics. 
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
