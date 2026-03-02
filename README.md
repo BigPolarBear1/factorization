@@ -23,6 +23,8 @@ Update: I hope to finish my work next week. So right now I already have a workin
 
 Update: Ofcourse microsoft deleted my linkedin account. Too much of a coward to face what they have done. Just like those cowards who threatened me with a gun. Guess cowardice is a thing about people living in Redmond.
 
+Update: Yea... can just change coefficients by multiiplying poly_val with a square   ... this also changes 'a' in a-N = poly_val and we get a different set of possible coefficients and roots. Then its just a matter of multiplying a bunch of different smooths until they all share the same coefficients and plug that into NFS... and done. And that's how you make history by sieving with arbitrary polynomials for the number field sieve algorithm. Ofcourse everyone is too much of a coward to admit I've made a breakthrough. I guess the goal for the coming days is to now write a function to multiply smooth values we found by sieving a-N = poly_val with squares, such that the new 'a' value for all smooths can be decomposed into the same coefficients. And that will conclude my work.. because sieving a-N = poly_val is infinitely easier then sieving a^2 - N = poly_val. Literally turned a quadratic problem into a linear problem. The irony is... if people know.. and this is how I am being treated, history isnt going to be kind on you cowards. 
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
