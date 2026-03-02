@@ -21,6 +21,8 @@ Update: hehehehe... yea ofcourse you can multiply everything to a common coeffic
 
 Update: I hope to finish my work next week. So right now I already have a working PoC (not yet uploaded) that just sieves a-N = poly_val and from 'a' deduces all possible coefficients and roots and saves them and then tries to run NFS on these results. Ofcourse this works only if we end up with a bunch of root solutions for the same coefficients. Ultimately what I need to do is multiply all these results so they all share a common coefficient. I did the math and I do believe it can be done... so tomorrow... I will do it.. once that works I should be ready to begin publishing my work for real. And if that doesn't work we can always just select 'a' (as in a-N = poly_val) such that we sieve for the same grouping of coefficients, at the very least it should allow us to sieve for multiply coefficients in one go.. that I know is possible for sure and is already novelty enough.. but I want to destroy factorization.
 
+Update: Ofcourse microsoft deleted my linkedin account. Too much of a coward to face what they have done. Just like those cowards who threatened me with a gun. Guess cowardice is a thing about people living in Redmond.
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
