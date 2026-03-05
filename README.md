@@ -31,6 +31,8 @@ I guess it must have been something I said. Probably in the months after the FBI
 
 I'm turning 36 soon. I'm at rock bottom. I have no future. No way to make money. Cant get hired anymore. I worked really hard for many years. Sacrificed a lot. Many holidays where I was spending time writing PoCs or hunting for bugs while family members were downstairs who have now passed away. For what? I see people with one or two CVEs get jobs left and right.  You know, western infosec, it is a club.. you are either part of it, or you are not. And the tech bros in infosec definitely never liked me from the start.
 
+Update: Depression. Just stuck in life. Everyone keeps asking me when I'm going to start earning some money again. I dont know how. I'm completely stuck. Just starting to feel like there is only one way out anymore.
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
