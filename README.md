@@ -15,14 +15,15 @@ NFS_WIP2 is a very early draft of trying to implement Chapter VIII in the paper,
 
 To do: NFS_WIP2 is very ugly and rushed for now, I struggled with depression a lot the last week and did some blogging about bug hunting instead. I just hacked this together really quickly.
 
-1. The main ticket item is during phase two, after sieving... we need to change our results with a quadratic coefficient (the paper describes using the k variable instead.. but after doing some math today, I figured the quadratic coefficient can also be used.. but I need to think what will end up being best.. because using the quadratic coefficient, controlling the factorization of zx+y becomes a little harder), such that a majority of sieving results will share the same linear coefficient. The uploaded PoC does a bruteforce attempt on this... but its written very poorly. Ideally I'll need to solve systems of linear congruences to figure out a good quadratic coefficient. Thats by far the biggest item to solve.
-2. Once 1 is finished, we need to reimplment sieving by moduli, like in NFS_WIP
-3. Its discarding all the negative linear coefficient right now.. should add a negative siev interval as well.
-4. Just the entire sieving logic needs to be fixed. We need 'a' values such that we know we're going to get linear coeficients within a certain range. I know how that math works, so I need to be a bit smarter about it.
-And ofcourse when 'decomposing' a into possible coefficients and roots.. we should take into consideration the entire set of combinations of factors, not just each individual prime.
-I'll continue uploading as I progress.. and will delete the older versions once this isn't in such a sad state anymore.
+I need to rewrite a bunch of shit in NFS_WIP2 ... also I just realized the following:
 
-Update: I was thinking some more.. and yes, in phase two, we should definitely multiply using that k value, bc it keeps the factorization of zx+y predictable. However.. sieving in the direction of the quadratic coefficient is also easy.. so we should perform sieving in that direction as well.  I'll have to do some thinking.. it's just implementation details now.. but I can't yolo this like the current version of NFS_WIP2.. everything needs to be deliberate.
+272^2-267\*272-4387 = -3027      and zx+y = 5
+272^2-262\*272-4387\*2 = -3027\*2  and zx+y = 10
+272^2-257\*272-4387\*3 = -3027\*3  and zx+y = 15
+272^2-252\*272-4387\*4 = -3027\*4  and zx+y = 20
+272^2-247\*272-4387\*5 = -3027\*5  and zx+y = 25
+
+So multiplying that k value in zx^2+yx-Nk and the polynomial value, it is by far the best way to change the linear coefficient while keeping control over the factorization of the polynomial value and zx+y. In NFS_WIP2 I tried using the quadratic coefficient instead (just in a quick and dirty bruteforce way).. but we lose control over the factorization of zx+y that way. Using that k value is definitely better. So I need to properly implement that.. I think I have a pretty good idea now how to do that in code. Then next I need to fix all the sieving code. This first iteration is really horrible.. but its a start. Just step by step now until its done.
 
 
 #### To run from folder "CUDA_QS_variant":</br></br>
