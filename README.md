@@ -17,11 +17,11 @@ To do: NFS_WIP2 is very ugly and rushed for now, I struggled with depression a l
 
 I need to rewrite a bunch of shit in NFS_WIP2 ... also I just realized the following:
 
-272^2-267\*272-4387 = -3027      and zx+y = 5
-272^2-262\*272-4387\*2 = -3027\*2  and zx+y = 10
-272^2-257\*272-4387\*3 = -3027\*3  and zx+y = 15
-272^2-252\*272-4387\*4 = -3027\*4  and zx+y = 20
-272^2-247\*272-4387\*5 = -3027\*5  and zx+y = 25
+272^2-267\*272-4387 = -3027      and zx+y = 5</br>
+272^2-262\*272-4387\*2 = -3027\*2  and zx+y = 10</br>
+272^2-257\*272-4387\*3 = -3027\*3  and zx+y = 15</br>
+272^2-252\*272-4387\*4 = -3027\*4  and zx+y = 20</br>
+272^2-247\*272-4387\*5 = -3027\*5  and zx+y = 25</br>
 
 So multiplying that k value in zx^2+yx-Nk and the polynomial value, it is by far the best way to change the linear coefficient while keeping control over the factorization of the polynomial value and zx+y. In NFS_WIP2 I tried using the quadratic coefficient instead (just in a quick and dirty bruteforce way).. but we lose control over the factorization of zx+y that way. Using that k value is definitely better. So I need to properly implement that.. I think I have a pretty good idea now how to do that in code. Then next I need to fix all the sieving code. This first iteration is really horrible.. but its a start. Just step by step now until its done.
 
