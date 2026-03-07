@@ -20,7 +20,9 @@ To do: NFS_WIP2 is very ugly and rushed for now, I struggled with depression a l
 3. Its discarding all the negative linear coefficient right now.. should add a negative siev interval as well.
 4. Just the entire sieving logic needs to be fixed. We need 'a' values such that we know we're going to get linear coeficients within a certain range. I know how that math works, so I need to be a bit smarter about it.
 And ofcourse when 'decomposing' a into possible coefficients and roots.. we should take into consideration the entire set of combinations of factors, not just each individual prime.
-I'll continue uploading as I progress.. and will delete the older versions once this isn't in such a sad state anymore. 
+I'll continue uploading as I progress.. and will delete the older versions once this isn't in such a sad state anymore.
+
+Update: I was thinking some more.. and yes, in phase two, we should definitely multiply using that k value, bc it keeps the factorization of zx+y predictable. However.. sieving in the direction of the quadratic coefficient is also easy.. so we should perform sieving in that direction as well.  I'll have to do some thinking.. it's just implementation details now.. but I can't yolo this like the current version of NFS_WIP2.. everything needs to be deliberate.
 
 
 #### To run from folder "CUDA_QS_variant":</br></br>
