@@ -19,7 +19,7 @@ To do: NFS_WIP2 is very ugly and rushed for now, I struggled with depression a l
 2. Once 1 is finished, we need to reimplment sieving by moduli, like in NFS_WIP
 3. Its discarding all the negative linear coefficient right now.. should add a negative siev interval as well.
 4. Just the entire sieving logic needs to be fixed. We need 'a' values such that we know we're going to get linear coeficients within a certain range. I know how that math works, so I need to be a bit smarter about it.
-
+And ofcourse when 'decomposing' a into possible coefficients and roots.. we should take into consideration the entire set of combinations of factors, not just each individual prime.
 I'll continue uploading as I progress.. and will delete the older versions once this isn't in such a sad state anymore. 
 
 
