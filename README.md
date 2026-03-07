@@ -25,6 +25,8 @@ I need to rewrite a bunch of shit in NFS_WIP2 ... also I just realized the follo
 
 So multiplying that k value in zx^2+yx-Nk and the polynomial value, it is by far the best way to change the linear coefficient while keeping control over the factorization of the polynomial value and zx+y. Notice how it is just subtracting zx+y from the linear coefficient at each step. In NFS_WIP2 I tried using the quadratic coefficient instead (just in a quick and dirty bruteforce way).. but we lose control over the factorization of zx+y that way. Using that k value is definitely better. So I need to properly implement that.. I think I have a pretty good idea now how to do that in code. Then next I need to fix all the sieving code. This first iteration is really horrible.. but its a start. Just step by step now until its done.
 
+I'll try and atleast fix it so it uses that k value to generate a bunch of smooths with the same linear coefficient before I go back to bug hunting next week. Albeit tomorrow I'll be busy with other stuff. Shouldn't be much work though.
+
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
