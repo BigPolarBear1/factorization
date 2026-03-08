@@ -14,6 +14,26 @@ NFS_WIP is my first attempt at porting these findings to a proper NFS algorithm.
 
 Update: Deleted NFS_WIP2 again.. doing it all wrong. I see how it should be done now, how to sieve exactly the same way as NFS_Variant_Simple does (i.e consider all quadratics with many different coefficients) and how to then use a quadratic character base and take a square root over a finite field. I see how it works now. Give me a couple of days.
 
+Here is the problem I have left to solve. Imagine we have:
+
+1060-4387 = -3327
+1360-4387 = -3027
+
+If we multiply these two results together we would get:
+
+1441600+4387*1967 = 10070829
+
+That's easy to see. Now 1441600 can represent many different roots and coefficients. For example:
+
+1^2+1441599*1+4387*1967 = 10070829
+2^2+720798*2+4387*1967 = 10070829
+
+Is there a mapping between the roots and coefficients of the multiplied result and that of the original polynomials when calculating the legendre symbols for a quadratic character base?
+Or do I first need to modify these two polynomials so they share a common coefficient (which is the approah described in the final chapter of my paper)? 
+There should be some really straight forward way to get that quadratic character base to work.. maybe something with Chinese remainder.. I'll need to check. I just really want to aoid adding any new complexity with this and nullify any advantages I get from my approach.
+
+
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
