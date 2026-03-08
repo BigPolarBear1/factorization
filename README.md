@@ -14,6 +14,7 @@ NFS_WIP is my first attempt at porting these findings to a proper NFS algorithm.
 
 Update: I spent a few hours this evening exploring the best approach. That approach described in the last chapter of the paper... using that "k" variable so that we end up with smooths having the same coefficients , is feasible. In fact I just figured out that there exists a very quick calculation to find what this "k" value should be. Hmm. I'll move on this quicly tomorrow.
 
+Update: EUREKA. Yea... yea.. there is a very quick calculation we can use to make it so all our smooths have the same coefficient. God damnit, it's so simple. I did it! Just need to slow down and dig in for a few hours. I BROKE FACTORIZATION! HAHAHAH. Factorization record incoming next week. With this math figured out, I know how to fix my PoC.
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
