@@ -25,8 +25,8 @@ If we multiply these two results together we would get:
 
 That's easy to see. Now 1441600 can represent many different roots and coefficients. For example:
 
-1^2+1441599*1+4387*1967 = 10070829
-2^2+720798*2+4387*1967 = 10070829
+1^2+1441599\*1+4387\*1967 = 10070829
+2^2+720798\*2+4387\*1967 = 10070829
 
 Is there a mapping between the roots and coefficients of the multiplied result and that of the original polynomials when calculating the legendre symbols for a quadratic character base?
 Or do I first need to modify these two polynomials so they share a common coefficient (which is the approah described in the final chapter of my paper)? 
