@@ -16,8 +16,8 @@ Update: Deleted NFS_WIP2 again.. doing it all wrong. I see how it should be done
 
 Here is the problem I have left to solve. Imagine we have:
 
-1060-4387 = -3327
-1360-4387 = -3027
+1060-4387 = -3327</br>
+1360-4387 = -3027</br>
 
 If we multiply these two results together we would get:
 
