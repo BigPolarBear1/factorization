@@ -27,6 +27,7 @@ So multiplying that k value in zx^2+yx-Nk and the polynomial value, it is by far
 
 I'll try and atleast fix it so it uses that k value to generate a bunch of smooths with the same linear coefficient before I go back to bug hunting next week. Albeit tomorrow I'll be busy with other stuff. Shouldn't be much work though.
 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!UPDATE: OOPS. IGNORE NFS_WIP2 FOR NOW. LOL. I SEE IT. Wildly overcomplicating everything right now. I can just multiple sieving results together. Just multiply those a values together (from a-N=poly_val) and the polynomial values.. then from the multiplied together a-value we can grab new coefficients and roots like I do in the paper and just create a polynomial from that and feed that into create_solution. The only thing thats left is those legendre symbols for the quadratic character base. I wonder if I can fix that with Chinese remainder. Let me see in the coming days.
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
