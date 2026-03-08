@@ -11,23 +11,8 @@ To run from NFS_WIP2 use (super super early draft): python3 run_qs.py -keysize 2
 
 NFS_Variant_Simple represents chapter Chapter VII in the paper. This is an intermediate step between QS and NFS.
 NFS_WIP is my first attempt at porting these findings to a proper NFS algorithm. The downside being that we are restricted to sieving a single pair of coefficients. 
-NFS_WIP2 is a very early draft of trying to implement Chapter VIII in the paper, where we sieve many different polynomials.
 
-To do: NFS_WIP2 is very ugly and rushed for now, I struggled with depression a lot the last week and did some blogging about bug hunting instead. I just hacked this together really quickly.
-
-I need to rewrite a bunch of shit in NFS_WIP2 ... also I just realized the following:
-
-272^2-267\*272-4387 = -3027      and zx+y = 5</br>
-272^2-262\*272-4387\*2 = -3027\*2  and zx+y = 10</br>
-272^2-257\*272-4387\*3 = -3027\*3  and zx+y = 15</br>
-272^2-252\*272-4387\*4 = -3027\*4  and zx+y = 20</br>
-272^2-247\*272-4387\*5 = -3027\*5  and zx+y = 25</br>
-
-So multiplying that k value in zx^2+yx-Nk and the polynomial value, it is by far the best way to change the linear coefficient while keeping control over the factorization of the polynomial value and zx+y. Notice how it is just subtracting zx+y from the linear coefficient at each step. In NFS_WIP2 I tried using the quadratic coefficient instead (just in a quick and dirty bruteforce way).. but we lose control over the factorization of zx+y that way. Using that k value is definitely better. So I need to properly implement that.. I think I have a pretty good idea now how to do that in code. Then next I need to fix all the sieving code. This first iteration is really horrible.. but its a start. Just step by step now until its done.
-
-I'll try and atleast fix it so it uses that k value to generate a bunch of smooths with the same linear coefficient before I go back to bug hunting next week. Albeit tomorrow I'll be busy with other stuff. Shouldn't be much work though.
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!UPDATE: OOPS. IGNORE NFS_WIP2 FOR NOW. LOL. I SEE IT. Wildly overcomplicating everything right now. I can just multiple sieving results together. Just multiply those a values together (from a-N=poly_val) and the polynomial values.. then from the multiplied together a-value we can grab new coefficients and roots like I do in the paper and just create a polynomial from that and feed that into create_solution. The only thing thats left is those legendre symbols for the quadratic character base. I wonder if I can fix that with Chinese remainder. Let me see in the coming days.
+Update: Deleted NFS_WIP2 again.. doing it all wrong. I see how it should be done now, how to sieve exactly the same way as NFS_Variant_Simple does (i.e consider all quadratics with many different coefficients) and how to then use a quadratic character base and take a square root over a finite field. I see how it works now. Give me a couple of days.
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
