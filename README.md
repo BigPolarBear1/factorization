@@ -12,27 +12,7 @@ To run from NFS_WIP2 use (super super early draft): python3 run_qs.py -keysize 2
 NFS_Variant_Simple represents chapter Chapter VII in the paper. This is an intermediate step between QS and NFS.
 NFS_WIP is my first attempt at porting these findings to a proper NFS algorithm. The downside being that we are restricted to sieving a single pair of coefficients. 
 
-Update: Deleted NFS_WIP2 again.. doing it all wrong. I see how it should be done now, how to sieve exactly the same way as NFS_Variant_Simple does (i.e consider all quadratics with many different coefficients) and how to then use a quadratic character base and take a square root over a finite field. I see how it works now. Give me a couple of days.
-
-Here is the problem I have left to solve. Imagine we have:
-
-1060-4387 = -3327</br>
-1360-4387 = -3027</br>
-
-If we multiply these two results together we would get:
-
-1441600+4387*1967 = 10070829
-
-That's easy to see. Now 1441600 can represent many different roots and coefficients. For example:
-
-1^2+1441599\*1+4387\*1967 = 10070829</br>
-2^2+720798\*2+4387\*1967 = 10070829</br>
-
-Is there a mapping between the roots and coefficients of the multiplied result and that of the original polynomials when calculating the legendre symbols for a quadratic character base?
-Or do I first need to modify these two polynomials so they share a common coefficient (which is the approah described in the final chapter of my paper)? 
-There should be some really straight forward way to get that quadratic character base to work.. maybe something with Chinese remainder.. I'll need to check. I just really want to aoid adding any new complexity with this and nullify any advantages I get from my approach.
-
-Anyway.. going to be busy the rest of the day.. but when I have some time.. let me just check what happens when we multiply two polynomials together with the same coefficients, and figure out exactly what is happening with that quadratic character base and then try to fix the case when we dont have the same coefficients. Just use the bug hunter's method for this.. reverse engineer it. I'm nearly there. The fact that we can just mulitply that k value (as in zx^2+yx-Nk) to get similar coefficients, as I said in the last chapter of the paper.. must mean there should also be an easier way to do it. But I got to understand what exactly happens with that quadratic character base first.
+Update: I spent a few hours this evening exploring the best approach. That approach described in the last chapter of the paper... using that "k" variable so that we end up with smooths having the same coefficients , is feasible. In fact I just figured out that there exists a very quick calculation to find what this "k" value should be. Hmm. I'll move on this quicly tomorrow.
 
 
 #### To run from folder "CUDA_QS_variant":</br></br>
