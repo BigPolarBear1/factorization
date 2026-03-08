@@ -32,6 +32,7 @@ Is there a mapping between the roots and coefficients of the multiplied result a
 Or do I first need to modify these two polynomials so they share a common coefficient (which is the approah described in the final chapter of my paper)? 
 There should be some really straight forward way to get that quadratic character base to work.. maybe something with Chinese remainder.. I'll need to check. I just really want to aoid adding any new complexity with this and nullify any advantages I get from my approach.
 
+Anyway.. going to be busy the rest of the day.. but when I have some time.. let me just check what happens when we multiply two polynomials together with the same coefficients, and figure out exactly what is happening with that quadratic character base and then try to fix the caswhen we dont have the same coefficients. Just use the bug hunter's method for this.. reverse engineer it. I'm nearly there. The fact that we can just mulitply that k value (as in zx^2+yx-Nk) to get similar coefficients, as I said in the last chapter of the paper.. must mean there should also be an easier way to do it. But I got to understand what exactly happens with that quadratic character base first.
 
 
 #### To run from folder "CUDA_QS_variant":</br></br>
