@@ -7,7 +7,6 @@ To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 50 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
 You can run the above command from either NFS_Variant_Simple or NFS_WIP.
-To run from NFS_WIP2 use (super super early draft): python3 run_qs.py -keysize 20 -base 50 -debug 1 -lin_size 200 -quad_size 1
 
 NFS_Variant_Simple represents chapter Chapter VII in the paper. This is an intermediate step between QS and NFS.
 NFS_WIP is my first attempt at porting these findings to a proper NFS algorithm. The downside being that we are restricted to sieving a single pair of coefficients. 
