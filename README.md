@@ -13,6 +13,8 @@ NFS_WIP is my first attempt at porting these findings to a proper NFS algorithm.
 
 Update: I spent a few hours this evening exploring the best approach. That approach described in the last chapter of the paper... using that "k" variable so that we end up with smooths having the same coefficients , is feasible. In fact I just figured out that there exists a very quick calculation to find what this "k" value should be. Hmm. I'll move on this quicly tomorrow.
 
+Update: Good day. My mood is better today. I implemented some code that will calculate new roots ad a k value (as in x^2+yx-Nk) such that a pair of smooths with distinct coefficient can be made to share the same coefficient. This code works for two smooths all the time.. now I need to generalize that same math so it works for an arbitrary number of smooths. Which should be straightforward enough. Once that is done.. I'll upload a PoC and the dominoes should start falling quickly. I don't understand this.. getting ignored like this. It doesnt matter bc once I succeed I will make sure everyone knows, and I'm super close now.
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
