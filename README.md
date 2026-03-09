@@ -15,7 +15,6 @@ Update: I spent a few hours this evening exploring the best approach. That appro
 
 Update: Good day. My mood is better today. I implemented some code that will calculate new roots and a k value (as in x^2+yx-Nk) such that a pair of smooths with distinct coefficient can be made to share the same coefficient (prerequisite for NFS). This code works for two smooths all the time.. now I need to generalize that same math so it works for an arbitrary number of smooths. Which should be straightforward enough. Once that is done.. I'll upload a PoC and the dominoes should start falling quickly. I don't understand this.. getting ignored like this. It doesnt matter bc once I succeed I will make sure everyone knows, and I'm super close now.
 
-Update: Hmpf, trying to combine more smooths then 2 seems to break my formula. I wonder if I simply need to increase the degree of my polynomials. That would make the most sense actually... I'll figure it out tomorrow. My mood just massively crashed again. I feel absolute anguish about my situation. It is like people are being told to ignore me on purpose and make it impossible for me to build a future or find employment. It literally feels like the pre-war years before WWII.. banning undesirables from public life. 
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
