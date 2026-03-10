@@ -15,6 +15,7 @@ Update: I spent a few hours this evening exploring the best approach. That appro
 
 Update: Good day. My mood is better today. I implemented some code that will calculate new roots and a k value (as in x^2+yx-Nk) such that a pair of smooths with distinct coefficient can be made to share the same coefficient (prerequisite for NFS). This code works for two smooths all the time.. now I need to generalize that same math so it works for an arbitrary number of smooths. Which should be straightforward enough. Once that is done.. I'll upload a PoC and the dominoes should start falling quickly. I don't understand this.. getting ignored like this. It doesnt matter bc once I succeed I will make sure everyone knows, and I'm super close now.
 
+Update: I struggled a bit trying to go from 2 smooths and using that k-variable to get similar coefficients to 3 smooths.. but almost there now, its definitely possible just using quadratics, its just that these numbers get large really fast which is why it was giving me such a headache.. then from 3 smooths to an arbitrary number of smooths should follow from those results. 
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
