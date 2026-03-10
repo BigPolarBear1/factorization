@@ -19,6 +19,8 @@ Update: I struggled a bit trying to go from 2 smooths and using that k-variable 
 
 Update: I know it is possible what I'm trying to do in a way that would yield a superior version of NFS. So close. This last part is a bit complicated though. 
 
+Update: It is very complicated. There is something going on that ties back to the first chapters of my paper.. with p+q and p*q (where p an q are factors of semiprime N) .. this relation between addition and multiplication... and goes into some really deep number theoretical stuff. I guess what I want to do tomorrow.. let me just write a PoC.. which will represent the final version.. with the only thing missing a function to calculate that proper k value. But lets just bruteforce that k value tomorrow and upload it. Then that is going to get me as close to a finshed PoC as I've ever been with one final challenge left to solve. I know it is possible.. but it is just boggling my mind right now and I dont know how long this final step will take for me to solve.
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
