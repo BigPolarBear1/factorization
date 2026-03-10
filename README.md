@@ -17,6 +17,8 @@ Update: Good day. My mood is better today. I implemented some code that will cal
 
 Update: I struggled a bit trying to go from 2 smooths and using that k-variable to get similar coefficients to 3 smooths.. but almost there now, its definitely possible just using quadratics, its just that these numbers get large really fast which is why it was giving me such a headache.. then from 3 smooths to an arbitrary number of smooths should follow from those results. Bit of a shit day today. Just the absolute agony and hopelessness of my situation. Either people know I am right and closing in fast, and this is their strategy they decided to deal with that (in which case, I'm going to Asia as soon as I can)... or people are oblivious to what is happening.. I dont know which one is worse. Just driving me nuts. I just want to live with some dignity, not like this, I want my own life, my independence.. just wasting the years sitting in a small room at my parents home. If people see me being angry at the west.. this is exactly why I am so angry. And its just the same shit from before 2020. Only my former manager had the courage to do anything about it.. but then microsoft retaliated against him I guess.
 
+Update: I know it is possible what I'm trying to do in a way that would yield a superior version of NFS. So close. This last part is a bit complicated though. 
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
