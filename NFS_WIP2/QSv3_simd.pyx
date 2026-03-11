@@ -1885,7 +1885,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                     pairs_flist.append(seen_primes2)
                     pair_list.append(pair)
                     pair_unfactored.append(value2)
-                    if len(pair_list)>20_000:
+                    if len(pair_list)>30_000:
                         stop=1
 
                 if stop ==1:
