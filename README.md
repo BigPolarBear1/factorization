@@ -21,6 +21,8 @@ Then once that is implemented.. we just add all the same bells and whistles we h
 
 Update: I got it... so finding a k value that works for many smooths.. it comes from the factorization of the roots (which in itself comes from the factorization of a, as in a-Nk=p). I should be good now to clear that bottleneck and finally bring my work to completion.. just now, I was mentally going some really bad places... it is always in my moments of greatest anguish that I finally see it. 
 
+Update: restless. I see how it works now. I should be able to use the quadratic coefficient.. since that basically encodes that "k" value. Plus I can probably also use the precalculated hashmap.THERE A BEAUTIFUL ALGORITHM FINALLY REVEALING ITSELF TO ME NOW. People must have known... there is no way people woudln't have known. Yet, if true, I cannot explain this last year. 
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
