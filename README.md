@@ -23,6 +23,8 @@ Update: I got it... so finding a k value that works for many smooths.. it comes 
 
 Update: restless. I see how it works now. I should be able to use the quadratic coefficient.. since that basically encodes that "k" value. Plus I can probably also use the precalculated hashmap.THERE A BEAUTIFUL ALGORITHM FINALLY REVEALING ITSELF TO ME NOW. People must have known... there is no way people woudln't have known. Yet, if true, I cannot explain this last year. 
 
+Update: Added some more info to the paper, expanding a little on how that k value works. With those details figured out.. I should be able to finish the code tomorrow. I am extremely stressed... so tomorrow I should know for sure if this will work or if it ends up being a dead end. I don't know if I could mentally cope if it ends up being a dead end. Tomorrow will be a big day either way... 
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
