@@ -25,7 +25,7 @@ Update: restless. I see how it works now. I should be able to use the quadratic 
 
 Update: Added some more info to the paper, expanding a little on how that k value works. With those details figured out.. I should be able to finish the code tomorrow. I am extremely stressed... so tomorrow I should know for sure if this will work or if it ends up being a dead end. I don't know if I could mentally cope if it ends up being a dead end. Tomorrow will be a big day either way... 
 
-Update: What I added to the paper yesterday is not quite correct. It is almost correct though. That part where I calculate those differences using N (15) as the midpoint.. that just happened to be N in this case.. but that midpoint can be a different value depending on the smooths we are combining. Let me figure out the correct calculations in the coming days and I'll fix it. Although I am also going to start writing my next blog on secure channel now.
+Update: What I added to the paper yesterday is not quite correct. It is almost correct though. Deleted yesterday's version.. let me correct those things.
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
