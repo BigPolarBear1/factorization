@@ -16,16 +16,7 @@ NFS_WIP is my first attempt at porting these findings to a proper NFS algorithm.
 NFS_WIP2 is a first version trying to leverage the final chapter. You can run this using (should find a solution most of the time): 
 python3 run_qs.py -keysize 20 -base 15 -debug 1 -lin_size 200 -quad_size 1
 
-TO DO: In NFS_WIP2 the main bottleneck is finding a good "k" value in find_common_coefficient(). Right now it is doing it in a really bad bruteforce way (plus it is also not calculating all possible coefficients, since it only takes into account individual primes and not combinations of primes). I have found a formula to calculate this "k" value for 2 smooths, something similar should work for 3 and more smooths as well.. but it is quite complicated.. as it goes back to those first chapters in my paper, the relation between p+q and p*q (where p and q are factors of semiprime N).. there's this link between addition and multiplication.. but it is very complicated.. but I know it will be possible based on what I'm seeing, the problem is simply that this k value will become a big number very quickly, even though the factors of k will remain predictable... so that doesn't end up being an issue. In addition once that formula is completed we will need a lot less smooths to be found in "phase one" (sieving a-Nk = p).. since we should be able to then find a common coefficient for most, if not all, smooths found.
-Then once that is implemented.. we just add all the same bells and whistles we have in CUDA_QS_variant.
-
-Update: I got it... so finding a k value that works for many smooths.. it comes from the factorization of the roots (which in itself comes from the factorization of a, as in a-Nk=p). I should be good now to clear that bottleneck and finally bring my work to completion.. just now, I was mentally going some really bad places... it is always in my moments of greatest anguish that I finally see it. 
-
-Update: restless. I see how it works now. I should be able to use the quadratic coefficient.. since that basically encodes that "k" value. Plus I can probably also use the precalculated hashmap.THERE A BEAUTIFUL ALGORITHM FINALLY REVEALING ITSELF TO ME NOW. People must have known... there is no way people woudln't have known. Yet, if true, I cannot explain this last year. 
-
-Update: Added some more info to the paper, expanding a little on how that k value works. With those details figured out.. I should be able to finish the code tomorrow. I am extremely stressed... so tomorrow I should know for sure if this will work or if it ends up being a dead end. I don't know if I could mentally cope if it ends up being a dead end. Tomorrow will be a big day either way... 
-
-Update: What I added to the paper yesterday is not quite correct. It is almost correct though. Deleted yesterday's version.. let me correct those things.
+UPDATE: Ignore NFS_WIP2 and the final chapter in the paper for now. I just realized something. It is very easy to improve NFS_WIP (not NFS_WIP2) massively.. Its not a problem to keep both the polynomial value and zx+y small... its actually quite easy. I dont know why I overcomplicate things so much lol. Let me first thing tomorrow just improve that previous PoC a bit... I understand all the moving parts a little better now... 
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
