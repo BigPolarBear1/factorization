@@ -26,7 +26,7 @@ Now 4388 can be rewritten as:
 
 Only zx+y and the polynomial value must factor to be consider a valid smooth for the number field sieve algorithm. And here we see an example of achieving a small value for both. Hence, proving that it is possible. 
 
-Update: Did some more thinking. Using the above, it would be trivial to find examples where the polynomial value is square and zx+y is square. And actually we then only need squaredness for the quadratic character base.. but I wonder if I cant simply use the precomputed hashmap for that. Hmm. I'm starting to see something... I can probably skip the entire linear algebra step this way. 
+Update: Did some more thinking. Using the above, it would be trivial to find examples where the polynomial value is square and zx+y is square. And actually we then only need squaredness for the quadratic character base.. but I wonder if I cant simply use the precomputed hashmap for that and just multiply both sides with squares until all the legendre symbols are squares too. Hmm. I'm starting to see something... I can probably skip the entire linear algebra step this way. 
 
 
 #### To run from folder "CUDA_QS_variant":</br></br>
