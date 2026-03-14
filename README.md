@@ -18,6 +18,8 @@ python3 run_qs.py -keysize 20 -base 15 -debug 1 -lin_size 200 -quad_size 1
 
 UPDATE: Ignore NFS_WIP2 and the final chapter in the paper for now. I just realized something. It is very easy to improve NFS_WIP (not NFS_WIP2) massively.. Its not a problem to keep both the polynomial value and zx+y small... its actually quite easy. I dont know why I overcomplicate things so much lol. Let me first thing tomorrow just improve that previous PoC a bit... I understand all the moving parts a little better now... 
 
+Update: Deleted NFS_WIP2. Going to improve NFS_WIP instead... I just realized it is actually trivial to keep both zx+y and the polynomial value small. Hence that solves all my issues and there also wouldn't be a reason to use higher degree polynomial.
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
