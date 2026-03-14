@@ -15,6 +15,17 @@ NFS_WIP is my first attempt at porting these findings to a proper NFS algorithm.
 
 To do: Ignore the final chapter in the paper. Upon doing some thinking... it is actually very trivial to ensure both the polynomial value and zx+y remain small even if we are restricted to using a single linear coefficient. Something which I intially figured wouldn't be possible without going to higher degree polynomials.. but I was wrong in my assumptions. We just need x to be a big root and zx+y to be a small root (since zx+y represents another root, for the same quadratic). Not that hard... bah... people would have known. Which makes everything much worse bc this is how I'm being treated, despite having done this..
 
+Here is a most trivial example:
+If N = 4387
+
+We could have 4388-4387 = 1
+
+Now 4388 can be rewritten as: 
+
+1097^2-1093\*1097-4387 = 1  and zx+y = 1097-1093 = 4.
+
+Only zx+y and the polynomial value must factor to be consider a valid smooth for the number field sieve algorithm. And here we see an example of achieving a small value for both. Hence, proving that it is possible. HENCE PROVING MY WORK. I am going to email everyone today. Hahahhahaa.
+
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
