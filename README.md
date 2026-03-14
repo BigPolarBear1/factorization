@@ -24,7 +24,9 @@ Now 4388 can be rewritten as:
 
 1097^2-1093\*1097-4387 = 1  and zx+y = 1097-1093 = 4.
 
-Only zx+y and the polynomial value must factor to be consider a valid smooth for the number field sieve algorithm. And here we see an example of achieving a small value for both. Hence, proving that it is possible. HENCE PROVING MY WORK. I am going to email everyone today. Hahahhahaa.
+Only zx+y and the polynomial value must factor to be consider a valid smooth for the number field sieve algorithm. And here we see an example of achieving a small value for both. Hence, proving that it is possible. 
+
+Update: Did some more thinking. Using the above, it would be trivial to find examples where the polynomial value is square and zx+y is square. And actually we then only need squaredness for the quadratic character base.. but I wonder if I cant simply use the precomputed hashmap for that. Hmm. I'm starting to see something... I can probably skip the entire linear algebra step this way. 
 
 
 #### To run from folder "CUDA_QS_variant":</br></br>
