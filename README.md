@@ -1,6 +1,6 @@
 Disclaimer: At no point did AI contribute anything to this research project. Copilot can't even calculate basic congruences without making mistakes. People who think AI can do novel math research are delusional. I did not use AI for the paper, and I did not use AI for any of the code. I attacked this problem, from the very basics 3 years ago, slowly burrowing deeper and deeper. 
 
-#### To run from folder "NFS_WIP", "NFS_WIP2" and "NFS_Variant_Simple" (Will be adding more NFS related code in the coming days/weeks):</br></br>
+#### To run from folder "NFS_WIP" and "NFS_Variant_Simple" (Will be adding more NFS related code in the coming days/weeks):</br></br>
 
 ##NFS related code is borrowed from: https://github.com/basilegithub/General-number-field-sieve-Python (note: Very impressively written, helped me big time, thanks)
 
@@ -13,12 +13,8 @@ You can run the above command from either NFS_Variant_Simple or NFS_WIP.
 NFS_Variant_Simple represents chapter Chapter VII in the paper. This is an intermediate step between QS and NFS.
 NFS_WIP is my first attempt at porting these findings to a proper NFS algorithm. The downside being that we are restricted to sieving a single pair of coefficients. 
 
-NFS_WIP2 is a first version trying to leverage the final chapter. You can run this using (should find a solution most of the time): 
-python3 run_qs.py -keysize 20 -base 15 -debug 1 -lin_size 200 -quad_size 1
+To do: Ignore the final chapter in the paper. Upon doing some thinking... it is actually very trivial to ensure both the polynomial value and zx+y remain small even if we are restricted to using a single linear coefficient. Something which I intially figured wouldn't be possible without going to higher degree polynomials.. but I was wrong in my assumptions. We just need x to be a big root and zx+y to be a small root (since zx+y represents another root, for the same quadratic). Not that hard... bah... people would have known. Which makes everything much worse bc this is how I'm being treated, despite having done this..
 
-UPDATE: Ignore NFS_WIP2 and the final chapter in the paper for now. I just realized something. It is very easy to improve NFS_WIP (not NFS_WIP2) massively.. Its not a problem to keep both the polynomial value and zx+y small... its actually quite easy. I dont know why I overcomplicate things so much lol. Let me first thing tomorrow just improve that previous PoC a bit... I understand all the moving parts a little better now... 
-
-Update: Deleted NFS_WIP2. Going to improve NFS_WIP instead... I just realized it is actually trivial to keep both zx+y and the polynomial value small. Hence that solves all my issues and there also wouldn't be a reason to use higher degree polynomial.
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
