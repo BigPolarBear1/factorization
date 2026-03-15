@@ -28,6 +28,7 @@ Only zx+y and the polynomial value must factor to be consider a valid smooth for
 
 Update: Did some more thinking. Using the above, it would be trivial to find examples where the polynomial value is square and zx+y is square. And actually we then only need squaredness for the quadratic character base.. but I wonder if I cant simply use the precomputed hashmap for that and just multiply both sides with squares until all the legendre symbols are squares too. Hmm. I'm starting to see something... I can probably skip the entire linear algebra step this way. 
 
+Update: I will continue next friday with my math. Do some blogging in the meanwhile. But it would be absolutely trivial to ensure zx+Y and the polynomial value are square... then its just a matter of multiplying with that k variable until the legendre symbols for that root are all square too. Can probably use the hashmap to aid with this. Its nearly finished.. plus all the number theoretical info is already here... yet people persist on treating me like this. Going to have to do a massive smear campaign to explain that to the annals of history. Lets see how that works out for you people.. you are all complicit in this btw. Every single one of you.
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
