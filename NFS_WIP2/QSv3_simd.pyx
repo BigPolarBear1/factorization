@@ -1135,7 +1135,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
             print("fatal")
             sys.exit()
         local_factors2, value2,seen_primes2,seen_primes_indexes2 = factorise_fast(a,primelist_f)
-        squares=[]
+        squares=[1]
         prev=-1
         i=0
         while i < len(seen_primes2):
@@ -1157,12 +1157,13 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
             i+=1     
    #     print("squares: "+str(squares)+" a: "+str(a)+" poly_val: "+str(poly_val))
 
+
         i=0
         while i < len(squares):
             ##Adding a lot of error checks.. so I dont have to waste time in the future when adding code and screwing shit up..
             
             k_ind=0
-            while k_ind < 20:
+            while k_ind < 50:
                 k=1+k_ind
                 
                 square=squares[i]*(k**2)
@@ -1208,14 +1209,14 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                         sym_line.append(0)
                         
                 k_ind+=1
-                pair=[[-1, x], poly_val, [[1 ,1]], x+y, [1], [-1,x], 1]
+                pair=[[-1, x], poly_val*(k**2), [[1 ,1]], x+y, [1], [-1,x], 1]
                 M=10000
                 pairs_used=[pair]
                 fvec=[1]
                 if hit ==0:
                     x1, y1 = create_solution(pairs_used,fvec,n,len(primelist),primelist,-f_x[1],f_x[0],f_x[0],M<<1,Q,f_x)
                     test=gcd(x1+y1,n)
-                    print("gcd: "+str(test)+" k: "+str(k)+" polyval: "+str(poly_val)+" x+y: "+str(x+y))
+                    print("gcd: "+str(test)+" k: "+str(k)+" polyval: "+str(poly_val*(k**2))+" x+y: "+str(x+y))
                     if check_poly_irreducible(f_x) != 1:
                         print("fail irreducible")
                     
