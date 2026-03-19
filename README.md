@@ -1,34 +1,21 @@
 Disclaimer: At no point did AI contribute anything to this research project. Copilot can't even calculate basic congruences without making mistakes. People who think AI can do novel math research are delusional. I did not use AI for the paper, and I did not use AI for any of the code. I attacked this problem, from the very basics 3 years ago, slowly burrowing deeper and deeper. 
 
-#### To run from folder "NFS_WIP" and "NFS_Variant_Simple" (Will be adding more NFS related code in the coming days/weeks):</br></br>
+#### To run from folder "NFS_WIP","NFS_WIP2" and "NFS_Variant_Simple" (Will be adding more NFS related code in the coming days/weeks):</br></br>
 
 ##NFS related code is borrowed from: https://github.com/basilegithub/General-number-field-sieve-Python (note: Very impressively written, helped me big time, thanks)
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 50 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
+To run (NFS_WIP and NFS_Variant_Simple only): python3 run_qs.py -keysize 50 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
 You can run the above command from either NFS_Variant_Simple or NFS_WIP.
 
 NFS_Variant_Simple represents chapter Chapter VII in the paper. This is an intermediate step between QS and NFS.
 NFS_WIP is my first attempt at porting these findings to a proper NFS algorithm. The downside being that we are restricted to sieving a single pair of coefficients. 
 
-To do: Ignore the final chapter in the paper. Upon doing some thinking... it is actually very trivial to ensure both the polynomial value and zx+y remain small even if we are restricted to using a single linear coefficient. Something which I intially figured wouldn't be possible without going to higher degree polynomials.. but I was wrong in my assumptions. We just need x to be a big root and zx+y to be a small root (since zx+y represents another root, for the same quadratic). Not that hard... bah... people would have known. Which makes everything much worse bc this is how I'm being treated, despite having done this..
+NFS_WIP2 is a further attempt to simplify and streamline everything by removing the linear algebra step. We start with the polynomial value being a square.. then calculate the other side as poly_val + n and that result contains any squares, we can use it to create a quadratic where zx+y is also square. With both the poly_val and zx+y being square, the only other thing we need is for the quadratic character base's legendre symbols to all indicate squaredness. Right now the PoC is doing that by just multiplying with a "k" variable ... but in the future I hope to use the hashmap to find a good "k" value.
 
-Here is a most trivial example:
-If N = 4387
-
-We could have 4388-4387 = 1
-
-Now 4388 can be rewritten as: 
-
-1097^2-1093\*1097-4387 = 1  and zx+y = 1097-1093 = 4.
-
-Only zx+y and the polynomial value must factor to be consider a valid smooth for the number field sieve algorithm. And here we see an example of achieving a small value for both. Hence, proving that it is possible. 
-
-Update: Did some more thinking. Using the above, it would be trivial to find examples where the polynomial value is square and zx+y is square. And actually we then only need squaredness for the quadratic character base.. but I wonder if I cant simply use the precomputed hashmap for that and just multiply both sides with squares until all the legendre symbols are squares too. Hmm. I'm starting to see something... I can probably skip the entire linear algebra step this way. 
-
-Update: I will continue next friday with my math. Do some blogging in the meanwhile. But it would be absolutely trivial to ensure zx+Y and the polynomial value are square... then its just a matter of multiplying with that k variable until the legendre symbols for that root are all square too. Can probably use the hashmap to aid with this. Its nearly finished.. plus all the number theoretical info is already here... yet people persist on treating me like this. Going to have to do a massive smear campaign to explain that to the annals of history. Lets see how that works out for you people.. you are all complicit in this btw. Every single one of you.
+To run NFS_WIP2: python3 run_qs.py -keysize 20 -base 500 -debug 1 -lin_size 100_000 -quad_size 1   (use 20-bit for now.. it should work most of the time.. however, it is slow since we are still bruteforcing that k value.. so that's the final thing that needs to be addressed).
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
