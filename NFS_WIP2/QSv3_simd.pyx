@@ -851,7 +851,7 @@ def initialize_2(f_x, d, primes, leading_coeff):
     
 def initialize_3(n, f_x, f_prime, const1, leading_coeff):
    # print("hit")
-    k = 3*n.bit_length()
+    k = n.bit_length()
     Q = []
     q = const1+1
     if not q%2: q += 1
@@ -1152,7 +1152,9 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                 if exp%2 !=0:
                     print("fatal0")
                     sys.exit()
+
                 squares.append(prime**exp)
+
             prev=prime
             i+=1     
    #     print("squares: "+str(squares)+" a: "+str(a)+" poly_val: "+str(poly_val))
@@ -1163,7 +1165,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
             ##Adding a lot of error checks.. so I dont have to waste time in the future when adding code and screwing shit up..
             
             k_ind=0
-            while k_ind < 50:
+            while k_ind < 10_000:
                 k=1+k_ind
                 
                 square=squares[i]*(k**2)
@@ -1216,7 +1218,8 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                 if hit ==0:
                     x1, y1 = create_solution(pairs_used,fvec,n,len(primelist),primelist,-f_x[1],f_x[0],f_x[0],M<<1,Q,f_x)
                     test=gcd(x1+y1,n)
-                    print("gcd: "+str(test)+" k: "+str(k)+" polyval: "+str(poly_val*(k**2))+" x+y: "+str(x+y))
+
+                    print(" gcd: "+str(test)+" k: "+str(k)+" polyval: "+str(poly_val*(k**2))+" x+y: "+str(x+y)+" square: "+str(square)+" x: "+str(x))
                     if check_poly_irreducible(f_x) != 1:
                         print("fail irreducible")
                     
