@@ -15,7 +15,7 @@ NFS_WIP is my first attempt at porting these findings to a proper NFS algorithm.
 
 NFS_WIP2 is a further attempt to simplify and streamline everything by removing the linear algebra step. We start with the polynomial value being a square.. then calculate the other side as poly_val + n and if that result contains any squares, we can use it to create a quadratic where zx+y is also square. With both the poly_val and zx+y being square, the only other thing we need is for the quadratic character base's legendre symbols to all indicate squaredness. Right now the PoC is doing that by just multiplying with a "k" variable ... but in the future I hope to use the hashmap to find a good "k" value.
 
-To run NFS_WIP2: python3 run_qs.py -keysize 20 -base 500 -debug 1 -lin_size 1000 -quad_size 1   (use 20-bit for now.. it should work most of the time.. however, it is slow since we are still bruteforcing that k value.. so that's the final thing that needs to be addressed).
+To run NFS_WIP2: python3 run_qs.py -keysize 25 -base 500 -debug 1 -lin_size 1000 -quad_size 1   (use 20-bit for now.. it should work most of the time.. however, it is slow since we are still bruteforcing that k value.. so that's the final thing that needs to be addressed).
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
