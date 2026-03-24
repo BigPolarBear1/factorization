@@ -11,7 +11,7 @@ To build: python3 setup.py build_ext --inplace</br>
 To run NFS_Variant_Simple: python3 run_qs.py -keysize 50 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 To run NFS_WIP2: python3 run_qs.py -keysize 30 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
-NFS_Variant_Simple represents chapter Chapter VII in the paper. This is an intermediate step between QS and NFS.
+NFS_Variant_Simple represents chapter Chapter VII in the paper. This is an intermediate step between QS and NFS.</br>
 NFS_WIP2 in the meanwhile is making progress toward a better NFS variant. Right now it has stripped out the linear algebra step, and simply sieves legendre symbols while keeping what is in NFS the rational and algebraic side square. This needs a lot more work... especially zx+y should be bigger values.. because this relates to the step size (you'll see what I mean). And also we need to use different k values as in zx^2+yx-Nk by multiplying both zx+y, k and the polynomial value with squares. Plus we can also use something similar like generate_modulus in CUDA_QS_variant.. but for Legendre symbols instead.
 
 Now the real endgame will be to implement some type of linear algebra step again to solve these Legendre symbols. I can somewhat see a way to potentially do it, but its fairly complicated.. but I'll get there eventually.
