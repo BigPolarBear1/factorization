@@ -2,22 +2,17 @@ Disclaimer: At no point did AI contribute anything to this research project. Cop
 
 The day I break factorization will be day 0 of the gay future. A better world will be born. A world of human creativity. A world of art, science and spirituality. A world without suffering. I will see that world become reality, no matter the cost. 
 
-#### To run from folder "NFS_WIP","NFS_WIP2" and "NFS_Variant_Simple" (Will be adding more NFS related code in the coming days/weeks):</br></br>
+#### To run from folder "NFS_WIP2" and "NFS_Variant_Simple" (Will be adding more NFS related code in the coming days/weeks):</br></br>
 
 ##NFS related code is borrowed from: https://github.com/basilegithub/General-number-field-sieve-Python (note: Very impressively written, helped me big time, thanks)
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run (NFS_WIP and NFS_Variant_Simple only): python3 run_qs.py -keysize 50 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
-
-You can run the above command from either NFS_Variant_Simple or NFS_WIP.
+To run NFS_Variant_Simple: python3 run_qs.py -keysize 50 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
+To run NFS_WIP2: python3 run_qs.py -keysize 30 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
 NFS_Variant_Simple represents chapter Chapter VII in the paper. This is an intermediate step between QS and NFS.
-NFS_WIP is my first attempt at porting these findings to a proper NFS algorithm. The downside being that we are restricted to sieving a single pair of coefficients. 
 
-NFS_WIP2 is a further attempt to simplify and streamline everything by removing the linear algebra step. We start with the polynomial value being a square.. then calculate the other side as poly_val + n and if that result contains any squares, we can use it to create a quadratic where zx+y is also square. With both the poly_val and zx+y being square, the only other thing we need is for the quadratic character base's legendre symbols to all indicate squaredness. Right now the PoC is doing that by just multiplying with a "k" variable ... but in the future I hope to use the hashmap to find a good "k" value.
-
-To run NFS_WIP2: python3 run_qs.py -keysize 25 -base 500 -debug 1 -lin_size 1000 -quad_size 1   (use 20-bit for now.. it should work most of the time.. however, it is slow since we are still bruteforcing that k value.. so that's the final thing that needs to be addressed).
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
