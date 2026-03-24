@@ -8,7 +8,7 @@ The day I break factorization will be day 0 of the gay future. A better world wi
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run NFS_Variant_Simple: python3 run_qs.py -keysize 50 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
+To run NFS_Variant_Simple: python3 run_qs.py -keysize 50 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br>
 To run NFS_WIP2: python3 run_qs.py -keysize 30 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
 
 NFS_Variant_Simple represents chapter Chapter VII in the paper. This is an intermediate step between QS and NFS.</br>
