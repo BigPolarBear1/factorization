@@ -12,7 +12,7 @@ To run: python3 run_qs.py -keysize 50 -base 60 -debug 1 -lin_size 10_000_000 -qu
 
 To do: The next thing to implement now is to use a bigger initial zx+y value instead of just 1. This basically divides the distances between the factors and makes it so we can easier find those case where the factors are far apart without increasing the sieve interval size. 
 
-Once that is done, we also need to re-introduce using different quadratic coefficient. Because I noticed that using divisors of k (as in zx^2+yx-Nk) and moving them over to the quadratic coefficient instead, like I demonstrate in CUDA_QS_variant.. this actually changes the Legendre symbols. Which makes sense with what we see in debug.py for example. So deciding which factors should be part of the quadratic coefficient and which ones should be part of k, I'm hoping to solve that with linear algebra. That is the big ticket item that should result in a breakthrough algorithm.
+Once that is done, we also need to re-introduce using different quadratic coefficients. Because I noticed that using divisors of k (as in zx^2+yx-Nk) and moving them over to the quadratic coefficient instead, like I demonstrate in CUDA_QS_variant.. this actually changes the Legendre symbols. Which makes sense with what we see in debug.py for example. So deciding which factors should be part of the quadratic coefficient and which ones should be part of k, I'm hoping to solve that with linear algebra. That is the big ticket item that should result in a breakthrough algorithm.
 
 And then there is also a bunch of smaller things I need to fix. I.e in initialize_3() we dont need to calculate those roots because we already have those in our precalculated hashmap.
 
