@@ -20,7 +20,7 @@ Update: AHA! I got it. So in zx^2+yx-Nk ... actually moving factors of k over to
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
+To run:  python3 run_qs.py -keysize 50 -base 60 -debug 1 -lin_size 10_000_000 -quad_size 20</br></br>
  
 Prerequisites: </br>
 -Python (tested on 3.13)</br>
