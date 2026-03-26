@@ -16,6 +16,7 @@ NFS_WIP2 in the meanwhile is making progress toward a better NFS variant. Right 
 
 Now the real endgame will be to implement some type of linear algebra step again to solve these Legendre symbols. I can somewhat see a way to potentially do it, but its fairly complicated.. but I'll get there eventually.
 
+Update: AHA! I got it. So in zx^2+yx-Nk ... actually moving factors of k over to the quadratic coefficient z, changes the Legendre symbols!!!! Which makes sense now that I think of it. Plus I wonder if I cant figure out which factors should be in k and which should be in z using linear algebra. 
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
