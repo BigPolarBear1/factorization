@@ -8,8 +8,11 @@ The day I break factorization will be day 0 of the gay future. A better world wi
 
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
+To run: python3 run_qs.py -keysize 50 -base 60 -debug 1 -lin_size 10_000_000 -quad_size 20</br></br>
 
-To run NFS_WIP2: python3 run_qs.py -keysize 50 -base 60 -debug 1 -lin_size 10_000_000 -quad_size 20</br></br>
+To do: The next thing to implement now is to use a bigger initial zx+y value instead of just 1. This basically divides the distances between the factors and makes it so we can easier find those case where the factors are far apart without increasing the sieve interval size. 
+
+Once that is done, we also need to re-introduce using different quadratic coefficient. Because I noticed that using divisors of k (as in zx^2+yx-Nk) and moving them over to the quadratic coefficient instead, like I demonstrate in CUDA_QS_variant.. this actually changes the Legendre symbols. Which makes sense with what we see in debug.py for example. So deciding which factors should be part of the quadratic coefficient and which ones should be part of k, I'm hoping to solve that with linear algebra. That is the big ticket item that should result in a breakthrough algorithm.
 
 
 #### To run from folder "CUDA_QS_variant":</br></br>
