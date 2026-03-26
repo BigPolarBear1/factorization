@@ -9,7 +9,7 @@ The day I break factorization will be day 0 of the gay future. A better world wi
 Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run NFS_Variant_Simple: python3 run_qs.py -keysize 50 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br>
-To run NFS_WIP2: python3 run_qs.py -keysize 30 -base 500 -debug 1 -lin_size 100_000 -quad_size 1</br></br>
+To run NFS_WIP2: python3 run_qs.py -keysize 50 -base 60 -debug 1 -lin_size 10_000_000 -quad_size 20</br></br>
 
 NFS_Variant_Simple represents chapter Chapter VII in the paper. This is an intermediate step between QS and NFS.</br>
 NFS_WIP2 in the meanwhile is making progress toward a better NFS variant. Right now it has stripped out the linear algebra step, and simply sieves legendre symbols while keeping what is in NFS the rational and algebraic side square. This needs a lot more work... especially zx+y should be bigger values.. because this relates to the step size (you'll see what I mean). And also we need to use different k values as in zx^2+yx-Nk by multiplying both zx+y, k and the polynomial value with squares. Plus we can also use something similar like generate_modulus in CUDA_QS_variant.. but for Legendre symbols instead.
@@ -20,7 +20,7 @@ Update: AHA! I got it. So in zx^2+yx-Nk ... actually moving factors of k over to
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 50 -base 60 -debug 1 -lin_size 10_000_000 -quad_size 20</br></br>
+To run: To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
  
 Prerequisites: </br>
 -Python (tested on 3.13)</br>
