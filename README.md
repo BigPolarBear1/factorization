@@ -19,6 +19,8 @@ Update: Going to take a break until Sunday. Using a zx+y value that is larger th
 
 Update: And to clarify.. the reason I'm waiting to implement any form of linear algebra until everything else is done is bc it may not even be needed. I like the idea of combining smooths with linear algebra.. but there is a chance that this ends up being faster, lets see. Its just a matter of using that precalculated hashmap and getting all my legendre symbols to be square.
 
+An intermediate step between QS and NFS (representing chapter VII in the paper) can be found here: https://github.com/BigPolarBear1/factorization/tree/7deba681fc78c349ea70e514a36ab723399f8e96/NFS_Variant_simple
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
