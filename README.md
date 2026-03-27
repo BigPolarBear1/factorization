@@ -2,11 +2,10 @@ Disclaimer: At no point did AI contribute anything to this research project. Cop
 
 The day I break factorization will be day 0 of the gay future. A better world will be born. A world of human creativity. A world of art, science and spirituality. A world without suffering. I will see that world become reality, no matter the cost. 
 
-#### To run from folder "NFS_WIP2" (Will be adding more NFS related code in the coming days/weeks):</br></br>
+#### To run from folder "NFS_WIP2" (Experimental WORK IN PROGRESS):</br></br>
 
 ##NFS related code is borrowed from: https://github.com/basilegithub/General-number-field-sieve-Python (note: Very impressively written, helped me big time, thanks)
 
-Note: Experimental WORK IN PROGRESS.</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 50 -base 60 -debug 1 -lin_size 10_000_000 -quad_size 20</br></br>
 
