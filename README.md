@@ -17,6 +17,8 @@ And then there is also a bunch of smaller things I need to fix. I.e in initializ
 
 Update: Going to take a break until Sunday. Using a zx+y value that is larger then 1 is quite important. We really want that to be reasonably large. But implementing it is a bit tedious. If I want zx+y to be square and the polynomial value to be square.. then to get it to work with a sieve interval I'll have to lift my hashmap to an even power. Its going to be quite some tedious number theory.. definitely possible.. but tedious and with an ultra marathon coming up, I want to focus on that rather then implement some tedious math. I am curious though.. once it is implemented what performance that will yield since it reduce the size the sieve interval will need to be. And ofcourse... all of this is still without linear algebra step. But I want to implement everything else first before I attack that problem. I have a pretty good idea how to do it though.
 
+Update: And to clarify.. the reason I'm waiting to implement any form of linear algebra until everything else is done is bc it may not even be needed. I like the idea of combining smooths with linear algebra.. but there is a chance that this ends up being faster, lets see. Its just a matter of using that precalculated hashmap and getting all my legendre symbols to be square.
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
