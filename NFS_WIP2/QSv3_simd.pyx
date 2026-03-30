@@ -499,8 +499,8 @@ def create_solution(pairs, null_space, n, len_primes, primes, m0, m1, leading, u
             rational_square=poly_prod(rational_square, pairs[k][0])
    # if count < 3:
       #  return 0,0
-    rat_test=math.isqrt(rat_square)
-    alg_test=math.isqrt(alg_square)
+    rat_test=math.isqrt(abs(rat_square))
+    alg_test=math.isqrt(abs(alg_square))
     if rat_test**2 != rat_square or alg_test**2 != alg_square:
         print("something went wrong lol")
         sys.exit()
@@ -1004,6 +1004,8 @@ def lift_root(z,y,n, root, p, exp):
     inv = modinv(deriv, p)
     t = ((-r//p**exp)*inv)%p
     new_root = (root+t*p**exp)%p**(exp+1)
+    pv=new_root**2+y*new_root-n
+    print("pv: "+str(pv)+" prime: "+str(p))
     return new_root
 
 def solve_roots(prime,n):
@@ -1025,9 +1027,27 @@ def solve_roots(prime,n):
             y2=y
             while y2 < prime:
                 for x in roots:
+                    #if len(roots)>1:
+                    #    x2=lift_root(1,y2,n*k,x,prime,1)
+                    #else:
+                    #    x2=0
+                    #    hit=0
+                    #    while x2 < prime**2:
+                    #        if (1*x2**2+y2*x2-n*k)%(prime**2)==0:
+                    #            hit=1
+                    #            break
+                    #        x2+=1
+                    #    if hit ==0:
+                    #        print("FATAAL")
+                    #        y2+=prime
+                     #       continue
                     if (1*x**2+y2*x-n*k)%prime!=0: 
                         print("error22")
                         sys.exit()   
+                  #  if (1*x2**2+y2*x2-n*k)%(prime**2)!=0: 
+                  #      print("x2: "+str(x2)+" y2: "+str(y2)+" prime: "+str(prime)+" roots: "+str(roots))
+                  #      print("error33")
+                   #     sys.exit()   
                     try:
                         ret=hmap_p[k-1][y2]
                         ret.append(x)
@@ -1112,20 +1132,12 @@ cdef factorise_fast(value,long long [::1] factor_base):
 
 def solve_lin_con(a,b,m):
     ##ax=b mod m
-    #g=gcd(a,m)
-    #a,b,m = a//g,b//g,m//g
+    g=gcd(a,m)
+    a,b,m = a//g,b//g,m//g
     return pow(a,-1,m)*b%m  
 
 
-def check_poly_irreducible(poly_coeffs):
-    """
-    Checks if a polynomial defined by coefficients [an..., a0]
-    is irreducible over the Rational field (Q).
-    """
-    x = symbols('x')
-    # Construct polynomial: [4, 7, 21, 28] -> 4x^3 + 7x^2 + 21x + 28
-    p = Poly(poly_coeffs, x)
-    return p.is_irreducible
+
 
 def test_stuff(primeslist,primelist,n,x,zxy,k):
     ##ignore this function.. just for doing research, I'll remove it eventually.
@@ -1158,55 +1170,63 @@ def test_stuff(primeslist,primelist,n,x,zxy,k):
 
     return 
 
-def create_sieve_interval(n,hmap,primeslist,k):
-    start_x=n
-    start_zxy=1*k
-    start_y=start_zxy-start_x
-   # print("start_x: "+str(start_x)+" start_zxy: "+str(start_zxy)+" start_y: "+str(start_y))
-    interval=[0]*lin_sieve_size
+def create_sieve_interval(n,hmap,primeslist,k,div,start_x,start_zxy,start_y,step):
+    interval=array.array('i',[0]*lin_sieve_size)#[0]*lin_sieve_size
     i=0
     while i < len(hmap):
         prime=primeslist[i]
 
         for key, value in hmap[i][(k-1)%prime].items():
-                
-            res=(key-start_y)%prime
-            if res == 0:
-                dist= 0
-            else:
-                dist=tonelli((-res)%prime,prime)
-            if dist != -1:
-                jacs=[]
-                hit=0
-                for root in value:
-                    deriv=2*root+key
-                    if deriv%prime ==0:
-                     #   print("skip: "+str(prime))
-                        continue
-                    res2=(-root+((start_x)+dist**2))%prime
-                    
-                    jac=jacobi(res2,prime)
-                 #   print("y: "+str(key)+" x: "+str(root)+" dist: "+str(dist)+" jac: "+str(jac)+" prime: "+str(prime))
-                    if (root**2+key*root-n*k)%prime != 0:
-                        print("fatal error")
-                    if jac == -1:
-                        hit=1
-                    jacs.append(jac)
+            distances=[]
+            roots=[]
+            q=0
+            while q < prime:
+                ##To do: fix this fucking shit
+                poly=n*k+(step+div*q)**2
+                if poly%div !=0:
+                    print("fatal error123")
+                    sys.exit()
+                x=poly//div
+                y=div-x
+                polyval=x**2+y*x-n
+            #    print("x: "+str(x)+" y: "+str(y)+" polyval: "+str(polyval))
+                if y%prime == key:
+                    distances.append(q)
+                    roots.append(x)
+                q+=1
 
-                if hit == 1:
-                    ind=dist
-                    while ind < len(interval):
-                        interval[ind]=1
-                        ind+=prime
-                    ind=(-dist)%prime
-                    while ind < len(interval):
-                        interval[ind]=1
-                        ind+=prime
+       #     print("distances: "+str(distances)+" key: "+str(key)+" value: "+str(value)+" prime: "+str(prime))
+            if len(distances)>0:
+                p=0
+                while p < len(roots):
+                    dist=distances[p]
+                    root=roots[p]
+                    hit=0
+                    for rootl in value:
+                        jac=jacobi(-rootl+root,prime)
+                        if jac == -1:
+                            hit=1
+                    if hit == 1:
+                        ind=dist
+                        while ind < len(interval):
+                            interval[ind]=1
+                            ind+=prime
+                    p+=1
         i+=1
-  #  print("interval: "+str(interval))
-
+    #print("interval: "+str(interval))
     return interval
 
+def find_divs(n,div):
+    ###Fix this function.. this is literally roots to some quadratic.. ergh
+
+    divs=[]
+    i=0
+    while i < div:
+        if (n+i**2)%div == 0:
+           divs.append(i%div) 
+        i+=1
+    #print("divs: "+str(divs))
+    return divs
 
 cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_prime_bound,primeslist2,small_primeslist):
     i=0
@@ -1221,68 +1241,114 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
     primelist_f=array.array('q',primelist_f)
     primelist=copy.copy(primeslist)
     primelist.insert(0,2) 
+
+
     k_ind=0
-    while (k_ind+1)**2 < quad_sieve_size:
+    while (k_ind+1)**2 < quad_sieve_size+1: ###BROKEN FIX THIS SOON
         k=k_ind+1
-        interval=create_sieve_interval(n,hmap,primeslist,k**2)
         
-        start_x=n
-        start_zxy=1*k**2
-        start_y=start_zxy-start_x
-        i=0
-        while i < len(interval):
-            if interval[i]==0:# or interval[i]==1:
-                y=start_y-i**2
-                x=start_x+i**2
+        zxy_ind=0
+        while zxy_ind < 100:
+            div=(1+zxy_ind)**2
             
-                B=primeslist[-1]
-                z=1
-                poly_val=z*x**2+y*x-n*k**2
-                f_x=[z,y,-n*k**2]
-                d=2
-                free_pairs,R_p, logs, divide_leading, pow_div, B_prime = initialize_2(f_x, d, primelist, z)
-                f_prime = get_derivative(f_x)
-                Q, k1 = initialize_3(n, f_x, f_prime, B, z)
-                #   print("Q: "+str(Q))
-                hit=0
-                sym_line=[]
-                for p in range(len(Q)):
-                    if len(Q[p])>0:
-                        if compute_legendre_character(eval_mod([-1,x], Q[p][1], Q[p][0]), Q[p][0]) == -1: 
-                            sym_line.append(1)
-                            hit=1
-                        else:
-                            sym_line.append(0)
-                    else: 
-                        sym_line.append(0)
-            #    print(str(interval[i])+" poly_val: "+str(poly_val)+ " x: "+str(x)+" y: "+str(y)+" x+y: "+str(x+y)+" k: "+str(k)+" sym_line: "+str(sym_line)+" "+str(Q))      
+            divs=find_divs(n*k**2,div)
+            if len(divs)==0:
+                zxy_ind+=1
+                continue
+           # print("div: "+str(div)+" divs: "+str(divs))
+            div_ind=0
+            while div_ind < len(divs):
+                start_dist=divs[div_ind]**2#(-n)%div
+                
+                if (n*k**2+start_dist)%div !=0:
+                    print("fatal")
+                    sys.exit()
+                start_x=n#+start_dist)//div
 
-                pair=[[-1, x], poly_val*(k**2), [[1 ,1]], x+y, [1], [-1,x], 1]
-                M=10000
-                pairs_used=[pair]
-                fvec=[1]
-                if hit ==0:
-                    x1, y1 = create_solution(pairs_used,fvec,n,len(primelist),primelist,-f_x[1],f_x[0],f_x[0],M<<1,Q,f_x)
-                    test=gcd(x1+y1,n)
+                start_zxy=1*k**2#div*k**2
+                start_y=start_zxy-start_x
+                interval=create_sieve_interval(n,hmap,primeslist,k**2,div,start_x,start_zxy,start_y,divs[div_ind])
+    
+                step=divs[div_ind]
+                i=0
+                while i < len(interval):
+                    if interval[i]==0:# or interval[i]==1:
+                        poly=n*k**2+(step+div*i)**2
+                        if poly%div !=0:
+                            print("fatal error")
+                            sys.exit()
+                        x=poly//div
+                        y=div-x
+                        zxy=div*k**2
+                        polyval=x**2+y*x-n*k**2
+                        pvsqr=math.isqrt(polyval)
+                        if pvsqr**2 != polyval:
+                            print("blah fcking error")
 
-                    if check_poly_irreducible(f_x) != 1:
-                        print("fail irreducible")
+
+                   
+ 
+                   
+
+                        B=primeslist[-1]
+                        z=1
+                        poly_val=z*x**2+y*x-n*k**2
+                        f_x=[z,y,-n*k**2]
+                        d=2
+                        free_pairs,R_p, logs, divide_leading, pow_div, B_prime = initialize_2(f_x, d, primelist, z)
+                        f_prime = get_derivative(f_x)
+                        Q, k1 = initialize_3(n, f_x, f_prime, B, z)
+
+                        hit=0
+                        sym_line=[]
+                        for p in range(len(Q)):
+                            if len(Q[p])>0:
+                                if compute_legendre_character(eval_mod([-1,x], Q[p][1], Q[p][0]), Q[p][0]) == -1: 
+                                    sym_line.append(1)
+                                    hit=1
+                                else:
+                                    sym_line.append(0)
+                            else: 
+                                sym_line.append(0)
+                        #if interval[i]==0:
+                        print("div: "+str(div)+" interval[i]: "+str(interval[i])+" poly_val: "+str(poly_val)+ " x: "+str(x)+" y: "+str(y)+" x+y: "+str(x+y)+" k: "+str(k))#+" sym_line: "+str(sym_line)+" "+str(Q))      
+
+                        pair=[[-1, x], poly_val*(k**2), [[1 ,1]], x+y, [1], [-1,x], 1]
+                        M=10000
+                        pairs_used=[pair]
+                        fvec=[1]
+                        if hit != 0 and interval[i]==0:
+                            print("this should never happen "+" sym_line: "+str(sym_line)+" "+str(Q))
+                            sys.exit()
+                        if hit ==0:
+                            x1, y1 = create_solution(pairs_used,fvec,n,len(primelist),primelist,-f_x[1],f_x[0],f_x[0],M<<1,Q,f_x)
+                            test=gcd(x1+y1,n)
+                            x_test = symbols('x_test')
+
+                            p = Poly(f_x, x_test)
+                            if p.is_irreducible==False:
+                                print("fail irreducible")
+
                     
-                    p=test
-                    q=n//test
-                    center=(p+q)//2
-                    inc=(x+y)//(k**2)
-                    if test != n and test !=1:
-                        print("Factors of: "+str(n)+" are: "+str(test)+" and "+str(n//test)+" k: "+str(k)+" polyval: "+str(poly_val)+" x+y: "+str((x+y)//(k**2))+" x: "+str(x))#+" x1: "+str(x1)+" y1: "+str(y1))
+                            p=test
+                            q=n//test
+                            center=(p+q)//2
+                            inc=(x+y)//(k)
+                            if test != n and test !=1 and interval[i]==0:
+                                print("Factors of: "+str(n)+" are: "+str(test)+" and "+str(n//test)+" k: "+str(k)+" polyval: "+str(poly_val)+" x+y: "+str((x+y)//(k**2))+" x: "+str(x))#+" x1: "+str(x1)+" y1: "+str(y1))
                         
-                        ##To do: Something here broke for different k values now.. debug this later
-                        ##Check bottom of the paper.. this is how all of this relates to the distance between the factors....
-                      #  if ((center + math.isqrt(poly_val)) + k*inc) != q and ((center + math.isqrt(poly_val)) + k*inc) != p:
-                          #  if ((center - math.isqrt(poly_val)) + k*inc) != q and ((center - math.isqrt(poly_val)) + k*inc) != p:
-                              #  print("error fatal22")
-                        sys.exit()         
+                            ##To do: Something here broke for different k values now.. debug this later
+                            ##Check bottom of the paper.. this is how all of this relates to the distance between the factors....
+                                if ((center + math.isqrt(poly_val//k**2)) + inc) != q and ((center + math.isqrt(poly_val//k**2)) + inc) != p:
+                                    if ((center - math.isqrt(poly_val//k**2)) + inc) != q and ((center - math.isqrt(poly_val//k**2)) + inc) != p:
+                                        print("Some edge case happened that I need to investigate...")
+                                sys.exit()         
 
-            i+=1
+                    i+=1
+                div_ind+=1
+           # sys.exit()
+            zxy_ind+=1
+      #  sys.exit()
         k_ind+=1
     return
 
