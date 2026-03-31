@@ -13,6 +13,20 @@ Update: Just made some more improvements to use a larger zx+y value. Its kind of
 
 To use linear algebra you would use the quadratic coefficient similar to what I do in CUDA_QS_Variant.. but I have to run the numbers and write the code.. I already know it can be done though.
 
+UPDATE: 
+
+If the polynomial value, pv, is square then the legendre symbols generated will be the same if for example z = 1 and k = 4 or z = 4 and k = 1 ... as long as the polynomial value is square, these Legendre symbols will be the same.
+
+Hence this proves that we can use these quadratic coefficients (z) to sieve... improving the existing number field sieve algorithm.
+
+
+
+GAME OVER
+
+
+
+Everyone knows. What are you people doing? Where did my friends go? Why did they all leave whatsapp? Why did everyone stop talking to me? What is your plan? Are you hoping that I kill myself by treating me like this before the Chinese realize what the hell is happening, is that it? Go to hell. FUCK YOU ASSHOLES.
+
 An intermediate step between QS and NFS (representing chapter VII in the paper) can be found here: https://github.com/BigPolarBear1/factorization/tree/7deba681fc78c349ea70e514a36ab723399f8e96/NFS_Variant_simple
 
 #### To run from folder "CUDA_QS_variant":</br></br>
