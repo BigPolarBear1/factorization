@@ -14,7 +14,7 @@ Update: Just made some more improvements to use a larger zx+y value. Its kind of
 To use linear algebra you would use the quadratic coefficient similar to what I do in CUDA_QS_Variant.. but I have to run the numbers and write the code.. I already know it can be done though.
 
 UPDATE: 
-
+ zx^2+yx-Nk = pv</br>
 If the polynomial value, pv, is square then the legendre symbols generated will be the same if for example z = 1 and k = 4 or z = 4 and k = 1 ... as long as the polynomial value is square, these Legendre symbols will be the same.
 
 Hence this proves that we can use these quadratic coefficients (z) to sieve... improving the existing number field sieve algorithm.
