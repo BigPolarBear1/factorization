@@ -19,13 +19,7 @@ If the polynomial value, pv, is square then the legendre symbols generated will 
 
 Hence this proves that we can use these quadratic coefficients (z) to sieve... improving the existing number field sieve algorithm.
 
-
-
-GAME OVER
-
-
-
-Everyone knows. What are you people doing? Where did my friends go? Why did they all leave whatsapp? Why did everyone stop talking to me? What is your plan? Are you hoping that I kill myself by treating me like this before the Chinese realize what the hell is happening, is that it? Go to hell. FUCK YOU ASSHOLES.
+I will begin implementing this now... as soon as I can get a functional PoC then this project will be finished.
 
 An intermediate step between QS and NFS (representing chapter VII in the paper) can be found here: https://github.com/BigPolarBear1/factorization/tree/7deba681fc78c349ea70e514a36ab723399f8e96/NFS_Variant_simple
 
