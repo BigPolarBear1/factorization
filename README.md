@@ -22,6 +22,8 @@ Hence this proves that we can use these quadratic coefficients (z) to sieve... i
 
 I will begin implementing this now... as soon as I can get a functional PoC then this project will be finished.
 
+Update: I have begun implementing a linear algebra step now. It's quite complicated so it may take a few days.. it's the final step now though... after that my work will be finished. Once it is finished I hope to go back to the basics and focus on finding a polynomial time factoization algorithm. 
+
 An intermediate step between QS and NFS (representing chapter VII in the paper) can be found here: https://github.com/BigPolarBear1/factorization/tree/7deba681fc78c349ea70e514a36ab723399f8e96/NFS_Variant_simple
 
 #### To run from folder "CUDA_QS_variant":</br></br>
