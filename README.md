@@ -9,7 +9,7 @@ To run: python3 run_qs.py -keysize 50 -base 500 -debug 1 -lin_size 1_000_000 -qu
 
 Update: THIS IS MY MOST RECENT VERSION! I JUST HAD A MAJOR INSIGHT! I will stop working on NFS_WIP2 below because I just realized I can just do Quadratic Sieve with higher degree polynomials. There is no reason to overcomplicate things with square roots over finite fields and all that. I just did the math on 3rd degree polynomials.. and I see now how to do it. I will add support for degree > 2 in the weekend. I'm an idiot. I should have realized this a LONG time ago.
 
-#### To run from folder "NFS_WIP2" (Experimental WORK IN PROGRESS):</br></br>
+#### (abandoning this approach in favor for the one above) To run from folder "NFS_WIP2" (Experimental WORK IN PROGRESS):</br></br>
 
 ##NFS related code is borrowed from: https://github.com/basilegithub/General-number-field-sieve-Python (note: Very impressively written, helped me big time, thanks)
 
