@@ -16,21 +16,7 @@ Update: THIS IS MY MOST RECENT VERSION! I JUST HAD A MAJOR INSIGHT! I will stop 
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 50 -base 70 -debug 1 -lin_size 100_000 -quad_size 50</br></br>
 
-Update: Just made some more improvements to use a larger zx+y value. Its kind of trash. Lots of brute force shit which should be done with number theory instead (i.e see create_sieve_interval).. but it doesn't matter.. I'll use this PoC now as a research tool to figure out how I can transform these ideas into using linear algebra to solve for this solution instead.. without having to restrict myself to a single set of coefficients as normal NFS does. That's the main thing now. I have an idea how to do it.. but I'll need to grind out the details now.. final step in the algorithm though.. once that works.. that's it.. it will be done. The uploaded PoC is basically doing fermat's factorization method with legendre symbols.. its kind of shit until I add some linear algebra.
-
-To use linear algebra you would use the quadratic coefficient similar to what I do in CUDA_QS_Variant.. but I have to run the numbers and write the code.. I already know it can be done though.
-
-UPDATE: 
- zx^2+yx-Nk = pv</br>
-If the polynomial value, pv, is square then the legendre symbols generated will be the same if for example z = 1 and k = 4 or z = 4 and k = 1 ... as long as the polynomial value is square, these Legendre symbols will be the same.
-
-Hence this proves that we can use these quadratic coefficients (z) to sieve... improving the existing number field sieve algorithm.
-
-I will begin implementing this now... as soon as I can get a functional PoC then this project will be finished.
-
-Update: I have begun implementing a linear algebra step now. It's quite complicated so it may take a few days.. it's the final step now though... after that my work will be finished. Once it is finished I hope to go back to the basics and focus on finding a polynomial time factoization algorithm. 
-
-An intermediate step between QS and NFS (representing chapter VII in the paper) can be found here: https://github.com/BigPolarBear1/factorization/tree/7deba681fc78c349ea70e514a36ab723399f8e96/NFS_Variant_simple
+An incomplete attempt at merging my findings with NFS. I will delete this once the version above matures more.
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
