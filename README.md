@@ -3,6 +3,12 @@ Disclaimer2: I never finished highschool. I started working on this 3 years ago,
 
 The day I break factorization will be day 0 of the gay future. A better world will be born. A world of human creativity. A world of art, science and spirituality. A world without suffering. I will see that world become reality, no matter the cost. 
 
+#### To run from folder "Higher Degree QS" (Experimental WORK IN PROGRESS):</br></br>
+To build: python3 setup.py build_ext --inplace</br>
+To run: python3 run_qs.py -keysize 50 -base 500 -debug 1 -lin_size 1_000_000 -quad_size 1
+
+Update: THIS IS MY MOST RECENT VERSION! I JUST HAD A MAJOR INSIGHT! I will stop working on NFS_WIP2 below because I just realized I can just do Quadratic Sieve with higher degree polynomials. There is no reason to overcomplicate things with square roots over finite fields and all that. I just did the math on 3rd degree polynomials.. and I see now how to do it. I will add support for degree > 2 in the weekend. I'm an idiot. I should have realized this a LONG time ago.
+
 #### To run from folder "NFS_WIP2" (Experimental WORK IN PROGRESS):</br></br>
 
 ##NFS related code is borrowed from: https://github.com/basilegithub/General-number-field-sieve-Python (note: Very impressively written, helped me big time, thanks)
