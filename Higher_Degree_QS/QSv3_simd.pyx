@@ -925,6 +925,17 @@ def evaluate(f, x):
 
     return res
 
+def evaluate_x2(f, x):
+    res = 0
+    i=0
+    while i < len(f)-2:
+        res += f[i]
+        res *= x
+        i+=1
+    res+=f[i]
+
+    return res
+
 cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_prime_bound,primeslist2,small_primeslist):
    # i=0
   #  while i < len(hmap):
@@ -983,10 +994,13 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                 continue
             x=x_ind
             polyval=evaluate(current,x)
-            lpv=polyval+n
-            if lpv%x !=0:
-                print("error")
-            local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(lpv,primelist_f)
+            x2=evaluate_x2(current, x)
+            #lpv=polyval+n
+            #if lpv%x !=0:
+              #  print("error")
+              #  sys.exit()
+
+            local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(x2,primelist_f)
             if value != 1:
                 x_ind+=1
                 continue
@@ -995,21 +1009,27 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
             if value2 != 1:
                 x_ind+=1
                 continue
-
+          #  print("polyval: "+str(polyval)+" lpv: "+str(x2*x)+" X: "+str(x)+" coeff: "+str(current)+" seen_primes: "+str(seen_primes)+" x2: "+str(x2))
+            if x2*x != polyval+n:
+                print("fatal error")
+                sys.exit()
 
             if polyval not in smooths:
-                #print("polyval: "+str(polyval)+" lpv: "+str(lpv)+" X: "+str(x)+" coeff: "+str(current)+" seen_primes: "+str(seen_primes))
-
                 smooths.append(polyval)
                 factors.append(local_factors2)
 
-                x_list.append(lpv)
+                x_list.append(x2*x)
+
+                local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(x*x2,primelist_f)
+                if value != 1:
+                    print("fatal error should never happen")
+                    sys.exit()
                 x_f_list.append(local_factors)
                 sfound+=1
                 print("Smooths found: "+str(sfound)+" / "+str((base+2)*2))
                 if sfound >(base+2)*2:#+qbase:
                     f1,f2=QS(n,primelist,smooths,factors,x_list,x_f_list)
-                    if f1 !=0:
+                    if f1 !=0: 
                         sys.exit()                
             x_ind+=1
 
