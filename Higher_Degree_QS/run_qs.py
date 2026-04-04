@@ -11,6 +11,7 @@ base=5000
 sbase=5000
 lin_size=1000
 quad_size=100
+d=2
 def print_banner():
     print("Polar Bear was here       ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀                       ")
     print("⠀         ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ ⣀⣀⣀⣤⣤⠶⠾⠟⠛⠛⠛⠛⠷⢶⣤⣄⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀   ")
@@ -34,7 +35,7 @@ def print_banner():
     return
 
 def parse_args():
-    global keysize,key,workers,debug,base,quad_size,sbase,lin_size
+    global keysize,key,workers,debug,base,quad_size,sbase,lin_size,d
     parser = argparse.ArgumentParser(description='Factor stuff')
     parser.add_argument('-key',type=int,help='Provide a key instead of generating one') 
     parser.add_argument('-keysize',type=int,help='Generate a key of input size')    
@@ -44,6 +45,7 @@ def parse_args():
     parser.add_argument('-sbase',type=int,help='Size of the small factor base')
     parser.add_argument('-quad_size',type=int,help='Quad sieve size')
     parser.add_argument('-lin_size',type=int,help='Lin sieve size')
+    parser.add_argument('-d',type=int,help='Degree')
     args = parser.parse_args()
     if args.keysize != None:    
         keysize = args.keysize
@@ -61,6 +63,8 @@ def parse_args():
         lin_size=args.lin_size  
     if args.quad_size != None:
         quad_size=args.quad_size   
+    if args.d != None:
+        d=args.d   
     return
 
 if __name__ == "__main__":
@@ -70,4 +74,4 @@ if __name__ == "__main__":
 
  #   s = pstats.Stats("Profile.prof")
  #   s.strip_dirs().sort_stats("time").print_stats()
-    QSv3_simd.main(keysize,workers,debug,base,key,lin_size,quad_size)
+    QSv3_simd.main(keysize,workers,debug,base,key,lin_size,quad_size,d)
