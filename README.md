@@ -14,6 +14,8 @@ Its super simple actually. I don't quite understand why I'm only seeing this now
 
 The thing about this setup is the following: Quadratic Sieve it sieves with x^2-N or some variation there of. But we can also sieve with 2x^2-N  and shift everything a little bit. It literally does not matter. Furthermore, also using higher degree polynomials will make it a little easier to sieve this way I believe. Give me a couple of days for this PoC to start maturing.. damnit.. it is like it suddenly clicked inside my brain and its so fcking simple too. I dont know why I overcomplicated everything this much until now.
 
+Update: While looking at these higher degree polynomials and the factorization of the polynomial values they produce. It finally clicked. Binomial expansion. That's the key! Thats how you sieve and generate smooth candidates with similar factorization. BINOMIAL EXPANSION! EUREKA! I DID IT! Haha! All the suffering. All this bullshit. All this silence. It will all come to an end now. 
+
 #### (abandoning this approach in favor for the one above) To run from folder "NFS_WIP2" (Experimental WORK IN PROGRESS):</br></br>
 
 ##NFS related code is borrowed from: https://github.com/basilegithub/General-number-field-sieve-Python (note: Very impressively written, helped me big time, thanks)
