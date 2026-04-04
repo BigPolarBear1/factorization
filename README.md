@@ -5,9 +5,12 @@ The day I break factorization will be day 0 of the gay future. A better world wi
 
 #### To run from folder "Higher_Degree_QS" (Experimental WORK IN PROGRESS):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 50 -base 500 -debug 1 -lin_size 1_000_000 -quad_size 1
+To run: python3 run_qs.py -keysize 30 -base 500 -debug 1 -lin_size 100_000 -quad_size 1 -d 4
 
-Update: THIS IS MY MOST RECENT VERSION! I JUST HAD A MAJOR INSIGHT! I will stop working on NFS_WIP2 below because I just realized I can just do Quadratic Sieve with higher degree polynomials. There is no reason to overcomplicate things with square roots over finite fields and all that. I just did the math on 3rd degree polynomials.. and I see now how to do it. I will add support for degree > 2 in the weekend. I'm an idiot. I should have realized this a LONG time ago.
+Update: I just uploaded a very barebones version. You can use -d to change the degree used to sieve with. Now we improve this. 
+If we sieve a-N = pv, where a is substituted by a polynomial of arbitrary degree.. then based on the value of the coefficients, we know if a will be square or not. And the coefficients can also be used to control the factorization of a. 
+
+Its super simple actually. I don't quite understand why I'm only seeing this now. I guess I just needed to advance enough with my math skills. Either way...  now the fun begins, because understanding all of this, how this works.. we can actually fix CUDA_QS_variant and properly implemented the strategy of hunting for smooths with similar factorization. I know how to do it now.. finally seeing the big picture. Hold on.. I'll start improving this quickly now.
 
 #### (abandoning this approach in favor for the one above) To run from folder "NFS_WIP2" (Experimental WORK IN PROGRESS):</br></br>
 
