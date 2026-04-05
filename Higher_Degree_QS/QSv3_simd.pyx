@@ -399,31 +399,35 @@ def lift_root(z,y,n, root, p, exp):
     return new_root
 
 def solve_roots(prime,n):
-    hmap_p={}
+    hmap_p=[]
 
-    k=1
+    k=0
     while k < prime and k < quad_sieve_size+1:
-        y=0
-        while y < prime:
-            roots=solve_quadratic_congruence(k, y, -n, prime)
-            if roots == -1:
-                y+=1
-                continue
-            y2=y
-            while y2 < prime:
+        hmap_p.append([])
+        z=1
+        while z < prime:
+            y=0
+            while y < prime:
+                roots=solve_quadratic_congruence(z, y, -n*k, prime)
+                if roots == -1:
+                    y+=1
+                    continue
+              #  y2=y
+              #  while y2 < prime:
                 for root in roots:
                     x = root#lift_root(1,y2,n*k,root,prime,1)
                   #  if prime == 3:
                       #  print("roots: "+str(roots)+" y: "+str(y2)+" k: "+str(k)+" x: "+str(x))
-                    if (k*x**2+y2*x-n)%prime==0:#**2==0: ##To do: Bug here if we have a single root from solve_quadratic_congruence..
+                    if (z*x**2+y*x-n*k)%prime==0:#**2==0: ##To do: Bug here if we have a single root from solve_quadratic_congruence..
                       #  hmap_p[k-1][y]=[x]#(k*x)+y2
-                        try:
-                            xlist=hmap_p[y]
-                            xlist.append(x)
-                        except Exception as e:
-                            hmap_p[y]=[x]
-                y2+=prime
-            y+=1
+                       # try:
+                       # xlist=hmap_p[k]
+                        hmap_p[-1].append([z,y])
+                      #  except Exception as e:
+                          #  hmap_p[k]=[[z,y]]
+                  #  y2+=prime
+                y+=1
+            z+=1
         k+=1
     return hmap_p
 
@@ -937,10 +941,10 @@ def evaluate_x2(f, x):
     return res
 
 cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_prime_bound,primeslist2,small_primeslist):
-   # i=0
-  #  while i < len(hmap):
+    i=0
+    while i < len(hmap):
       #  print("prime: "+str(primeslist[i])+" "+str(hmap[i]))
-      #  i+=1
+        i+=1
 
 
     primelist_f=copy.copy(primeslist)
@@ -967,71 +971,54 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
     x_list=[]
     x_f_list=[]
 
-    sfound=0
+
+    k=1
+    while k < quad_sieve_size+1:
+
+        coeff=[-n*k]
 
 
-    coeff=[-n]
+        d=degree
+        d_ind=0
+        while d_ind < d:
+            coeff.insert(0,0)
 
+            d_ind+=1
 
-    d=degree
-    d_ind=0
-    while d_ind < d:
-        coeff.insert(0,1)
-
-        d_ind+=1
-
-
-
-
-    ranges = [range(start, 100) for start in coeff[:-1]]
-
-    for combo in itertools.product(*ranges):
-        current = list(combo) +  [coeff[-1]]
-        x_ind=1
-        while x_ind < lin_sieve_size:
-            if lival[x_ind-1]!=1:
-                x_ind+=1
-                continue
-            x=x_ind
-            polyval=evaluate(current,x)
-            x2=evaluate_x2(current, x)
-            #lpv=polyval+n
-            #if lpv%x !=0:
-              #  print("error")
-              #  sys.exit()
-
-            local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(x2,primelist_f)
-            if value != 1:
-                x_ind+=1
-                continue
-
-            local_factors2, value2,seen_primes2,seen_primes_indexes2 = factorise_fast(polyval,primelist_f)
-            if value2 != 1:
-                x_ind+=1
-                continue
-          #  print("polyval: "+str(polyval)+" lpv: "+str(x2*x)+" X: "+str(x)+" coeff: "+str(current)+" seen_primes: "+str(seen_primes)+" x2: "+str(x2))
-            if x2*x != polyval+n:
-                print("fatal error")
-                sys.exit()
-
-            if polyval not in smooths:
-                smooths.append(polyval)
-                factors.append(local_factors2)
-
-                x_list.append(x2*x)
-
-                local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(x*x2,primelist_f)
-                if value != 1:
-                    print("fatal error should never happen")
-                    sys.exit()
-                x_f_list.append(local_factors)
-                sfound+=1
-                print("Smooths found: "+str(sfound)+" / "+str((base+2)*2))
-                if sfound >(base+2)*2:#+qbase:
-                    f1,f2=QS(n,primelist,smooths,factors,x_list,x_f_list)
-                    if f1 !=0: 
-                        sys.exit()                
-            x_ind+=1
+        ranges = [range(start, lin_sieve_size) for start in coeff[:-1]]
+        for combo in itertools.product(*ranges):
+            current = list(combo) +  [coeff[-1]]
+            false=0
+            g=0
+            while g < len(hmap):
+                prime = primeslist[g]
+             #   print(hmap[g])
+             #   print((k-1)%prime)
+                colist=hmap[g][(k)%prime]
+                temp=copy.deepcopy(list(combo))
+            #    print("temp: "+str(temp)+" prime: "+str(prime))
+                a=0
+                while a < len(temp):
+                    temp[a]=temp[a]%prime
+                    a+=1
+                if temp not in colist:
+                    false=1
+                    break
+                g+=1
+            if false == 0:
+                print("found one: "+str(current))
+                disclist= list(combo)
+                test=disclist[-1]**2+4*n*k*disclist[0]
+                test_sqr=math.isqrt(test)
+                if test_sqr**2 == test:
+                    gcdtest=gcd(test_sqr+disclist[-1],n)
+                    if gcdtest != 1 and gcd != n:
+                        print("factors of "+str(n)+" are: "+str(gcdtest)+" and: "+str(n//gcdtest))
+                        sys.exit()
+                    else:
+                        print("blah:"+str(test))
+ 
+        k+=1
 
     return 
 
