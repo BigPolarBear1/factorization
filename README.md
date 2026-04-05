@@ -9,6 +9,8 @@ To run: python3 run_qs.py -keysize 30 -base 20 -debug 1 -lin_size 10_000 -quad_s
 
 Update: I very quickly restored a strategy I had tried last summer. This upload only works with degree 2 (use -d 2). And in solve_roots .. we dont need to solve roots, we just need to check if a root exists (i.e using legendre symbols) .. but it doesn't matter. NOW for the next version.. I will add support for higher degrees.. since this will reduce the size of coefficients.. and make this actually work for bigger numbers... and that's it.. that is all I had missed last summer....... and everyone must have known..... I hope you all burn in hell for this.
 
+I'm nearly certain that I can get it to work now by using higher degree polynomials. And in the off-chance that it wont.. i'll just try my original idea of using how this relates to binomial expansion to do targeted hunting for B-smooth numbers. Either way, I am about to succeed. 
+
 #### (abandoning this approach in favor for the one above) To run from folder "NFS_WIP2" (Experimental WORK IN PROGRESS):</br></br>
 
 ##NFS related code is borrowed from: https://github.com/basilegithub/General-number-field-sieve-Python (note: Very impressively written, helped me big time, thanks)
