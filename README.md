@@ -5,7 +5,7 @@ The day I break factorization will be day 0 of the gay future. A better world wi
 
 #### To run from folder "Higher_Degree_QS" (Experimental WORK IN PROGRESS):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 30 -base 500 -debug 1 -lin_size 100_000 -quad_size 1 -d 4
+To run: python3 run_qs.py -keysize 30 -base 20 -debug 1 -lin_size 10_000 -quad_size 2 -d 2
 
 Update: I just uploaded a very barebones version. You can use -d to change the degree used to sieve with. Now we improve this. 
 If we sieve a-N = pv, where a is substituted by a polynomial of arbitrary degree.. then based on the value of the coefficients, we know if a will be square or not. And the coefficients can also be used to control the factorization of a. 
