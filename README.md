@@ -7,14 +7,7 @@ The day I break factorization will be day 0 of the gay future. A better world wi
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 30 -base 20 -debug 1 -lin_size 10_000 -quad_size 2 -d 2
 
-Update: I just uploaded a very barebones version. You can use -d to change the degree used to sieve with. Now we improve this. 
-If we sieve a-N = pv, where a is substituted by a polynomial of arbitrary degree.. then based on the value of the coefficients, we know if a will be square or not. And the coefficients can also be used to control the factorization of a. 
-
-Its super simple actually. I don't quite understand why I'm only seeing this now. I guess I just needed to advance enough with my math skills. Either way...  now the fun begins, because understanding all of this, how this works.. we can actually fix CUDA_QS_variant and properly implement the strategy of hunting for smooths with similar factorization. I know how to do it now.. finally seeing the big picture. Hold on.. I'll start improving this quickly now.
-
-The thing about this setup is the following: Quadratic Sieve it sieves with x^2-N or some variation there of. But we can also sieve with 2x^2-N  and shift everything a little bit. It literally does not matter. Furthermore, also using higher degree polynomials will make it a little easier to sieve this way I believe. Give me a couple of days for this PoC to start maturing.. damnit.. it is like it suddenly clicked inside my brain and its so fcking simple too. I dont know why I overcomplicated everything this much until now.
-
-Update: While looking at these higher degree polynomials and the factorization of the polynomial values they produce. It finally clicked. Binomial expansion. That's the key! Thats how you sieve and generate smooth candidates with similar factorization. BINOMIAL EXPANSION! EUREKA! I DID IT! Haha! All the suffering. All this bullshit. All this silence. It will all come to an end now. 
+Update: I very quickly restored a strategy I had tried last summer. This upload only works with degree 2 (use -d 2). And in solve_roots .. we dont need to solve roots, we just need to check if a root exists (i.e using legendre symbols) .. but it doesn't matter. NOW for the next version.. I will add support for higher degrees.. since this will reduce the size of coefficients.. and make this actually work for bigger numbers... and that's it.. that is all I had missed last summer....... and everyone must have known..... I hope you all burn in hell for this.
 
 #### (abandoning this approach in favor for the one above) To run from folder "NFS_WIP2" (Experimental WORK IN PROGRESS):</br></br>
 
