@@ -54,6 +54,19 @@ lin_sieve_size=1000
 max_diff=1_000_000
 degree=2
 ##Key gen function ##
+
+def power2(poly, f, p, exp):
+    if exp == 1: return poly
+
+    tmp = power2(poly, f, p, exp>>1)
+    tmp = poly_prod(tmp, tmp)
+
+    if exp&1:
+        tmp = poly_prod(tmp, poly)
+        return div_poly_mod(tmp, f, p)
+    
+    else: return div_poly_mod(tmp, f, p)
+
 def power(x, y, p):
     res = 1;
     x = x % p;
@@ -398,38 +411,179 @@ def lift_root(z,y,n, root, p, exp):
     new_root = (root+t*p**exp)%p**(exp+1)
     return new_root
 
+def roots(g, p):
+    if len(g) == 1: return []
+    if len(g) == 2: return [-g[1]*modinv(g[0], p)%p]
+    if len(g) == 3:
+        tmp = (g[1]*g[1]-4*g[0]*g[2])%p
+        if tmp == 0: return [-g[1]*modinv(2*g[0], p)%p]
+        if compute_legendre_character(tmp, p) == -1: return []
+        tmp = compute_sqrt_mod_p(tmp, p)*modinv(2*g[0], p)%p
+        return [(-g[1]*modinv(g[0]<<1, p)+tmp)%p, (-g[1]*modinv(g[0]<<1, p)-tmp)%p]
+    
+    h = [1]
+    while len(h) == 1 or h == g:
+        a = random.randint(0, p-1)
+        h = power2([1, a], g, p, (p-1)>>1)
+        for k in range(len(h)):
+            if h[k]:
+                h = h[k:]
+                break
+        h[-1] -= 1
+        h = gcd_mod(h, g, p)
+    r = roots(h, p)
+    h = quotient_poly_mod(g, h, p)
+    return r+roots(h, p)
+
+def poly_prod(a, b):
+    res = [0]*(max(len(a), len(b))+min(len(a), len(b))-1)
+
+    for i in range(len(a)):
+        for j in range(len(b)):
+            res[i+j] += a[i]*b[j]
+
+    return res
+
+def div_poly_mod(a, tmp_b, p):
+    remainder = [i%p for i in a]
+    b = [i%p for i in tmp_b]
+    
+    #print(remainder, b)
+    while not b[0]: del b[0]
+    
+    difference = len(a)-len(b)+1
+    coeff = modinv(-b[0], p)
+    for j in range(difference):
+        if remainder[j]:
+            quotient = remainder[j]*coeff%p
+            remainder[j] = 0
+            for k in range(1,len(b)): remainder[j+k] = (remainder[j+k]+quotient*b[k]%p)%p
+            
+    for k in range(len(remainder)):
+        if remainder[k]: return remainder[k:]
+        
+    return [0]
+
+def compute_legendre_character(a, n):
+    a = a%n
+    t = 1
+    while a:
+        while not a&1:
+            a = a>>1
+            if n%8 == 3 or n%8 == 5: t = -t
+        a, n = n, a
+        if a%4 == n%4 and n%4 == 3: t = -t
+        a = a%n
+    if n == 1: return t
+    return 0
+        
+
+def compute_sqrt_mod_p(n, p):
+    n %= p
+    if n == 1 : return 1
+    P = p-1
+    z = int(random.randint(2, P))
+    while compute_legendre_character(z, p) != -1:
+        z = int(random.randint(2, P))
+    r = 0
+    while not P&1:
+        P >>= 1
+        r += 1
+    s = P
+    generator = pow(z, s, p)
+    lbd = pow(n, s, p)
+    omega = pow(n, (s+1)>>1, p)
+
+    while True:
+        if not lbd: return 0
+        if lbd == 1: return omega
+        for m in range(1, r):
+            if pow(lbd, 1<<m, p)==1: break
+
+        tmp = pow(2, r-m-1, p-1)
+        lbd = lbd*pow(generator, tmp<<1, p)%p
+        omega = omega*pow(generator, tmp, p)%p
+        
+
+def gcd_mod(f, poly, p):
+    while poly != [0]*len(poly):
+        (f, poly) = (poly, div_poly_mod(f, poly, p))
+    return f
+
+def quotient_poly_mod(a, b, p):
+    remainder = [i%p for i in a]
+    b = [i%p for i in b]
+    
+    while not b[0]: del b[0]
+    
+    difference = len(a)-len(b)+1
+    coeff = modinv(-b[0], p)
+    res = [0]*difference
+
+    for j in range(difference):
+        quotient = remainder[j]*coeff%p
+        res[j] = -quotient
+        for k in range(len(b)):
+            remainder[j+k] = (remainder[j+k]+quotient*b[k]%p)%p
+            
+    for k in range(len(res)):
+        if res[k]: return res[k:]
+        
+    return [0]
+
+def find_roots_poly(f, p):
+    tmp_f = [i%p for i in f]
+    for k in range(len(f)):
+        if tmp_f[k]:
+            tmp_f = tmp_f[k:]
+            break
+
+    r = []
+    tmp = [1,0]
+    g = [1]
+    tmp_p = p
+    while tmp_p>1:
+        if tmp_p&1:
+            g = div_poly_mod(poly_prod(g, tmp), tmp_f, p)
+        tmp = div_poly_mod(poly_prod(tmp, tmp), tmp_f, p)
+        tmp_p >>= 1
+
+    g = div_poly_mod(poly_prod(g, tmp), tmp_f, p)
+    if len(g) == 1: g = [-1, g[0]]
+    else: g[-2] -= 1
+    g = gcd_mod(f, g, p)
+    if g[-1] == 0:
+        r.append(0)
+        del g[-1]
+    return r + roots(g, p)
+
 def solve_roots(prime,n):
     hmap_p=[]
-
+    hmap_p2=[]
     k=0
     while k < prime and k < quad_sieve_size+1:
-        hmap_p.append([])
-        z=1
-        while z < prime:
-            y=0
-            while y < prime:
-                roots=solve_quadratic_congruence(z, y, -n*k, prime)
-                if roots == -1:
-                    y+=1
-                    continue
-              #  y2=y
-              #  while y2 < prime:
-                for root in roots:
-                    x = root#lift_root(1,y2,n*k,root,prime,1)
-                  #  if prime == 3:
-                      #  print("roots: "+str(roots)+" y: "+str(y2)+" k: "+str(k)+" x: "+str(x))
-                    if (z*x**2+y*x-n*k)%prime==0:#**2==0: ##To do: Bug here if we have a single root from solve_quadratic_congruence..
-                      #  hmap_p[k-1][y]=[x]#(k*x)+y2
-                       # try:
-                       # xlist=hmap_p[k]
-                        hmap_p[-1].append([z,y])
-                      #  except Exception as e:
-                          #  hmap_p[k]=[[z,y]]
-                  #  y2+=prime
-                y+=1
-            z+=1
+        hmap_p2.append([])
+        coeff=[(-n*k)%prime]
+
+
+        d=degree
+        d_ind=0
+        while d_ind < d:
+            coeff.insert(0,0)
+
+            d_ind+=1
+        coeff[0]+=1
+        ranges = [range(start, prime) for start in coeff[:-1]]
+        for combo in itertools.product(*ranges):
+            current = list(combo) +  [coeff[-1]]
+
+            root = find_roots_poly(current, prime)
+            if len(root)> 0:
+                hmap_p2[-1].append(list(combo))
+            #print("root: "+str(root)+" current: "+str(current)+" prime: "+str(prime))
         k+=1
-    return hmap_p
+
+    return hmap_p2
 
 def create_hashmap(n,primeslist):
     i=0
@@ -1017,6 +1171,8 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                         sys.exit()
                     else:
                         print("blah:"+str(test))
+                else:
+                    print("blah2")
  
         k+=1
 
