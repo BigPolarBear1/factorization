@@ -8,15 +8,15 @@ https://stackoverflow.com/questions/79330304/optimizing-sieving-code-in-the-self
 https://github.com/basilegithub/General-number-field-sieve-Python 
 
 
-#### To run from folder "Higher_Degree_QS" (Experimental WORK IN PROGRESS):</br></br>
-Note: Ignore the folder name. I will officially name this algorithm "Coefficient Sieve", since that best describes what it does. Will rename for the next version.
-
+#### To run from folder "Coefficient_Sieve" (Experimental WORK IN PROGRESS):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 30 -base 20 -debug 1 -lin_size 10_000 -quad_size 2 -d 2
 
 Update: I very quickly restored a strategy I had tried last summer. This upload only works with degree 2 (use -d 2). And in solve_roots .. we dont need to solve roots, we just need to check if a root exists (i.e using legendre symbols) .. but it doesn't matter. NOW for the next version.. I will add support for higher degrees.. since this will reduce the size of coefficients.. and make this actually work for bigger numbers... and that's it.. that is all I had missed last summer....... and everyone must have known..... I hope you all burn in hell for this.
 
 I'm nearly certain that I can get it to work now by using higher degree polynomials. And in the off-chance that it wont.. i'll just try my original idea of using how this relates to binomial expansion to do targeted hunting for B-smooth numbers. Either way, I am about to succeed. 
+
+Update: I quickly fixed solve_roots() for arbitrary degree. I'll have to simplify this later, because we just need to check the existence of a root rather then calculate the root.. but this works for now. Next I need to figure out how to calculate the discriminant for higher degrees.. since the code will still only work with degree 2 until I fix that.
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
