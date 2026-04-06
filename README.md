@@ -12,7 +12,7 @@ https://github.com/basilegithub/General-number-field-sieve-Python
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 30 -base 20 -debug 1 -lin_size 10_000 -quad_size 2 -d 2
 
-This is an algorithm I had already discovered a year ago, but being a math novice, I dismissed it as it didn't seem practical. I however at the time did not realize you could generalize this to higher degree polynomials.. and doing so would infact turn this into a powerful algorithm.
+This is an algorithm I had already discovered a year ago (and had uploaded to github), but being a math novice, I dismissed it as it didn't seem practical. I however at the time did not realize you could generalize this to higher degree polynomials.. and doing so would infact turn this into a powerful algorithm.
 
 Note: This is a work in progress. The mechanics of this is exactly the same as what number field sieve does. But much simpler. I will add a sieve interval to the PoC shortly and then finish my paper. Then I have something to show people already... and make some noise about. After that... I'll start generalizing everything to higher degree polynomials. Instead of taking the discriminant you would need to calculate roots mod p and use chinese remainder or something similar.
 
