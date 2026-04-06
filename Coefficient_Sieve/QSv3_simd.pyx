@@ -1101,47 +1101,65 @@ def evaluate_x2(f, x):
 
 
 cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_prime_bound,primeslist2,small_primeslist):
+    
+
+
     print("[i]Entering attack loop")
     k=1
     while k < quad_sieve_size+1:
+        print("[i]Building interval")
+        interval=np.zeros([lin_sieve_size,lin_sieve_size],dtype=np.int16)
+        t=0
+        while t < len(hmap):
+            prime=primeslist[t]
+            coeff=[(-n*k)%prime]
+
+
+            d=degree
+            d_ind=0
+            while d_ind < d:
+                coeff.insert(0,0)
+
+                d_ind+=1
+            coeff[0]+=1
+            ranges = [range(start, prime) for start in coeff[:-1]]
+            for combo in itertools.product(*ranges):
+                cur=list(combo)
+               # if cur not in hmap[t][k]:
+                test=cur[1]**2+4*n*k*cur[0]
+                if jacobi(test,prime)==-1:
+                    if cur[0] < lin_sieve_size and cur[1] < lin_sieve_size:
+                        interval[cur[0]::prime,cur[1]::prime]=1
+            t+=1
+       # print("interval: ",interval)
+        print("[i]Checking interval")
         coeff=[-n*k]
         d=degree
         d_ind=0
         while d_ind < d:
             coeff.insert(0,0)
             d_ind+=1
+        coeff[0]+=1
         ranges = [range(start, lin_sieve_size) for start in coeff[:-1]]
         for combo in itertools.product(*ranges):
             current = list(combo) +  [coeff[-1]]
-            false=0
-            g=0
-            while g < len(hmap):
-                prime = primeslist[g]
-                colist=hmap[g][(k)%prime]
-                temp=copy.deepcopy(list(combo))
-                a=0
-                while a < len(temp):
-                    temp[a]=temp[a]%prime
-                    a+=1
-                if temp not in colist:
-                    false=1
-                    break
-                g+=1
-            if false == 0:
-                disclist= list(combo)
-                ##This wont work for higher degrees
-                test=disclist[-1]**2+4*n*k*disclist[0]
-                print("found one: "+str(current)+" my_for: "+str(test))
-                test_sqr=math.isqrt(test)
-                if test_sqr**2 == test:
-                    gcdtest=gcd(test_sqr+disclist[-1],n)
-                    if gcdtest != 1 and gcd != n:
-                        print("factors of "+str(n)+" are: "+str(gcdtest)+" and: "+str(n//gcdtest))
-                        sys.exit()
-                    else:
-                        print("[i]Might need to increase factor base size")
+    
+            if interval[current[0],current[1]]==1:
+                continue
+            ##This wont work for higher degrees. For higher degrees I suppose we'll need to calculate roots mod p and use CRT.
+            test=current[1]**2+4*n*k*current[0]
+
+            print("found one: "+str(current)+" my_for: "+str(test))
+            test_sqr=math.isqrt(test)
+            if test_sqr**2 == test:
+                gcdtest=gcd(test_sqr+current[1],n)
+                if gcdtest != 1 and gcdtest != n:
+                    print("factors of "+str(n)+" are: "+str(gcdtest)+" and: "+str(n//gcdtest))
+                    sys.exit()
                 else:
                     print("[i]Might need to increase factor base size")
+            else:
+                print("[i]Might need to increase factor base size")
         k+=1
     return 
 
