@@ -13,7 +13,7 @@
 
 ###To build: python3 setup.py build_ext --inplace
 
-from sympy import symbols, Poly, Matrix
+from sympy import symbols, Poly, Matrix,discriminant
 import random
 import sympy
 from itertools import chain
@@ -314,13 +314,13 @@ def launch(n,primeslist1,primeslist2,small_primeslist):
     return_dict=manager.dict()
     jobs=[]
     start= default_timer()
-    print("[i]Creating iN datastructure... this can take a while...")
+    print("[i]Creating coefficient datastructure... this can take a while...")
     primeslist1c=copy.deepcopy(primeslist1)
     plists=[]
 
     hmap,hmap2=create_hashmap(n,primeslist1)
     duration = default_timer() - start
-    print("[i]Creating iN datastructure in total took: "+str(duration))
+    print("[i]Creating coefficient datastructure in total took: "+str(duration))
 
     print("[*]Launching attack with "+str(workers)+" workers\n")
     find_comb(n,hmap,hmap2,primeslist1,primeslist2,small_primeslist)
@@ -576,10 +576,14 @@ def solve_roots(prime,n):
         ranges = [range(start, prime) for start in coeff[:-1]]
         for combo in itertools.product(*ranges):
             current = list(combo) +  [coeff[-1]]
-
-            root = find_roots_poly(current, prime)
-            if len(root)> 0:
-                hmap_p2[-1].append(list(combo))
+            if degree > 2:
+                root = find_roots_poly(current, prime)
+                if len(root)> 0:
+                    hmap_p2[-1].append(list(combo))
+            else:
+                test=current[1]**2+4*n*k*current[0]
+                if jacobi(test%prime,prime) != -1:
+                    hmap_p2[-1].append(list(combo))
             #print("root: "+str(root)+" current: "+str(current)+" prime: "+str(prime))
         k+=1
 
@@ -1094,51 +1098,18 @@ def evaluate_x2(f, x):
 
     return res
 
+
+
 cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_prime_bound,primeslist2,small_primeslist):
-    i=0
-    while i < len(hmap):
-      #  print("prime: "+str(primeslist[i])+" "+str(hmap[i]))
-        i+=1
-
-
-    primelist_f=copy.copy(primeslist)
-    primelist_f.insert(0,len(primelist_f)+1)
-    primelist_f=array.array('q',primelist_f)
-
-    primelist2_f=copy.copy(primeslist2)
-    primelist2_f.insert(0,len(primelist2_f)+1)
-    primelist2_f=array.array('q',primelist2_f)
-    cdef Py_ssize_t size
-    primelist=copy.copy(primeslist)
-    primelist.insert(0,2) ##To do: remove when we fix lifting for powers of 2
-    primelist.insert(0,-1)
-    print("[i]Filtering Quadratic Coefficients (quad_size) (to do: can be saved to disk for re-use)")
-    valid_quads,valid_quads_factors,qival=filter(primelist_f,n,1,quad_sieve_size+1)
-    print("[i]Filtering interval indices (lin_size) (to do: can be saved to disk for re-use)")
-    start=round(n**0.25)
-
-    valid_ind,valid_ind_factors,lival=filter(primelist_f,n,1,lin_sieve_size+1)
     print("[i]Entering attack loop")
-    smooths=[]
-    factors=[]
-
-    x_list=[]
-    x_f_list=[]
-
-
     k=1
     while k < quad_sieve_size+1:
-
         coeff=[-n*k]
-
-
         d=degree
         d_ind=0
         while d_ind < d:
             coeff.insert(0,0)
-
             d_ind+=1
-
         ranges = [range(start, lin_sieve_size) for start in coeff[:-1]]
         for combo in itertools.product(*ranges):
             current = list(combo) +  [coeff[-1]]
@@ -1146,11 +1117,8 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
             g=0
             while g < len(hmap):
                 prime = primeslist[g]
-             #   print(hmap[g])
-             #   print((k-1)%prime)
                 colist=hmap[g][(k)%prime]
                 temp=copy.deepcopy(list(combo))
-            #    print("temp: "+str(temp)+" prime: "+str(prime))
                 a=0
                 while a < len(temp):
                     temp[a]=temp[a]%prime
@@ -1160,9 +1128,10 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                     break
                 g+=1
             if false == 0:
-                print("found one: "+str(current))
                 disclist= list(combo)
+                ##This wont work for higher degrees
                 test=disclist[-1]**2+4*n*k*disclist[0]
+                print("found one: "+str(current)+" my_for: "+str(test))
                 test_sqr=math.isqrt(test)
                 if test_sqr**2 == test:
                     gcdtest=gcd(test_sqr+disclist[-1],n)
@@ -1170,12 +1139,10 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                         print("factors of "+str(n)+" are: "+str(gcdtest)+" and: "+str(n//gcdtest))
                         sys.exit()
                     else:
-                        print("blah:"+str(test))
+                        print("[i]Might need to increase factor base size")
                 else:
-                    print("blah2")
- 
+                    print("[i]Might need to increase factor base size")
         k+=1
-
     return 
 
 
@@ -1234,6 +1201,7 @@ def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_
         count+=1
     print("[i]Number of digits: ",count)
     print("[i]Gathering prime numbers..")
+    print("[i]!!!!!!!! Only -d 2 (degree) polynomials supported for now.. work in progresss")
     primeslist.extend(get_primes(3,20000000))
     i=0
     while len(primeslist1) < base:
