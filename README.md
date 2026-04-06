@@ -14,7 +14,7 @@ To run: python3 run_qs.py -keysize 40 -base 40 -debug 1 -lin_size 5000 -quad_siz
 
 This is an algorithm I had already discovered a year ago (and had uploaded to github), but being a math novice, I dismissed it as it didn't seem practical and deleted it again. I however at the time did not realize you could generalize this to higher degree polynomials.. and doing so would infact turn this into a powerful algorithm.
 
-To do: 
+To do: </br>
 2. Generalize to degrees > 2. 
 
 The idea being that higher degrees will yield smaller coefficients. Hence in theory it should be easier to find coefficients that are a valid solution for any prime. I'll give that a try. If that doesn't work, I'll try using everything I've learned so far to sieve for specific factorizations.
