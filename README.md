@@ -14,11 +14,10 @@ To run: python3 run_qs.py -keysize 40 -base 40 -debug 1 -lin_size 5000 -quad_siz
 
 This is an algorithm I had already discovered a year ago (and had uploaded to github), but being a math novice, I dismissed it as it didn't seem practical and deleted it again. I however at the time did not realize you could generalize this to higher degree polynomials.. and doing so would infact turn this into a powerful algorithm.
 
-Note: This is a work in progress. The mechanics of this is exactly the same as what number field sieve does. But much simpler. I will add a sieve interval to the PoC shortly and then finish my paper. Then I have something to show people already... and make some noise about. After that... I'll start generalizing everything to higher degree polynomials. Instead of taking the discriminant you would need to calculate roots mod p and use chinese remainder or something similar.
-
 To do: 
-1. Add a sieve interval
 2. Generalize to degrees > 2. 
+
+The idea being that higher degrees will yield smaller coefficients. Hence in theory it should be easier to find coefficients that are a valid solution for any prime. I'll give that a try. If that doesn't work, I'll try using everything I've learned so far to sieve for specific factorizations.
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
