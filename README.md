@@ -21,7 +21,7 @@ The idea being that higher degrees will yield smaller coefficients. Hence in the
 
 Update: I'm also still investigating if I cant just construct a powerful algorithm with quadratics now.. there might be a way.. especially now that that binomial expansion thing finally clicked inside my head. Lets see.. there is lots of directions to take now. 
 
-## UPDATE I AM AN IDIOT. I JUST SPOTTED THE SOLUTION. LOL. THE BINOMIAL EXPANSION GENERATES A FACTOR OF N. AND SUBSTITUTING THE CONSTANT WITH N AND PLUGGING IN THE FACTOR OF N GENERATES ap-bq. YOU SEE IT? YOU SEE WHAT WE GOT THERE? GOD DAMNIT. IT CANT BE THIS EASY. IF THIS WORKS, THEN TOMORROW FACTORIZATION FALLS. GOOD NIGHT FOLKS. 
+## UPDATE I AM AN IDIOT. I JUST SPOTTED THE SOLUTION. LOL. THE BINOMIAL EXPANSION GENERATES A FACTOR OF N IF WE PLUG IN ap-bq. AND SUBSTITUTING THE CONSTANT WITH N AND PLUGGING IN THE FACTOR OF N GENERATES ap-bq. YOU SEE IT? YOU SEE WHAT WE GOT THERE? GOD DAMNIT. IT CANT BE THIS EASY. IF THIS WORKS, THEN TOMORROW FACTORIZATION FALLS. GOOD NIGHT FOLKS. 
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
