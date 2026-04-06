@@ -3,7 +3,7 @@ Disclaimer2: I never finished highschool. I started working on this 3 years ago,
 
 The day I break factorization will be day 0 of the gay future. A better world will be born. A world of human creativity. A world of art, science and spirituality. A world without suffering. I will see that world become reality, no matter the cost. 
 
-##References (re-used many of the core number theoretical functions from these PoCs to fit my own algorithm): 
+#### References (re-used many of the core number theoretical functions from these PoCs to fit my own algorithm): 
 https://stackoverflow.com/questions/79330304/optimizing-sieving-code-in-the-self-initializing-quadratic-sieve-for-pypy
 https://github.com/basilegithub/General-number-field-sieve-Python 
 
