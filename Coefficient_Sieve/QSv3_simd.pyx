@@ -313,17 +313,18 @@ def launch(n,primeslist1,primeslist2,small_primeslist):
     manager=multiprocessing.Manager()
     return_dict=manager.dict()
     jobs=[]
-    start= default_timer()
-    print("[i]Creating coefficient datastructure... this can take a while...")
+   # start= default_timer()
+  #  print("[i]Creating coefficient datastructure... this can take a while...")
     primeslist1c=copy.deepcopy(primeslist1)
     plists=[]
 
-    hmap,hmap2=create_hashmap(n,primeslist1)
-    duration = default_timer() - start
-    print("[i]Creating coefficient datastructure in total took: "+str(duration))
+   # hmap,hmap2=create_hashmap(n,primeslist1)
+   # duration = default_timer() - start
+   # print("[i]Creating coefficient datastructure in total took: "+str(duration))
 
     print("[*]Launching attack with "+str(workers)+" workers\n")
-    find_comb(n,hmap,hmap2,primeslist1,primeslist2,small_primeslist)
+  #  find_comb(n,primeslist1,primeslist2,small_primeslist)
+    construct_interval(n,primeslist1)
 
     return 
 
@@ -1100,17 +1101,17 @@ def evaluate_x2(f, x):
 
 
 
-cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_prime_bound,primeslist2,small_primeslist):
+cdef construct_interval(n,primeslist):
     
 
 
     print("[i]Entering attack loop")
     k=1
     while k < quad_sieve_size+1:
-        print("[i]Building interval")
+        print("[i]Building interval: "+str(k))
         interval=np.zeros([lin_sieve_size,lin_sieve_size],dtype=np.int16)
         t=0
-        while t < len(hmap):
+        while t < len(primeslist):
             prime=primeslist[t]
             coeff=[(-n*k)%prime]
 
@@ -1132,7 +1133,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
                         interval[cur[0]::prime,cur[1]::prime]=1
             t+=1
        # print("interval: ",interval)
-        print("[i]Checking interval")
+        print("[i]Checking interval: "+str(k))
         coeff=[-n*k]
         d=degree
         d_ind=0
@@ -1166,19 +1167,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
 
 
 
-def find_comb(n,hmap,hmap2,primeslist1,primeslist2,small_primeslist):
 
-    ret_array=[[],[],[],[]]
-
-    
-
-    partials={}
-
-
-    large_prime_bound = primeslist1[-1] ** lp_multiplier
-    construct_interval(ret_array,partials,n,primeslist1,hmap,hmap2,large_prime_bound,primeslist2,small_primeslist)
-
-    return 0
 
 def get_primes(start,stop):
     return list(sympy.sieve.primerange(start,stop))
