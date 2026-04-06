@@ -11,15 +11,6 @@ Update: I very quickly restored a strategy I had tried last summer. This upload 
 
 I'm nearly certain that I can get it to work now by using higher degree polynomials. And in the off-chance that it wont.. i'll just try my original idea of using how this relates to binomial expansion to do targeted hunting for B-smooth numbers. Either way, I am about to succeed. 
 
-#### (abandoning this approach in favor for the one above) To run from folder "NFS_WIP2" (Experimental WORK IN PROGRESS):</br></br>
-
-##NFS related code is borrowed from: https://github.com/basilegithub/General-number-field-sieve-Python (note: Very impressively written, helped me big time, thanks)
-
-To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 50 -base 70 -debug 1 -lin_size 100_000 -quad_size 50</br></br>
-
-An incomplete attempt at merging my findings with NFS. I will delete this once the version above matures more.
-
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
