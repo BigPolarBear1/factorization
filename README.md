@@ -18,6 +18,8 @@ I'm nearly certain that I can get it to work now by using higher degree polynomi
 
 Update: I quickly fixed solve_roots() for arbitrary degree. I'll have to simplify this later, because we just need to check the existence of a root rather then calculate the root.. but this works for now. Next I need to figure out how to calculate the discriminant for higher degrees.. since the code will still only work with degree 2 until I fix that.
 
+Update: I guess rather then calculating the discriminant for bigger degrees you would calculate the roots modulo p and then use chinese remainder. Euhm, let me go ahead and optimize that PoC for quadratics first and write it in such a way that it can be expanded to higher degrees later. Now that I see how it works, I should be able to get a decent performance even with quadratics.
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
