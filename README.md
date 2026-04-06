@@ -10,7 +10,7 @@ https://github.com/basilegithub/General-number-field-sieve-Python
 
 #### To run from folder "Coefficient_Sieve" (Experimental WORK IN PROGRESS):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 30 -base 20 -debug 1 -lin_size 10_000 -quad_size 2 -d 2
+To run: python3 run_qs.py -keysize 40 -base 40 -debug 1 -lin_size 5000 -quad_size 1000 -d 2
 
 This is an algorithm I had already discovered a year ago (and had uploaded to github), but being a math novice, I dismissed it as it didn't seem practical and deleted it again. I however at the time did not realize you could generalize this to higher degree polynomials.. and doing so would infact turn this into a powerful algorithm.
 
