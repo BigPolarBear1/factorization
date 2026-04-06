@@ -19,6 +19,8 @@ To do: </br>
 
 The idea being that higher degrees will yield smaller coefficients. Hence in theory it should be easier to find coefficients that are a valid solution for any prime. I'll give that a try. If that doesn't work, I'll try using everything I've learned so far to sieve for specific factorizations.
 
+Update: I'm also still investigating if I cant just construct a powerful algorithm with quadratics now.. there might be a way.. especially now that that binomial expansion thing finally clicked inside my head. Lets see.. there is lots of directions to take now. 
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
