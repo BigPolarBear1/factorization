@@ -18,6 +18,8 @@ I have added information about how this works to the newest version of my math p
 
 If it still doesn't work, then it is time to start investigating using higher degree polynomials and how we can sieve more effectively with those.
 
+Update: Some pretty bad headache right now. I'll figure it out tomorrow. I'm fairly sure I can use these binomial expansions to eliminate incorrect solutions mod p and build up a solution in the integers that way. I see a way to potentially do it. If at all possible... I'll know tomorrow fur sure. Today was just a wasted day, just couldn't focus.
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
