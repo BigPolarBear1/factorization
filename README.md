@@ -12,17 +12,9 @@ https://github.com/basilegithub/General-number-field-sieve-Python
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 40 -base 40 -debug 1 -lin_size 5000 -quad_size 1000 -d 2
 
-This is an algorithm I had already discovered a year ago (and had uploaded to github), but being a math novice, I dismissed it as it didn't seem practical and deleted it again. I however at the time did not realize you could generalize this to higher degree polynomials.. and doing so would infact turn this into a powerful algorithm.
+This is an algorithm I had already discovered a year ago (and had uploaded to github), but being a math novice, I dismissed it as it didn't seem practical and deleted it again. 
 
-To do: </br>
-2. Generalize to degrees > 2. 
-
-The idea being that higher degrees will yield smaller coefficients. Hence in theory it should be easier to find coefficients that are a valid solution for any prime. I'll give that a try. If that doesn't work, I'll try using everything I've learned so far to sieve for specific factorizations.
-
-Update: I'm also still investigating if I cant just construct a powerful algorithm with quadratics now.. there might be a way.. especially now that that binomial expansion thing finally clicked inside my head. Lets see.. there is lots of directions to take now. 
-
-## UPDATE I AM AN IDIOT. I JUST SPOTTED THE SOLUTION. LOL. THE BINOMIAL EXPANSION GENERATES A FACTOR OF N IF WE PLUG IN ap-bq. AND SUBSTITUTING THE CONSTANT WITH N AND PLUGGING IN THE FACTOR OF N GENERATES ap-bq. YOU SEE IT? YOU SEE WHAT WE GOT THERE? GOD DAMNIT. IT CANT BE THIS EASY. IF THIS WORKS, THEN TOMORROW FACTORIZATION FALLS. GOOD NIGHT FOLKS. 
-## Anyway.. I'll check tomorrow. I dont want to think about it. I want to have some hope that it will finally work now tomorrow.. I'm hopig to use this as an oracle for the correct solution somehow. I'm just so tired.. I need to finish this now or I think I'm legit going to end my own life.
+I have added information about how this works to the newest version of my math paper, found in this github repo. My mistake last spring/summer was that I didn't quite understand the relation to the binomial theorem.. so when I tried to find the correct multiple of N in the discriminant.. I couldn't pull it off, but now to I do understand it.. I'm pretty sure I can do it now. I need a few days to refactor and include this in my PoC.
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
