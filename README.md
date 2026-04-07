@@ -14,7 +14,9 @@ To run: python3 run_qs.py -keysize 40 -base 40 -debug 1 -lin_size 5000 -quad_siz
 
 This is an algorithm I had already discovered a year ago (and had uploaded to github), but being a math novice, I dismissed it as it didn't seem practical and deleted it again. 
 
-I have added information about how this works to the newest version of my math paper, found in this github repo. My mistake last spring/summer was that I didn't quite understand the relation to the binomial theorem.. so when I tried to find the correct multiple of N in the discriminant.. I couldn't pull it off, but now to I do understand it.. I'm pretty sure I can do it now. I need a few days to refactor and include this in my PoC.
+I have added information about how this works to the newest version of my math paper, found in this github repo. My mistake last spring/summer was that I didn't quite understand the relation to the binomial theorem.. so when I tried to find the correct multiple of N in the discriminant.. I couldn't pull it off, but now to I do understand it.. I'm pretty sure I can do it now. I need a few days to refactor and include this in my PoC. If that works like I believe it should.. then that's it.. my work will be done.
+
+If it still doesn't work, then it is time to start investigating using higher degree polynomials and how we can sieve more effectively with those.
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
