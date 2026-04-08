@@ -22,6 +22,8 @@ Update: Some pretty bad headache right now. I'll figure it out tomorrow. I'm fai
 
 Update: Making rapid progress now. I'll share more tomorrow. But singular roots in a primefield they give information about the divisors of the binomial terms.. I just had an ephiphany.
 
+Update: To finish the algo.. just find singular roots that lift to a high exponent in a prime field. Once one is found, that garantuees one of the binomial values is a large multiple of said prime and we can easily calculate the other binomial value. That's it. I know that is the solution I had missed for so long. It finally clicked. I know it 100%. This is it. This will work. It's game over. You know where to find me if you want to stop or delay this.
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
