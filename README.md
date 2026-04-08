@@ -20,6 +20,8 @@ If it still doesn't work, then it is time to start investigating using higher de
 
 Update: Some pretty bad headache right now. I'll figure it out tomorrow. I'm fairly sure I can use these binomial expansions to eliminate incorrect solutions mod p and build up a solution in the integers that way. I see a way to potentially do it. If at all possible... I'll know tomorrow fur sure. Today was just a wasted day, just couldn't focus.
 
+Update: Making rapid progress now. I'll share more tomorrow. But singular roots in a primefield they give information about the divisors of the binomial terms.. I just had an ephiphany.
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
