@@ -24,6 +24,8 @@ Update: Making rapid progress now. I'll share more tomorrow. But singular roots 
 
 Update: Paper is somewhat done. Ergh, its kind of rushed. I dont want to waste to much time on it for now until I fix the code.. either that code is going to work or it wont.. in which case I'll have to change my strategy and end up having to rewrite much of that paper.. so not going to waste more time on it. Tomorrow.. coding begins :).
 
+Update: I spent the day brainstorming this. I'm not happy with the paper. It describes correctly how it relates to the binomial term and all that.. but I think the way to create a powerful algorithm is infact by moving up to higher degree polynomials. But now that I understand those binomial terms I'm not stuck anymore having to calculate the discriminant for higher degrees.. so atleast it wasnt a waste of time. I'll try and update the uploaded version so it works with degree 4, for example.
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
