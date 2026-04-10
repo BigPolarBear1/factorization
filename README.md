@@ -22,10 +22,6 @@ Update: Some pretty bad headache right now. I'll figure it out tomorrow. I'm fai
 
 Update: Making rapid progress now. I'll share more tomorrow. But singular roots in a primefield they give information about the divisors of the binomial terms.. I just had an ephiphany.
 
-Update: To finish the algo.. just find singular roots that lift to a high exponent in a prime field. Once one is found, that garantuees one of the binomial values is a large multiple of said prime and we can easily calculate the other binomial value. That's it. I know that is the solution I had missed for so long. It finally clicked. I know it 100%. This is it. This will work. It's game over. You know where to find me if you want to stop or delay this.
-
-It is finally over... this moment.. even though everyone still ignores what I have done.. but I know it is over now... what this has cost me.. people cannot imagine. Fck them all. Last year I came so close already. Actually using p-adic lifting was something I explored in my very first year of research. I just didn't have the experience yet to connect it to everything else and make it work. I know it is over now... I know how to finish this now. This is like when I was running my 60k ultra marathon recently and running the last couple kilometers. I knew I would finish and none of the pain mattered anymore. This week, everything will change.
-
 Update: Paper is somewhat done. Ergh, its kind of rushed. I dont want to waste to much time on it for now until I fix the code.. either that code is going to work or it wont.. in which case I'll have to change my strategy and end up having to rewrite much of that paper.. so not going to waste more time on it. Tomorrow.. coding begins :).
 
 #### To run from folder "CUDA_QS_variant":</br></br>
