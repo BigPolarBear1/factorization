@@ -26,6 +26,8 @@ Update: To finish the algo.. just find singular roots that lift to a high expone
 
 It is finally over... this moment.. even though everyone still ignores what I have done.. but I know it is over now... what this has cost me.. people cannot imagine. Fck them all. Last year I came so close already. Actually using p-adic lifting was something I explored in my very first year of research. I just didn't have the experience yet to connect it to everything else and make it work. I know it is over now... I know how to finish this now. This is like when I was running my 60k ultra marathon recently and running the last couple kilometers. I knew I would finish and none of the pain mattered anymore. This week, everything will change.
 
+Update: Paper is somewhat done. Ergh, its kind of rushed. I dont want to waste to much time on it for now until I fix the code.. either that code is going to work or not it wont.. in which case I'll have to change my strategy and end up having to rewrite much of that paper.. so not going to waste more time on it. Tomorrow.. coding begins :).
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
@@ -49,4 +51,5 @@ This was an attempt at finding smooths with similar factorization using an SIQS 
 To run: python3 debug.py -keysize 12
 
 This basically creates a system of quadratics. Solving them mod p is easy. But there is only one root solution (the factor of N) which solves the system for 0 for any mod p (aka solves it in the integers). Figuring out how to exactly do this quickly is still an ongoing area of research for me. And if a polynomial time algorithm for factorization exists, it is likely done by solving this system of quadratics. Finding a polyomial time algorithm is my ultimate goal, as this would make progress toward solving p = np as well. 
+
 
