@@ -928,35 +928,6 @@ def get_partials(mod,list1):
 
     return new_list
 
-def coefficients(P):
-    Pc = []
-    for i in range(P.degree(), -1, -1):
-        Pc.append(P.nth(i))
-    return tuple(Pc)
-def sylvester(P, Q):
-    rows = []
-    m = P.degree()
-    n = Q.degree()
-    size = m + n
-    CP = coefficients(P)
-    CQ = coefficients(Q)
-    for i in range(size):
-        tail = []
-        row = []
-        if i in range(0, n):
-            row = list(CP)
-            row.extend((n-1-i)*[0])
-            row[:0] = [0]*i
-            rows.append(row)
-        if i in range(n, size):
-            row = list(CQ)
-            row.extend((size-1-i)*[0])
-            row[:0] = [0]*(size-len(row))
-            rows.append(row)
-    return Matrix(rows)
-def resultant(P, Q):
-    return sylvester(P,Q).det()
-
 def evaluate(f, x):
     res = 0
 
@@ -967,153 +938,6 @@ def evaluate(f, x):
     res += f[-1]
 
     return res
-def new_coeffs(f, x):
-    b = 1
-    tmp = [i for i in f]
-    for i in range(len(f)-1):
-        tmp[i] *= b
-        b *= x
-    tmp[-1] *= b
-    return tmp
-    
-def sieve(length, f_x, rational_base, algebraic_base, m0, m1, b, leading):
-    ##Code borrowed from: https://github.com/basilegithub/General-number-field-sieve-Python
- 
-    pairs = []
-    tmp_poly = new_coeffs(f_x, b)
-  #  print("b: ",b)
-    sieve_array = [0]*(length<<1)
-    for q, p in enumerate(rational_base):
-        tmp_len = length%p
-        log = round(math.log2(p))#logs[q]
-
-        if m1%p:
-            root = (tmp_len+b*m0*modinv(m1, p))%p
-            for i in range(root, len(sieve_array), p): sieve_array[i] += log
-
-        for r in algebraic_base[q]:
-            root = (tmp_len+b*r)%p
-            for i in range(root, len(sieve_array), p): sieve_array[i] += log
-
-    if b&1:
-     #   print("hit")
-        eval2 = -length*m1-b*m0
-        a = -length
-
-
-        tmp = [0]*len(tmp_poly)
-        for j in range(len(tmp_poly)): 
-            tmp[j] = evaluate(tmp_poly, -length+j)
-        tmp_debug=copy.copy(tmp)
-        for q in range(1, len(tmp_poly)):
-            for k in range(len(tmp_poly)-1, q-1, -1): 
-                tmp[k] -= tmp[k-1]
-
-        eval1 = tmp[0]
-        for k in range(len(sieve_array)):
-            if a and math.gcd(a, b) == 1 and eval2:
-                eval = abs(eval1*eval2)
-               # print("eval: ",eval)
-                if eval != 0 and sieve_array[k]:# > eval.bit_length()-offset:
-                    pairs.append([[-b, a*leading], eval1, [[1 ,1]], eval2, [1], [-b,a], 1])
-            a += 1
-            eval2 += m1
-            eval1 += tmp[1]
-            for q in range(1, len(tmp_poly)-1): 
-                tmp[q] += tmp[q+1]
-    else:
-     #   print("hit2")
-        init = 0
-        if not length&1:
-            length -= 1
-            init = 1
-        eval2 = -length*m1-b*m0
-        a = -length
-        tmp = [0]*len(tmp_poly)
-        for j in range(len(tmp_poly)): 
-            tmp[j] = evaluate(tmp_poly, -length+2*j)
-        for q in range(1, len(tmp_poly)):
-            for k in range(len(tmp_poly)-1, q-1, -1): 
-                tmp[k] -= tmp[k-1]
-
-        eval1 = tmp[0]
-        for k in range(init, len(sieve_array), 2):
-            if math.gcd(a, b) == 1 and eval2:
-                eval = abs(eval1*eval2)
-                if eval != 0 and sieve_array[k]:# > eval.bit_length()-offset:
-                  #  if b == 366:
-                     #   print("ADDING eval2: "+str(eval2)+" a: "+str(a)+" m1: "+str(m1)+" b: "+str(b)+" m0: "+str(m0))
-
-                    pairs.append([[-b, a*leading], eval1, [[1, 1]], eval2, [1], [-b,a], 1])
-            a += 2
-            eval2 += m1<<1
-            eval1 += tmp[1]
-            for q in range(1, len(tmp_poly)-1): 
-                tmp[q] += tmp[q+1]
-    return pairs
-
-def trial(pair, primes, div):
-    large1 = 1
-    large2 = 1
-    
-    result = abs(pair[3])
-    for p in primes:
-        while not result%p: 
-            result //= p
-        if result == 1: 
-            break
-
-    if result > 1:
-            return False, 1, 1, 1, 1
-    else: 
-       # print("wohooo1")
-        large1, large2 = 1, 1
-   # print("hit")
-    result = abs(pair[1])//div
-   # print("result: ",result)
-    for p in primes:
-        while not result%p: 
-            result //= p
-        if result == 1: 
-          #  print("WOHOOO!!")
-            return True, 1, 1, large1, large2
-
-    if result > 1:
-        return False, 1, 1, 1, 1
-        
-    return True, 1, 1, 1, 1
-    
-
-def evaluate(f, x):
-    res = 0
-
-    for i in range(len(f)-1):
-        res += f[i]
-        res *= x
-
-    res += f[-1]
-
-    return res
-
-def evaluate_x2(f, x):
-    res = 0
-    i=0
-    while i < len(f)-2:
-        res += f[i]
-        res *= x
-        i+=1
-    res+=f[i]
-
-    return res
-
-def get_root(p,b,a):
-    a_inv=modinv((a%p),p)
-    if a_inv == None:
-        return -1
-    ba=(b*a_inv)%p 
-    bdiv = (ba*modinv(2,p))%p
-    return bdiv%p
-
 
 cdef construct_interval(n,primeslist):
     print("[i]Entering attack loop")
@@ -1136,12 +960,23 @@ cdef construct_interval(n,primeslist):
             coeff[0]+=1
             ranges = [range(start, prime) for start in coeff[:-1]]
             for combo in itertools.product(*ranges):
-                cur=list(combo)
-               # if cur not in hmap[t][k]:
-                test=cur[1]**2+4*n*k*cur[0]
-                if jacobi(test,prime)==-1:
+                cur=list(combo)+[coeff[-1]]
+
+                ##To do: Don't need to find the roots here. There is this gcd method for checking the existence of roots. Or legendre on the discriminant when d = 2.
+                roots=find_roots_poly(cur,prime)
+
+                if len(roots) == 0:
+
                     if cur[0] < lin_sieve_size and cur[1] < lin_sieve_size:
                         interval[cur[0]::prime,cur[1]::prime]=1
+
+
+                ###Old discriminant code.. works for d = 2 but not higher
+                #test=cur[1]**2+4*n*k*cur[0]
+                
+               # if jacobi(test,prime)==-1:
+                  #  if cur[0] < lin_sieve_size and cur[1] < lin_sieve_size:
+                    #    interval[cur[0]::prime,cur[1]::prime]=1
             t+=1
        # print("interval: ",interval)
         print("[i]Checking interval: "+str(k))
