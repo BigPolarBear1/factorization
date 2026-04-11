@@ -318,7 +318,8 @@ def launch(n,primeslist1,primeslist2,small_primeslist):
     primeslist1c=copy.deepcopy(primeslist1)
     plists=[]
 
-   # hmap,hmap2=create_hashmap(n,primeslist1)
+    #hmap=create_hashmap(n,primeslist1)
+
    # duration = default_timer() - start
    # print("[i]Creating coefficient datastructure in total took: "+str(duration))
 
@@ -573,34 +574,40 @@ def solve_roots(prime,n):
             coeff.insert(0,0)
 
             d_ind+=1
-        coeff[0]+=1
+
         ranges = [range(start, prime) for start in coeff[:-1]]
         for combo in itertools.product(*ranges):
             current = list(combo) +  [coeff[-1]]
-            if degree > 2:
-                root = find_roots_poly(current, prime)
-                if len(root)> 0:
-                    hmap_p2[-1].append(list(combo))
+            if current[0]==0:
+                if current[1]==0:
+                    continue
+                x=solve_lin_con(current[1],n*k,prime)
+                if (x*current[1]-n*k)%prime != 0:
+                    print("fatal")
+                root=[x]
             else:
-                test=current[1]**2+4*n*k*current[0]
-                if jacobi(test%prime,prime) != -1:
-                    hmap_p2[-1].append(list(combo))
-            #print("root: "+str(root)+" current: "+str(current)+" prime: "+str(prime))
-        k+=1
+                ##to do: Use tonelli instead if we arn't going to use higher degrees...
+                root = find_roots_poly(current, prime)
+            if len(root)>0:
+                    f=list(combo)
+                    f.append(root)
+                    hmap_p2[-1].append(f)
 
+        k+=1
+   # print("\n")
     return hmap_p2
 
 def create_hashmap(n,primeslist):
     i=0
     hmap=[]
-    hmap2=[]
+
     while i < len(primeslist):
         hmap_p=solve_roots(primeslist[i],n)
         hmap.append(hmap_p)
-        hmap2.append([])
+
         i+=1
 
-    return hmap,hmap2
+    return hmap
 
 
 @cython.profile(False)
@@ -1099,12 +1106,16 @@ def evaluate_x2(f, x):
 
     return res
 
+def get_root(p,b,a):
+    a_inv=modinv((a%p),p)
+    if a_inv == None:
+        return -1
+    ba=(b*a_inv)%p 
+    bdiv = (ba*modinv(2,p))%p
+    return bdiv%p
 
 
 cdef construct_interval(n,primeslist):
-    
-
-
     print("[i]Entering attack loop")
     k=1
     while k < quad_sieve_size+1:
@@ -1144,23 +1155,74 @@ cdef construct_interval(n,primeslist):
         ranges = [range(start, lin_sieve_size) for start in coeff[:-1]]
         for combo in itertools.product(*ranges):
             current = list(combo) +  [coeff[-1]]
-    
+
             if interval[current[0],current[1]]==1:
                 continue
-            ##This wont work for higher degrees. For higher degrees I suppose we'll need to calculate roots mod p and use CRT.
-            test=current[1]**2+4*n*k*current[0]
+            partials=[]
+            lmod=1
+            h=0
+            while h < len(primeslist) and lmod < n:
+                prime=primeslist[h]
+                if math.gcd(prime,current[0])!=1 or jacobi((-n*k)%prime,prime) == -1:
+                    h+=1
+                    continue
 
-            print("found one: "+str(current)+" my_for: "+str(test))
-            test_sqr=math.isqrt(test)
-            if test_sqr**2 == test:
-                gcdtest=gcd(test_sqr+current[1],n)
+                red_current=[]
+                e=0
+                while e < len(current):
+                    if e == 0:
+                        red_current.append(1)
+                    elif e == len(current)-1:
+                        red_current.append((-current[0]*k*n)%prime)
+                    else:   
+                        red_current.append(current[e]%prime)
+
+                    e+=1
+                roots=find_roots_poly(red_current,prime)
+
+                lmod*=prime
+                partials.append(prime)
+                partials.append(roots)
+                h+=1
+            ##In theory we can also just use a large prime.. i'll fix when it becomes an issue..
+            partials=get_partials(lmod,partials)
+            enum=[]
+            h=0
+            while h < len(partials):
+                enum.append(partials[h+1])
+                h+=2
+    
+            for combo in itertools.product(*enum):
+                r=0
+                u=0
+                while u < len(combo):
+                    r+=combo[u]
+                    u+=1
+                r%=lmod
+                
+                div2=modinv(2,n)
+                binomial_y=(current[1]*div2)%n 
+                binomial_x=2*current[0]*r**2+current[1]
+                binomial_x=(binomial_x*div2)%n 
+                gcdtest=math.gcd(r,n)
                 if gcdtest != 1 and gcdtest != n:
                     print("factors of "+str(n)+" are: "+str(gcdtest)+" and: "+str(n//gcdtest))
                     sys.exit()
-                else:
-                    print("[i]Might need to increase factor base size")
-            else:
-                print("[i]Might need to increase factor base size")
+            print("[i]A solution was indicated but not found.. perhaps increase factor base")
+            ##Old discriminant code... replaced this by taking the root now
+            #test=current[1]**2+4*n*k*current[0]
+
+            #print("found one: "+str(current)+" my_for: "+str(test))
+            #test_sqr=math.isqrt(test)
+            #if test_sqr**2 == test:
+                #gcdtest=gcd(test_sqr+current[1],n)
+                #if gcdtest != 1 and gcdtest != n:
+                    #print("factors of "+str(n)+" are: "+str(gcdtest)+" and: "+str(n//gcdtest))
+                    #sys.exit()
+                #else:
+                    #print("[i]Might need to increase factor base size")
+            #else:
+                #print("[i]Might need to increase factor base size")
         k+=1
     return 
 
