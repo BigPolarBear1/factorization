@@ -18,13 +18,7 @@ I have added information about how this works to the newest version of my math p
 
 If it still doesn't work, then it is time to start investigating using higher degree polynomials and how we can sieve more effectively with those.
 
-Update: Some pretty bad headache right now. I'll figure it out tomorrow. I'm fairly sure I can use these binomial expansions to eliminate incorrect solutions mod p and build up a solution in the integers that way. I see a way to potentially do it. If at all possible... I'll know tomorrow fur sure. Today was just a wasted day, just couldn't focus.
-
-Update: Making rapid progress now. I'll share more tomorrow. But singular roots in a primefield they give information about the divisors of the binomial terms.. I just had an ephiphany.
-
-Update: Paper is somewhat done. Ergh, its kind of rushed. I dont want to waste to much time on it for now until I fix the code.. either that code is going to work or it wont.. in which case I'll have to change my strategy and end up having to rewrite much of that paper.. so not going to waste more time on it. Tomorrow.. coding begins :).
-
-Update: I spent the day brainstorming this. I'm not happy with the paper. It describes correctly how it relates to the binomial term and all that.. but I think the way to create a powerful algorithm is infact by moving up to higher degree polynomials. But now that I understand those binomial terms I'm not stuck anymore having to calculate the discriminant for higher degrees.. so atleast it wasnt a waste of time. I'll try and update the uploaded version so it works with degree 4, for example.
+Update: I replaced taking the discriminant by calculating the polyomial roots. Which is needed to try and port these findings to higher degrees.. since discriminants dont work well as the degree goes up lol... (although that does seem like an interesting research area I would love to dig deeper into one day).
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
