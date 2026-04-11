@@ -14,7 +14,7 @@ To run: python3 run_qs.py -keysize 40 -base 40 -debug 1 -lin_size 5000 -quad_siz
 
 This is an algorithm I had already discovered a year ago (and had uploaded to github), but being a math novice, I dismissed it as it didn't seem practical and deleted it again. 
 
-Update: I replaced taking the discriminant by calculating the polyomial roots. Which is needed to try and port these findings to higher degrees.. since discriminants dont work well as the degree goes up lol... (although that does seem like an interesting research area I would love to dig deeper into one day).
+Update: I replaced taking the discriminant by calculating the polyomial roots. Which is needed to try and port these findings to higher degrees.. since discriminants dont work well as the degree goes up lol... (although that does seem like an interesting research area I would love to dig deeper into one day). If moving up in degree doesn't increase performance.. then I'll investigate how I can re-implement some type of linear algebra step, without downgrading myself to a standard NFS-type algorithm.
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
