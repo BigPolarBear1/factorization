@@ -15,10 +15,8 @@ To run: python3 run_qs.py -keysize 40 -base 40 -debug 1 -lin_size 5000 -quad_siz
 This is an algorithm I had already discovered a year ago (and had uploaded to github), but being a math novice, I dismissed it as it didn't seem practical and deleted it again. 
 
 Note: There is a bunch of dead code also in the uploaded PoC.. I'll clean it up later. Just due to my iterative way of doing research.
-
-!!!!!!!!!!!!!!!!!!!!!!!!! Bah. I was actually thinking about this..  I actually know how to setup quadratic sieve but instead of using the factorization of the discriminant.. we just use legendre symbols... I see the mechanics of it now... holy f*ck. I suspected this was possible.. but I never could quite see the big picture for some reason... I do now... I'll go for a run.. then start implementing it... 
-
-I'm such an idiot. Like.. replacing the factorization of the discriminant with legendre symbol is something I have tried many times in the last year.. yet I missed the one crucial trick... and that is to keep my coefficients as small as possible. Oh damnit. An entire year wasted bc I just couldn't make that one connection. 
+ 
+UPDATE: I'm going to modify CUDA_QS_Variant tomorrow... I just realized.. if a large part of the discriminant is already square... then you can just represent the rest with legendre symbols and use it with linear algebra... ergh... LOL. it was basically finished... I just had to replace factorization of b-smooths with legendre symbols. I see the mechanics of it now... I'm an idiot. I'm an idiot of such magnitude, even Fermat, Euler, Legendre and Galois would be embarassed for me. 
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
