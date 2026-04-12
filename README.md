@@ -16,9 +16,7 @@ This is an algorithm I had already discovered a year ago (and had uploaded to gi
 
 Note: There is a bunch of dead code also in the uploaded PoC.. I'll clean it up later. Just due to my iterative way of doing research.
 
-Update: I replaced taking the discriminant by calculating the polyomial roots. Which is needed to try and port these findings to higher degrees.. since discriminants dont work well as the degree goes up lol... (although that does seem like an interesting research area I would love to dig deeper into one day). If moving up in degree doesn't increase performance.. then I'll investigate how I can re-implement some type of linear algebra step, without downgrading myself to a standard NFS-type algorithm.
-
-Update: I'm going to try and implement some type of linear algebra first while sticking to quadratics. Higher degree polynomials.. it should be possible.. but things just get so much more complicated and its going to take some analysis and learning to figure it all out. While quadratics.. I pretty much know everything there is to know about them.. so if I can implement some linear algebra now.. then that works too and should yield a fast algorithm. I think I have an idea anyway :). We can do NFS without using the roots at all.. basically taking into consideration the entire set of roots.  Lets see.
+!!!!!!!!!!!!!!!!!!!!!!!!! Bah. I was actually thinking about this..  I actually know how to setup quadratic sieve but instead of using the factorization of the discriminant.. we just use legendre symbols... I see the mechanics of it now... holy f*ck. I suspected this was possible.. but I never could quite see the big picture for some reason... I do now... I'll go for a run.. then start implementing it... 
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
