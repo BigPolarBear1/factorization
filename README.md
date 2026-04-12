@@ -18,6 +18,8 @@ Note: There is a bunch of dead code also in the uploaded PoC.. I'll clean it up 
 
 !!!!!!!!!!!!!!!!!!!!!!!!! Bah. I was actually thinking about this..  I actually know how to setup quadratic sieve but instead of using the factorization of the discriminant.. we just use legendre symbols... I see the mechanics of it now... holy f*ck. I suspected this was possible.. but I never could quite see the big picture for some reason... I do now... I'll go for a run.. then start implementing it... 
 
+I'm such an idiot. Like.. replacing the factorization of the discriminant with legendre symbol is something I have tried many times in the last year.. yet I missed the one crucial trick... and that is to keep my coefficients as small as possible. Oh damnit. An entire year wasted bc I just couldn't make that one connection. 
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
