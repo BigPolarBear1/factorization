@@ -10,7 +10,7 @@ https://github.com/basilegithub/General-number-field-sieve-Python
 
 #### To run from folder "Coefficient_Sieve" (Experimental WORK IN PROGRESS):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 30 -base 40 -debug 1 -lin_size 5000 -quad_size 100 -t 240
+To run: python3 run_qs.py -keysize 30 -base 40 -debug 1 -lin_size 5000 -quad_size 100 -d 2
 
 This is kind of NFS with second degree polynomials.. this needs to be expanded to higher degrees eventually..
 
