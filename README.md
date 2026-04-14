@@ -16,6 +16,8 @@ This is an algorithm I had already discovered a year ago (and had uploaded to gi
 
 Update: I have made some changed. The code now uses a proper threshold value to sieve with, this will be needed later one when we add the linear algebra step. I have also added some p-adic lifting code.. but I need to improve it.. there is a bunch of ways to speed up that code. I'll make some improvements later. It will need to be reasonably fast before I implement linear algebra since it will be a core element to get the linear algebra step to work.
 
+There's also a bug I need to resolve.. because that log value should always be the same for squares in Z.. its probably skipping some solutions where one of the coefficients is divisible by Zp.
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
