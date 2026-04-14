@@ -18,6 +18,8 @@ Update: I have made some changed. The code now uses a proper threshold value to 
 
 There's also a bug I need to resolve.. because that log value should always be the same for squares in Z.. its probably skipping some solutions where one of the coefficients is divisible by Zp.
 
+And also lifting for p = 2 needs to be implemented.. because that one has a lot of singular roots that lift nicely. 
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
