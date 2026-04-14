@@ -12,15 +12,7 @@ https://github.com/basilegithub/General-number-field-sieve-Python
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 30 -base 40 -debug 1 -lin_size 5000 -quad_size 100 -t 240
 
-This is an algorithm I had already discovered a year ago (and had uploaded to github), but being a math novice, I dismissed it as it didn't seem practical and deleted it again. 
-
-Update: I have made some changed. The code now uses a proper threshold value to sieve with, this will be needed later one when we add the linear algebra step. I have also added some p-adic lifting code.. but I need to improve it.. there is a bunch of ways to speed up that code. I'll make some improvements later. It will need to be reasonably fast before I implement linear algebra since it will be a core element to get the linear algebra step to work.
-
-There's also a bug I need to resolve.. because that log value should always be the same for squares in Z.. its probably skipping some solutions where one of the coefficients is divisible by Zp.
-
-And also lifting for p = 2 needs to be implemented.. because that one has a lot of singular roots that lift nicely. 
-
-Update: Blah, I need to correct my paper I think. Its not that easy. Everything I can think of, working with quadratics, it comes down to finding discriminants with large squares in it.. now.. I can write a super optimized PoC to find these large squares.. I know exactly how to do it.. and it may actually work now.. so I'll do that.. and after that I need to start studying higher degree polynomials since the paper indicates that should be do-able too.. but it will require time and energy to figure it all out. And I also want to focus my energy on further exploring the existence of a polynomial time algorithm.
+This is kind of NFS with second degree polynomials.. this needs to be expanded to higher degrees eventually..
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
