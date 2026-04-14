@@ -20,11 +20,7 @@ There's also a bug I need to resolve.. because that log value should always be t
 
 And also lifting for p = 2 needs to be implemented.. because that one has a lot of singular roots that lift nicely. 
 
-UPDATE: OH YEA.. I should probably only be lifting singular roots... find one that lifts very high with small coefficients. 
-
-UPDATE2: I AM AN IDIOT! I should just lift singular roots to hunt for large squares to reduce the size of smooth candidates.. like what I tried with CUDA_QS_Variant.. but setting it up like this will probably work better. I'll work through the night to produce a PoC.
-
-Update3: Actually let me check something first. If a discriminant has a large square. Then we know the binomial value will have its square root as divisors... hence it then becomes a matter of multiplying that square root such that its square has a valid mapping in every other prime field...or something like that... oh shit. Could that work?
+Update: Blah, I need to correct my paper I think. Its not that easy. Everything I can think of, working with quadratics, it comes down to finding discriminants with large squares in it.. now.. I can write a super optimized PoC to find these large squares.. I know exactly how to do it.. and it may actually work now.. so I'll do that.. and after that I need to start studying higher degree polynomials since the paper indicates that should be do-able too.. but it will require time and energy to figure it all out. And I also want to focus my energy on further exploring the existence of a polynomial time algorithm.
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
