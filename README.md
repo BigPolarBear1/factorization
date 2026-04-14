@@ -10,14 +10,12 @@ https://github.com/basilegithub/General-number-field-sieve-Python
 
 #### To run from folder "Coefficient_Sieve" (Experimental WORK IN PROGRESS):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 40 -base 40 -debug 1 -lin_size 5000 -quad_size 1000 -d 2
+To run: python3 run_qs.py -keysize 30 -base 40 -debug 1 -lin_size 5000 -quad_size 100 -t 240
 
 This is an algorithm I had already discovered a year ago (and had uploaded to github), but being a math novice, I dismissed it as it didn't seem practical and deleted it again. 
 
-Note: There is a bunch of dead code also in the uploaded PoC.. I'll clean it up later. Just due to my iterative way of doing research.
+Update: I have made some changed. The code now uses a proper threshold value to sieve with, this will be needed later one when we add the linear algebra step. I have also added some p-adic lifting code.. but I need to improve it.. there is a bunch of ways to speed up that code. I'll make some improvements later. It will need to be reasonably fast before I implement linear algebra since it will be a core element to get the linear algebra step to work.
 
-Update: Will upload a version of this incorporating linear algebra soon.
- 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
