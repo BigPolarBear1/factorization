@@ -15,9 +15,9 @@ To run: python3 run_qs.py -keysize 40 -base 40 -debug 1 -lin_size 5000 -quad_siz
 This is an algorithm I had already discovered a year ago (and had uploaded to github), but being a math novice, I dismissed it as it didn't seem practical and deleted it again. 
 
 Note: There is a bunch of dead code also in the uploaded PoC.. I'll clean it up later. Just due to my iterative way of doing research.
- 
-UPDATE: I'm going to modify CUDA_QS_Variant tomorrow... I just realized.. if a large part of the discriminant is already square... then you can just represent the rest with legendre symbols and use it with linear algebra... ergh... LOL. it was basically finished... I just had to replace factorization of b-smooths with legendre symbols. I see the mechanics of it now... I'm an idiot. I'm an idiot of such magnitude, even Fermat, Euler, Legendre and Galois would be embarassed for me. 
 
+Update: Will upload a version of this incorporating linear algebra soon.
+ 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
