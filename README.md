@@ -22,6 +22,8 @@ And also lifting for p = 2 needs to be implemented.. because that one has a lot 
 
 UPDATE: OH YEA.. I should probably only be lifting singular roots... find one that lifts very high with small coefficients. 
 
+UPDATE2: I AM AN IDIOT! I should just lift singular roots to hunt for large squares to reduce the size of smooth candidates.. like what I tried with CUDA_QS_Variant.. but setting it up like this will probably work better. I'll work through the night to produce a PoC.
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
