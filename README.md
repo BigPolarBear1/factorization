@@ -24,6 +24,8 @@ UPDATE: OH YEA.. I should probably only be lifting singular roots... find one th
 
 UPDATE2: I AM AN IDIOT! I should just lift singular roots to hunt for large squares to reduce the size of smooth candidates.. like what I tried with CUDA_QS_Variant.. but setting it up like this will probably work better. I'll work through the night to produce a PoC.
 
+Update3: Actually let me check something first. If a discriminant has a large square. Then we know the binomial value will have its square root as divisors... hence it then becomes a matter of multiplying that square root such that its square has a valid mapping in every other prime field...or something like that... oh shit. Could that work?
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
