@@ -7,6 +7,12 @@ The day I break factorization will be day 0 of the gay future. A better world wi
 https://stackoverflow.com/questions/79330304/optimizing-sieving-code-in-the-self-initializing-quadratic-sieve-for-pypy
 https://github.com/basilegithub/General-number-field-sieve-Python 
 
+#### To run from folder "QS_SF_Variant" (Experimental WORK IN PROGRESS):</br></br>
+To build: python3 setup.py build_ext --inplace</br>
+To run: python3 run_qs.py -keysize 50 -base 100 -debug 1 -lin_size 50_000 -quad_size 100 -t 20
+
+This is Quadratic Sieve Small factor Variant. This will attempt to find large concentrations of small factors using p-adic lifting.
+To do: We shouldn't calculate a sieve interval for every k value (k as in zx^2+yx-nk) .. we should quickly cycle through k values until we have a bunch of singular roots that lift to a high exponent within our sieve region. I need to do some thinking though how to best appraoch this.
 
 #### To run from folder "Coefficient_Sieve" (Experimental WORK IN PROGRESS):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
