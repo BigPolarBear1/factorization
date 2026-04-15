@@ -16,7 +16,7 @@ The upside of this approach is that if we have a bunch of smooth candidates, mos
 
 TO DO: 
 
--We can actually treat singular roots as non-singular roots. Thats exactly what I'm doing in CUDA_QS_Variant.. so I need to implement that so we can properly use hensel's lemma.
+-We can actually treat singular roots as non-singular roots. Thats exactly what I'm doing in CUDA_QS_Variant.. so I need to implement that so we can properly use hensel's lemma.</br>
 -Need to rapidly cycle through k values (as in zx^2+yx-Nk) .. until one is found where a bunch of singular roots lift very highly within our sieve region. Additionally finding an optimal sieve region can also be investigated. 
 
 
