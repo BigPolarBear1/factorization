@@ -14,7 +14,11 @@ To run: python3 run_qs.py -keysize 50 -base 100 -debug 1 -lin_size 50_000 -quad_
 This is Quadratic Sieve Small factor Variant. This will attempt to find large concentrations of small factors using p-adic lifting.
 The upside of this approach is that if we have a bunch of smooth candidates, mostly made up from small factors.. then we dramatically reduce the amount of smooth candidates needed during the linear algebra step.
 
-TO DO: I noticed that in CUDA_QS_Variant I'm basically able to do the same type of p-adic lifting using non-singular roots. But functionally it is doing the same.. so I need to integrate that into this PoC I think...  that will speed up lifting a lot.. let me investigate... we really need to make lifting super fast. It will be the big bottleneck..
+TO DO: 
+
+-We can actually treat singular roots as non-singular roots. Thats exactly what I'm doing in CUDA_QS_Variant.. so I need to implement that so we can properly use hensel's lemma.
+-Need to rapidly cycle through k values (as in zx^2+yx-Nk) .. until one is found where a bunch of singular roots lift very highly within our sieve region. Additionally finding an optimal sieve region can also be investigated. 
+
 
 #### To run from folder "Coefficient_Sieve" (Experimental WORK IN PROGRESS):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
