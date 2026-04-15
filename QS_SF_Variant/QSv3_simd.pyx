@@ -300,6 +300,7 @@ def launch(n,primeslist1,primeslist2,small_primeslist):
     small_base=8
     k=1
     while k < quad_sieve_size+1:
+        print("[i]Lifting polynomial coefficients and roots in Z/p^e")
         hmap=create_map(n,primeslist1[:small_base],k)
         print("[i]Building Sieve Interval")
         interval=np.zeros([lin_sieve_size,lin_sieve_size],dtype=np.int16)
@@ -505,7 +506,7 @@ def create_map(n,primeslist,k):
         prime=primeslist[t]
         coeff=[(-n*k)%prime]
 
-        print("Sieving Z/"+str(prime)+"^e")
+        print("Lifting Z/"+str(prime)+"^e")
 
 
         d_ind=0
