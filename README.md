@@ -22,6 +22,8 @@ The main idea is to just focus on small factors that lift very high p-adically..
 
 Update: Actually.. the fact that we can change these singular root to non-singular roots...  I think  there may be a mechanism to exploit there which I hadn't yet realized.. let me investigate... I'm such an idiot if it allows me to do what I think it may allow me to do.. *sigh*
 
+## Update: Ignore this.. I just updated the paper. All we really need is find a single prime which we can lift p-adically higher then Nk**0.5 and it should reveal a root of N I believe. Let me verify that this is true tomorrow. If it is.. then tomorrow I am done.
+
 #### To run from folder "Coefficient_Sieve" (Experimental WORK IN PROGRESS):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 30 -base 40 -debug 1 -lin_size 5000 -quad_size 100 -d 2
