@@ -278,6 +278,14 @@ def build_matrix(factor_base, smooth_nums, factors):#,pflist):
         ind = ind + ind       
     return M2
 
+def get_root(p,b,a):
+    a_inv=modinv((a%p),p)
+    if a_inv == None:
+        return -1
+    ba=(b*a_inv)%p 
+    bdiv = (ba*modinv(2,p))%p
+    return bdiv%p
+
 @cython.profile(False)
 def launch(n,primeslist1,primeslist2,small_primeslist):
     found=0
@@ -289,18 +297,19 @@ def launch(n,primeslist1,primeslist2,small_primeslist):
     factor_list=[]
     primeslist1c=copy.deepcopy(primeslist1)
     plists=[]
-    small_base=20
+    small_base=8
     k=1
     while k < quad_sieve_size+1:
         hmap=create_map(n,primeslist1[:small_base],k)
+        print("[i]Building Sieve Interval")
         interval=np.zeros([lin_sieve_size,lin_sieve_size],dtype=np.int16)
         i=0
         while i < len(hmap):
             prime=primeslist1[i]
             j=0
             while j < len(hmap[i]):
-
-                #print("prime: "+str(primeslist1[i])+" hmap: "+str(hmap[i][j]))
+                #if hmap[i][j][0]>3 and prime !=2:
+                #    print("k: "+str(k)+" prime: "+str(primeslist1[i])+" hmap: "+str(hmap[i][j]))
                 interval[hmap[i][j][1]::prime**(hmap[i][j][0]),hmap[i][j][2]::prime**(hmap[i][j][0])]+=round(math.log2(prime))
                 j+=1
             i+=1
@@ -496,7 +505,7 @@ def create_map(n,primeslist,k):
         prime=primeslist[t]
         coeff=[(-n*k)%prime]
 
-        print("Sieving Z/"+str(prime))
+        print("Sieving Z/"+str(prime)+"^e")
 
 
         d_ind=0
@@ -535,11 +544,16 @@ def create_map(n,primeslist,k):
                     while z < prime**(exp+1):
                         y=sol[1]
                         while y < prime**(exp+1):
-                           # print("prime: "+str(prime)+" z: "+str(z)+" y: "+str(y)+" exp: "+str(exp+1)+" root: "+str(sol[2]))
-                            root=lift_root(z,y,n*k, sol[2], prime, exp)
+                            ###To do: I'm sure I can figure out a faster way here.. maybe calculate them in a different primefield.. dunno..
+                            root=sol[2]
+
+                            while root < prime**(exp+1):
+                                deriv=(2*z*root+y)%prime**(exp+1)
+                                if deriv%prime**(exp+1) ==0:
+                                    break
+                                root+=prime**exp
                             poly=(z*root**2+y*root-n*k)%prime**(exp+1)
-                            deriv=(2*z*root+y)%prime**(exp+1)
-                            if poly == 0 and deriv == 0:                                            
+                            if poly == 0 and root < prime**(exp+1):                                            
                                 if z < lin_sieve_size and y < lin_sieve_size:# and root < n:
                                     new_solutions.append([z,y,root])
                                     #if (exp+1)%2 == 0:
@@ -547,6 +561,8 @@ def create_map(n,primeslist,k):
                             y+=prime**exp
                         z+=prime**exp
                 solutions=new_solutions
+                if len(solutions) == 0:
+                    break
                 exp+=1
 
         t+=1
