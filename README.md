@@ -11,6 +11,8 @@ https://github.com/basilegithub/General-number-field-sieve-Python
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 50 -base 100 -debug 1 -lin_size 50_000 -quad_size 100 -t 20
 
+UPDATE: ONE SEC, THERE IS A MAJOR BUG IN THE LIFTING CODE IS QUICKLY NEED TO FIX. 
+
 This is Quadratic Sieve Small factor Variant. This will attempt to find large concentrations of small factors using p-adic lifting.
 The upside of this approach is that if we have a bunch of smooth candidates, mostly made up from small factors.. then we dramatically reduce the amount of smooth candidates needed during the linear algebra step.
 
