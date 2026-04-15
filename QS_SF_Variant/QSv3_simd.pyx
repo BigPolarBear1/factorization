@@ -309,8 +309,8 @@ def launch(n,primeslist1,primeslist2,small_primeslist):
             prime=primeslist1[i]
             j=0
             while j < len(hmap[i]):
-                #if hmap[i][j][0]>3 and prime !=2:
-                #    print("k: "+str(k)+" prime: "+str(primeslist1[i])+" hmap: "+str(hmap[i][j]))
+              #  if hmap[i][j][1]%prime**(hmap[i][j][0]) == 35%prime**(hmap[i][j][0]) and hmap[i][j][2]%prime**(hmap[i][j][0]) == 590%prime**(hmap[i][j][0]):
+              #      print("k: "+str(k)+" prime: "+str(primeslist1[i])+" hmap: "+str(hmap[i][j]))
                 interval[hmap[i][j][1]::prime**(hmap[i][j][0]),hmap[i][j][2]::prime**(hmap[i][j][0])]+=round(math.log2(prime))
                 j+=1
             i+=1
@@ -497,6 +497,76 @@ def evaluate(f, x):
 
     return res
 
+def lift2(n,k):
+    ret=[]
+    
+    solutions=[]
+    z=0
+    while z < 2:
+        y=0
+        while y < 2:
+            disc=(y**2+4*n*k*z)%2
+            if disc == 0:
+                solutions.append([1,z,y])
+                ret.append([1,z,y,0])
+            y+=1
+        z+=1
+
+
+
+
+
+    exp=1
+    while exp < 500:
+        new_solutions=[]
+        for sol in solutions:
+            z=sol[1]
+            while z < 2**(exp+1):
+                y=sol[2]
+                while y < 2**(exp+1):
+                    disc=(y**2+4*n*k*z)%2**(exp+1)
+                    if disc == 0:
+                        if z < lin_sieve_size and y < lin_sieve_size:
+                            new_solutions.append([exp+1,z,y])
+                            ret.append([exp+1,z,y,0])
+                    y+=2**exp
+                z+=2**exp
+        solutions=new_solutions
+        if len(solutions)==0:
+            break
+        exp+=1
+  #  print("ret: "+str(ret))
+    return ret
+
+def liftp_zero(k,n,prime):
+    ret=[]
+    solutions=[]
+    ret.append([1,0,0,0])
+    solutions.append([1,0,0])
+    
+
+    exp=1
+    while exp < 500:
+        new_solutions=[]
+        for sol in solutions:
+            z=sol[1]
+            while z < prime**(exp+1):
+                y=sol[2]
+                while y < prime**(exp+1):
+                    disc=y**2+4*n*k*z
+                    if disc%prime**(exp+1) ==0:
+                        if z < lin_sieve_size and y < lin_sieve_size:
+                            ret.append([exp+1,z,y,0])
+                            new_solutions.append([exp+1,z,y])
+                    y+=prime**exp
+                z+=prime**exp
+        solutions=new_solutions
+        if len(solutions)==0:
+            break
+        exp+=1
+
+    return ret
+
 def create_map(n,primeslist,k):
     max_exp=100000
     hmap=[]
@@ -504,9 +574,15 @@ def create_map(n,primeslist,k):
     while t < len(primeslist):
         hmap.append([])
         prime=primeslist[t]
+        print("Lifting Z/"+str(prime)+"^e")
+        if prime == 2:
+            hmap[-1].extend(lift2(n,k))
+            t+=1
+            continue
         coeff=[(-n*k)%prime]
 
-        print("Lifting Z/"+str(prime)+"^e")
+
+       
 
 
         d_ind=0
@@ -514,30 +590,29 @@ def create_map(n,primeslist,k):
             coeff.insert(0,0)
 
             d_ind+=1
-        coeff[0]+=1
+       # if prime != 2:
+         #  coeff[0]+=1
         ranges = [range(start, prime) for start in coeff[:-1]]
         for combo in itertools.product(*ranges):
             cur=list(combo)+[coeff[-1]]
+            if cur[0]==0 and cur[1]==0:
+                hmap[-1].extend(liftp_zero(k,n,prime))
+                continue
             disc=cur[1]**2+4*n*k*cur[0] 
             if disc%prime!=0:
                 continue
-            if prime != 2:
-                roots=solve_quadratic_congruence(cur[0], cur[1],cur[2], prime)
-            else:
-                a=0
-                while a < 2:
-                    if (cur[0]*a**2+cur[1]*a+cur[2])%2 == 0:
-                        roots=[a]
-                        break
-                    a+=1
+
+            roots=solve_quadratic_congruence(cur[0], cur[1],cur[2], prime)
             if len(roots)!=1:
                 print("something went wrong")
-        
+   
             solutions=[]
             for r in roots:
                 solutions.append([cur[0],cur[1],r])
                 hmap[-1].append([1,cur[0],cur[1],r])
+           # print("roots: "+str(roots)+" solutions: "+str(solutions))
             exp=1
+
             while exp < max_exp:
                 new_solutions=[]
                 for sol in solutions:
@@ -547,15 +622,21 @@ def create_map(n,primeslist,k):
                         while y < prime**(exp+1):
                             ###To do: I'm sure I can figure out a faster way here.. maybe calculate them in a different primefield.. dunno..
                             root=sol[2]
-
+    
                             while root < prime**(exp+1):
-                                deriv=(2*z*root+y)%prime**(exp+1)
-                                if deriv%prime**(exp+1) ==0:
+                                deriv=(2*z*root+y)%prime**(exp+1) #(2*z*root+y)
+                                if deriv ==0:
                                     break
                                 root+=prime**exp
                             poly=(z*root**2+y*root-n*k)%prime**(exp+1)
+                            #if z%prime**(exp+1) == 53%prime**(exp+1) and y%prime**(exp+1) == 346%prime**(exp+1):
+                            #    print("orig root: "+str(sol[2])+" new root: "+str(root)+" deriv: "+str(deriv)+" prime: "+str(prime)+" exp : "+str(exp+1)+" poly: "+str(poly))
+
                             if poly == 0 and root < prime**(exp+1):                                            
                                 if z < lin_sieve_size and y < lin_sieve_size:# and root < n:
+                                #    if z%prime**(exp+1) == 53%prime**(exp+1) and y%prime**(exp+1) == 346%prime**(exp+1):
+                                  #      print("ADDDING orig root: "+str(sol[2])+" new root: "+str(root)+" deriv: "+str(deriv)+" prime: "+str(prime)+" exp : "+str(exp+1))
+
                                     new_solutions.append([z,y,root])
                                     #if (exp+1)%2 == 0:
                                     hmap[-1].append([exp+1,z,y,root])
@@ -591,11 +672,23 @@ cdef construct_interval(n,primeslist,interval,k,smooth_list,root_list,factor_lis
         z=int(indexlist_y[ind])
 
         current = [z,y]
+        if z == 0:
+            ind+=1
+            continue
         disc=y**2+4*n*k*z
+
         factors, value,seen_primes,seen_primes_indexes=factorise_fast(disc,primelist_f)
+        log=0
+        g=0
+        for prime in seen_primes:
+            if prime < 20:
+                log+=round(math.log2(prime))
+        if log != interval[z,y]:
+            print("fatal error: "+str(seen_primes)+" log: "+str(log)+" inter: "+str(interval[z,y])+" disc: "+str(disc)+" current: "+str(current))
+            sys.exit()
         if value == 1:
             if factors not in factor_list:
-                print("found: "+str(disc)+" seen_primes: "+str(seen_primes)+" interval value: "+str(interval[z,y]))
+                print("found: "+str(disc)+" seen_primes: "+str(seen_primes)+" interval value: "+str(interval[z,y])+" log: "+str(log)+" coeff: "+str(current))
                 smooth_list.append(disc)
                 root_list.append(current[1])
                 factor_list.append(factors)
