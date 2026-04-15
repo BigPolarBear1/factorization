@@ -623,16 +623,13 @@ def create_map(n,primeslist,k):
                             ###To do: I'm sure I can figure out a faster way here.. maybe calculate them in a different primefield.. dunno..
                             root=sol[2]
     
-                            while root < prime**(exp+1):
-                                deriv=(2*z*root+y)%prime**(exp+1) #(2*z*root+y)
-                                if deriv ==0:
-                                    break
-                                root+=prime**exp
+
+                            root=lift_root(z,0,-n, sol[2], prime, exp)       
                             poly=(z*root**2+y*root-n*k)%prime**(exp+1)
                             #if z%prime**(exp+1) == 53%prime**(exp+1) and y%prime**(exp+1) == 346%prime**(exp+1):
                             #    print("orig root: "+str(sol[2])+" new root: "+str(root)+" deriv: "+str(deriv)+" prime: "+str(prime)+" exp : "+str(exp+1)+" poly: "+str(poly))
 
-                            if poly == 0 and root < prime**(exp+1):                                            
+                            if poly == 0 and root < prime**(exp+1):                               
                                 if z < lin_sieve_size and y < lin_sieve_size:# and root < n:
                                 #    if z%prime**(exp+1) == 53%prime**(exp+1) and y%prime**(exp+1) == 346%prime**(exp+1):
                                   #      print("ADDDING orig root: "+str(sol[2])+" new root: "+str(root)+" deriv: "+str(deriv)+" prime: "+str(prime)+" exp : "+str(exp+1))
