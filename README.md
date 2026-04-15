@@ -12,6 +12,8 @@ To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 50 -base 100 -debug 1 -lin_size 50_000 -quad_size 100 -t 20
 
 This is Quadratic Sieve Small factor Variant. This will attempt to find large concentrations of small factors using p-adic lifting.
+The upside of this approach is that if we have a bunch of smooth candidates, mostly made up from small factors.. then we dramatically reduce the amount of smooth candidates needed during the linear algebra step.
+
 To do: We shouldn't calculate a sieve interval for every k value (k as in zx^2+yx-nk) .. we should quickly cycle through k values until we have a bunch of singular roots that lift to a high exponent within our sieve region. I need to do some thinking though how to best appraoch this.
 
 #### To run from folder "Coefficient_Sieve" (Experimental WORK IN PROGRESS):</br></br>
