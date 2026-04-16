@@ -628,8 +628,12 @@ def create_map(n,primeslist,k):
                             poly=(z*root**2+y*root-n*k)%prime**(exp+1)
                             #if z%prime**(exp+1) == 53%prime**(exp+1) and y%prime**(exp+1) == 346%prime**(exp+1):
                             #    print("orig root: "+str(sol[2])+" new root: "+str(root)+" deriv: "+str(deriv)+" prime: "+str(prime)+" exp : "+str(exp+1)+" poly: "+str(poly))
+                            deriv=(2*z*root+y)%prime**(exp+1)
 
-                            if poly == 0 and root < prime**(exp+1):                               
+                            if poly == 0 and deriv == 0 and root < prime**(exp+1):            
+                              #  if deriv !=0:
+                              #      print("something went wrong deriv")
+                              #      sys.exit()                   
                                 if z < lin_sieve_size and y < lin_sieve_size:# and root < n:
                                 #    if z%prime**(exp+1) == 53%prime**(exp+1) and y%prime**(exp+1) == 346%prime**(exp+1):
                                   #      print("ADDDING orig root: "+str(sol[2])+" new root: "+str(root)+" deriv: "+str(deriv)+" prime: "+str(prime)+" exp : "+str(exp+1))
@@ -646,6 +650,43 @@ def create_map(n,primeslist,k):
 
         t+=1
     return hmap
+
+def ff_square_root(z,y,k,n,seen_primes):
+    ###To do: Not finished yet, experimental. Once we find a large finite field.. we then need to look at other primefields to figure out what to divide the root by.
+    ###This still needs to be implemented. Will implement shortly
+    prev=0
+    r=0
+    while r < len(seen_primes):
+        partials=[]
+        lmod=1
+        h=0
+
+        prime=seen_primes[r]
+        if (z%prime == 0 and y%prime ==0) or prime == 2:
+            r+=1
+            continue
+            
+        roots=solve_quadratic_congruence(1, y,-n*k*z, prime)
+        root=roots[0]
+        if root == 0:
+            r+=1
+            continue
+        prev=prime
+        r+=1
+        exp=1
+        while r < len(seen_primes) and seen_primes[r] == prev:
+            root=lift_root(1,0,-n*k*z, root, prime, exp)    
+            if (root**2+y*root-n*k*z)%prime**(exp+1)!=0:
+                print("fatal: "+str(root)+" prime: "+str(prime)+" exp: "+str(exp))
+            exp+=1
+            r+=1
+        if prime**exp > math.isqrt(n*k*z):
+            gcdtest=math.gcd(root,n)
+            disc=y**2+4*n*k*z
+            if gcdtest != 1 and gcdtest !=n:
+                print("[!!!!!FOUND BY TAKING SQUARE ROOT OVER FINITE FIELD (Note: This function isn't finished yet, will update soon)!!!!!]Factors of "+str(n)+" : "+str(gcdtest)+" and "+str(n//gcdtest))
+                sys.exit()
+  
 cdef construct_interval(n,primeslist,interval,k,smooth_list,root_list,factor_list):
     found=0
     primelist_f=copy.copy(primeslist)
@@ -664,6 +705,7 @@ cdef construct_interval(n,primeslist,interval,k,smooth_list,root_list,factor_lis
     indexlist_y=indexlist[0]#cp.asnumpy(indexlist[0])
     ind=0
     length=len(indexlist_x)
+    checked=0
     while ind < length:# length:  
         y=int(indexlist_x[ind])
         z=int(indexlist_y[ind])
@@ -675,21 +717,27 @@ cdef construct_interval(n,primeslist,interval,k,smooth_list,root_list,factor_lis
         disc=y**2+4*n*k*z
 
         factors, value,seen_primes,seen_primes_indexes=factorise_fast(disc,primelist_f)
+        if value != 1:
+            ind+=1
+            continue
+
+        ff_square_root(z,y,k,n,seen_primes)
+     
         log=0
         g=0
         for prime in seen_primes:
             if prime < 20:
                 log+=round(math.log2(prime))
-        if log != interval[z,y]:
-            print("fatal error: "+str(seen_primes)+" log: "+str(log)+" inter: "+str(interval[z,y])+" disc: "+str(disc)+" current: "+str(current))
-            sys.exit()
-        if value == 1:
-            if factors not in factor_list:
-                print("found: "+str(disc)+" seen_primes: "+str(seen_primes)+" interval value: "+str(interval[z,y])+" log: "+str(log)+" coeff: "+str(current))
-                smooth_list.append(disc)
-                root_list.append(current[1])
-                factor_list.append(factors)
-                found+=1
+    #    if log != interval[z,y]:
+    #        print("fatal error: "+str(seen_primes)+" log: "+str(log)+" inter: "+str(interval[z,y])+" disc: "+str(disc)+" current: "+str(current)+" k: "+str(k))
+    #        sys.exit()
+
+        if factors not in factor_list:
+            print("found: "+str(disc)+" seen_primes: "+str(seen_primes)+" interval value: "+str(interval[z,y])+" log: "+str(log)+" coeff: "+str(current))
+            smooth_list.append(disc)
+            root_list.append(current[1])
+            factor_list.append(factors)
+            found+=1
         ind+=1
     return found
 
