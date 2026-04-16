@@ -11,9 +11,6 @@ https://github.com/basilegithub/General-number-field-sieve-Python
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 50 -base 100 -debug 1 -lin_size 50_000 -quad_size 100 -t 20
 
-This is Quadratic Sieve Small factor Variant. This will attempt to find large concentrations of small factors using p-adic lifting.
-The upside of this approach is that if we have a bunch of smooth candidates, mostly made up from small factors.. then we dramatically reduce the amount of smooth candidates needed during the linear algebra step.
-
 Update: Some work in progress where I am exploring two different ideas. One is to find smooth candidates with many small factors and the other one is by taking a square root over a finite field (see: ff_square_root() in the PoC) ... since singular roots divide the factors of N... however, what's missing in ff_square_root() is that we then need to look at other prime fields to figure out what to divide the root by. Because it will end up being some multiple of the factor of N if we lift a root p-adically in a primefield. Atleast theoretically that would work.. I still need to write the code now where it uses other primefields to divide that root.. if that works then we can narrow down the factorization problem to just find B-smooth candidates with a large square in the discriminant.
 
 #### To run from folder "Coefficient_Sieve" (Experimental WORK IN PROGRESS):</br></br>
