@@ -624,7 +624,7 @@ def create_map(n,primeslist,k):
                             root=sol[2]
     
 
-                            root=lift_root(z,0,-n, sol[2], prime, exp)       
+                            root=lift_root(z,0,-n*k, sol[2], prime, exp)       
                             poly=(z*root**2+y*root-n*k)%prime**(exp+1)
                             #if z%prime**(exp+1) == 53%prime**(exp+1) and y%prime**(exp+1) == 346%prime**(exp+1):
                             #    print("orig root: "+str(sol[2])+" new root: "+str(root)+" deriv: "+str(deriv)+" prime: "+str(prime)+" exp : "+str(exp+1)+" poly: "+str(poly))
