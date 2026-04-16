@@ -14,15 +14,7 @@ To run: python3 run_qs.py -keysize 50 -base 100 -debug 1 -lin_size 50_000 -quad_
 This is Quadratic Sieve Small factor Variant. This will attempt to find large concentrations of small factors using p-adic lifting.
 The upside of this approach is that if we have a bunch of smooth candidates, mostly made up from small factors.. then we dramatically reduce the amount of smooth candidates needed during the linear algebra step.
 
-TO DO: 
-
--We can actually treat singular roots as non-singular roots. Thats exactly what I'm doing in CUDA_QS_Variant.. so I need to implement that so we can properly use hensel's lemma.</br>
--Need to rapidly cycle through k values (as in zx^2+yx-Nk) .. until one is found where a bunch of singular roots lift very highly within our sieve region.... Ideally we would create a sieve interval to find these ideal k values.. but this requires my lifting code to be fast first. Additionally finding an optimal sieve region can also be investigated...
-The main idea is to just focus on small factors that lift very high p-adically.. because that will really saturate our sieve region.
-
-Update: Actually.. the fact that we can change these singular root to non-singular roots...  I think  there may be a mechanism to exploit there which I hadn't yet realized.. let me investigate... I'm such an idiot if it allows me to do what I think it may allow me to do.. *sigh*
-
-## Update: Ignore this.. I just updated the paper. All we really need is find a single prime which we can lift p-adically higher then Nk**0.5 and it should reveal a root of N I believe. Let me verify that this is true tomorrow. If it is.. then tomorrow I am done.
+Update: Some work in progress where I am exploring two different ideas. One is to find smooth candidates with many small factors and the other one is by taking a square root over a finite field (see: ff_square_root() in the PoC) ... since singular roots divide the factors of N... however, what's missing in ff_square_root() is that we then need to look at other prime fields to figure out what to divide the root by. Because it will end up being some multiple of the factor of N if we lift a root p-adically in a primefield. Atleast theoretically that would work.. I still need to write the code now where it uses other primefields to divide that root.. if that works then we can narrow down the factorization problem to just find B-smooth candidates with a large square in the discriminant.
 
 #### To run from folder "Coefficient_Sieve" (Experimental WORK IN PROGRESS):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
