@@ -302,6 +302,11 @@ def launch(n,primeslist1,primeslist2,small_primeslist):
     while k < quad_sieve_size+1:
         print("[i]Lifting polynomial coefficients and roots in Z/p^e")
         hmap=create_map(n,primeslist1[:small_base],k)
+        #for e in hmap[7]:
+           # if e[2]**2%primeslist1[7]==5394**2%primeslist1[7]:
+           # if e[1]!=0 and e[0]==1 and e[2]==5394%primeslist1[4]:
+            #    print(str(e)+" k: "+str(k)+" primeslist1[4]: "+str(primeslist1[4]))
+     #   print(hmap[3])
         print("[i]Building Sieve Interval")
         interval=np.zeros([lin_sieve_size,lin_sieve_size],dtype=np.int16)
         i=0
@@ -317,7 +322,7 @@ def launch(n,primeslist1,primeslist2,small_primeslist):
 
         found+=construct_interval(n,primeslist1,interval,k,smooth_list,root_list,factor_list)
         print("Smooths #: "+str(len(smooth_list)))
-        if found >20:
+        if found >50:
             print("Performing linear algebra")
             QS(n,primelist,smooth_list,factor_list,root_list)
             found=0
@@ -654,6 +659,8 @@ def create_map(n,primeslist,k):
 def ff_square_root(z,y,k,n,seen_primes):
     ###To do: Not finished yet, experimental. Once we find a large finite field.. we then need to look at other primefields to figure out what to divide the root by.
     ###This still needs to be implemented. Will implement shortly
+
+    
     prev=0
     r=0
     while r < len(seen_primes):
@@ -662,30 +669,64 @@ def ff_square_root(z,y,k,n,seen_primes):
         h=0
 
         prime=seen_primes[r]
+
         if (z%prime == 0 and y%prime ==0) or prime == 2:
             r+=1
             continue
-            
+          #  d_inv=modinv(d,prime)
         roots=solve_quadratic_congruence(1, y,-n*k*z, prime)
+        roots2=solve_quadratic_congruence(k*z, -y,-n, prime)
         root=roots[0]
+        root2=roots2[0]
         if root == 0:
             r+=1
             continue
+        if (root**2+y*root-n*k*z)%prime !=0:
+            print("something seems to have gone wrong..")
+            sys.exit()
+        if (k*z*root2**2-y*root2-n)%prime!=0:
+            print("2 something seems to have gone wrong..")
+            sys.exit()
         prev=prime
         r+=1
         exp=1
         while r < len(seen_primes) and seen_primes[r] == prev:
-            root=lift_root(1,0,-n*k*z, root, prime, exp)    
+            root=lift_root(1,0,-n*k*z, root, prime, exp)   
+            root2=lift_root(k*z,0,-n, root2, prime, exp)   
             if (root**2+y*root-n*k*z)%prime**(exp+1)!=0:
-                print("fatal: "+str(root)+" prime: "+str(prime)+" exp: "+str(exp))
+                print("fatal: "+str(root)+" prime: "+str(prime)+" exp: "+str(exp+1))
+                sys.exit()
+            if (k*z*root2**2-y*root2-n)%prime**(exp+1)!=0:
+                print("2 fatal: "+str(root)+" prime: "+str(prime)+" exp: "+str(exp+1))
+                sys.exit()
             exp+=1
             r+=1
-        if prime**exp > math.isqrt(n*k*z):
-            gcdtest=math.gcd(root,n)
-            disc=y**2+4*n*k*z
-            if gcdtest != 1 and gcdtest !=n:
-                print("[!!!!!FOUND BY TAKING SQUARE ROOT OVER FINITE FIELD (Note: This function isn't finished yet, will update soon)!!!!!]Factors of "+str(n)+" : "+str(gcdtest)+" and "+str(n//gcdtest))
-                sys.exit()
+        if prime**exp > round(n**0.6):
+            ###To do: Need to calculate d in another larger finite field rather then just bruteforce.. or alternatively create a sieve interval for it.
+            ###Almost finished now...
+            d=1
+            while d < 10_000:
+                
+                if d%prime ==0:
+                    d+=1
+                    continue
+                d_inv=modinv(d,prime**exp)
+                new_root=(root*d_inv)%prime**exp
+                new_root2=(root2*d)%prime**exp
+                if (d*new_root**2+y*new_root-n*k*z*d_inv)%prime**exp !=0:
+                    print("d: ",d)
+                    sys.exit()
+                if (k*z*d_inv*new_root2**2-y*new_root2-n*d)%prime**exp !=0:
+                    print("d: ",d)
+                    sys.exit()
+                gcdtest=math.gcd(new_root,n)
+                gcdtest2=math.gcd(new_root2,n)
+                #disc=y**2+4*n*k*z
+                if gcdtest != 1 and gcdtest !=n:
+                    print("[!!!!!FOUND BY TAKING SQUARE ROOT OVER FINITE FIELD (Note: This function isn't finished yet, will update soon)!!!!!]Factors of "+str(n)+" : "+str(gcdtest)+" and "+str(n//gcdtest))#+" d: "+str(d)+" gcdtest2: "+str(gcdtest2)+" new_root//gcdtest: "+str(new_root//gcdtest)+" prime**exp: "+str(prime**exp)+" root: "+str(new_root)+" root2: "+str(new_root2))
+                    sys.exit()
+                d+=1
+
   
 cdef construct_interval(n,primeslist,interval,k,smooth_list,root_list,factor_list):
     found=0
