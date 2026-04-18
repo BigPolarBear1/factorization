@@ -15,6 +15,8 @@ Update: Some work in progress where I am exploring two different ideas. One is t
 
 Anyway.. I'll go run first. Experiencing extreme levels of stress. Then after that I'll fix that code.
 
+Update: Pushed some more changes to ff_square_root(), so it better reflects the final 2 chapters in my paper. However, right now it is bruteforcing the divisor.. but we need to calculate it by using other primefields.. so I'll implement that next.. either that works and my work will be finished or it doesn't work and I'll need to do some further research. 
+
 #### To run from folder "Coefficient_Sieve" (Experimental WORK IN PROGRESS):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 30 -base 40 -debug 1 -lin_size 5000 -quad_size 100 -d 2
