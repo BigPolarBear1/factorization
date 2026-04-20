@@ -19,6 +19,8 @@ Update: Pushed some more changes to ff_square_root(), so it better reflects the 
 
 Update:  Starting implementing some logic to check other primefields in create_div_interval(). This works. Run using:  python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 10_000 -quad_size 100 -t 20   .. next I'll turn that into a sieve interval today.. and after that, explore how to calculate that divisor using other large finite fields.
 
+Update: Actually building a sieve interval isn't ideal in this setup. So let me just skip to using a finite field to calculate that divisor.. if that works, i'll be finished shortly with my project.
+
 #### To run from folder "Coefficient_Sieve" (Experimental WORK IN PROGRESS):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 30 -base 40 -debug 1 -lin_size 5000 -quad_size 100 -d 2
