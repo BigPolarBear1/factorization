@@ -301,7 +301,7 @@ def launch(n,primeslist1,primeslist2,small_primeslist):
     k=1
     while k < quad_sieve_size+1:
         print("[i]Lifting polynomial coefficients and roots in Z/p^e")
-        hmap=create_map(n,primeslist1[:small_base],k)
+        hmap,root_hmap=create_map(n,primeslist1,k,small_base)
         #for e in hmap[7]:
            # if e[2]**2%primeslist1[7]==5394**2%primeslist1[7]:
            # if e[1]!=0 and e[0]==1 and e[2]==5394%primeslist1[4]:
@@ -320,7 +320,7 @@ def launch(n,primeslist1,primeslist2,small_primeslist):
                 j+=1
             i+=1
 
-        found+=construct_interval(n,primeslist1,interval,k,smooth_list,root_list,factor_list)
+        found+=construct_interval(n,primeslist1,interval,k,smooth_list,root_list,factor_list,root_hmap)
         print("Smooths #: "+str(len(smooth_list)))
         if found >50:
             print("Performing linear algebra")
@@ -403,7 +403,12 @@ def solve_quadratic_congruence(a, b, c, p):
             return []
         x1 = (y - b_div_2) % p
         x2 = (p - y - b_div_2) % p
-        return [x1,x2]
+        if x1 == 0:
+            return [x2]
+        elif x2 == 0:
+            return [x1]
+        else:
+            return [x1,x2]
 
 def lift_root(z,y,n, root, p, exp):
     r =(z*root**2+root*y-n)%p**(exp+1)
@@ -503,6 +508,7 @@ def evaluate(f, x):
     return res
 
 def lift2(n,k):
+    ##To do: This needs to be fixed but it's a special case of hensel's lemma... need to refresh how that worked
     ret=[]
     
     solutions=[]
@@ -516,10 +522,6 @@ def lift2(n,k):
                 ret.append([1,z,y,0])
             y+=1
         z+=1
-
-
-
-
 
     exp=1
     while exp < 500:
@@ -544,6 +546,7 @@ def lift2(n,k):
     return ret
 
 def liftp_zero(k,n,prime):
+    ##I dont know.. I need to fix this eventually, this is very poor.
     ret=[]
     solutions=[]
     ret.append([1,0,0,0])
@@ -572,42 +575,44 @@ def liftp_zero(k,n,prime):
 
     return ret
 
-def create_map(n,primeslist,k):
+def create_map(n,primeslist,k,small_base):
     max_exp=100000
     hmap=[]
+    root_hmap=[]
     t=0
     while t < len(primeslist):
-        hmap.append([])
+        if t < small_base:
+            hmap.append([])
+        root_hmap.append([])
         prime=primeslist[t]
-        print("Lifting Z/"+str(prime)+"^e")
+        print("Calculating Z/"+str(prime)+"^e")
         if prime == 2:
             hmap[-1].extend(lift2(n,k))
             t+=1
             continue
-        coeff=[(-n*k)%prime]
 
-
-       
-
-
-        d_ind=0
-        while d_ind < 2:
-            coeff.insert(0,0)
-
-            d_ind+=1
-       # if prime != 2:
-         #  coeff[0]+=1
+        coeff=[0,0,(-n*k)%prime]
         ranges = [range(start, prime) for start in coeff[:-1]]
         for combo in itertools.product(*ranges):
             cur=list(combo)+[coeff[-1]]
             if cur[0]==0 and cur[1]==0:
-                hmap[-1].extend(liftp_zero(k,n,prime))
+               # hmap[-1].extend(liftp_zero(k,n,prime))
+                continue
+
+            roots=solve_quadratic_congruence(cur[0], cur[1],cur[2], prime)
+            roots2=solve_quadratic_congruence(k, -cur[1],-n*cur[0], prime)
+            if len(roots) != 0:
+                #print("roots: "+str(roots)+" roots2: "+str(roots2)+" prime: "+str(prime)+" cur: "+str(cur))
+
+                root_hmap[-1].append([cur[0],cur[1],roots,roots2])
+
+            if t > small_base-1:
                 continue
             disc=cur[1]**2+4*n*k*cur[0] 
             if disc%prime!=0:
                 continue
 
-            roots=solve_quadratic_congruence(cur[0], cur[1],cur[2], prime)
+            
             if len(roots)!=1:
                 print("something went wrong")
    
@@ -625,7 +630,6 @@ def create_map(n,primeslist,k):
                     while z < prime**(exp+1):
                         y=sol[1]
                         while y < prime**(exp+1):
-                            ###To do: I'm sure I can figure out a faster way here.. maybe calculate them in a different primefield.. dunno..
                             root=sol[2]
     
 
@@ -652,14 +656,44 @@ def create_map(n,primeslist,k):
                 if len(solutions) == 0:
                     break
                 exp+=1
-
+    #    print("root_hmap: "+str(root_hmap[-1]))
         t+=1
-    return hmap
+    return hmap,root_hmap
 
-def ff_square_root(z,y,k,n,seen_primes):
+def create_div_interval(root_hmap,primeslist,r1,r2,mod,lin_co):
+    ##TO DO: Next step is to just create an interval here. Easy enough.. then after that.. I'll get rid of the interval and just calculate that divisor, but I want to do it the easy way first.
+    i=1
+    while i < len(primeslist):
+        prime=primeslist[i]
+        if mod%prime ==  0 or lin_co%prime ==0:
+            i+=1
+            continue
+        found=0
+        j=0
+        while j < len(root_hmap[i]):
+         #   print("Prime: "+str(prime)+" "+str(root_hmap[i][j]))
+            if root_hmap[i][j][1] == lin_co%prime:
+                h=0
+                while h < len(root_hmap[i][j][-2]):
+                    if root_hmap[i][j][-2][h] == r1%prime:
+                        if r2%prime in root_hmap[i][j][-1]:
+                            found =1
+                            break
+                    h+=1
+            if found == 1:
+                break
+            j+=1
+        if found == 0:
+           # print("Returning for prime: "+str(prime))
+            return 0
+        i+=1
+
+    return 1
+
+def ff_square_root(z,y,k,n,seen_primes,root_hmap,primeslist):
     ###To do: Not finished yet, experimental. Once we find a large finite field.. we then need to look at other primefields to figure out what to divide the root by.
     ###This still needs to be implemented. Will implement shortly
-
+    
     
     prev=0
     r=0
@@ -687,6 +721,8 @@ def ff_square_root(z,y,k,n,seen_primes):
         if (k*z*root2**2-y*root2-n)%prime!=0:
             print("2 something seems to have gone wrong..")
             sys.exit()
+        
+
         prev=prime
         r+=1
         exp=1
@@ -704,8 +740,9 @@ def ff_square_root(z,y,k,n,seen_primes):
         if prime**exp > round(n**0.6):
             ###To do: Need to calculate d in another larger finite field rather then just bruteforce.. or alternatively create a sieve interval for it.
             ###Almost finished now...
+            print("Checking ff: "+str(prime**exp))
             d=1
-            while d < 10_000:
+            while d < prime**exp:
                 
                 if d%prime ==0:
                     d+=1
@@ -713,6 +750,12 @@ def ff_square_root(z,y,k,n,seen_primes):
                 d_inv=modinv(d,prime**exp)
                 new_root=(root*d_inv)%prime**exp
                 new_root2=(root2*d)%prime**exp
+                result=create_div_interval(root_hmap,primeslist,new_root,new_root2,prime**exp,y)
+                if result == 1:
+                    print("D: "+str(d))
+                else:
+                    d+=1
+                    continue
                 if (d*new_root**2+y*new_root-n*k*z*d_inv)%prime**exp !=0:
                     print("d: ",d)
                     sys.exit()
@@ -722,13 +765,13 @@ def ff_square_root(z,y,k,n,seen_primes):
                 gcdtest=math.gcd(new_root,n)
                 gcdtest2=math.gcd(new_root2,n)
                 #disc=y**2+4*n*k*z
-                if gcdtest != 1 and gcdtest !=n:
-                    print("[!!!!!FOUND BY TAKING SQUARE ROOT OVER FINITE FIELD (Note: This function isn't finished yet, will update soon)!!!!!]Factors of "+str(n)+" : "+str(gcdtest)+" and "+str(n//gcdtest))#+" d: "+str(d)+" gcdtest2: "+str(gcdtest2)+" new_root//gcdtest: "+str(new_root//gcdtest)+" prime**exp: "+str(prime**exp)+" root: "+str(new_root)+" root2: "+str(new_root2))
+                if gcdtest != 1 and gcdtest !=n and new_root//gcdtest == 1:
+                    print("[!!!!!FOUND BY TAKING SQUARE ROOT OVER FINITE FIELD (Note: This function isn't finished yet, will update soon)!!!!!]Factors of "+str(n)+" : "+str(gcdtest)+" and "+str(n//gcdtest)+" result: "+str(result)+" new_root: "+str(new_root)+" new_root2: "+str(new_root2)+" prime**exp: "+str(prime**exp))#+" d: "+str(d)+" gcdtest2: "+str(gcdtest2)+" new_root//gcdtest: "+str(new_root//gcdtest)+" prime**exp: "+str(prime**exp)+" root: "+str(new_root)+" root2: "+str(new_root2))
                     sys.exit()
                 d+=1
 
   
-cdef construct_interval(n,primeslist,interval,k,smooth_list,root_list,factor_list):
+cdef construct_interval(n,primeslist,interval,k,smooth_list,root_list,factor_list,root_hmap):
     found=0
     primelist_f=copy.copy(primeslist)
     primelist_f.insert(0,len(primelist_f)+1)
@@ -762,7 +805,7 @@ cdef construct_interval(n,primeslist,interval,k,smooth_list,root_list,factor_lis
             ind+=1
             continue
 
-        ff_square_root(z,y,k,n,seen_primes)
+        ff_square_root(z,y,k,n,seen_primes,root_hmap,primeslist)
      
         log=0
         g=0
