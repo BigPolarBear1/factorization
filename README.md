@@ -9,13 +9,15 @@ https://github.com/basilegithub/General-number-field-sieve-Python
 
 #### To run from folder "QS_SF_Variant" (Experimental WORK IN PROGRESS):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 50 -base 100 -debug 1 -lin_size 50_000 -quad_size 100 -t 20
+To run: python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 10_000 -quad_size 100 -t 20
 
 Update: Some work in progress where I am exploring two different ideas. One is to find B-smooth candidates with many small factors and the other one is by taking a square root over a finite field (see: ff_square_root() in the PoC) ... since singular roots divide the factors of N (i.e as we lift it will only contain residues for either factor p or q, not both as is the problem with non-singular roots)... however, what's missing in ff_square_root() is that we then need to look at other prime fields to figure out what to divide the root by. Because it will end up being some multiple of the factor of N if we lift a root p-adically in a primefield. Atleast theoretically that would work.. I still need to write the code now where it uses other primefields to divide that root.. if that works then we can narrow down the factorization problem to just find B-smooth candidates with many of the same factors. Such that we can lift a singular root in a finite field.
 
 Anyway.. I'll go run first. Experiencing extreme levels of stress. Then after that I'll fix that code.
 
 Update: Pushed some more changes to ff_square_root(), so it better reflects the final 2 chapters in my paper. However, right now it is bruteforcing the divisor.. but we need to calculate it by using other primefields.. so I'll implement that next.. either that works and my work will be finished or it doesn't work and I'll need to do some further research. 
+
+Update:  Starting implementing some logic to check other primefields in create_div_interval(). This works. Run using:  python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 10_000 -quad_size 100 -t 20   .. next I'll turn that into a sieve interval today.. and after that, explore how to calculate that divisor using other large finite fields.
 
 #### To run from folder "Coefficient_Sieve" (Experimental WORK IN PROGRESS):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
