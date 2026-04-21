@@ -11,17 +11,7 @@ https://github.com/basilegithub/General-number-field-sieve-Python
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 10_000 -quad_size 100 -t 20
 
-Update: Some work in progress where I am exploring two different ideas. One is to find B-smooth candidates with many small factors and the other one is by taking a square root over a finite field (see: ff_square_root() in the PoC) ... since singular roots divide the factors of N (i.e as we lift it will only contain residues for either factor p or q, not both as is the problem with non-singular roots)... however, what's missing in ff_square_root() is that we then need to look at other prime fields to figure out what to divide the root by. Because it will end up being some multiple of the factor of N if we lift a root p-adically in a primefield. Atleast theoretically that would work.. I still need to write the code now where it uses other primefields to divide that root.. if that works then we can narrow down the factorization problem to just find B-smooth candidates with many of the same factors. Such that we can lift a singular root in a finite field.
-
-Anyway.. I'll go run first. Experiencing extreme levels of stress. Then after that I'll fix that code.
-
-Update: Pushed some more changes to ff_square_root(), so it better reflects the final 2 chapters in my paper. However, right now it is bruteforcing the divisor.. but we need to calculate it by using other primefields.. so I'll implement that next.. either that works and my work will be finished or it doesn't work and I'll need to do some further research. 
-
-Update:  Starting implementing some logic to check other primefields in create_div_interval(). This works. Run using:  python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 10_000 -quad_size 100 -t 20   .. next I'll turn that into a sieve interval today.. and after that, explore how to calculate that divisor using other large finite fields.
-
-Update: Actually building a sieve interval isn't ideal in this setup. So let me just skip to using a finite field to calculate that divisor.. if that works, i'll be finished shortly with my project.
-
-Update: Ran some test numbers today. So rather then checking for existence in multiple different prime fields.. just checking it in a single one (other then the original) which we then p-adically lift also works. So if I can make that computationally work somehow.. then factorization straight up dies. Lets see.
+Update: Initially my idea with this PoC was to explore finding smooth candidates with lots of small factors (since it reduces the size of the required factor base). But now I'm going off on a bit of a tangent, trying to figure out if there is any way we can take a square root mod m when the discriminant isn't square in Z. Because that would still be the most ideal option. If I cant get that to work I'll go back to exploring my initial idea here.
 
 #### To run from folder "Coefficient_Sieve" (Experimental WORK IN PROGRESS):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
