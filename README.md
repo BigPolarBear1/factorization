@@ -7,6 +7,9 @@ The day I break factorization will be day 0 of the gay future. A better world wi
 https://stackoverflow.com/questions/79330304/optimizing-sieving-code-in-the-self-initializing-quadratic-sieve-for-pypy
 https://github.com/basilegithub/General-number-field-sieve-Python 
 
+### About the paper
+Math paper is a work in progress. The final chapters are a bit rushed and building an algorithm around p-adic lifting is as straight forward as I had assumed. I do thing there is an angle there I can exploit, but I'll do some further experimentation first and get a working PoC before I make edits to the paper again.
+
 #### To run from folder "QS_SF_Variant" (Experimental WORK IN PROGRESS):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 10_000 -quad_size 100 -t 20
