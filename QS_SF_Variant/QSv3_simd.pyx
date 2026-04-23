@@ -390,13 +390,15 @@ def solve_quadratic_congruence(a, b, c, p):
             return []
         if jacobi(alpha,p)==0:
             ##To do: Sort out the number theory for this
+            ret=-1
             i=0
             while i < p:
                 if (a*i**2+b*i+c)%p ==0:
                     ret=i 
                     break
                 i+=1
-
+            if ret == -1:
+                return []
             return [ret]
         y = tonelli(alpha, p)
         if y is None:
@@ -605,7 +607,7 @@ def create_map(n,primeslist,k,small_base):
                 #print("roots: "+str(roots)+" roots2: "+str(roots2)+" prime: "+str(prime)+" cur: "+str(cur))
 
                 root_hmap[-1].append([cur[0],cur[1],roots,roots2])
-
+ 
             if t > small_base-1:
                 continue
             disc=cur[1]**2+4*n*k*cur[0] 
@@ -668,6 +670,8 @@ def create_div_interval(root_hmap,primeslist,r1,r2,mod,lin_co):
         if mod%prime ==  0 or lin_co%prime ==0:
             i+=1
             continue
+
+        
         found=0
         j=0
         while j < len(root_hmap[i]):
@@ -690,16 +694,186 @@ def create_div_interval(root_hmap,primeslist,r1,r2,mod,lin_co):
 
     return 1
 
-def ff_square_root(z,y,k,n,seen_primes,root_hmap,primeslist):
+def calc_d(root_hmap,primeslist,r1,r2,mod,lin_co):
+    ##TO DO: Next step is to just create an interval here. Easy enough.. then after that.. I'll get rid of the interval and just calculate that divisor, but I want to do it the easy way first.
+    d_list=[]
+
+    i=1
+    while i < len(primeslist):
+        d_list.append([])
+        prime=primeslist[i]
+        if mod%prime ==  0 or lin_co%prime ==0:
+            i+=1
+            continue
+
+        
+        j=0
+        while j < len(root_hmap[i]):
+         #   print("Prime: "+str(prime)+" "+str(root_hmap[i][j]))
+            if root_hmap[i][j][1] == lin_co%prime:
+                temp_r1=[]
+                h=0
+                while h < len(root_hmap[i][j][-2]):
+                    r1_d=root_hmap[i][j][-2][h]
+
+
+                    temp_r1.append(r1_d)
+                    h+=1
+                temp_r2=[]
+                h=0
+                while h < len(root_hmap[i][j][-1]):
+                    r2_d=root_hmap[i][j][-1][h]
+
+
+                    temp_r2.append(r2_d)
+                    h+=1
+                d_list[-1].append([temp_r1,temp_r2])
+
+            j+=1
+       # print("prime: "+str(prime)+" d_list: "+str(d_list[-1]))
+        i+=1
+
+    return d_list
+
+
+def enumerated_product(*args):
+    for e in itertools.product(*(range(len(x)) for x in args)):
+        yield e
+
+def ff_clean(z,y,k,n,seen_primes,root_hmap,primeslist,disc):
+    lpartials_1=[]
+    lpartials_2=[]
+    lmod=1
+    prev=0
+    partials=[]
+    r=0
+    while r < len(seen_primes):
+        prime=seen_primes[r]
+        prev=prime
+        r+=1
+        exp=1
+        while r < len(seen_primes) and seen_primes[r] == prev:
+            exp+=1
+            r+=1
+
+        print("prime: "+str(exp))
+        
+        roots=[]
+        x=0
+        while x < prime**exp:
+            deriv=(2*z*x+y)%prime**exp
+            if (z*x**2+y*x-n*k)%prime**exp == 0 and deriv == 0:
+                roots.append(x)
+            x+=1
+        print("prime: "+str(prime**exp)+" roots: "+str(roots))
+        x=0#roots[0]
+        roots2=[]
+        while x < prime**(exp+1):
+            if (z*x**2+y*x-n*k)%prime**(exp+1) == 0:
+                roots2.append(x)
+            x+=1#prime**exp
+        print("prime: "+str(prime**(exp+1))+" roots2: "+str(roots2))
+        lmod*=prime**(exp+1)
+        partials.append(prime**(exp+1))
+        partials.append(roots2)
+    print("partials: "+str(partials))
+    partials=get_partials(lmod,partials)
+    enum=[]
+
+    h=0
+    while h < len(partials):
+        enum.append(partials[h+1])
+
+        h+=2
+
+    for idx in enumerated_product(*enum):
+        r1=0
+
+        u=0
+        while u < len(idx):
+            r1+=enum[u][idx[u]]
+
+            u+=1
+        r1%=lmod
+        gcdtest=math.gcd(r1,n)
+        if gcdtest != 1 and gcdtest !=n:
+            print("r1: "+str(r1))
+    return
+
+def ff_square_root(z,y,k,n,seen_primes,root_hmap,primeslist,disc123):
+    print("boop")
     ###To do: Not finished yet, experimental. Once we find a large finite field.. we then need to look at other primefields to figure out what to divide the root by.
     ###This still needs to be implemented. Will implement shortly
+    partials=[]
+    partials2=[]
+    lmod=1
+    counter=n*2
+    counter+=1
+
+    large_ff_roots=[]
+    h=0
+    while lmod < n:
+        if isPrime(counter,5) ==0:
+            counter+=2
+            continue
+        prime=counter
+        if math.gcd(prime,z)!=1 or jacobi(disc123,prime)!=1:# or jacobi((-n*k)%prime,prime) == -1:###Note to self: This
+            counter+=2
+            h+=1
+            continue
+
+        red_current=[1,y%prime,(-z*k*n)%prime]
+        roots=solve_quadratic_congruence(1, y,-n*k*z, prime)
+        roots2=solve_quadratic_congruence(k*z, -y,-n, prime)
+       # roots=find_roots_poly(red_current,prime)
+        if len(roots) == 2:
+            lmod*=prime
+            partials.append(prime)
+            partials.append(roots)
+            partials2.append(prime)
+            partials2.append(roots2)
+        h+=1
+    if lmod > n:
+        print("checking")
+    else:
+        return
+    ##In theory we can also just use a large prime.. i'll fix when it becomes an issue..
+   # print("partials: "+str(partials))
+    partials=get_partials(lmod,partials)
+    partials2=get_partials(lmod,partials2)
+    enum=[]
+    enum2=[]
+    h=0
+    while h < len(partials):
+        enum.append(partials[h+1])
+        enum2.append(partials2[h+1])
+        h+=2
+
+    for idx in enumerated_product(*enum):
+        r1=0
+        r2=0
+        u=0
+        while u < len(idx):
+            r1+=enum[u][idx[u]]
+            r2+=enum2[u][idx[u]]
+            u+=1
+        r1%=lmod
+        r2%=lmod  
+        large_ff_roots.append(r1)
+        large_ff_roots.append(r2)
+        gcdtest=math.gcd(r1,n)  
+        gcdtest2=math.gcd(r2,n)  
+        print("factors of "+str(n)+" are: "+str(gcdtest)+" and: "+str(n//gcdtest)+" r//gcdtest: "+str(r1//gcdtest)+" z: "+str(z)+" y: "+str(y)+" r1: "+str(r1)+" r2: "+str(r2))
+
     
-    
+    lpartials_1=[]
+    lpartials_2=[]
+    lmod=1
     prev=0
     r=0
     while r < len(seen_primes):
-        partials=[]
-        lmod=1
+
+        
         h=0
 
         prime=seen_primes[r]
@@ -710,8 +884,11 @@ def ff_square_root(z,y,k,n,seen_primes,root_hmap,primeslist):
           #  d_inv=modinv(d,prime)
         roots=solve_quadratic_congruence(1, y,-n*k*z, prime)
         roots2=solve_quadratic_congruence(k*z, -y,-n, prime)
+      #  print("roots: "+str(roots)+" roots2: "+str(roots2))
         root=roots[0]
+
         root2=roots2[0]
+
         if root == 0:
             r+=1
             continue
@@ -727,6 +904,7 @@ def ff_square_root(z,y,k,n,seen_primes,root_hmap,primeslist):
         r+=1
         exp=1
         while r < len(seen_primes) and seen_primes[r] == prev:
+
             root=lift_root(1,0,-n*k*z, root, prime, exp)   
             root2=lift_root(k*z,0,-n, root2, prime, exp)   
             if (root**2+y*root-n*k*z)%prime**(exp+1)!=0:
@@ -737,38 +915,86 @@ def ff_square_root(z,y,k,n,seen_primes,root_hmap,primeslist):
                 sys.exit()
             exp+=1
             r+=1
-        if prime**exp > round(n**0.6):
-            ###To do: Need to calculate d in another larger finite field rather then just bruteforce.. or alternatively create a sieve interval for it.
-            ###Almost finished now...
-            print("Checking ff: "+str(prime**exp))
-            d=1
-            while d < prime**exp:
-                
-                if d%prime ==0:
-                    d+=1
-                    continue
-                d_inv=modinv(d,prime**exp)
-                new_root=(root*d_inv)%prime**exp
-                new_root2=(root2*d)%prime**exp
-                result=create_div_interval(root_hmap,primeslist,new_root,new_root2,prime**exp,y)
-                if result == 1:
-                    print("D: "+str(d))
-                else:
-                    d+=1
-                    continue
-                if (d*new_root**2+y*new_root-n*k*z*d_inv)%prime**exp !=0:
-                    print("d: ",d)
-                    sys.exit()
-                if (k*z*d_inv*new_root2**2-y*new_root2-n*d)%prime**exp !=0:
-                    print("d: ",d)
-                    sys.exit()
-                gcdtest=math.gcd(new_root,n)
-                gcdtest2=math.gcd(new_root2,n)
-                #disc=y**2+4*n*k*z
-                if gcdtest != 1 and gcdtest !=n and new_root//gcdtest == 1:
-                    print("[!!!!!FOUND BY TAKING SQUARE ROOT OVER FINITE FIELD (Note: This function isn't finished yet, will update soon)!!!!!]Factors of "+str(n)+" : "+str(gcdtest)+" and "+str(n//gcdtest)+" result: "+str(result)+" new_root: "+str(new_root)+" new_root2: "+str(new_root2)+" prime**exp: "+str(prime**exp))#+" d: "+str(d)+" gcdtest2: "+str(gcdtest2)+" new_root//gcdtest: "+str(new_root//gcdtest)+" prime**exp: "+str(prime**exp)+" root: "+str(new_root)+" root2: "+str(new_root2))
-                    sys.exit()
-                d+=1
+        if exp%2 == 0:
+            lmod*=prime**exp
+            lpartials_1.append(prime**exp)
+            lpartials_1.append([root])
+            lpartials_2.append(prime**exp)
+            lpartials_2.append([root2])
+    if lmod < n:
+        return
+ #   print("lpartials_1: "+str(lpartials_1)+" lmod: "+str(lmod))
+    lpartials_1=get_partials(lmod,lpartials_1)
+    lpartials_2=get_partials(lmod,lpartials_2)
+    
+  
+    enum=[]
+    enum2=[]
+    h=0
+    while h < len(lpartials_1):
+        enum.append(lpartials_1[h+1])
+        enum2.append(lpartials_2[h+1])
+        h+=2
+
+    for idx in enumerated_product(*enum):
+        r1=0
+        r2=0
+        u=0
+        while u < len(idx):
+            r1+=enum[u][idx[u]]
+            r2+=enum2[u][idx[u]]
+            u+=1
+        
+        r1%=lmod
+        r2%=lmod
+        gcd1=math.gcd(r1,n)
+        gcd2=math.gcd(r2,n)
+      #  print("r1: "+str(r1)+" r2: "+str(r2)+" gcd1: "+str(gcd1)+" gcd2: "+str(gcd2))
+
+    print("partials: "+str(lpartials_1)+" lpartials_2: "+str(lpartials_2)+" seen_primes: "+str(seen_primes)+" z: "+str(z)+" y: "+str(y)+" r1t: "+str(r1)+" r2t: "+str(r2)) 
+    root=r1
+    root2=r2
+
+    if lmod > round(n**0.6):
+        print("Checking for factors mod: "+str(lmod))
+        t=0
+        while t < len(large_ff_roots):
+            d=solve_congruence(root2,large_ff_roots[t],lmod)
+            correct_d=solve_congruence(root2,41,lmod)
+            test=solve_congruence(d,correct_d,lmod)
+            correct_d2=solve_congruence(root2,107,lmod)
+            test2=solve_congruence(d,correct_d2,lmod)
+            print("trying d: "+str(d))
+            print("correct_d: "+str(correct_d)+" correct_d2: "+str(correct_d2)+" test: "+str(test)+" test2: "+str(test2))
+            if math.gcd(d,lmod)!=1:
+                print("skipping")
+                t+=1
+                continue
+            
+            d_inv=modinv(d,lmod)
+            new_root=(root*d_inv)%lmod
+            new_root2=(root2*d)%lmod
+
+            result=create_div_interval(root_hmap,primeslist,new_root,new_root2,lmod,y)
+            if result == 1:
+                print("D: "+str(d))
+            else:
+                t+=1
+                continue
+            if (d*new_root**2+y*new_root-n*k*z*d_inv)%lmod !=0:
+                print("d quit: ",d)
+                sys.exit()
+            if (k*z*d_inv*new_root2**2-y*new_root2-n*d)%lmod !=0:
+                print("d quit: ",d)
+                sys.exit()
+            gcdtest=math.gcd(new_root,n)
+            gcdtest2=math.gcd(new_root2,n)
+       #         #disc=y**2+4*n*k*z
+            if gcdtest != 1 and gcdtest !=n and new_root//gcdtest == 1:
+                print("[!!!!!FOUND BY TAKING SQUARE ROOT OVER FINITE FIELD (Note: This function isn't finished yet, will update soon)!!!!!]Factors of "+str(n)+" : "+str(gcdtest)+" and "+str(n//gcdtest)+" result: "+str(result)+" new_root: "+str(new_root)+" new_root2: "+str(new_root2)+" lmod: "+str(lmod)+" z: "+str(z)+" y: "+str(y)+" seen_primes: "+str(seen_primes))#+" d: "+str(d)+" gcdtest2: "+str(gcdtest2)+" new_root//gcdtest: "+str(new_root//gcdtest)+" prime**exp: "+str(prime**exp)+" root: "+str(new_root)+" root2: "+str(new_root2))
+                sys.exit()
+            t+=1
+    
 
   
 cdef construct_interval(n,primeslist,interval,k,smooth_list,root_list,factor_list,root_hmap):
@@ -805,8 +1031,6 @@ cdef construct_interval(n,primeslist,interval,k,smooth_list,root_list,factor_lis
             ind+=1
             continue
 
-        ff_square_root(z,y,k,n,seen_primes,root_hmap,primeslist)
-     
         log=0
         g=0
         for prime in seen_primes:
