@@ -28,6 +28,11 @@ To run: python3 run_qs.py -keysize 30 -base 40 -debug 1 -lin_size 5000 -quad_siz
 
 This is kind of NFS with second degree polynomials.. this needs to be expanded to higher degrees eventually..
 
+Update: I quickly changed something so it takes a square root over a single large prime. Next we need to explore to different routs:
+
+1. Can we succeed when the discriminant is not square? And if so, how and when?
+2. Can we gain an advantage using higher degree polynomials?
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
