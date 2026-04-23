@@ -16,6 +16,8 @@ To run: python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_s
 
 Update: I rolled back some of the experimentation I was doing here. I actually had a better idea. There is a way to do a quadratic sieve style sieving using binomial expansions. Since the result of the discriminant can also by generated using these binomial expansions to higher degrees (the paper shows how) .. That may actually be the way to find many smooth candidates with similar factorization. Let me explore that route a bit more.
 
+Update YEA DEFINITELY. You can use higher degree polynomials for sieving. And the math behind it isn't at all complicated. It is actually VERY SIMPLE. Fcking hell. I dont know why I just missed something as  obvious as this. Will upload PoC hopefully tomorrow or in the weekend.
+
 #### To run from folder "Coefficient_Sieve" (Experimental WORK IN PROGRESS):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 30 -base 40 -debug 1 -lin_size 5000 -quad_size 100 -d 2
