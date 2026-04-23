@@ -939,12 +939,16 @@ def evaluate(f, x):
 
     return res
 
+def enumerated_product(*args):
+    for e in itertools.product(*(range(len(x)) for x in args)):
+        yield e
+
 cdef construct_interval(n,primeslist):
     print("[i]Entering attack loop")
     k=1
     while k < quad_sieve_size+1:
         print("[i]Building interval: "+str(k))
-        interval=np.zeros([lin_sieve_size,lin_sieve_size],dtype=np.int16)
+        interval=np.ones([lin_sieve_size,lin_sieve_size],dtype=np.int16)
         t=0
         while t < len(primeslist):
             prime=primeslist[t]
@@ -968,96 +972,93 @@ cdef construct_interval(n,primeslist):
                 if len(roots) == 0:
 
                     if cur[0] < lin_sieve_size and cur[1] < lin_sieve_size:
-                        interval[cur[0]::prime,cur[1]::prime]=1
-
-
-                ###Old discriminant code.. works for d = 2 but not higher
-                #test=cur[1]**2+4*n*k*cur[0]
-                
-               # if jacobi(test,prime)==-1:
-                  #  if cur[0] < lin_sieve_size and cur[1] < lin_sieve_size:
-                    #    interval[cur[0]::prime,cur[1]::prime]=1
+                        interval[cur[0]::prime,cur[1]::prime]=0
             t+=1
-       # print("interval: ",interval)
-        print("[i]Checking interval: "+str(k))
-        coeff=[-n*k]
-        d=degree
-        d_ind=0
-        while d_ind < d:
-            coeff.insert(0,0)
-            d_ind+=1
-        coeff[0]+=1
-        ranges = [range(start, lin_sieve_size) for start in coeff[:-1]]
-        for combo in itertools.product(*ranges):
-            current = list(combo) +  [coeff[-1]]
 
-            if interval[current[0],current[1]]==1:
+        print("[i]Checking interval: "+str(k))
+
+        indexlist=np.nonzero(interval)
+        indexlist_x=indexlist[1]
+        indexlist_y=indexlist[0]
+        ind=0
+        length=len(indexlist_x)
+        checked=0
+        while ind < length:# length:  
+            y=int(indexlist_x[ind])
+            z=int(indexlist_y[ind])
+
+  
+            if z == 0:
+                ind+=1
+                continue
+
+
+            if interval[z,y]==0:
+                print("error")
+                ind+=1
                 continue
             partials=[]
-            lmod=1
-            h=0
-            while h < len(primeslist) and lmod < n:
-                prime=primeslist[h]
-                if math.gcd(prime,current[0])!=1 or jacobi((-n*k)%prime,prime) == -1:
-                    h+=1
-                    continue
+            partials2=[]
 
-                red_current=[]
-                e=0
-                while e < len(current):
-                    if e == 0:
-                        red_current.append(1)
-                    elif e == len(current)-1:
-                        red_current.append((-current[0]*k*n)%prime)
-                    else:   
-                        red_current.append(current[e]%prime)
+            counter=n*2
+            counter+=1
+            while isPrime(counter,5) ==0:
+                counter+=2
+                continue
+            prime=counter
+            red_current=[1,y%prime,(-z*k*n)%prime]
+            disc=y**2+4*n*k*z
+            discgcd=math.gcd(math.isqrt(disc)+y,n)
+            print("[i]trying  find_roots on large prime z: "+str(z)+" y: "+str(y)+" prime: "+str(prime)+" disc**0.5 "+str(disc**0.5))
+            cur=[1,y,-n*k*z]
+            roots=find_roots_poly(cur,prime)
+            cur2=[k*z,-y,-n]
+            roots2=find_roots_poly(cur,prime)
 
-                    e+=1
-                roots=find_roots_poly(red_current,prime)
+            ##This tonelli code seems broken for large prime.. probably some floating point precision loss..
+            #roots=solve_quadratic_congruence(1, y,-n*k*z, prime)
+           # roots2=solve_quadratic_congruence(k*z, -y,-n, prime)
+            if len(roots)==0:
+                ind+=1
+                continue
 
-                lmod*=prime
-                partials.append(prime)
-                partials.append(roots)
-                h+=1
-            ##In theory we can also just use a large prime.. i'll fix when it becomes an issue..
-            partials=get_partials(lmod,partials)
+            partials.append(prime)
+            partials.append(roots)
+            partials2.append(prime)
+            partials2.append(roots2)
+
+            partials=get_partials(prime,partials)
+            partials2=get_partials(prime,partials2)
             enum=[]
+            enum2=[]
             h=0
             while h < len(partials):
                 enum.append(partials[h+1])
+                enum2.append(partials2[h+1])
                 h+=2
-    
-            for combo in itertools.product(*enum):
-                r=0
-                u=0
-                while u < len(combo):
-                    r+=combo[u]
-                    u+=1
-                r%=lmod
-                
-                div2=modinv(2,n)
-                binomial_y=(current[1]*div2)%n 
-                binomial_x=2*current[0]*r**2+current[1]
-                binomial_x=(binomial_x*div2)%n 
-                gcdtest=math.gcd(r,n)
-                if gcdtest != 1 and gcdtest != n:
-                    print("factors of "+str(n)+" are: "+str(gcdtest)+" and: "+str(n//gcdtest))
-                    sys.exit()
-            print("[i]A solution was indicated but not found.. perhaps increase factor base")
-            ##Old discriminant code... replaced this by taking the root now
-            #test=current[1]**2+4*n*k*current[0]
 
-            #print("found one: "+str(current)+" my_for: "+str(test))
-            #test_sqr=math.isqrt(test)
-            #if test_sqr**2 == test:
-                #gcdtest=gcd(test_sqr+current[1],n)
-                #if gcdtest != 1 and gcdtest != n:
-                    #print("factors of "+str(n)+" are: "+str(gcdtest)+" and: "+str(n//gcdtest))
-                    #sys.exit()
-                #else:
-                    #print("[i]Might need to increase factor base size")
-            #else:
-                #print("[i]Might need to increase factor base size")
+            for idx in enumerated_product(*enum):
+                r1=0
+                r2=0
+                u=0
+                while u < len(idx):
+                    r1+=enum[u][idx[u]]
+                    r2+=enum2[u][idx[u]]
+                    u+=1
+                r1%=prime
+                r2%=prime  
+
+                gcdtest=math.gcd(r1,n)  
+                gcdtest2=math.gcd(r2,n)  
+   
+                discgcd=-1
+                if disc > 0:
+                    discgcd=math.gcd(math.isqrt(disc)+y,n)
+                print("factors of "+str(n)+" are: "+str(gcdtest)+" and: "+str(n//gcdtest)+" r//gcdtest: "+str(r1//gcdtest)+" z: "+str(z)+" y: "+str(y)+" r1: "+str(r1)+" r2: "+str(r2)+" discgcd: "+str(discgcd))
+
+                if gcdtest != 1 and gcdtest != n:
+                    sys.exit()
+            print("[i]Solutions was indicated but not found.. ")
         k+=1
     return 
 
