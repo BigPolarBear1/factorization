@@ -12,15 +12,9 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 
 #### To run from folder "QS_SF_Variant" (Experimental WORK IN PROGRESS):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 10_000 -quad_size 100 -t 20
+To run: python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100 -t 20
 
-Update: Initially my idea with this PoC was to explore finding smooth candidates with lots of small factors (since it reduces the size of the required factor base). But now I'm going off on a bit of a tangent, trying to figure out if there is any way we can take a square root mod m when the discriminant isn't square in Z. Because that would still be the most ideal option. If I cant get that to work I'll go back to exploring my initial idea here.
-
-Update: Actually I have an idea for tomorrow. Calculating the divisor is very hard, it would be an area of research which would take time. However, if we can make it so our divisor value is very small, which ends up being the case if the discriminant is square.. then it does not matter. So tomorrow I should have a look at cases, for example when the discriminant is 3\*3\*2  .. aka.. nearly square. What happens with this divisor value if it is almost square? Because if I can calculate those cases.. then that would be an historical breakthrough and a major improvement on existing algorithms. Lets see tomorrow.
-
-Update: I spent the day working on this. I think the only way to do it is as following: If the discriminant for example is 7\*7\*7 then we can calculate the singular root for that. THen we need to figure out the divisor. But, and here is the crucial part.. rather then looking at solutions in a different prime field.. we look at solutions in 7\*7\*7\*7 instead. Because that then simplifies all this residue math. I dont know if I can see another way to do it. I guess if this fails I'll go back and try to optimize what I had before. JUst quickly finding large concentrations of small factors isn't a bad strategy either.. I just havnt yet tried hard enough to implement an optimized PoC for it. Although I am fairly sure if the discriminant is nearly square.. I should be able to do something with it.. it's definitely an angle I'll keep exploring for a while.
-
-Update: You know what. Tomorrow I'm just going to go with the original idea I had here. Just a quadratic sieve variant trying to get many small factors in the discriminant so we can work with small factor bases. Get a super optimized PoC for that published. I can explore all these other things later. Its time I produce something I can show people instead of chasing perfection. 
+Update: I rolled back some of the experimentation I was doing here. I actually had a better idea. There is a way to do a quadratic sieve style sieving using binomial expansions. Since the result of the discriminant can also by generated using these binomial expansions to higher degrees (the paper shows how) .. That may actually be the way to find many smooth candidates with similar factorization. Let me explore that route a bit more.
 
 #### To run from folder "Coefficient_Sieve" (Experimental WORK IN PROGRESS):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
