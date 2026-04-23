@@ -20,6 +20,8 @@ Update: Actually I have an idea for tomorrow. Calculating the divisor is very ha
 
 Update: I spent the day working on this. I think the only way to do it is as following: If the discriminant for example is 7\*7\*7 then we can calculate the singular root for that. THen we need to figure out the divisor. But, and here is the crucial part.. rather then looking at solutions in a different prime field.. we look at solutions in 7\*7\*7\*7 instead. Because that then simplifies all this residue math. I dont know if I can see another way to do it. I guess if this fails I'll go back and try to optimize what I had before. JUst quickly finding large concentrations of small factors isn't a bad strategy either.. I just havnt yet tried hard enough to implement an optimized PoC for it. Although I am fairly sure if the discriminant is nearly square.. I should be able to do something with it.. it's definitely an angle I'll keep exploring for a while.
 
+Update: You know what. Tomorrow I'm just going to go with the original idea I had here. Just a quadratic sieve variant trying to get many small factors in the discriminant so we can work with small factor bases. Get a super optimized PoC for that published. I can explore all these other things later. Its time I produce something I can show people instead of chasing perfection. 
+
 #### To run from folder "Coefficient_Sieve" (Experimental WORK IN PROGRESS):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 30 -base 40 -debug 1 -lin_size 5000 -quad_size 100 -d 2
