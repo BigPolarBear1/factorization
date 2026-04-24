@@ -10,24 +10,11 @@ https://github.com/basilegithub/General-number-field-sieve-Python
 #### About the paper
 Math paper is a work in progress. The final chapters are a bit rushed and building an algorithm around p-adic lifting isnt as straight forward as I had assumed. I do think there is an angle there I can exploit, but I'll do some further experimentation first and get a working PoC before I make edits to the paper again.
 
-#### To run from folder "QS_SF_Variant" (Experimental WORK IN PROGRESS):</br></br>
+#### To run from folder "binomial_sieve" (Experimental WORK IN PROGRESS):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100 -t 20
+To run:  python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 1000 -quad_size 100
 
-Update: I rolled back some of the experimentation I was doing here. I actually had a better idea. There is a way to do a quadratic sieve style sieving using binomial expansions. Since the result of the discriminant can also by generated using these binomial expansions to higher degrees (the paper shows how) .. That may actually be the way to find many smooth candidates with similar factorization. Let me explore that route a bit more.
-
-Update YEA DEFINITELY. You can use higher degree polynomials for sieving. And the math behind it isn't at all complicated. It is actually VERY SIMPLE. Fcking hell. I dont know why I just missed something as  obvious as this. Will upload PoC hopefully tomorrow or in the weekend.
-
-#### To run from folder "Coefficient_Sieve" (Experimental WORK IN PROGRESS):</br></br>
-To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 30 -base 40 -debug 1 -lin_size 5000 -quad_size 100 -d 2
-
-This is kind of NFS with second degree polynomials.. this needs to be expanded to higher degrees eventually..
-
-Update: I quickly changed something so it takes a square root over a single large prime. Next we need to explore to different routs:
-
-1. Can we succeed when the discriminant is not square? And if so, how and when?
-2. Can we gain an advantage using higher degree polynomials?
+TO DO: Alright, first PoC demonstrating how to sieve using higher degree polynomials (see binomial_sieve()). Now this will require me to implement residue sieving as well like I did in CUDA_QS_variant so we can use this setup to quickly hunt for b-smooth candidates wtih similar factorization.
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
