@@ -14,7 +14,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 1000 -quad_size 100
 
-TO DO: Alright, first PoC demonstrating how to sieve using higher degree polynomials (see binomial_sieve()). Now this will require me to implement residue sieving as well like I did in CUDA_QS_variant so we can use this setup to quickly hunt for b-smooth candidates wtih similar factorization.
+TO DO: Alright, first PoC demonstrating how to sieve using higher degree polynomials (see binomial_sieve()). Now this will require me to implement residue sieving as well like I did in CUDA_QS_variant so we can use this setup to quickly hunt for b-smooth candidates with similar factorization.
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
