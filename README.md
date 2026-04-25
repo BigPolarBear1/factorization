@@ -18,6 +18,8 @@ TO DO: Alright, first PoC demonstrating how to sieve using higher degree polynom
 
 UPDATE: EUREKA! Ofcourse. If we have singular roots, and we keep lifting until we have no solution. But we still have non-singular roots that solve for 0, then this means the discriminant is a square residue and if this is the case for every divisor of the discriminant then we are square in Z. Easy! Plus with using higher degree polynomials, we can actually use this strategy.
 
+Update: I'll leave this repo and I'm starting a new one called psieve (p-adic sieve)... it will combine everything. We actually dont really need to sieve at all. We just need to calculate p-adic solutions (singular roots) of quadratics.. and if the exp + 1 then yields non-singular roots, meaning it is also a quadratic residue in a slightly bigger field.. then we save those solutions. Then we can create a hashmap from which we can literally pull square relations. I'll write that first. Then next we can use these higher degree polynomials to better calculate coefficients.. bc of how these binomial expansions work if we have a correct solution in the integers.. you'll see soon what I mean.
+
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
