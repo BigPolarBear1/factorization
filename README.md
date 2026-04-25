@@ -16,7 +16,7 @@ To run:  python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 1000 -quad_si
 
 TO DO: Alright, first PoC demonstrating how to sieve using higher degree polynomials (see binomial_sieve()). Now this will require me to implement residue sieving as well like I did in CUDA_QS_variant so we can use this setup to quickly hunt for b-smooth candidates with similar factorization.
 
-Update: Today's task will be to re-integrate support for moduli (i.e generate_modulus in CUDA_QS_Variant). 
+UPDATE: EUREKA! Ofcourse. If we have singular roots, and we keep lifting until we have no solution. But we still have non-singular roots that solve for 0, then this means the discriminant is a square residue and if this is the case for every divisor of the discriminant then we are square in Z. Easy! Plus with using higher degree polynomials, we can actually use this strategy.
 
 #### To run from folder "CUDA_QS_variant":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
