@@ -19,7 +19,7 @@ The idea is we can do p-adic lifting of singular roots until no more roots are f
 
 I will optimize this code first. Then finally, we will also combine the results from binomial_sieve.. bc if we have a solution in Z, then there is a direct correlation between solutions expanded to the second degree and solutions expanded to the fourth degree for example. Which abstractly creates kind of a vector to calculate the correct coefficient... in theory. Which would straight up break factorization and likely yield a polytime algorithm...
 
-#### To run from folder "binomial_sieve" (Experimental WORK IN PROGRESS):</br></br>
+#### To run from folder "binomial_sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 1000 -quad_size 100
 
