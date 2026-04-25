@@ -14,7 +14,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 16 -base 20 -debug 1 -lin_size 400 -quad_size 1
 
-A first commit. This version will combine everything learned so far. Some awful code in here. I'll fix it tomorrow.
+A first commit. This version will combine everything learned so far. Some awful code in here. I'll fix it tomorrow (it will remain slow until I do.. some bruteforce shit in create_map2 I need to resolve).
 The idea is we can do p-adic lifting of singular roots until no more roots are found, at which point we check if we can still find non-singular roots, which means the discriminant will be a quadratic residue in this finite field.. and we only track the cases where this occurs. Then from the result we can pull square relations and in theory we can just keep lifting primes until we get a hit. 
 
 I will optimize this code first. Then finally, we will also combine the results from binomial_sieve.. bc if we have a solution in Z, then there is a direct correlation between solutions expanded to the second degree and solutions expanded to the fourth degree for example. Which abstractly creates kind of a vector to calculate the correct coefficient... in theory. Which would straight up break factorization and likely yield a polytime algorithm...
