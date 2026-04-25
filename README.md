@@ -25,7 +25,7 @@ To run:  python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 1000 -quad_si
 
 Just sieves with binomial expansions... for use with the paper. I hope to combine everything learned in the last 3 years in psieve.
 
-#### To run from folder "CUDA_QS_variant":</br></br>
+#### To run from folder "CUDA_QS_variant" (Failed Experiment):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
  
