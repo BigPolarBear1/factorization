@@ -10,6 +10,15 @@ https://github.com/basilegithub/General-number-field-sieve-Python
 #### About the paper
 Math paper is a work in progress. The final chapters are a bit rushed and building an algorithm around p-adic lifting isnt as straight forward as I had assumed. I do think there is an angle there I can exploit, but I'll do some further experimentation first and get a working PoC before I make edits to the paper again.
 
+#### To run from folder "psieve" (Experimental WORK IN PROGRESS):</br></br>
+To build: python3 setup.py build_ext --inplace</br>
+To run: python3 run_qs.py -keysize 16 -base 20 -debug 1 -lin_size 400 -quad_size 1
+
+A first commit. This version will combine everything learned so far. Some awful code in here. I'll fix it tomorrow.
+The idea is we can do p-adic lifting of singular roots until no more roots are found, at which point we check if we can still find non-singular roots, which means the discriminant will be a quadratic residue in this finite field.. and we only track the cases where this occurs. Then from the result we can pull square relations and in theory we can just keep lifting primes until we get a hit. 
+
+I will optimize this code first. Then finally, we will also combine the results from binomial_sieve.. bc if we have a solution in Z, then there is a direct correlation between solutions expanded to the second degree and solutions expanded to the fourth degree for example. Which abstractly creates kind of a vector to calculate the correct coefficient... in theory. Which would straight up break factorization and likely yield a polytime algorithm...
+
 #### To run from folder "binomial_sieve" (Experimental WORK IN PROGRESS):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 1000 -quad_size 100
