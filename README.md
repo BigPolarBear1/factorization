@@ -12,16 +12,11 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 
 #### To run from folder "psieve" (Experimental WORK IN PROGRESS):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 16 -base 20 -debug 1 -lin_size 400 -quad_size 1
+To run: python3 run_qs.py -keysize 20 -base 20 -debug 1 -lin_size 500 -quad_size 1
 
-A first commit. This version will combine everything learned so far. Some awful code in here. I'll fix it tomorrow (it will remain slow until I do.. some bruteforce shit in create_map2 I need to resolve).
-The idea is we can do p-adic lifting of singular roots until no more roots are found, at which point we check if we can still find non-singular roots, which means the discriminant will be a quadratic residue in this finite field (which is basically going to be the finite field thats one exponent higher then the discriminant).. and we only track the cases where this occurs. Then from the result we can pull square relations and in theory we can just keep lifting primes until we get a hit. 
+P-adic Sieve to do:
 
-I will optimize this code first. Then finally, we will also combine the results from binomial_sieve.. bc if we have a solution in Z, then there is a direct correlation between solutions expanded to the second degree and solutions expanded to the fourth degree for example. Which abstractly creates kind of a vector to calculate the correct coefficient... in theory. Which would straight up break factorization and likely yield a polytime algorithm... in theory.. but it looks very promising... in theory. My haters will say I'm schizo, but they cant stand I'm getting closer to victory every day. Cry more losers.
-
-I guess as a first implementation what I'll do is, if we find a discriminant that's almost square using quadratics, we can then check residues for polynomials in the 4th degree. Which should then help to calculate the correct coefficients such that we resolve into a square in Z. This is a really good angle to attack factorization. I'm feeling quite optimistic about this. And once that works, I'll begin generalizing the hell out of it and work towards a polynomial time algorithm.
-
-I know people know I'm closing in fast. I will complete this even if it is the last thing I do in this life.
+Next we need to calculate residues for 4th degree polynomials. My hope is that we can correlate the results from 2nd degree polynomials with these to generate square solutions from nearly-square solutions. Since the paper shows how solutions in Z correlate with these binomial expansions. And this is also demonstrated in binomial_sieve. Thinking laterally, trying to correlate residue results from different degrees, might actually allow me to crack this wide open. We'll see. Furthermore, it is also p-adicly lifting singular roots (meaning the derivative is zero mod p^e) and when we cant lift further we then check if the resulting discriminant yields a quadratic residue in mod p^(e+1). This allows us to eliminate coefficients whose discriminant most definitely are not going to yield a square in Z. 
 
 #### To run from folder "binomial_sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
