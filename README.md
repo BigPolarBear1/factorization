@@ -20,6 +20,8 @@ Next we need to calculate residues for 4th degree polynomials. My hope is that w
 
 In theory this setup should absolutely work.. and we can even go up and calculate 6th degree.. and so on. And then if they have the same root residues and discriminant mod p^e just chinese remainder it all together to generate the solution in Z. Bc they will all be distinct modular reductions of the solution in Z... due to how these coefficients change as we perform binomial expanions. Its the best bet I have to break this problem wide open.
 
+Anyway going to take a break now for a few days, going to spent a few days again writing blogs. I'll start implementing this later next week.
+
 #### To run from folder "binomial_sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 1000 -quad_size 100
