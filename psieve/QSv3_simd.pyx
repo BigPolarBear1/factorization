@@ -313,32 +313,52 @@ def launch(n,primeslist1,primeslist2,small_primeslist):
   #  threshold=1
     k=1
     hashmap=create_map2(n,primeslist1,k,small_base)
-    z=1
-    while z < lin_sieve_size:
-        y=1
-        while y < lin_sieve_size:
-            lmod=1
-            i=0
-            while i < len(hashmap):
-                try:
-                    res=hashmap[i][tuple([z,y])]
-                    lmod*=primeslist1[i]**res
-                except Exception as e:
-                    i+=1
-                    continue
-                i+=1
-           # print("lmod: "+str(lmod))
-            if lmod > n:
-                disc=y**2+4*n*k*z
-                print("disc: "+str(disc)+" lmod: "+str(lmod)+" z: "+str(z)+" y: "+str(y))
-                disc_test=math.isqrt(disc)
-                if disc_test**2 == disc:
-                    gcdtest=math.gcd(disc_test+y,n)
-                    if gcdtest != 1 and gcdtest != n:
-                        print("Factors of "+str(n)+" are: "+str(gcdtest)+" and: "+str(n//gcdtest))
-                        sys.exit()
-            y+=1
-        z+=1
+    interval= np.zeros((lin_sieve_size,lin_sieve_size),dtype=np.int16)
+
+    i=0
+    while i < len(hashmap):
+        prime=primeslist1[i]
+
+        for key, value in hashmap[i].items():
+            z=key[0]#hashmap[i][j][0]
+            y=key[1]#hashmap[i][j][1]
+            exp=value#hashmap[i][j][3]
+            ###Should be able to tile it, but its a little bit more complicated with this setup
+            interval[z,y]+=round(math.log2(prime**exp))
+        i+=1
+
+    threshold=round(math.log2(n))
+    
+    np.putmask(interval, interval<threshold, 0)
+    indexlist=np.nonzero(interval)
+
+    indexlist_x=indexlist[1]
+    indexlist_y=indexlist[0]
+    ind=0
+    length=len(indexlist_x)
+    checked=0
+    while ind < length:# length:  
+        y=int(indexlist_x[ind])
+        z=int(indexlist_y[ind])
+
+  
+        if z == 0:
+            ind+=1
+            continue
+
+
+        if interval[z,y]==0:
+            print("Error")
+
+        disc=y**2+4*n*k*z 
+        print(str(disc)+" interval[z,y]: "+str(interval[z,y]))
+        disc_test=math.isqrt(disc)
+        if disc_test**2 == disc:
+            gcdtest=math.gcd(disc_test+y,n)
+            if gcdtest !=1 and gcdtest !=n:
+                print("Factors of "+str(n)+" are: "+str(gcdtest)+" and: "+str(n//gcdtest))
+                sys.exit()
+        ind+=1
     sys.exit() 
     return 
 
@@ -748,10 +768,13 @@ def find_roots_poly(f, p):
 
 def create_map2(n,primeslist,k,small_base):
     hashmap=[]
+    new_map=[]
+  #  hashmap.append({})
     max_exp=500
     i=0
     while i < len(primeslist):
         hashmap.append({})
+        new_map.append({})
         prime=primeslist[i]
         print("Lifting: "+str(prime))
         if prime == 2:
@@ -796,6 +819,7 @@ def create_map2(n,primeslist,k,small_base):
                                 if poly == 0 and deriv ==0 and root < prime**(exp+1):   
                                     if z < lin_sieve_size and y < lin_sieve_size:         
                                         new_solutions.append([z,y,root])
+                                     #   hashmap[-1].append([z,y,root,exp])#[tuple([z,y])]=exp+1
                                         hashmap[-1][tuple([z,y])]=exp+1
                                 y+=prime**exp
                             z+=prime**exp
@@ -804,34 +828,27 @@ def create_map2(n,primeslist,k,small_base):
                     if len(solutions) == 0:
                         break
                     exp+=1
-       # print("hashmap[-1]: "+str(hashmap[-1]))
-        to_delete=[]
+        
+
         for key, value in hashmap[-1].items():
             l=list(key)
             z=int(l[0])
             y=int(l[1])
-            check=y**2+n*k*z
-           # print("exp: "+str(value)+" "+str(l)+" "+str(jacobi(check,prime**(value+1))))
-            if value%2 == 1: #note cant be square in Z
-                to_delete.append(key)
-                continue
-            hit=0
-            x=0
-            while x < prime**(value+1):
-                ###To do: GOT TO FIX THIS!!!!!!!!!!!!!!!!!!!
-                poly=(z*x**2+y*x-n*k)%prime**(value+1)
-                if poly == 0:
-                    hit=1
-                 #   print("poly found: "+str(key)+" jacobi: "+str(jacobi(check,prime**(value+1))))
-                    break
-                x+=1
-            if hit ==0:
-                to_delete.append(key)
-        for key in to_delete:
-            del hashmap[-1][key]
-    #    print("hashmap[-1]: "+str(hashmap[-1]))
-        i+=1
-    return hashmap
+            if value%2==0:
+                zc=z 
+                
+                while zc < lin_sieve_size:
+                    yc=y   
+                    while yc < lin_sieve_size:
+                        check=(yc**2+4*n*k*zc)//(prime**value)
+                        ja=jacobi(check,prime**(value+1))
+                        if ja != -1:
+                            new_map[-1][tuple([zc,yc])]=value
+                        yc+=prime**value
+                    zc+=prime**value
+        i+=1     
+
+    return new_map
     
 def enumerated_product(*args):
     for e in itertools.product(*(range(len(x)) for x in args)):
