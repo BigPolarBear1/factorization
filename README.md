@@ -28,7 +28,7 @@ To run:  python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 1000 -quad_si
 
 Just sieves with binomial expansions... for use with the paper. I hope to combine everything learned in the last 3 years in psieve.
 
-#### To run from folder "Coefficient_Sieve" (Demonstrates math from the paper):</br></br>
+#### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
 
