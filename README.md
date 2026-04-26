@@ -21,6 +21,8 @@ I will optimize this code first. Then finally, we will also combine the results 
 
 I guess as a first implementation what I'll do is, if we find a discriminant that's almost square using quadratics, we can then check residues for polynomials in the 4th degree. Which should then help to calculate the correct coefficients such that we resolve into a square in Z. This is a really good angle to attack factorization. I'm feeling quite optimistic about this. And once that works, I'll begin generalizing the hell out of it and work towards a polynomial time algorithm.
 
+I know people know I'm closing in fast. I will complete this even if it is the last thing I do in this life.
+
 #### To run from folder "binomial_sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 1000 -quad_size 100
