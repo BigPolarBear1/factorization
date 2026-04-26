@@ -28,6 +28,12 @@ To run:  python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 1000 -quad_si
 
 Just sieves with binomial expansions... for use with the paper. I hope to combine everything learned in the last 3 years in psieve.
 
+#### To run from folder "Coefficient_Sieve" (Demonstrates math from the paper):</br></br>
+To build: python3 setup.py build_ext --inplace</br>
+To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
+
+Just demonstrates the math from the paper using quadratics. For educational purposes. And rather then taking a square root over a large prime we can also just calculate the discriminant. But this demonstrates the interesting relation between these quadratics and the factors of N.
+
 #### To run from folder "CUDA_QS_variant" (Failed Experiment):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
