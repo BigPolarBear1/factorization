@@ -16,7 +16,7 @@ To run:  python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 1000 -quad_si
 
 Sieves with binomial expansions... 
 
-Update: I have changed some things so it can sieve with non-zero derivates.. but sieving degrees > 2 needs to be refined and in addition we need to implement residue sieving. 
+Update: I have changed some things so it can sieve with non-zero derivatives.. but sieving degrees > 2 needs to be refined and in addition we need to implement residue sieving. 
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
