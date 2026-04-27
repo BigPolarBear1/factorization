@@ -10,23 +10,13 @@ https://github.com/basilegithub/General-number-field-sieve-Python
 #### About the paper
 Math paper is a work in progress. The final chapters are a bit rushed and building an algorithm around p-adic lifting isnt as straight forward as I had assumed. I do think there is an angle there I can exploit, but I'll do some further experimentation first and get a working PoC before I make edits to the paper again.
 
-#### To run from folder "psieve" (Experimental WORK IN PROGRESS):</br></br>
-To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 20 -base 20 -debug 1 -lin_size 500 -quad_size 1
-
-P-adic Sieve to do:
-
-Next we need to calculate residues for 4th degree polynomials. My hope is that we can correlate the results from 2nd degree polynomials with these to generate square solutions from nearly-square solutions. Since the paper shows how solutions in Z correlate with these binomial expansions. And this is also demonstrated in binomial_sieve. Thinking laterally, trying to correlate residue results from different degrees, might actually allow me to crack this wide open. We'll see. Furthermore, it is also p-adicly lifting singular roots (meaning the derivative is zero mod p^e) and when we cant lift further we then check if the resulting discriminant yields a quadratic residue in mod p^(e+1). This allows us to eliminate coefficients whose discriminant most definitely are not going to yield a square in Z. 
-
-In theory this setup should absolutely work.. and we can even go up and calculate 6th degree.. and so on. And then if they have the same root residues and discriminant mod p^e just chinese remainder it all together to generate the solution in Z. Bc they will all be distinct modular reductions of the solution in Z... due to how these coefficients change as we perform binomial expanions. Its the best bet I have to break this problem wide open.
-
-Anyway going to take a break now for a few days, going to spent a few days again writing blogs. I'll start implementing this later next week.
-
 #### To run from folder "binomial_sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 1000 -quad_size 100
 
-Just sieves with binomial expansions... for use with the paper. I hope to combine everything learned in the last 3 years in psieve.
+Just sieves with binomial expansions... for use with the paper.
+
+Upate: I'm going to improve this a little. Bc I also know how to sieve non-zero derivatives... I should add that.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
