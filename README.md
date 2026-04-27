@@ -18,6 +18,8 @@ Sieves with binomial expansions...
 
 Update: I have changed some things so it can sieve with non-zero derivatives.. but sieving degrees > 2 needs to be refined and in addition we need to implement residue sieving. 
 
+Update: What I'll do next is simple... do an approach similar to CUDA_QS_Variant and if we find a smooth candidate using second degree polynomials... just expand to the 4th degree and sieve.. and so on. That should hopefully allow us to find smooth candidates with similar factorization... and succeed at the linear algebra step with much fewer smooth candidates.. bc traditional QS variants they cant punch past that 110 digit ceiling due to the fact of how quickly the required factor base size grows.. but this approach would solve that. And if that works... I'll pubish and take some time to seriously study math to begin the journey towards a polytime algorithm. That is my dream. Nobody can take my dream away. No matter how hard they try.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
