@@ -14,9 +14,9 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 1000 -quad_size 100
 
-Just sieves with binomial expansions... for use with the paper.
+Sieves with binomial expansions... 
 
-Upate: I'm going to improve this a little. Bc I also know how to sieve non-zero derivatives... I should add that.
+Update: I have changed some things so it can sieve with non-zero derivates.. but sieving degrees > 2 needs to be refined and in addition we need to implement residue sieving. 
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
