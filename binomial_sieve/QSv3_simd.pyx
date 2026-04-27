@@ -164,13 +164,13 @@ def gcd(a,b): # Euclid's algorithm ##To do: Use a version without recursion?
     else:
         return gcd(b,a)
         
-def QS(n,factor_list,sm,flist,x_list):#,jsymbols,testl,primeslist2,disc1_squared_list):#,disc_sr_list,pval_list,pflist):
+def QS(n,factor_list,sm,flist,x_list,factor_list2):#,jsymbols,testl,primeslist2,disc1_squared_list):#,disc_sr_list,pval_list,pflist):
     g_max_smooths=base+2#+qbase
     if len(sm) > g_max_smooths*10000000: 
         del sm[g_max_smooths:]
        # del xlist[g_max_smooths:]
         del flist[g_max_smooths:]  
-    M2 = build_matrix(factor_list, sm, flist)#,pflist)
+    M2 = build_matrix(factor_list, sm, flist,factor_list2)#,pflist)
     null_space=solve_bits(M2,factor_list,len(sm))
     f1,f2=extract_factors(n, sm, null_space,x_list)#,disc_sr_list,pval_list,pflist)
     if f1 != 0:
@@ -194,16 +194,17 @@ def extract_factors(N, relations, null_space,x_list):#,disc_sr_list,pval_list,pf
             vector = vector >> 1
             if bit == 1:
                 prod_left *= relations[idx]
+                prod_right *=x_list[idx]
                 x*=x_list[idx]
              #   print("polyval:  "+str(relations[idx])+" disc constant "+str(x_list[idx]))
             idx += 1
-        prod_right=x**2
-        sqrt_right = x
+
+        sqrt_right = math.isqrt(prod_right)
         sqrt_left = math.isqrt(prod_left)#prod_left
         if sqrt_left**2 != prod_left:
             print("horrible error")
             sys.exit()
-       # print(" polyval sqrt: "+str(sqrt_left)+" disc constant sqrt: "+str(sqrt_right))#+" zx*zxy: "+str(x))
+        print(" polyval sqrt: "+str(sqrt_left%N)+" disc constant sqrt: "+str(sqrt_right%N))#+" zx*zxy: "+str(x))
         ###Debug shit, remove for final version
         sqr1=prod_left%N 
         sqr2=prod_right%N
@@ -214,7 +215,7 @@ def extract_factors(N, relations, null_space,x_list):#,disc_sr_list,pval_list,pf
 
         if sqr1 != sqr2:
             print("ERROR ERROR")
-            time.sleep(10000)
+            #time.sleep(10000)
         ###End debug shit#########
         sqrt_left = sqrt_left % N
         sqrt_right = sqrt_right % N
@@ -265,17 +266,25 @@ def solve_bits(matrix,factor_base,length):
             break
     return nulls
 
-def build_matrix(factor_base, smooth_nums, factors):#,pflist):
+def build_matrix(factor_base, smooth_nums, factors,factor_list2):#,pflist):
     fb_map = {val: i for i, val in enumerate(factor_base)}
 
     ind=1
 
-    M2=[0]*(len(factor_base)+2)#+qbase)#+2+qbase)
+    M2=[0]*((len(factor_base)+2)*2)#+qbase)#+2+qbase)
     for i in range(len(smooth_nums)):
         for fac in factors[i]:
             idx = fb_map[fac]
             M2[idx] |= ind
         ind = ind + ind       
+
+    offset=(len(factor_base)+2)
+    ind=1
+    for i in range(len(factor_list2)):
+        for fac in factor_list2[i]:
+            idx = fb_map[fac]
+            M2[idx+offset] |= ind
+        ind = ind + ind
     return M2
 
 def get_root(p,b,a):
@@ -292,36 +301,58 @@ def get_derivative(f):
         res[i] = (len(f)-1-i)*f[i]
     return res
 
-def binomial_sieve(root_hmap,primeslist1,primelist_f,n,smooth_list,factor_list,root_list):
+def binomial_sieve(root_hmap,primeslist1,primelist_f,n,smooth_list,factor_list,root_list,factor_list2):
     ##TO DO: This now needs residue sieving similar to CUDA_QS_VARIANT, but with higher degree polynomials to quickly find b-smooth candidates with similar factorization
     found=0
     degree=2
-    while degree < 9:
-        y=1
-        while y < lin_sieve_size:
+    x_size=1000
+    while degree < 5:
+        if degree == 2:
+            y_exp=0.3#(degree+1)*0.10
+        if degree > 2:
+            y_exp=0.01 ##Got to figure this out...
+      #  print("exp: "+str(y_exp))
+        y_start=round(n**y_exp) ##We can presieve these aswell
+        y=y_start
+        while y < y_start+lin_sieve_size:
+            factors, value,seen_primes,seen_primes_indexes=factorise_fast(y,primelist_f)
+            if value !=1:
+                y+=1
+                continue
+            #print("checking: "+str(y))
             sym_x = sympy.symbols("sym_x")
             formula = (sym_x - y)**degree
             poly=formula.expand().as_poly(sym_x).all_coeffs()
             deriv=get_derivative(poly)
             constant=poly[-1]
             poly[-1]=0
-            pval=evaluate(poly,lin_sieve_size//2)*-1
+            pval=evaluate(poly,(y*x_size)//2)#*-1
             k_start=pval//n
             k_start-=5
-            x=1
-            while x < lin_sieve_size:
+            xc=1
+            while xc < x_size:
+                x=y*xc ###We can presieve these x's
                 dval=evaluate(deriv,x)
-                if dval != 0: ###We'll fix this later when we implement residue sieving.. 
-                    x+=1
-                    continue
+             #   if dval != 0: ###We'll fix this later when we implement residue sieving.. 
+             #       x+=1
+             #       continue
                 k=k_start
                 while k < k_start+10:
-                    poly[-1]=n*k
-                    pval=evaluate(poly,x)*-1
-                    
+                    if k == 0:
+                        k+=1
+                        continue
+                    poly[-1]=-n*k
+                    lside=evaluate(poly,x)
+                    pval=lside*-1
+                    lside+=n*k
+                  #  print("pval: "+str(pval))
+                  #  print("lside: "+str(lside))
                     factors, value,seen_primes,seen_primes_indexes=factorise_fast(pval,primelist_f)
+                    factors2, value2,seen_primes2,seen_primes_indexes2=factorise_fast(lside,primelist_f)
+                  #  if degree>2:
+                  #      print("y: "+str(y)+" pval: "+str(pval)+" lside: "+str(lside)+" seen_primes2: "+str(seen_primes2))
               #  print("pval: "+str(pval)+" dval: "+str(dval)+" poly: "+str(poly)+" deriv: "+str(deriv))
-                    if value == 1:
+                    if value == 1 and value2 == 1:
                         hit=0
                         ##Need to do some shit using the derivative mod p here when we implement residue sieving
                         #q=0
@@ -329,20 +360,21 @@ def binomial_sieve(root_hmap,primeslist1,primelist_f,n,smooth_list,factor_list,r
                           # prime=seen_primes[q]
                           #  if dval%prime !=0:
                            #     hit=1
-                           # q+=1
-                        if dval == 0:
-                            if factors not in factor_list:
-                                smooth_list.append(pval)
-                                factor_list.append(factors)
-                                root_list.append(math.isqrt(y**degree))
-                                if len(smooth_list)>len(primeslist1)+10:
-                                    return found 
-                                found+=1
-                                disc=y**degree-pval
-                                print("pval: "+str(pval)+" y: "+str(y)+" x: "+str(x)+" deriv: "+str(dval)+" disc: "+str(disc%n)+" poly: "+str(poly)+" deriv: "+str(deriv))
+                      #  print("blah")
+                        if factors not in factor_list and factors2 not in factor_list2:
+                            smooth_list.append(pval)
+                            factor_list.append(factors)
+                            root_list.append(lside)
+                            factor_list2.append(factors2)
+                            if len(smooth_list)>(len(primeslist1)*2)+10:
+                                return found 
+                            found+=1
+                            disc=y**degree-pval
+                            print("pval: "+str(pval)+" lside: "+str(lside)+" y: "+str(y)+" x: "+str(x)+" deriv: "+str(dval)+" disc: "+str(disc%n)+" poly: "+str(poly)+" deriv: "+str(deriv)+" seen_primes2: "+str(seen_primes2)+" n*k "+str(n*k)+" k: "+str(k))
                     k+=1
-                x+=1
+                xc+=1
             y+=1
+        print("next degree")
         degree+=2
     return found
 
@@ -355,6 +387,7 @@ def launch(n,primeslist1,primeslist2,small_primeslist):
     smooth_list=[]
     root_list=[]
     factor_list=[]
+    factor_list2=[]
     primeslist1c=copy.deepcopy(primeslist1)
     plists=[]
     small_base=8
@@ -364,11 +397,11 @@ def launch(n,primeslist1,primeslist2,small_primeslist):
    # root_hmap=create_map(n,primeslist1,small_base)
     ###To do: implement residue sieving with create_map
     root_hmap=[]
-    found+=binomial_sieve(root_hmap,primeslist1,primelist_f,n,smooth_list,factor_list,root_list)
+    found+=binomial_sieve(root_hmap,primeslist1,primelist_f,n,smooth_list,factor_list,root_list,factor_list2)
     print("Smooths #: "+str(len(smooth_list)))
 
     print("Performing linear algebra")
-    QS(n,primelist,smooth_list,factor_list,root_list)
+    QS(n,primelist,smooth_list,factor_list,root_list,factor_list2)
     found=0
     return 
 
