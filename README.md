@@ -10,7 +10,7 @@ https://github.com/basilegithub/General-number-field-sieve-Python
 #### About the paper
 Math paper is a work in progress. The final chapters are a bit rushed and building an algorithm around p-adic lifting isnt as straight forward as I had assumed. I do think there is an angle there I can exploit, but I'll do some further experimentation first and get a working PoC before I make edits to the paper again.
 
-#### To run from folder "binomial_sieve" (For use with the paper):</br></br>
+#### To run from folder "binomial_sieve":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 1000 -quad_size 100
 
