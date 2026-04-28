@@ -12,7 +12,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 
 #### To run from folder "binomial_sieve":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 30 -base 50 -debug 1 -lin_size 1000 -quad_size 100
+To run:  python3 run_qs.py -keysize 50 -base 500 -debug 1 -lin_size 10_000 -quad_size 100  -t 50
 
 Sieves with binomial expansions... 
 
@@ -21,6 +21,8 @@ Update: I have changed some things so it can sieve with non-zero derivatives.. b
 Update: What I'll do next is simple... do an approach similar to CUDA_QS_Variant and if we find a smooth candidate using second degree polynomials... just expand to the 4th degree and sieve.. and so on. That should hopefully allow us to find smooth candidates with similar factorization... and succeed at the linear algebra step with much fewer smooth candidates.. bc traditional QS variants they cant punch past that 110 digit ceiling due to the fact of how quickly the required factor base size grows.. but this approach would solve that. And if that works... I'll pubish and take some time to seriously study math to begin the journey towards a polytime algorithm. That is my dream. Nobody can take my dream away. No matter how hard they try.
 
 Update: I'll add a sieve interval for the second degree tomorrow. Then once a smooth candidates is found we can go hunting for similar factorizations on both sides of the congruence using binomial expansions.. thats the benefit of that setup..because we can ensure both sides of the congruence have similar factorizations... hopefully I can finish a function that goes hunting for similar factorization at higher degrees towards the weekend. If it works.. that concludes my work and I would have a prove-able breakthrough.. it would be good to see the end. After that I should go to a doctor and have these gut issues checked out.. does not seem to go away.. at this point its either a bad case of SIBO or colon cancer lol, just persistent localized pain for well over 6 months now.. its annoying bc I cant think straight anymore with the constant pain. If its cancer, the so be it, I'll go into the woods and take my life. Tired of this bullshit anyway. 
+
+Update: Quickly added a sieve interval. So next we will have our mainloop exclusively using second degree polynomials.. once we hit a smooth candidate we then use binomial expansions to higher (even) degrees.. since they come from the same binomial term and as root we use multiples of this binomial term, it means atleast one side of the congruence will have similar factorizations.. for the other side we need to use precalculated residue maps.. but unlike normal quadratic sieve.. since we can sieve with polynomials having non-zero derivatives.. we have much better control over this. Anyway... I'll release this toward the end of the week. In addition.. we could also use moduli... like in my SIQS variant.. which doubles the speed, but since that complicates the number theory a fair bit, we'll implement that once everything else is done.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
