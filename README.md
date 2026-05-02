@@ -26,6 +26,8 @@ Update: Quickly added a sieve interval. So next we will have our mainloop exclus
 
 Update: Refactored some things. So we start sieving with linear polynomials... collects all the factors for b-smooths founds.. and then does binomial expansions to try and find similar factorizations. Fairly straightforward set-up ... but I now need to fix a lot of shit and do a lot of improvements. Idea of this is that we can make the amount of B-smooths required independent from the factorbase size... 
 
+UPDATE: EUREKA! Sieving those multiples of N, I see it. Its often hitting very similar factorizations, and not just with factors I'm sieving for.. I see whats going on now.. let me improve the PoC so we zero in on this behavior..
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
