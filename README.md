@@ -30,6 +30,8 @@ So yea. This is it. Actually, the PoC that was online for the last couple of day
 
 To do: Bunch of buggy stuff in there still. But next, let me implement a modulus like in CUDA_QS_Variant, bc the way everything is setup now, it is easily do-able. That will double the speed. And hopefully get speeds similar to my SIQS variant. Then I can focus on trying to push beyond it by using large factor bases since with this setup we arn't as dependent on factor base size anymore to succeed at the linear algebra step, and experiment with p-adic lifting too. I think a week max now for it all to finally come together.
 
+Update: Quickly fixed a couple of bugs. Tomorrow I'll add support for SIQS style moduli. Then the speed will quickly start picking up from there..
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
