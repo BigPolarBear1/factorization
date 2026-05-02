@@ -639,11 +639,12 @@ def construct_interval(primeslist,f,step_size):
         i+=1
     return interval
 
-def find_similar(y,factors,primeslist1,primelist_f,n,smooth_list,factor_list,root_list,factor_list2):
+def find_similar(y,primeslist1,primelist_f,n,smooth_list,factor_list,root_list,factor_list2):
     ###To do: So lside will have similar factors, but now we need to do residue sieving so pval also has similar factors that match the original B-smooth
-    factors=list(factors)
+    factors=primeslist1[1:]
     factors.sort()
     print("Binomial term: "+str(y)+" factors to find: "+str(factors))
+    found=0
     degree = 2
     while degree < 5:##To do: Worth going even higher?
         sym_x = sympy.symbols("sym_x")
@@ -730,8 +731,13 @@ def find_similar(y,factors,primeslist1,primelist_f,n,smooth_list,factor_list,roo
             while i < len(k_interval):
                 if k_interval[i] > threshold:
                     k=k_start+i
+                    if k == 0:
+                        i+=1
+                        continue
                     poly[-1]=-n*k
+                 #   polyc=copy.deepcopy(poly)
                     lside=evaluate(poly,x)
+                    
                     pval=lside*-1
                     lside+=n*k
                     factors1, value,seen_primes,seen_primes_indexes=factorise_fast(pval,primelist_f)
@@ -739,20 +745,23 @@ def find_similar(y,factors,primeslist1,primelist_f,n,smooth_list,factor_list,roo
                     if value == 1 and value2 == 1:
                       #  print("hit")
                         if factors1 not in factor_list:# and factors2 not in factor_list2:
+                            found+=1
                             smooth_list.append(pval)
                             factor_list.append(factors1)
                             root_list.append(lside)
                             factor_list2.append(factors2)
-                            print("!!!!!!!!Found similar poly: "+str(poly)+" pval: "+str(pval)+" seen_primes: "+str(factors1)+" k: "+str(k-k_start)+" seen_primes2: "+str(factors2)+" threshold: "+str(threshold)+" indicated threshold: "+str(k_interval[i]))
+                            print("Poly: "+str(poly)+" x: "+str(x)+" pval: "+str(pval)+" seen_primes: "+str(factors1)+" k: "+str(k-k_start)+" seen_primes2: "+str(factors2)+" threshold: "+str(threshold)+" indicated threshold: "+str(k_interval[i]))
                             if len(smooth_list) > len(primeslist1)*2+10:
-                                return
+                               # print("returning")
+                                return found
                 i+=1
             xc+=1
         degree+=1
    # sys.exit()
-    return
 
-def binomial_sieve(root_hmap,primeslist1,primelist_f,n,smooth_list,factor_list,root_list,factor_list2):
+    return found
+
+def binomial_sieve(root_hmap,primeslist1,primelist_f,n,smooth_list,factor_list,root_list,factor_list2,primelist):
 
     grays = get_gray_code(20)
     seen=[]
@@ -774,61 +783,11 @@ def binomial_sieve(root_hmap,primeslist1,primelist_f,n,smooth_list,factor_list,r
         y_start=round(n**y_exp) ##We can presieve these aswell
         y=y_start
         while y < y_start+lin_sieve_size:
-            factors_to_find=[]
-            factors, value,seen_primes,seen_primes_indexes=factorise_fast(y,primelist_f)
-            if value !=1:
-                y+=1
-                continue
-
-            poly=[y,0]
-            #print("poly: "+str(poly))
-            constant=poly[-1]
-            pval=evaluate(poly,(y*x_size)//2)#*-1
-            k_start=pval//n
-            if k_start == 0:
-                k_start+=1
-
-            k=k_start
-            while k < k_start+1:
-                if k == 0:
-                    k+=1
-                    continue
-                poly[-1]=-n*k
-                interval=construct_interval(primeslist1,poly,y)
-                xc=0
-                while xc < len(interval):
-                    if interval[xc]<threshold:
-                        xc+=1
-                        continue
-                    x=xc*y
-                    lside=evaluate(poly,x)
-                    pval=lside*-1
-                    lside+=n*k
-
-                    factors, value,seen_primes,seen_primes_indexes=factorise_fast(pval,primelist_f)
-                    factors2, value2,seen_primes2,seen_primes_indexes2=factorise_fast(lside,primelist_f)
-                    if value == 1 and value2 == 1:
-                        hit=0
-                        if factors not in factor_list:# and factors2 not in factor_list2:
-                            for fac in factors:
-                                if fac not in factors_to_find:
-                                    factors_to_find.append(fac)
-                            smooth_list.append(pval)
-                            factor_list.append(factors)
-                            root_list.append(lside)
-                            factor_list2.append(factors2)
-
-                            if len(smooth_list)>(len(primeslist1)*2)+10:
-                                return found 
-                            found+=1
-                            disc=y**degree-pval
-                            print("pval: "+str(pval)+" lside: "+str(lside)+" y: "+str(y)+" x: "+str(x)+" disc: "+str(disc%n)+" poly: "+str(poly)+" seen_primes2: "+str(factors2)+" n*k "+str(n*k)+" k: "+str(k)+" seen_primes: "+str(factors)+" ival: "+str(interval[xc]))
-                            if len(smooth_list) > len(primeslist1)*2+10:
-                                return
-                         #   sys.exit()
-                    xc+=1
-                k+=1
-            find_similar(y,factors_to_find,primeslist1,primelist_f,n,smooth_list,factor_list,root_list,factor_list2)
+            found+=find_similar(y,primeslist1,primelist_f,n,smooth_list,factor_list,root_list,factor_list2)
+            if found > 50:
+                print("Performing linear algebra")
+                QS(n,primelist,smooth_list,factor_list,root_list,factor_list2)
+                found=0
 
             y+=1
         print("next degree")
@@ -854,7 +813,7 @@ def launch(n,primeslist1,primeslist2,small_primeslist):
    # root_hmap=create_map(n,primeslist1,small_base)
     ###To do: implement residue sieving with create_map
     root_hmap=[]
-    found+=binomial_sieve(root_hmap,primeslist1,primelist_f,n,smooth_list,factor_list,root_list,factor_list2)
+    found+=binomial_sieve(root_hmap,primeslist1,primelist_f,n,smooth_list,factor_list,root_list,factor_list2,primelist)
     print("Smooths #: "+str(len(smooth_list)))
 
     print("Performing linear algebra")
