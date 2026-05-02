@@ -24,6 +24,8 @@ Update: I'll add a sieve interval for the second degree tomorrow. Then once a sm
 
 Update: Quickly added a sieve interval. So next we will have our mainloop exclusively using second degree polynomials.. once we hit a smooth candidate we then use binomial expansions to higher (even) degrees.. since they come from the same binomial term and as root we use multiples of this binomial term, it means atleast one side of the congruence will have similar factorizations.. for the other side we need to use precalculated residue maps.. but unlike normal quadratic sieve.. since we can sieve with polynomials having non-zero derivatives.. we have much better control over this. Anyway... I'll release this toward the end of the week. In addition.. we could also use moduli... like in my SIQS variant.. which doubles the speed, but since that complicates the number theory a fair bit, we'll implement that once everything else is done.
 
+Update: Refactored some things. So we start sieving with linear polynomials... collects all the factors for b-smooths founds.. and then does binomial expansions to try and find similar factorizations. Fairly straightforward set-up ... but I now need to fix a lot of shit and do a lot of improvements. Idea of this is that we can make the amount of B-smooths required independent from the factorbase size... 
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
