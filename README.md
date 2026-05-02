@@ -16,10 +16,8 @@ To run:  python3 run_qs.py -keysize 35 -base 60 -debug 1 -lin_size 100_000 -quad
 
 Sieves with binomial expansions... 
 
-To do:
-
-This PoC starts with sieving linear polynomials. If a b-smooth is found we create higher degrees to find similar factorizations.
-However, as I was playing around with this, I noticed that the way I set up everything generated an awful lot of B-smooth candidates with similar factorizations (once all the squares are factored out), and not just factors I was sieving for.. just similar factorizations in general. This is because of how we're sieving the root (sieving polynomials with non-zero derivative). So what I now need to do is zero in on this behavior.. bc this is exactly what I was looking for. This is my breakthrough. It's coming now. Good luck.
+Eureka!
+Now it is working, hehehehe. This setup will pull very different factorizations. Hence potentially reducing the amount of smooth candidates required and making it independent from the factor base size. Which is geat. Now two things left to do! Ensure all smooth candidates are unique so we dont end up with trivial factorizations. And optimize everything and we're done! That's it. This is how simple the solution ended up being.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
