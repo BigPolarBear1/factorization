@@ -17,7 +17,7 @@ To run:  python3 run_qs.py -keysize 45 -base 100 -debug 1 -lin_size 100_000 -qua
 Sieves with binomial expansions... 
 
 Eureka!
-Now it is working, hehehehe. This setup will pull very different factorizations. Hence potentially reducing the amount of smooth candidates required and making it independent from the factor base size. Which is geat. Now two things left to do! Ensure all smooth candidates are unique so we dont end up with trivial factorizations. And optimize everything and we're done! That's it. This is how simple the solution ended up being.
+Now it is working, hehehehe. This setup will pull very similar factorizations. Hence potentially reducing the amount of smooth candidates required and making it independent from the factor base size. Which is geat. Now two things left to do! Ensure all smooth candidates are unique so we dont end up with trivial factorizations. And optimize everything and we're done! That's it. This is how simple the solution ended up being.
 
 I.e you will often see output like this: 
 
