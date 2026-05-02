@@ -26,6 +26,7 @@ Poly: [1, -1840, -6026759394959] x: 920 pval: 6026760241359 seen_primes: {3, 103
 Poly: [1, -1840, 18080278184877] x: 2760 pval: -18080280724077 seen_primes: {103, 13, 79, 83, 61, -1, 31} k: 2603 </br>
 
 Both "seen_primes" here have near identical factorizations. And since k: 2603 * 3 != k: 5800 these should also count as unique.
+So yea. This is it. Actually, the PoC that was online for the last couple of days was already doing this, I just didn't spot that it was spitting out near identical factorizations sometimes. So yea.. it's over. This is going to escalate very quickly now. 
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
