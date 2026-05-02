@@ -28,6 +28,8 @@ Poly: [1, -1840, 18080278184877] x: 2760 pval: -18080280724077 seen_primes: {103
 Both "seen_primes" here have near identical factorizations. And since k: 2603 * 3 != k: 5800 these should also count as unique.
 So yea. This is it. Actually, the PoC that was online for the last couple of days was already doing this, I just didn't spot that it was spitting out near identical factorizations sometimes. So yea.. it's over. This is going to escalate very quickly now. 
 
+To do: Bunch of buggy stuff in there still. But next, let me implement a modulus like in CUDA_QS_Variant, bc the way everything is setup now, it is easily do-able. That will double the speed. And hopefully get speeds similar to my SIQS variant. Then I can focus on trying to push beyond it by using large factor bases since with this setup we arn't as dependent on factor base size anymore to succeed at the linear algebra step, and experiment with p-adic lifting too. I think a week max now for it all to finally come together.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
