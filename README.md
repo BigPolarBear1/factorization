@@ -19,6 +19,14 @@ Sieves with binomial expansions...
 Eureka!
 Now it is working, hehehehe. This setup will pull very different factorizations. Hence potentially reducing the amount of smooth candidates required and making it independent from the factor base size. Which is geat. Now two things left to do! Ensure all smooth candidates are unique so we dont end up with trivial factorizations. And optimize everything and we're done! That's it. This is how simple the solution ended up being.
 
+I.e you will often see output like this: 
+
+
+Poly: [1, -1840, -6026759394959] x: 920 pval: 6026760241359 seen_primes: {3, 103, 13, 79, 83, 61, 31} k: 5800 </br>
+Poly: [1, -1840, 18080278184877] x: 2760 pval: -18080280724077 seen_primes: {103, 13, 79, 83, 61, -1, 31} k: 2603 </br>
+
+Both "see_primes" here have near identical factorizations. And since k: 2603 * 3 != k: 5800 these should also count as unique.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
