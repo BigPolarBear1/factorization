@@ -19,7 +19,7 @@ Sieves with binomial expansions...
 To do:
 
 This PoC starts with sieving linear polynomials. If a b-smooth is found we create higher degrees to find similar factorizations.
-However, as I was playing around with this, I noticed that the way I set up generated an awful lot of B-smooth candidates with similar factorizations, and not just factors I was sieving for.. just similar factorizations in general. This is because of how we're sieving the root (sieving polynomials with non-zero derivative). So what I now need to do is zero in on this behavior.. bc this is exactly what I was looking for. This is my breakthrough. It's coming now. Good luck.
+However, as I was playing around with this, I noticed that the way I set up everything generated an awful lot of B-smooth candidates with similar factorizations (once all the squares are factored out), and not just factors I was sieving for.. just similar factorizations in general. This is because of how we're sieving the root (sieving polynomials with non-zero derivative). So what I now need to do is zero in on this behavior.. bc this is exactly what I was looking for. This is my breakthrough. It's coming now. Good luck.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
