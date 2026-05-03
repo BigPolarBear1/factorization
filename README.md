@@ -32,6 +32,8 @@ To do: Bunch of buggy stuff in there still. But next, let me implement a modulus
 
 Update: Quickly fixed a couple of bugs. Tomorrow I'll add support for SIQS style moduli. Then the speed will quickly start picking up from there..
 
+Update: pushed some more changes but need to fix a bunch of stuff still. I also need to figure out how to maximize the change of hitting these near identical smooths. I do think I know how.. will experiment a bit.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
