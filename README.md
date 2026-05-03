@@ -12,7 +12,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 
 #### To run from folder "binomial_sieve":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 45 -base 100 -debug 1 -lin_size 100_000 -quad_size 1000 -t 30
+To run:  python3 run_qs.py -keysize 45 -base 100 -debug 1 -lin_size 100_000 -quad_size 10_000 -t 30
 
 Sieves with binomial expansions... 
 
