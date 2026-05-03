@@ -16,26 +16,7 @@ To run:  python3 run_qs.py -keysize 45 -base 100 -debug 1 -lin_size 100_000 -qua
 
 Sieves with binomial expansions... 
 
-Eureka!
-Now it is working, hehehehe. This setup will pull very similar factorizations. Hence potentially reducing the amount of smooth candidates required and making it independent from the factor base size. Which is geat. Now two things left to do! Ensure all smooth candidates are unique so we dont end up with trivial factorizations. And optimize everything and we're done! That's it. This is how simple the solution ended up being.
-
-I.e you will often see output like this: 
-
-
-
-Smooth# 8 Poly: [1, -47012444, -1103938318402917281248138] x: 3478920856 pval: 1103926379065166892607466 seen_primes: [2, 43, 47, 53, 67, 73, 103, 167, 173, 241, 523] k: 1997924882</br>
-Smooth# 9 Poly: [1, -47012444, -1134183203838613645117950] x: 3525933300 pval: 1134170937395719410213150 seen_primes: [2, 3, 43, 47, 53, 67, 103, 167, 173, 241, 523] k: 2052662550</br>
-
-Both "seen_primes" here have near identical factorizations. And since both k values, the multipliers of N are not a multiple of eachother this can be counted as two unique B-smooths. This actually ends up happening very often.
-So yea. This is it. Actually, the PoC that was online for the last couple of days was already doing this, I just didn't spot that it was spitting out near identical factorizations sometimes. So yea.. it's over. This is going to escalate very quickly now. 
-
-To do: Bunch of buggy stuff in there still. But next, let me implement a modulus like in CUDA_QS_Variant, bc the way everything is setup now, it is easily do-able. That will double the speed. And hopefully get speeds similar to my SIQS variant. Then I can focus on trying to push beyond it by using large factor bases since with this setup we arn't as dependent on factor base size anymore to succeed at the linear algebra step, and experiment with p-adic lifting too. I think a week max now for it all to finally come together.
-
-Update: Quickly fixed a couple of bugs. Tomorrow I'll add support for SIQS style moduli. Then the speed will quickly start picking up from there..
-
-Update: pushed some more changes but need to fix a bunch of stuff still. I also need to figure out how to maximize the change of hitting these near identical smooths. I do think I know how.. will experiment a bit.
-
-UPDATE: EUREKA! Its 4am and I figured it out. So if we find a B-smooth.. we can just test for the existence of small multiples of this B-smooth by using this residue map! Easy! :D Super Easy! I'll get some sleep first.. then tomorrow implement it.. and that will be that. Then continue optimizing and within days shit is going to hit the fan now.
+Will continue fixing this... idea is to be able to pull many smooth candidates with similar factorization
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
