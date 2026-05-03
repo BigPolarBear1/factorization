@@ -834,7 +834,7 @@ def find_similar(y,primeslist1,primelist_f,n,smooth_list,factor_list,root_list,f
                                 factor_list.append(factors1)
                                 root_list.append(lside*y**2)
                                 factor_list2.append(factors2)
-                                print("Smooth# "+str(len(smooth_list))+" Poly: "+str(poly)+" x: "+str(x)+" pval: "+str(pval)+" seen_primes: "+str(factors1)+" k: "+str(k-k_start)+" seen_primes2: "+str(factors2)+" threshold: "+str(threshold)+" indicated threshold: "+str(k_interval[i]))
+                                print("Smooth# "+str(len(smooth_list))+" Poly: "+str(poly)+" x: "+str(x)+" pval: "+str(pval)+" seen_primes: "+str(factors1)+" k: "+str(k)+" seen_primes2: "+str(factors2)+" threshold: "+str(threshold)+" indicated threshold: "+str(k_interval[i]))
                                 if len(smooth_list) > len(primeslist1)*2+10:
                                # print("returning")
                                     return found
