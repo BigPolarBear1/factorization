@@ -683,11 +683,12 @@ def get_mod_root(mod_item,resmap,primeslist1,x):
 def find_similar(y,primeslist1,primelist_f,n,smooth_list,factor_list,root_list,factor_list2):
     grays = get_gray_code(20)
     seen=[]
-    close_range=20
-    too_close=1
+    facseen=[]
+    close_range=10
+    too_close=5
     LOWER_BOUND_SIQS=1
     UPPER_BOUND_SIQS=4000
-    tnum=int(((n)**0.2) )#/(lin_sieve_size))
+    tnum=int(((n)**0.5) )#/(lin_sieve_size))
     tnum_bit=bitlen(tnum)
     quad=1
     factors=primeslist1[1:]
@@ -702,6 +703,9 @@ def find_similar(y,primeslist1,primelist_f,n,smooth_list,factor_list,root_list,f
                 break
             continue
         modlist.append([new_mod,cfact,indexes])
+        for fac in cfact:
+            if fac not in facseen:
+                facseen.append(fac)
     print("modlist: "+str(modlist)) 
     if len(modlist)==0:
         print("something went wrong")
@@ -723,11 +727,15 @@ def find_similar(y,primeslist1,primelist_f,n,smooth_list,factor_list,root_list,f
         i=0
         while i < len(factors):
             factor=factors[i]
+            ###To do: This is dumb... refactor this later
+
             resmap.append({})
             if factor == -1 or factor == 2:
                 i+=1
                 continue
-            
+            if factor not in facseen:
+                i+=1
+                continue
             mod*=factor
            # if factor > 20:
             thresmod*=factor
@@ -792,32 +800,32 @@ def find_similar(y,primeslist1,primelist_f,n,smooth_list,factor_list,root_list,f
                     print("fatal error")
                     sys.exit()
                 k_interval=array.array('i',[0]*quad_sieve_size)
-                i=0
-                while i < len(factors):
-                    factor=factors[i]
-                    if mod%factor ==0:
-                        i+=1
-                        continue
-                    try:
-                        xm=x%factor
-                        res=resmap[i][xm]
-                        for re in res:
-                            s=solve_lin_con(mod,re-k_start,factor)
-                            if (k_start+s*mod)%factor !=re:
-                                print("fail")
-                            j=s
-                            while j < len(k_interval):
-                                k_interval[j]+=round(math.log2(factor))
-                                j+=factor
-                    except Exception as e:
-                        i+=1
-                        continue
-                    i+=1
+  #              i=0
+  #              while i < len(factors):
+  #                  factor=factors[i]
+  #                  if mod%factor ==0:
+  #                      i+=1
+  #                      continue
+  #                  try:
+  #                      xm=x%factor
+  #                      res=resmap[i][xm]
+  #                      for re in res:
+  #                          s=solve_lin_con(mod,re-k_start,factor)
+  #                          if (k_start+s*mod)%factor !=re:
+  #                              print("fail")
+  #                          j=s
+  #                          while j < len(k_interval):
+  #                              k_interval[j]+=round(math.log2(factor))
+  #                              j+=factor
+  #                  except Exception as e:
+  #                      i+=1
+  #                      continue
+  #                  i+=1
 
            
                 i = 0
                 while i < len(k_interval):
-                    if k_interval[i] > threshold:
+                    if k_interval[i] > -1:
                         k=k_start+i*mod
                         if k == 0:
                             i+=1
@@ -845,7 +853,7 @@ def find_similar(y,primeslist1,primelist_f,n,smooth_list,factor_list,root_list,f
                                 factor_list.append(factors1)
                                 root_list.append(lside*y**2)
                                 factor_list2.append(factors2)
-                                print("Smooth# "+str(len(smooth_list))+" Poly: "+str(poly)+" x: "+str(x)+" pval: "+str(pval)+" pval/mod bits: "+str(bitlen(pval//mod))+" seen_primes: "+str(factors1)+" k: "+str(k)+" seen_primes2: "+str(factors2)+" threshold: "+str(threshold)+" indicated threshold: "+str(k_interval[i])+" k center: "+str(k_start+(quad_sieve_size//2)))
+                                print("Smooth# "+str(len(smooth_list))+"/"+str(len(primeslist1)*2+10)+" Poly: "+str(poly)+" x: "+str(x)+" pval: "+str(pval)+" pval/mod bits: "+str(bitlen(pval//mod))+" seen_primes: "+str(factors1)+" k: "+str(k)+" seen_primes2: "+str(factors2)+" threshold: "+str(threshold)+" indicated threshold: "+str(k_interval[i])+" k center: "+str(k_start+(quad_sieve_size//2)))
                                 if len(smooth_list) > len(primeslist1)*2+10:
                                     #print("returning")
                                     return found
