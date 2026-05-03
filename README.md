@@ -24,6 +24,8 @@ Update: Did some thinking.. I should get rid of the sieve interval. Keep the mod
 
 Update: Removed the sieve interval. This is already much better. Sometimes it will find really small smooth candidates.. I wonder if I can somehow sieve for these now. In addition, I can also use p-adic lifting.. because any squares are ignored during linear algebra.. so a combination of the two.. sieve for small smooth candidates and as modulus use large squares (so that the remaining factors are small)... then we can also use as big of a factor base as we want. I'll move on this in the coming days.. my work will see completion very soon now. 
 
+Update: Oops. Cant I just find a multiple of N thats seen for a lot of primes and then just figure out a polynomial that works for it? Like do the reverse of what Im doing now? I may have missed something obvious..let me have a look tomorrow if the reverse approach is possible.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
