@@ -27,6 +27,8 @@ Update: Removed the sieve interval. This is already much better. Sometimes it wi
 Update: Oops. Cant I just find a multiple of N thats seen for a lot of primes and then just figure out a polynomial that works for it? Like do the reverse of what Im doing now? I may have missed something obvious..let me have a look tomorrow if the reverse approach is possible.
 Update: Well I guess it doesnt really matter how I do it. But there definitely should be a way to pull these cases where the polynomial value is small straight out of a residue map. Let me think about this tomorrow. 
 
+Update: God damnit... all of this is making me think.. lets say k = 1, I calculate possible roots and coefficients for a bunch of primes. and I just pull my smooth candidates from that. I believe I actually know how to do it practically now. 
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
