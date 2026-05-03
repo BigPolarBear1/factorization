@@ -14,20 +14,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 50 -base 500 -debug 1 -lin_size 100_000 -quad_size 4
 
-Sieves with binomial expansions... 
-
-Will continue fixing this... idea is to be able to pull many smooth candidates with similar factorization.
-
-Let me think.. its going in the right direction.. not happy though with the way it's sieving. Ideally we just want to look at the cases where the smooth candidates are the smallest. Might be able to set something up just using this residue map. Let me think.
-
-Update: Did some thinking.. I should get rid of the sieve interval. Keep the modulus.. but get rid of the sieve interval. Just focus on when those values are smallest. And perform trial factorization. Then for these multiples of the root.. we can presieve these "multiples" up to a certain range.. that then combined with just focusing on small values should work pretty well. I'll go for a run and implement it either tonight or tomorrow.
-
-Update: Removed the sieve interval. This is already much better. Sometimes it will find really small smooth candidates.. I wonder if I can somehow sieve for these now. In addition, I can also use p-adic lifting.. because any squares are ignored during linear algebra.. so a combination of the two.. sieve for small smooth candidates and as modulus use large squares (so that the remaining factors are small)... then we can also use as big of a factor base as we want. I'll move on this in the coming days.. my work will see completion very soon now. 
-
-Update: Oops. Cant I just find a multiple of N thats seen for a lot of primes and then just figure out a polynomial that works for it? Like do the reverse of what Im doing now? I may have missed something obvious..let me have a look tomorrow if the reverse approach is possible.
-Update: Well I guess it doesnt really matter how I do it. But there definitely should be a way to pull these cases where the polynomial value is small straight out of a residue map. Let me think about this tomorrow. 
-
-Update: God damnit... all of this is making me think.. lets say k = 1, I calculate possible roots and coefficients for a bunch of primes. and I just pull my smooth candidates from that. I believe I actually know how to do it practically now. 
+UPDATE: I'm going to refactor this completely tomorrow. Building this PoC actually made me realize there is a much more practical approach to this. We can work purely with a residue map and just pull B-smooths out of it in a way that is algorithmically sound. I should be able to write the implementation in a single day tomorrow. With that done, it will be over quick. 
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
