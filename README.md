@@ -22,10 +22,11 @@ Now it is working, hehehehe. This setup will pull very similar factorizations. H
 I.e you will often see output like this: 
 
 
-Poly: [1, -1840, -6026759394959] x: 920 pval: 6026760241359 seen_primes: {3, 103, 13, 79, 83, 61, 31} k: 5800 </br>
-Poly: [1, -1840, 18080278184877] x: 2760 pval: -18080280724077 seen_primes: {103, 13, 79, 83, 61, -1, 31} k: 2603 </br>
 
-Both "seen_primes" here have near identical factorizations. And since k: 2603 * 3 != k: 5800 these should also count as unique.
+Smooth# 45 Poly: [1, -6122526, -812999542495315871211] x: 321432615 pval: 812898191548872718476 seen_primes: [3, 11, 17, 23, 71, 103, 191, 193, 283, 431, 479] k: -41729</br>
+Smooth# 46 Poly: [1, -6122526, -844572340262124254559] x: 327555141 pval: 844467053356595930844 seen_primes: [3, 11, 17, 23, 71, 107, 191, 193, 283, 431, 479] k: -43065</br> 
+
+Both "seen_primes" here have near identical factorizations. And since both k values, the multipliers of N are not a multiple of eachother this can be counted as two unique B-smooths. This actually ends up happening very often.
 So yea. This is it. Actually, the PoC that was online for the last couple of days was already doing this, I just didn't spot that it was spitting out near identical factorizations sometimes. So yea.. it's over. This is going to escalate very quickly now. 
 
 To do: Bunch of buggy stuff in there still. But next, let me implement a modulus like in CUDA_QS_Variant, bc the way everything is setup now, it is easily do-able. That will double the speed. And hopefully get speeds similar to my SIQS variant. Then I can focus on trying to push beyond it by using large factor bases since with this setup we arn't as dependent on factor base size anymore to succeed at the linear algebra step, and experiment with p-adic lifting too. I think a week max now for it all to finally come together.
