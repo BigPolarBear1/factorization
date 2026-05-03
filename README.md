@@ -20,6 +20,8 @@ Will continue fixing this... idea is to be able to pull many smooth candidates w
 
 Let me think.. its going in the right direction.. not happy though with the way it's sieving. Ideally we just want to look at the cases where the smooth candidates are the smallest. Might be able to set something up just using this residue map. Let me think.
 
+Update: Did some thinking.. I should get rid of the sieve interval. Keep the modulus.. but get rid of the sieve interval. Just focus on when those values are smallest. And perform trial factorization. Then for these multiples of the root.. we can presieve these "multiples" up to a certain range.. that then combined with just focusing on small values should work pretty well. I'll go for a run and implement it either tonight or tomorrow.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
