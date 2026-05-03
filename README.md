@@ -34,6 +34,8 @@ Update: Quickly fixed a couple of bugs. Tomorrow I'll add support for SIQS style
 
 Update: pushed some more changes but need to fix a bunch of stuff still. I also need to figure out how to maximize the change of hitting these near identical smooths. I do think I know how.. will experiment a bit.
 
+UPDATE: EUREKA! Its 4am and I figured it out. So if we find a B-smooth.. we can just test for the existence of small multiples of this B-smooth by using this residue map! Easy! :D Super Easy! I'll get some sleep first.. then tomorrow implement it.. and that will be that. Then continue optimizing and within days shit is going to hit the fan now.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
