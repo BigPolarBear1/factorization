@@ -16,7 +16,9 @@ To run:  python3 run_qs.py -keysize 45 -base 100 -debug 1 -lin_size 100_000 -qua
 
 Sieves with binomial expansions... 
 
-Will continue fixing this... idea is to be able to pull many smooth candidates with similar factorization
+Will continue fixing this... idea is to be able to pull many smooth candidates with similar factorization.
+
+Let me think.. its going in the right direction.. not happy though with the way it's sieving. Ideally we just want to look at the cases where the smooth candidates are the smallest. Might be able to set something up just using this residue map. Let me think.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
