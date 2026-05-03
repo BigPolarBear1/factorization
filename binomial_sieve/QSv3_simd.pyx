@@ -172,7 +172,7 @@ def QS(n,factor_list,sm,flist,x_list,factor_list2):#,jsymbols,testl,primeslist2,
         del flist[g_max_smooths:]  
     M2 = build_matrix(factor_list, sm, flist,factor_list2)#,pflist)
     null_space=solve_bits(M2,factor_list,len(sm))
-    f1,f2=extract_factors(n, sm, null_space,x_list)#,disc_sr_list,pval_list,pflist)
+    f1,f2=extract_factors(n, sm, null_space,x_list,flist)#,disc_sr_list,pval_list,pflist)
     if f1 != 0:
         print("[SUCCESS]Factors are: "+str(f1)+" and "+str(f2))
         sys.exit()
@@ -180,7 +180,7 @@ def QS(n,factor_list,sm,flist,x_list,factor_list2):#,jsymbols,testl,primeslist2,
    # print("[FAILURE]No factors found")
     return 0,0
 
-def extract_factors(N, relations, null_space,x_list):#,disc_sr_list,pval_list,pflist):
+def extract_factors(N, relations, null_space,x_list,factor_list):#,disc_sr_list,pval_list,pflist):
     n = len(relations)
     for vector in null_space:
         prod_left = 1
@@ -189,14 +189,16 @@ def extract_factors(N, relations, null_space,x_list):#,disc_sr_list,pval_list,pf
         disc_sr=1
         xy=1
         x=1
+        count=0
         for idx in range(len(relations)):
             bit = vector & 1
             vector = vector >> 1
             if bit == 1:
+                count+=1
                 prod_left *= relations[idx]
                 prod_right *=x_list[idx]
                 x*=x_list[idx]
-             #   print("polyval:  "+str(relations[idx])+" disc constant "+str(x_list[idx]))
+               # print("polyval:  "+str(relations[idx])+" disc constant "+str(x_list[idx])+" factors: "+str(factor_list[idx]))
             idx += 1
 
         sqrt_right = math.isqrt(prod_right)
@@ -223,10 +225,10 @@ def extract_factors(N, relations, null_space,x_list):#,disc_sr_list,pval_list,pf
 
 
         if factor_candidate not in (1, N):
-         #   print(str(factor_candidate)+" sm: "+str(sqrt_right)+" root: "+str(sqrt_left))
+          #  print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!: "+str(factor_candidate))#+" sm: "+str(sqrt_right)+" root: "+str(sqrt_left))
             other_factor = N // factor_candidate
             return factor_candidate, other_factor
-
+    sys.exit()
     return 0, 0
 
 def solve_bits(matrix,factor_base,length):
@@ -278,7 +280,7 @@ def build_matrix(factor_base, smooth_nums, factors,factor_list2):#,pflist):
             M2[idx] |= ind
         ind = ind + ind       
 
-    offset=(len(factor_base)+2)
+    offset=(len(factor_base)+2)-1
     ind=1
     for i in range(len(factor_list2)):
         for fac in factor_list2[i]:
@@ -681,18 +683,18 @@ def get_mod_root(mod_item,resmap,primeslist1,x):
 def find_similar(y,primeslist1,primelist_f,n,smooth_list,factor_list,root_list,factor_list2):
     grays = get_gray_code(20)
     seen=[]
-    close_range=100
+    close_range=20
     too_close=1
     LOWER_BOUND_SIQS=1
     UPPER_BOUND_SIQS=4000
-    tnum=int(((n)**0.30) )#/(lin_sieve_size))
+    tnum=int(((n)**0.2) )#/(lin_sieve_size))
     tnum_bit=bitlen(tnum)
     quad=1
     factors=primeslist1[1:]
     factors.sort()
     modlist=[]
     retry=0
-    while len(modlist) < 100:
+    while len(modlist) < 10:
         new_mod,cfact,indexes=generate_modulus(n,factors,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,tnum_bit,quad)
         if new_mod ==0:
             retry+=1
@@ -712,7 +714,7 @@ def find_similar(y,primeslist1,primelist_f,n,smooth_list,factor_list,root_list,f
     degree = 2
     while degree < 5:##To do: Worth going even higher?
         sym_x = sympy.symbols("sym_x")
-        formula = (sym_x - y)**degree
+        formula = (sym_x + y)**degree
         poly=formula.expand().as_poly(sym_x).all_coeffs()
         print("poly: "+str(poly))
         resmap=[]
@@ -755,28 +757,37 @@ def find_similar(y,primeslist1,primelist_f,n,smooth_list,factor_list,root_list,f
         while a < len(modlist):
             mod_item=modlist[a]
             xc=1
-            while xc < 1000:
+            while xc < 10_000:
           #  print("xc: "+str(xc))
                 x=y*xc
                 poly[-1]=0
                 pval=evaluate(poly,x)
+                #print("Pval: "+str(pval)+" poly: "+str(poly))
                 if pval == 0:
                     xc+=1
                     continue
 
                 kres,mod=get_mod_root(mod_item,resmap,factors,x)
                # print(kres)
-                k_start=pval//n
-                k_start-=quad_sieve_size//2   
-                diff=k_start-kres
-                diff=diff//mod
-                k_start=kres+diff*mod
-                poly[-1]=-n*kres
+                k_start=(pval)//n
+
+                k_start-=(quad_sieve_size//2)*mod
+              #  print("kstart: "+str(k_start))
+                r=k_start%mod
+                d=(r-kres)%mod
+                #diff=abs(k_start)-kres
+               # diff=diff//mod
+                k_start=k_start-d#kres+diff*mod
+                if k_start%mod !=kres:
+                    print("super fatal")
+                    sys.exit()
+              #  print("k_start adjusted: "+str(k_start))
+                poly[-1]=-n*k_start
                  #   polyc=copy.deepcopy(poly)
                 lside=evaluate(poly,x)
                 if k_start%mod != kres:
                     print("oops")
-                pval=lside*-1
+                pval=lside
                 if pval%mod !=0:
                     print("fatal error")
                     sys.exit()
@@ -815,7 +826,7 @@ def find_similar(y,primeslist1,primelist_f,n,smooth_list,factor_list,root_list,f
                  #   polyc=copy.deepcopy(poly)
                         lside=evaluate(poly,x)
                     
-                        pval=lside*-1
+                        pval=lside
                         lside+=n*k
                         if lside%y**2 !=0:
                             print("error")
@@ -834,9 +845,9 @@ def find_similar(y,primeslist1,primelist_f,n,smooth_list,factor_list,root_list,f
                                 factor_list.append(factors1)
                                 root_list.append(lside*y**2)
                                 factor_list2.append(factors2)
-                                print("Smooth# "+str(len(smooth_list))+" Poly: "+str(poly)+" x: "+str(x)+" pval: "+str(pval)+" seen_primes: "+str(factors1)+" k: "+str(k)+" seen_primes2: "+str(factors2)+" threshold: "+str(threshold)+" indicated threshold: "+str(k_interval[i]))
+                                print("Smooth# "+str(len(smooth_list))+" Poly: "+str(poly)+" x: "+str(x)+" pval: "+str(pval)+" pval/mod bits: "+str(bitlen(pval//mod))+" seen_primes: "+str(factors1)+" k: "+str(k)+" seen_primes2: "+str(factors2)+" threshold: "+str(threshold)+" indicated threshold: "+str(k_interval[i])+" k center: "+str(k_start+(quad_sieve_size//2)))
                                 if len(smooth_list) > len(primeslist1)*2+10:
-                               # print("returning")
+                                    #print("returning")
                                     return found
                     i+=1
                 xc+=1
@@ -847,23 +858,11 @@ def find_similar(y,primeslist1,primelist_f,n,smooth_list,factor_list,root_list,f
     return found
 
 def binomial_sieve(root_hmap,primeslist1,primelist_f,n,smooth_list,factor_list,root_list,factor_list2,primelist):
-
-    grays = get_gray_code(20)
-    seen=[]
-    close_range=100
-    too_close=1
-    LOWER_BOUND_SIQS=400
-    UPPER_BOUND_SIQS=4000
-    tnum=int(((n)**0.3) )#/(lin_sieve_size))
-    quad=1
-  
-    ##TO DO: This now needs residue sieving similar to CUDA_QS_VARIANT, but with higher degree polynomials to quickly find b-smooth candidates with similar factorization
     found=0
     degree=1
     x_size=1000
     while degree < 2:
-        y_exp=0.5
-
+        y_exp=0.3
       #  print("exp: "+str(y_exp))
         y_start=round(n**y_exp) ##We can presieve these aswell
         y=y_start
@@ -1258,66 +1257,6 @@ def calc_d(root_hmap,primeslist,r1,r2,mod,lin_co):
 def enumerated_product(*args):
     for e in itertools.product(*(range(len(x)) for x in args)):
         yield e
-
-def ff_clean(z,y,k,n,seen_primes,root_hmap,primeslist,disc):
-    lpartials_1=[]
-    lpartials_2=[]
-    lmod=1
-    prev=0
-    partials=[]
-    r=0
-    while r < len(seen_primes):
-        prime=seen_primes[r]
-        prev=prime
-        r+=1
-        exp=1
-        while r < len(seen_primes) and seen_primes[r] == prev:
-            exp+=1
-            r+=1
-
-        print("prime: "+str(exp))
-        
-        roots=[]
-        x=0
-        while x < prime**exp:
-            deriv=(2*z*x+y)%prime**exp
-            if (z*x**2+y*x-n*k)%prime**exp == 0 and deriv == 0:
-                roots.append(x)
-            x+=1
-        print("prime: "+str(prime**exp)+" roots: "+str(roots))
-        x=0#roots[0]
-        roots2=[]
-        while x < prime**(exp+1):
-            if (z*x**2+y*x-n*k)%prime**(exp+1) == 0:
-                roots2.append(x)
-            x+=1#prime**exp
-        print("prime: "+str(prime**(exp+1))+" roots2: "+str(roots2))
-        lmod*=prime**(exp+1)
-        partials.append(prime**(exp+1))
-        partials.append(roots2)
-    print("partials: "+str(partials))
-    partials=get_partials(lmod,partials)
-    enum=[]
-
-    h=0
-    while h < len(partials):
-        enum.append(partials[h+1])
-
-        h+=2
-
-    for idx in enumerated_product(*enum):
-        r1=0
-
-        u=0
-        while u < len(idx):
-            r1+=enum[u][idx[u]]
-
-            u+=1
-        r1%=lmod
-        gcdtest=math.gcd(r1,n)
-        if gcdtest != 1 and gcdtest !=n:
-            print("r1: "+str(r1))
-    return
 
 def get_primes(start,stop):
     return list(sympy.sieve.primerange(start,stop))
