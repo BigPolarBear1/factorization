@@ -23,8 +23,8 @@ I.e you will often see output like this:
 
 
 
-Smooth# 45 Poly: [1, -6122526, -812999542495315871211] x: 321432615 pval: 812898191548872718476 seen_primes: [3, 11, 17, 23, 71, 103, 191, 193, 283, 431, 479] k: -41729</br>
-Smooth# 46 Poly: [1, -6122526, -844572340262124254559] x: 327555141 pval: 844467053356595930844 seen_primes: [3, 11, 17, 23, 71, 107, 191, 193, 283, 431, 479] k: -43065</br> 
+Smooth# 8 Poly: [1, -47012444, -1103938318402917281248138] x: 3478920856 pval: 1103926379065166892607466 seen_primes: [2, 43, 47, 53, 67, 73, 103, 167, 173, 241, 523] k: 1997924882</br>
+Smooth# 9 Poly: [1, -47012444, -1134183203838613645117950] x: 3525933300 pval: 1134170937395719410213150 seen_primes: [2, 3, 43, 47, 53, 67, 103, 167, 173, 241, 523] k: 2052662550</br>
 
 Both "seen_primes" here have near identical factorizations. And since both k values, the multipliers of N are not a multiple of eachother this can be counted as two unique B-smooths. This actually ends up happening very often.
 So yea. This is it. Actually, the PoC that was online for the last couple of days was already doing this, I just didn't spot that it was spitting out near identical factorizations sometimes. So yea.. it's over. This is going to escalate very quickly now. 
