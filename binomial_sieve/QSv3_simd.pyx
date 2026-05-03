@@ -228,7 +228,6 @@ def extract_factors(N, relations, null_space,x_list,factor_list):#,disc_sr_list,
           #  print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!: "+str(factor_candidate))#+" sm: "+str(sqrt_right)+" root: "+str(sqrt_left))
             other_factor = N // factor_candidate
             return factor_candidate, other_factor
-    sys.exit()
     return 0, 0
 
 def solve_bits(matrix,factor_base,length):
@@ -906,11 +905,6 @@ def launch(n,primeslist1,primeslist2,small_primeslist):
     ###To do: implement residue sieving with create_map
     root_hmap=[]
     found+=binomial_sieve(root_hmap,primeslist1,primelist_f,n,smooth_list,factor_list,root_list,factor_list2,primelist)
-    print("Smooths #: "+str(len(smooth_list)))
-
-    print("Performing linear algebra")
-    QS(n,primelist,smooth_list,factor_list,root_list,factor_list2)
-    found=0
     return 
 
 
