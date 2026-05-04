@@ -958,8 +958,8 @@ def process_interval(interval,y,n,k,degree,primelist_f,smooth_list,factor_list,r
 def sieve_loop(n,root_hmap,primeslist,k,degree,primelist_f,smooth_list,factor_list,root_list,factor_list2,primelist):
     
     found=0
-    y=34
-    while y < 100:
+    y=1
+    while y < lin_sieve_size:
         interval=array.array("i",lin_sieve_size*[0])
         i=0
         while i < len(root_hmap):
