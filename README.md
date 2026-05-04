@@ -24,6 +24,7 @@ To do:
 -Combine the above two items to hunt for similar factorizations such that success at the linear algebra step becomes independent from the factor base size, which happens to be the largest bottleneck in QS variants.</br>
 -Bunch of optimizations.. including size of the binomials we sieve with.. and we can also sieve at different multiples of N using the k variable or the leading coefficient (i'll need to think if there is ever any point in using that leading coefficient).
 
+Update: Going to take a break for today. Technically this code will also work with degrees > 2 now. But tomorrow I will write a function, if we find a B-smooth at the second degree, we then call into a new function thats going to calcualte all the roots modulo the B-smooth for degrees > 2 and different multiples of N (the constant in our polynomials) and try to find B-smooths with similar factorization. It's going to work pretty smoothly, I've got it figured out now.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
