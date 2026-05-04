@@ -904,6 +904,21 @@ def verify_result(pos,y,degree,n,k,prime):
         print("verify fail...exiting")
         sys.exit()
 
+def verify_log(indicated,seen_primes):
+    
+    log=0
+    prev=-1
+    i=0
+    while i < len(seen_primes):
+        prime=seen_primes[i]
+        if prime != prev:
+            log+=round(math.log2(prime))
+        prev=prime
+
+        i+=1
+    print("log: "+str(log)+" indicated: "+str(indicated)+" seen_primes: "+str(seen_primes))
+    return
+
 def process_interval(interval,y,n,k,degree,primelist_f,smooth_list,factor_list,root_list,factor_list2):
     sym_x = sympy.symbols("sym_x")
     formula = (sym_x + y)**degree
@@ -916,6 +931,7 @@ def process_interval(interval,y,n,k,degree,primelist_f,smooth_list,factor_list,r
             pval=evaluate(poly,y*i)
             lside=pval+n*k
             factors1, value,seen_primes,seen_primes_indexes=factorise_fast(pval,primelist_f)
+        #    verify_log(interval[i],seen_primes)
             if lside%y**2 != 0:
                 print("fatal")
                 sys.exit()
@@ -940,10 +956,11 @@ def process_interval(interval,y,n,k,degree,primelist_f,smooth_list,factor_list,r
 
 
 def sieve_loop(n,root_hmap,primeslist,k,degree,primelist_f,smooth_list,factor_list,root_list,factor_list2,primelist):
-    interval=array.array("i",lin_sieve_size*[0])
+    
     found=0
-    y=1
+    y=34
     while y < 100:
+        interval=array.array("i",lin_sieve_size*[0])
         i=0
         while i < len(root_hmap):
             prime=primeslist[i]
@@ -953,13 +970,17 @@ def sieve_loop(n,root_hmap,primeslist,k,degree,primelist_f,smooth_list,factor_li
             log=round(math.log2(prime))
             try:
                 res=root_hmap[i][y%prime]
-           #     print("Prime: "+str(prime)+" res : "+str(res))
                 for item in res:
-                    for root in item[-1]:
+                    prevr=-1
+                    for root in item[-1]:   
+                        if root == prevr:
+                            print("oops")
+                            sys.exit()
+                        prevr=root
                         pos=solve_lin_con(y,root,prime)
 
                        
-                        #verify_result(pos,y,degree,n,k,prime) ##Debug remove later
+                      #  verify_result(pos,y,degree,n,k,prime) ##Debug remove later
                         mark_interval(interval,pos,prime,log)
             except Exception as e:
               #  print(e)
