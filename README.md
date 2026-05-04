@@ -16,13 +16,14 @@ To run: python3 run_qs.py -keysize 75 -base 500 -debug 1 -lin_size 100_000 -quad
 
 This is how this is supposed to be sieved! Finally got it. Let me begin improving this now :).
 This differs from quadratic sieve in that we are able to sieve with polynomials with non-zero derivatives, hence giving us more precision (adds a linear offset).
-Now.. optimize optimize optimize.... 
 
-I've also just implemented support for second degree polynomials for now. But this will work for higher degrees to. I will reimplement support for higher degrees shortly. As that is quite a powerful tool to hunt for smooth candidates with similar factorizations.
+To do:
 
-Update: I'll re-implement support for higher degrees this evening, as this is going to be quite central to the final shape of the algorithm. We'll also implement support for p-adic lifting eventually.
+-Ive already demonstrated how polynomials of degree bigger then 2 can also be used. But I need to re-implement this into the PoC. This is quite an important feature thats still missing.
+-Implement p-adic lifting
+-Combine the above two items to hunt for similar factorizations such that success at the linear algebra step becomes independent from the factor base size, which happens to be the largest bottleneck in QS variants. 
 
-Update: Oops, fixed an ugly bug... now its much faster. And still missing a lot of features.
+
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
