@@ -22,6 +22,8 @@ I've also just implemented support for second degree polynomials for now. But th
 
 Update: I'll re-implement support for higher degrees this evening, as this is going to be quite central to the final shape of the algorithm. We'll also implement support for p-adic lifting eventually.
 
+Update: Oops, fixed an ugly bug... now its much faster. And still missing a lot of features.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
