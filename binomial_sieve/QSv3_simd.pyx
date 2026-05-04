@@ -885,6 +885,97 @@ def binomial_sieve(root_hmap,primeslist1,primelist_f,n,smooth_list,factor_list,r
         degree+=2
     return found
 
+def mark_interval(interval,pos,prime,log):
+    i=pos
+    while i < len(interval):
+        interval[i]+=log
+
+        i+=prime
+
+def verify_result(pos,y,degree,n,k,prime):
+    ##Debug remove later
+    sym_x = sympy.symbols("sym_x")
+    formula = (sym_x + y)**degree
+    poly=formula.expand().as_poly(sym_x).all_coeffs()
+    poly[-1]=-n*k
+    pval=evaluate(poly,y*pos)
+   # print("pval: "+str(pval)+" y: "+str(y)+" pos: "+str(pos)+" prime: "+str(prime)+" poly: "+str(poly))
+    if pval%prime !=0:
+        print("verify fail...exiting")
+        sys.exit()
+
+def process_interval(interval,y,n,k,degree,primelist_f,smooth_list,factor_list,root_list,factor_list2):
+    sym_x = sympy.symbols("sym_x")
+    formula = (sym_x + y)**degree
+    poly=formula.expand().as_poly(sym_x).all_coeffs()
+    poly[-1]=-n*k
+    i=0
+    found=0
+    while i < len(interval):
+        if interval[i]>threshold:
+            pval=evaluate(poly,y*i)
+            lside=pval+n*k
+            factors1, value,seen_primes,seen_primes_indexes=factorise_fast(pval,primelist_f)
+            if lside%y**2 != 0:
+                print("fatal")
+                sys.exit()
+            lside//=y**2
+            factors2, value2,seen_primes2,seen_primes_indexes2=factorise_fast(lside,primelist_f)
+            if value == 1 and value2 == 1:
+                if factors1 not in factor_list:# and factors2 not in factor_list2:
+                    print("Smooth# "+str(len(smooth_list))+" pval: "+str(pval)+" lside: "+str(lside)+" seen_primes: "+str(seen_primes)+" seen_primes2: "+str(factors2)+" index: "+str(i)+" poly: "+str(poly))
+
+                    found+=1
+                    smooth_list.append(pval)
+                    factor_list.append(factors1)
+                    root_list.append(lside*y**2)
+                    factor_list2.append(factors2)
+                    #print("Smooth# "+str(len(smooth_list))+"/"+str(len(primeslist1)*2+10)+" Poly: "+str(poly)+" x: "+str(x)+" pval: "+str(pval)+" pval/mod bits: "+str(bitlen(pval//mod))+" seen_primes: "+str(factors1)+" k: "+str(k)+" seen_primes2: "+str(factors2)+" threshold: "+str(threshold)+" indicated threshold: "+str(k_interval[i])+" k center: "+str(k_start+(quad_sieve_size//2)))
+                    if len(smooth_list) > len(primelist_f)*2+10:
+                                    #print("returning")
+                        return found
+        i+=1
+    return found
+
+
+
+def sieve_loop(n,root_hmap,primeslist,k,degree,primelist_f,smooth_list,factor_list,root_list,factor_list2,primelist):
+    interval=array.array("i",lin_sieve_size*[0])
+    found=0
+    y=1
+    while y < 100:
+        i=0
+        while i < len(root_hmap):
+            prime=primeslist[i]
+            if y%prime ==0:
+                i+=1
+                continue
+            log=round(math.log2(prime))
+            try:
+                res=root_hmap[i][y%prime]
+           #     print("Prime: "+str(prime)+" res : "+str(res))
+                for item in res:
+                    for root in item[-1]:
+                        pos=solve_lin_con(y,root,prime)
+
+                       
+                        #verify_result(pos,y,degree,n,k,prime) ##Debug remove later
+                        mark_interval(interval,pos,prime,log)
+            except Exception as e:
+              #  print(e)
+                i+=1
+                continue
+            i+=1
+        found+=process_interval(interval,y,n,k,degree,primelist_f,smooth_list,factor_list,root_list,factor_list2)
+
+        if found > 50:
+            print("Performing linear algebra")
+            QS(n,primelist,smooth_list,factor_list,root_list,factor_list2)
+            found=0
+       # print("interval: "+str(interval))
+        y+=1
+
+
 @cython.profile(False)
 def launch(n,primeslist1,primeslist2,small_primeslist):
     found=0
@@ -901,7 +992,9 @@ def launch(n,primeslist1,primeslist2,small_primeslist):
     primelist_f=copy.copy(primeslist1)
     primelist_f.insert(0,len(primelist_f)+1)
     primelist_f=array.array('q',primelist_f)
-   # root_hmap=create_map(n,primeslist1,small_base)
+    root_hmap=create_map(n,primeslist1,1,2)
+    sieve_loop(n,root_hmap,primeslist1,1,2,primelist_f,smooth_list,factor_list,root_list,factor_list2,primelist)
+    sys.exit()
     ###To do: implement residue sieving with create_map
     root_hmap=[]
     found+=binomial_sieve(root_hmap,primeslist1,primelist_f,n,smooth_list,factor_list,root_list,factor_list2,primelist)
@@ -1155,30 +1248,44 @@ def liftp_zero(k,n,prime):
 
     return ret
 
-def create_map(n,primeslist,small_base):
+def create_map(n,primeslist,k,degree):
     max_exp=100000
 
     root_hmap=[]
     t=0
     while t < len(primeslist):
-        root_hmap.append([])
+        root_hmap.append({})
         prime=primeslist[t]
-        k=0
-        while k < prime:
-       
-            coeff=[0,0,(-n*k)%prime]
-            ranges = [range(start, prime) for start in coeff[:-1]]
-            for combo in itertools.product(*ranges):
-                cur=list(combo)+[coeff[-1]]
-                if cur[0]==0 and cur[1]==0:
-                    continue
+        coeff=[(-n*k)%prime]
+        d=degree
+        d_ind=0
+        while d_ind < d-1:
+            coeff.insert(0,0)
+            d_ind+=1
 
-                roots=solve_quadratic_congruence(cur[0], cur[1],cur[2], prime)
-                roots2=solve_quadratic_congruence(k, -cur[1],-n*cur[0], prime)
-                if len(roots) != 0:
-                    root_hmap[-1].append([cur[0],cur[1],k,roots,roots2])
-                    print("prime: "+str(prime)+" hmap: "+str(root_hmap[-1][-1]))
-            k+=1
+
+        ranges = [range(start, prime) for start in coeff[:-1]]
+        for combo in itertools.product(*ranges):
+            cur=[1]+list(combo)+[coeff[-1]]
+           # print(cur)
+            if cur[0]==0 and cur[1]==0:
+                continue
+            curc=copy.deepcopy(cur)##I need to fix find_roots_poly.. so we can remove this..
+            roots=find_roots_poly(curc, prime)
+            #roots=solve_quadratic_congruence(cur[0], cur[1],cur[2], prime)
+            
+            ##For the second degree.. since the linear coefficient is twice the binomial term, we divide by 2
+            ##I need to generalize this to higher degrees
+            inv2=modinv(2,prime)
+            binomial=(cur[1]*inv2)%prime
+            if len(roots) != 0:
+                try:
+                    res=root_hmap[-1][binomial]
+                    res.append([cur,k,roots])
+                except Exception as e:
+                    root_hmap[-1][binomial]=[[cur,k,roots]]
+               # root_hmap[-1].append([cur,k,roots])
+        #print("prime: "+str(prime)+" hmap: "+str(root_hmap[-1]))
         t+=1
     return root_hmap
 
