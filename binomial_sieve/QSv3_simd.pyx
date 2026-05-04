@@ -939,7 +939,7 @@ def process_interval(interval,y,n,k,degree,primelist_f,smooth_list,factor_list,r
             factors2, value2,seen_primes2,seen_primes_indexes2=factorise_fast(lside,primelist_f)
             if value == 1 and value2 == 1:
                 if factors1 not in factor_list:# and factors2 not in factor_list2:
-                    print("Smooth# "+str(len(smooth_list))+" pval: "+str(pval)+" lside: "+str(lside)+" seen_primes: "+str(seen_primes)+" seen_primes2: "+str(factors2)+" index: "+str(i)+" poly: "+str(poly))
+                    print("Smooth# "+str(len(smooth_list))+"/"+str(len(primelist_f)*2+10)+" pval: "+str(pval)+" lside: "+str(lside)+" seen_primes: "+str(seen_primes)+" seen_primes2: "+str(factors2)+" index: "+str(i)+" poly: "+str(poly))
 
                     found+=1
                     smooth_list.append(pval)
