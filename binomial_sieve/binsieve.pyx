@@ -926,10 +926,8 @@ def verify_log(indicated,seen_primes):
 @cython.boundscheck(False)
 #@cython.wraparound(False)
 cdef process_interval(int [:] interval,y,n,k,degree,primelist_f,smooth_list,factor_list,root_list,factor_list2,int [:] interval2):
-    sym_x = sympy.symbols("sym_x")
-    formula = (sym_x + y)**degree
-    poly=formula.expand().as_poly(sym_x).all_coeffs()
-    poly[-1]=-n*k
+    poly=binomial_coeffs_fast(y,degree)
+    poly+=[(-n*k)]
     cdef Py_ssize_t i=0
     found=0
     while i < lin_sieve_size-2:
@@ -940,7 +938,7 @@ cdef process_interval(int [:] interval,y,n,k,degree,primelist_f,smooth_list,fact
             pval=evaluate(poly,y*i)
             lside=pval+n*k
             factors1, value,seen_primes,seen_primes_indexes=factorise_fast(pval,primelist_f)
-        #    verify_log(interval[i],seen_primes)
+            #verify_log(interval[i],seen_primes)
             if lside%y**2 != 0:
                 print("fatal")
                 sys.exit()
@@ -986,11 +984,7 @@ def sieve_loop(n,root_hmap,primeslist,k,degree,primelist_f,smooth_list,factor_li
             try:
                 res=root_hmap[i][y%prime]
                 for item in res:
-                    prevr=-1
-                    for root in item[-1]:   
-                        if root == prevr:
-                            print("oops")
-                            sys.exit()
+                    for root in item:   
                         prevr=root
                         pos=solve_lin_con(y,root,prime)
 
@@ -1301,7 +1295,20 @@ def liftp_zero(k,n,prime):
 
     return ret
 
+@cython.boundscheck(False)
+@cython.wraparound(False)
+cdef binomial_coeffs_fast(y, n):
+    coeffs=[1]                
+    c=1
+    yk=1
+    for k in range(1, n):
+        c=c*(n-k+1)//k 
+        yk*=y                
+        coeffs.append(c*yk)
+    return coeffs
+
 def create_map(n,primeslist,k,degree):
+    sym_x = sympy.symbols("sym_x")
     max_exp=100000
 
     root_hmap=[]
@@ -1316,29 +1323,22 @@ def create_map(n,primeslist,k,degree):
             coeff.insert(0,0)
             d_ind+=1
 
-
-        ranges = [range(start, prime) for start in coeff[:-1]]
-        for combo in itertools.product(*ranges):
-            cur=[1]+list(combo)+[coeff[-1]]
-           # print(cur)
-            if cur[0]==0 and cur[1]==0:
+        y=0
+        while y < prime:
+            ##To do: We should write our own binomial expansion implementation..
+            poly=binomial_coeffs_fast(y,degree)
+            poly+=[(-n*k)%prime]
+            if poly[0]==0 and poly[1]==0:
                 continue
-            curc=copy.deepcopy(cur)##I need to fix find_roots_poly.. so we can remove this..
+            curc=copy.deepcopy(poly)##I need to fix find_roots_poly.. so we can remove this..
             roots=find_roots_poly(curc, prime)
-            #roots=solve_quadratic_congruence(cur[0], cur[1],cur[2], prime)
-            
-            ##For the second degree.. since the linear coefficient is twice the binomial term, we divide by 2
-            ##I need to generalize this to higher degrees
-            inv2=modinv(2,prime)
-            binomial=(cur[1]*inv2)%prime
             if len(roots) != 0:
                 try:
-                    res=root_hmap[-1][binomial]
-                    res.append([cur,k,roots])
+                    res=root_hmap[-1][y]
+                    res.append(roots)
                 except Exception as e:
-                    root_hmap[-1][binomial]=[[cur,k,roots]]
-               # root_hmap[-1].append([cur,k,roots])
-        #print("prime: "+str(prime)+" hmap: "+str(root_hmap[-1]))
+                    root_hmap[-1][y]=[roots]
+            y+=1
         t+=1
     return root_hmap
 
