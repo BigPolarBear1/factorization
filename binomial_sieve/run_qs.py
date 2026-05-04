@@ -1,4 +1,4 @@
-import QSv3_simd
+import binsieve
 import argparse
 import pstats, cProfile
 import pyximport
@@ -70,8 +70,8 @@ def parse_args():
 if __name__ == "__main__":
     parse_args()
     print_banner()
-  #  cProfile.runctx("QSv3_simd.main(keysize,workers,debug,base,key,lin_size,quad_size)", globals(), locals(), "Profile.prof")
+   # cProfile.runctx("binsieve.main(keysize,workers,debug,base,key,lin_size,quad_size,t)", globals(), locals(), "Profile.prof")
 
- #   s = pstats.Stats("Profile.prof")
- #   s.strip_dirs().sort_stats("time").print_stats()
-    QSv3_simd.main(keysize,workers,debug,base,key,lin_size,quad_size,t)
+   # s = pstats.Stats("Profile.prof")
+   # s.strip_dirs().sort_stats("time").print_stats()
+    binsieve.main(keysize,workers,debug,base,key,lin_size,quad_size,t)
