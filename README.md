@@ -18,6 +18,8 @@ This is how this is supposed to be sieved! Finally got it. Let me begin improvin
 This differs from quadratic sieve in that we are able to sieve with polynomials with non-zero derivatives, hence giving us more precision (adds a linear offset).
 Now.. optimize optimize optimize.... 
 
+I've also just implemented support for second degree polynomials for now. But this will work for higher degrees to. I will reimplement support for higher degrees shortly. As that is quite a powerful tool to hunt for smooth candidates with similar factorizations.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
