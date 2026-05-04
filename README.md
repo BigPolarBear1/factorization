@@ -26,6 +26,8 @@ To do:
 
 Update: Going to take a break for today. Technically this code will also work with degrees > 2 now. But tomorrow I will write a function, if we find a B-smooth at the second degree, we then call into a new function thats going to calcualte all the roots modulo the B-smooth for degrees > 2 and different multiples of N (the constant in our polynomials) and try to find B-smooths with similar factorization. It's going to work pretty smoothly, I've got it figured out now.
 
+Update: Ok ok, work out the details for next steps. Tomorrow I'll implement a proper find_same() function. If it is going to work like I hope, then we should be able to succeed with just a handful of B-smooths. Big day tomorrow.... lets see. Will definitely need p-adic lifting for it.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
