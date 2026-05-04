@@ -12,7 +12,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 
 #### To run from folder "binomial_sieve":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 60 -base 500 -debug 1 -lin_size 100_000 -quad_size 10 -t 50
+To run: python3 run_qs.py -keysize 70 -base 500 -debug 1 -lin_size 100_000 -quad_size 10 -t 50
 
 This is how this is supposed to be sieved! Finally got it. Let me begin improving this now :).
 This differs from quadratic sieve in that we are able to sieve with polynomials with non-zero derivatives, hence giving us more precision (adds a linear offset).
