@@ -19,9 +19,9 @@ This differs from quadratic sieve in that we are able to sieve with polynomials 
 
 To do:
 
--Ive already demonstrated how polynomials of degree bigger then 2 can also be used. But I need to re-implement this into the PoC. This is quite an important feature thats still missing.
--Implement p-adic lifting
--Combine the above two items to hunt for similar factorizations such that success at the linear algebra step becomes independent from the factor base size, which happens to be the largest bottleneck in QS variants. 
+-Ive already demonstrated how polynomials of degree bigger then 2 can also be used. But I need to re-implement this into the PoC. This is quite an important feature thats still missing.</br>
+-Implement p-adic lifting.</br>
+-Combine the above two items to hunt for similar factorizations such that success at the linear algebra step becomes independent from the factor base size, which happens to be the largest bottleneck in QS variants.</br>
 
 
 
