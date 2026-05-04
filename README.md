@@ -12,9 +12,11 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 
 #### To run from folder "binomial_sieve":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 50 -base 500 -debug 1 -lin_size 100_000 -quad_size 4
+To run: python3 run_qs.py -keysize 40 -base 200 -debug 1 -lin_size 100_000 -quad_size 10 -t 30
 
-UPDATE: I'm going to refactor this completely tomorrow. Building this PoC actually made me realize there is a much more practical approach to this. We can work purely with a residue map and just pull B-smooths out of it in a way that is algorithmically sound. I should be able to write the implementation in a single day tomorrow. With that done, it will be over quick. Im completely certain now that it will work. This ends tomorrow for sure. I hope you are all happy. fcking nazi transphobes. After this i want NOTHING to do with Beglium or any other country allied with the US. Go to hell. I'll be looking toward Asia for my future. I have my principles and I'm willing to die for them, I will never be on the side of people who are openly ridiculing folks like me. 
+This is how this is supposed to be sieved! Finally got it. Let me begin improving this now :).
+This differs from quadratic sieve in that we are able to sieve with polynomials with non-zero derivatives, hence giving us more precision (adds a linear offset).
+Now.. optimize optimize optimize.... 
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
