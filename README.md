@@ -22,7 +22,7 @@ To do:
 -Ive already demonstrated how polynomials of degree bigger then 2 can also be used. But I need to re-implement this into the PoC. This is quite an important feature thats still missing.</br>
 -Implement p-adic lifting.</br>
 -Combine the above two items to hunt for similar factorizations such that success at the linear algebra step becomes independent from the factor base size, which happens to be the largest bottleneck in QS variants.</br>
-
+-Bunch of optimizations.. including size of the binomials we sieve with.. and we can also sieve at different multiples of N using the k variable or the leading coefficient (i'll need to think if there is ever any point in using that leading coefficient).
 
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
