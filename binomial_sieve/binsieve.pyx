@@ -206,7 +206,7 @@ def extract_factors(N, relations, null_space,x_list,factor_list):#,disc_sr_list,
         if sqrt_left**2 != prod_left:
             print("horrible error")
             sys.exit()
-        print(" polyval sqrt: "+str(sqrt_left%N)+" disc constant sqrt: "+str(sqrt_right%N))#+" zx*zxy: "+str(x))
+       # print(" polyval sqrt: "+str(sqrt_left%N)+" disc constant sqrt: "+str(sqrt_right%N))#+" zx*zxy: "+str(x))
         ###Debug shit, remove for final version
         sqr1=prod_left%N 
         sqr2=prod_right%N
@@ -648,8 +648,7 @@ def get_mod_root(mod_item,resmap,primeslist1,x):
     i=0
     while i < len(indexes):
         prime=cfact[i]
-        if prime != primeslist1[indexes[i]]:
-            print("fatal: "+str(prime)+" "+str(primeslist1[indexes[i]]))
+
         if prime == 2:
             mod//=2
             i+=1
@@ -667,9 +666,9 @@ def get_mod_root(mod_item,resmap,primeslist1,x):
             i+=1
             continue
         i+=1
-  #  print("pl: "+str(pl)+" x: "+str(x))
+    #print("pl: "+str(pl)+" x: "+str(x)+" mod: "+str(mod))
     pl=get_partials(mod,pl)
-  #  print("pl: "+str(pl))
+    #print("pl: "+str(pl))
     kres=0
     i=0
     while i < len(pl):
@@ -679,211 +678,7 @@ def get_mod_root(mod_item,resmap,primeslist1,x):
    # sys.exit()
     return kres,mod
 
-def find_similar(y,primeslist1,primelist_f,n,smooth_list,factor_list,root_list,factor_list2):
-    grays = get_gray_code(20)
-    seen=[]
-    facseen=[]
-    close_range=10
-    too_close=5
-    LOWER_BOUND_SIQS=1
-    UPPER_BOUND_SIQS=4000
-    tnum=int(((n)**0.5) )#/(lin_sieve_size))
-    tnum_bit=bitlen(tnum)
-    quad=1
-    factors=primeslist1[1:]
-    factors.sort()
-    modlist=[]
-    retry=0
-    while len(modlist) < 10:
-        new_mod,cfact,indexes=generate_modulus(n,factors,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,tnum_bit,quad)
-        if new_mod ==0:
-            retry+=1
-            if retry == 100:
-                break
-            continue
-        modlist.append([new_mod,cfact,indexes])
-        for fac in cfact:
-            if fac not in facseen:
-                facseen.append(fac)
-    print("modlist: "+str(modlist)) 
-    if len(modlist)==0:
-        print("something went wrong")
-        sys.exit()
-    ###To do: So lside will have similar factors, but now we need to do residue sieving so pval also has similar factors that match the original B-smooth
-    
-    
-    print("Binomial term: "+str(y))#+" factors to find: "+str(factors))
-    found=0
-    degree = 2
-    while degree < 5:##To do: Worth going even higher?
-        sym_x = sympy.symbols("sym_x")
-        formula = (sym_x + y)**degree
-        poly=formula.expand().as_poly(sym_x).all_coeffs()
-        print("poly: "+str(poly))
-        resmap=[]
-        thresmod=1
-        mod=1
-        i=0
-        while i < len(factors):
-            factor=factors[i]
-            ###To do: This is dumb... refactor this later
 
-            resmap.append({})
-            if factor == -1 or factor == 2:
-                i+=1
-                continue
-            if factor not in facseen:
-                i+=1
-                continue
-            mod*=factor
-           # if factor > 20:
-            thresmod*=factor
-            k=0
-            while k < factor:
-                
-                polyc=copy.deepcopy(poly)
-                polyc[-1]=-n*k
-                roots=find_roots_poly(polyc, factor)
-                if len(roots)>0:
-                    for r in roots:
-                        try:
-                            res=resmap[-1][r]
-                            res.append(k)
-                        except Exception as e:
-                            resmap[-1][r]=[k]
-                  #  print("factor: "+str(factor)+" mod: "+str(mod)+" roots: "+str(roots))
-                k+=1
-
-           # print("prime: "+str(factor)+" resmap: "+str(resmap[-1]))
-            i+=1
-
-       # print("poly: "+str(poly))
-       
-        print("[i]Done building root map")
-        a = 0
-        while a < len(modlist):
-            mod_item=modlist[a]
-            xc=1
-            while xc < 10_000:
-          #  print("xc: "+str(xc))
-                x=y*xc
-                poly[-1]=0
-                pval=evaluate(poly,x)
-                #print("Pval: "+str(pval)+" poly: "+str(poly))
-                if pval == 0:
-                    xc+=1
-                    continue
-
-                kres,mod=get_mod_root(mod_item,resmap,factors,x)
-               # print(kres)
-                k_start=(pval)//n
-
-                k_start-=(quad_sieve_size//2)*mod
-              #  print("kstart: "+str(k_start))
-                r=k_start%mod
-                d=(r-kres)%mod
-                #diff=abs(k_start)-kres
-               # diff=diff//mod
-                k_start=k_start-d#kres+diff*mod
-                if k_start%mod !=kres:
-                    print("super fatal")
-                    sys.exit()
-              #  print("k_start adjusted: "+str(k_start))
-                poly[-1]=-n*k_start
-                 #   polyc=copy.deepcopy(poly)
-                lside=evaluate(poly,x)
-                if k_start%mod != kres:
-                    print("oops")
-                pval=lside
-                if pval%mod !=0:
-                    print("fatal error")
-                    sys.exit()
-                k_interval=array.array('i',[0]*quad_sieve_size)
-  #              i=0
-  #              while i < len(factors):
-  #                  factor=factors[i]
-  #                  if mod%factor ==0:
-  #                      i+=1
-  #                      continue
-  #                  try:
-  #                      xm=x%factor
-  #                      res=resmap[i][xm]
-  #                      for re in res:
-  #                          s=solve_lin_con(mod,re-k_start,factor)
-  #                          if (k_start+s*mod)%factor !=re:
-  #                              print("fail")
-  #                          j=s
-  #                          while j < len(k_interval):
-  #                              k_interval[j]+=round(math.log2(factor))
-  #                              j+=factor
-  #                  except Exception as e:
-  #                      i+=1
-  #                      continue
-  #                  i+=1
-
-           
-                i = 0
-                while i < len(k_interval):
-                    if k_interval[i] > -1:
-                        k=k_start+i*mod
-                        if k == 0:
-                            i+=1
-                            continue
-                        poly[-1]=-n*k
-                 #   polyc=copy.deepcopy(poly)
-                        lside=evaluate(poly,x)
-                    
-                        pval=lside
-                        lside+=n*k
-                        if lside%y**2 !=0:
-                            print("error")
-                        lside//=y**2
-                        factors1, value,seen_primes,seen_primes_indexes=factorise_fast(pval,primelist_f)
-                        factors2, value2,seen_primes2,seen_primes_indexes2=factorise_fast(lside,primelist_f)
-                        factors1=list(factors1)
-                        factors1.sort()
-                      #  seen_primes.sort()
-                      #  print("pval: "+str(bitlen(pval))+" lside: "+str(lside)+" poly: "+str(poly)+" x: "+str(x)+" seen_primes: "+str(seen_primes)+" value: "+str(value)+" threshold: "+str(threshold)+" indicated threshold: "+str(k_interval[i])+" value2: "+str(value2)+" mod: "+str(mod))
-                        if value == 1 and value2 == 1:
-                        #print("hit")
-                            if factors1 not in factor_list:# and factors2 not in factor_list2:
-                                found+=1
-                                smooth_list.append(pval)
-                                factor_list.append(factors1)
-                                root_list.append(lside*y**2)
-                                factor_list2.append(factors2)
-                                print("Smooth# "+str(len(smooth_list))+"/"+str(len(primeslist1)*2+10)+" Poly: "+str(poly)+" x: "+str(x)+" pval: "+str(pval)+" pval/mod bits: "+str(bitlen(pval//mod))+" seen_primes: "+str(factors1)+" k: "+str(k)+" seen_primes2: "+str(factors2)+" threshold: "+str(threshold)+" indicated threshold: "+str(k_interval[i])+" k center: "+str(k_start+(quad_sieve_size//2)))
-                                if len(smooth_list) > len(primeslist1)*2+10:
-                                    #print("returning")
-                                    return found
-                    i+=1
-                xc+=1
-            a+=1
-        degree+=1
-   # sys.exit()
-
-    return found
-
-def binomial_sieve(root_hmap,primeslist1,primelist_f,n,smooth_list,factor_list,root_list,factor_list2,primelist):
-    found=0
-    degree=1
-    x_size=1000
-    while degree < 2:
-        y_exp=0.3
-      #  print("exp: "+str(y_exp))
-        y_start=round(n**y_exp) ##We can presieve these aswell
-        y=y_start
-        while y < y_start+lin_sieve_size:
-            found+=find_similar(y,primeslist1,primelist_f,n,smooth_list,factor_list,root_list,factor_list2)
-            if found > 50:
-                print("Performing linear algebra")
-                QS(n,primelist,smooth_list,factor_list,root_list,factor_list2)
-                found=0
-
-            y+=1
-        print("next degree")
-        degree+=2
-    return found
 
 
 @cython.boundscheck(False)
@@ -923,9 +718,164 @@ def verify_log(indicated,seen_primes):
     print("log: "+str(log)+" indicated: "+str(indicated)+" seen_primes: "+str(seen_primes))
     return
 
+def find_same(primeslist,factors,y,n,primelist_f,smooth_list,factor_list,root_list,factor_list2):
+    factors=list(factors)
+   # if len(primeslist)<20:
+    #    print("[i]use a larger factor base")
+    #    sys.exit()
+   # small_base=copy.deepcopy(primeslist[1:20])
+   # for p in small_base:
+     #   if p not in factors:
+       #     factors.append(p)
+#    factors.extend(small_base)
+    found=0
+   # print("looking for: "+str(factors)+" binomial term: "+str(y))
+    degree=2
+    while degree < 5:
+        poly=binomial_coeffs_fast(y,degree)
+        poly+=[0]
+        modulus=1
+        modfac=[]
+        modind=[]
+        resmap=[]
+        i=0
+        while i < len(factors):
+            factor=factors[i]
+            ###To do: This is dumb... refactor this later
+
+            resmap.append({})
+            if factor == -1 or factor == 2:
+                i+=1
+                continue
+            modfac.append(factor)
+            modulus*=factor
+            modind.append(i)
+            k=0
+            while k < factor:
+                
+                polyc=copy.deepcopy(poly)
+                polyc[-1]=-n*k
+                roots=find_roots_poly(polyc, factor)
+                if len(roots)>0:
+                    for r in roots:
+                        try:
+                            res=resmap[-1][r]
+                            res.append(k)
+                        except Exception as e:
+                            resmap[-1][r]=[k]
+                  #  print("factor: "+str(factor)+" mod: "+str(mod)+" roots: "+str(roots))
+                k+=1
+        #    print("Prime: "+str(factor)+" resmap: "+str(resmap[-1]))
+            i+=1
+      #  mod_item=[modulus,modfac,modind]
+        xc=1
+        while xc < 10_000:
+            x=y*xc
+            poly[-1]=0
+            pval=evaluate(poly,x)
+            
+            if pval == 0:
+                xc+=1
+                continue
+
+         #   kres,mod=get_mod_root(mod_item,resmap,factors,x)
+            k_start=(pval)//n
+
+            k_start-=(quad_sieve_size//2)#*mod
+        #    r=k_start%mod
+         #   d=(r-kres)%mod
+        #    k_start=k_start-d#kres+diff*mod
+           # if k_start%mod !=kres:
+            #    print("super fatal")
+            #    sys.exit()
+
+           # poly[-1]=-n*k_start
+           # lside=evaluate(poly,x)
+            #if k_start%mod != kres:
+            #    print("oops")
+           # pval=lside
+          #  if pval%mod !=0:
+           #     print("fatal error")
+           #     sys.exit()
+
+
+            k_interval=array.array('i',[0]*quad_sieve_size)
+            i=0
+            while i < len(factors):
+                factor=factors[i]
+                #if mod%factor ==0:
+                 #   i+=1
+                 #   continue
+                try:
+                    xm=x%factor
+                    res=resmap[i][xm]
+                    for re in res:
+                        s=solve_lin_con(1,re-k_start,factor)
+                        if (k_start+s)%factor !=re:
+                            print("fail")
+                        j=s
+                        while j < len(k_interval):
+                            k_interval[j]+=round(math.log2(factor))
+                            j+=factor
+                except Exception as e:
+                    i+=1
+                    continue
+                i+=1
+
+           
+            i = 0
+            while i < len(k_interval):
+                if k_interval[i] <threshold:
+                    i+=1
+                    continue
+
+                k=k_start+i#*mod
+                if k == 0:
+                    i+=1
+                    continue
+                poly[-1]=-n*k
+                lside=evaluate(poly,x)
+                    
+                pval=lside
+             #   if bitlen(pval//mod)>threshold:
+                 #   i+=1
+                 #   continue
+                lside+=n*k
+                if lside%y**2 !=0:
+                    print("error")
+                lside//=y**2
+                factors1, value,seen_primes,seen_primes_indexes=factorise_fast(pval,primelist_f)
+              # print("factors: "+str(factors))
+              #  verify_log(k_interval[i],seen_primes)
+                factors2, value2,seen_primes2,seen_primes_indexes2=factorise_fast(lside,primelist_f)
+                factors1=list(factors1)
+                factors1.sort()
+               # for fac in factors1:
+                  #  if k%fac == 0:
+                     #   i+=1
+                     #   continue
+                seen_primes=list(seen_primes)
+                seen_primes.sort()
+                if value == 1 and value2 == 1:
+                    if factors1 not in factor_list:# and factors2 not in factor_list2:
+                        found+=1
+                        factors1=list(factors1)
+                        factors1.sort()
+                        smooth_list.append(pval)
+                        factor_list.append(factors1)
+                        root_list.append(lside*y**2)
+                        factor_list2.append(factors2)
+                        print("Found similar smooth# "+str(len(smooth_list))+"/"+str(len(primeslist)*2+10)+" Poly: "+str(poly)+" x: "+str(x)+" pval: "+str(pval)+" pval bits: "+str(bitlen(pval))+" seen_primes: "+str(seen_primes)+" k: "+str(k)+" seen_primes2: "+str(factors2)+" k center: "+str(k_start+(quad_sieve_size//2)))
+                        if found > 50:
+                            return found
+                i+=1
+            xc+=1
+        degree+=1
+    return found
+
 @cython.boundscheck(False)
 #@cython.wraparound(False)
-cdef process_interval(int [:] interval,y,n,k,degree,primelist_f,smooth_list,factor_list,root_list,factor_list2,int [:] interval2):
+cdef process_interval(int [:] interval,y,n,k,degree,primelist_f,smooth_list,factor_list,root_list,factor_list2,int [:] interval2,primeslist):
     poly=binomial_coeffs_fast(y,degree)
     poly+=[(-n*k)]
     cdef Py_ssize_t i=0
@@ -938,7 +888,7 @@ cdef process_interval(int [:] interval,y,n,k,degree,primelist_f,smooth_list,fact
             pval=evaluate(poly,y*i)
             lside=pval+n*k
             factors1, value,seen_primes,seen_primes_indexes=factorise_fast(pval,primelist_f)
-            #verify_log(interval[i],seen_primes)
+           # verify_log(interval[i],seen_primes)
             if lside%y**2 != 0:
                 print("fatal")
                 sys.exit()
@@ -951,13 +901,42 @@ cdef process_interval(int [:] interval,y,n,k,degree,primelist_f,smooth_list,fact
                 print("error error")
             if value == 1 and value2 == 1:
                 if factors1 not in factor_list:# and factors2 not in factor_list2:
-                    print("Smooth# "+str(len(smooth_list))+"/"+str(len(primelist_f)*2+10)+" pval: "+str(pval)+" lside: "+str(lside)+" seen_primes: "+str(seen_primes)+" seen_primes2: "+str(seen_primes2)+" index: "+str(i)+" poly: "+str(poly))
-
+                    factors1=list(factors1)
+                    factors1.sort()                    
+                    print("Smooth# "+str(len(smooth_list))+"/"+str(len(primelist_f)*2+10)+" pval: "+str(pval)+" lside: "+str(lside)+" seen_primes: "+str(factors1)+" seen_primes2: "+str(factors2)+" index: "+str(i)+" poly: "+str(poly))
                     found+=1
                     smooth_list.append(pval)
+
                     factor_list.append(factors1)
                     root_list.append(lside*y**2)
                     factor_list2.append(factors2)
+                    poly_new=copy.deepcopy(poly)
+                    last=poly[-1]
+                 #   h=0
+                 #   while h < len(primeslist):
+                    #    prime=primeslist[h]
+                    #    poly_new[-1]=last*prime
+                    #    pval=evaluate(poly_new,y*i*prime)
+                    #    lside=pval+last*prime        
+
+                   #     factors1, value,seen_primes,seen_primes_indexes=factorise_fast(pval,primelist_f)
+                   #     factors2, value2,seen_primes2,seen_primes_indexes2=factorise_fast(lside,primelist_f)
+                   #     print(" Adding "+str(prime)+" poly: "+str(poly_new)+" seen_primes: "+str(seen_primes)+" seen_primes2: "+str(seen_primes2))
+                   #     if value == 1 and value2 == 1:
+                   #         if factors1 not in factor_list:
+                   #             factors1=list(factors1)
+                   #             factors1.sort()                    
+                   #             print("!!!!!Smooth# "+str(len(smooth_list))+"/"+str(len(primelist_f)*2+10)+" pval: "+str(pval)+" lside: "+str(lside)+" seen_primes: "+str(factors1)+" seen_primes2: "+str(factors2)+" index: "+str(i)+" poly: "+str(poly))
+                  #              found+=1
+                  #              smooth_list.append(pval)
+
+                  #              factor_list.append(factors1)
+                  #              root_list.append(lside*y**2)
+                  #              factor_list2.append(factors2)
+
+                  #      h+=1
+                    found+=find_same(primeslist,factors1,y,n,primelist_f,smooth_list,factor_list,root_list,factor_list2)
+         
                     #print("Smooth# "+str(len(smooth_list))+"/"+str(len(primeslist1)*2+10)+" Poly: "+str(poly)+" x: "+str(x)+" pval: "+str(pval)+" pval/mod bits: "+str(bitlen(pval//mod))+" seen_primes: "+str(factors1)+" k: "+str(k)+" seen_primes2: "+str(factors2)+" threshold: "+str(threshold)+" indicated threshold: "+str(k_interval[i])+" k center: "+str(k_start+(quad_sieve_size//2)))
                     if len(smooth_list) > len(primelist_f)*2+10:
                                     #print("returning")
@@ -971,39 +950,19 @@ def sieve_loop(n,root_hmap,primeslist,k,degree,primelist_f,smooth_list,factor_li
     
     found=0
     y_start=round((n*k)**0.3)
+    if degree > 2:
+        y_start=1
     y=y_start
     while y < y_start+lin_sieve_size:
-        interval=array.array("i",lin_sieve_size*[0])
-        i=0
-        while i < len(root_hmap):
-            prime=primeslist[i]
-            if y%prime ==0:
-                i+=1
-                continue
-            log=round(math.log2(prime))
-            try:
-                res=root_hmap[i][y%prime]
-                for item in res:
-                    for root in item:   
-                        prevr=root
-                        pos=solve_lin_con(y,root,prime)
-
-                       
-                      #  verify_result(pos,y,degree,n,k,prime) ##Debug remove later
-                        mark_interval(interval,pos,prime,log,lin_sieve_size)
-            except Exception as e:
-              #  print(e)
-                i+=1
-                continue
-            i+=1
-        found+=process_interval(interval,y,n,k,degree,primelist_f,smooth_list,factor_list,root_list,factor_list2,interval2)
-
+        found+=find_same(primeslist,primeslist,y,n,primelist_f,smooth_list,factor_list,root_list,factor_list2)
         if found > 50:
             print("Performing linear algebra")
             QS(n,primelist,smooth_list,factor_list,root_list,factor_list2)
             found=0
-        #print("interval: "+str(interval))
         y+=1
+
+    
+    
 
 def filter(qbase,size):
 
@@ -1042,10 +1001,6 @@ def launch(n,primeslist1,primeslist2,small_primeslist):
     root_hmap=create_map(n,primeslist1,1,2)
     print("[i]Entering Sieve Loop")
     sieve_loop(n,root_hmap,primeslist1,1,2,primelist_f,smooth_list,factor_list,root_list,factor_list2,primelist,interval2)
-    sys.exit()
-    ###To do: implement residue sieving with create_map
-    root_hmap=[]
-    found+=binomial_sieve(root_hmap,primeslist1,primelist_f,n,smooth_list,factor_list,root_list,factor_list2,primelist)
     return 
 
 
