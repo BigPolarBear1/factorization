@@ -738,6 +738,7 @@ def find_same(primeslist,factors,y,n,primelist_f,smooth_list,factor_list,root_li
         modfac=[]
         modind=[]
         resmap=[]
+        print("[i]Building root map")
         i=0
         while i < len(factors):
             factor=factors[i]
@@ -866,7 +867,7 @@ def find_same(primeslist,factors,y,n,primelist_f,smooth_list,factor_list,root_li
                         root_list.append(lside*y**2)
                         factor_list2.append(factors2)
                         print("Found similar smooth# "+str(len(smooth_list))+"/"+str(len(primeslist)*2+10)+" Poly: "+str(poly)+" x: "+str(x)+" pval: "+str(pval)+" pval bits: "+str(bitlen(pval))+" seen_primes: "+str(seen_primes)+" k: "+str(k)+" seen_primes2: "+str(factors2)+" k center: "+str(k_start+(quad_sieve_size//2)))
-                        if found > 50:
+                        if found > 100:
                             return found
                 i+=1
             xc+=1
@@ -946,7 +947,7 @@ cdef process_interval(int [:] interval,y,n,k,degree,primelist_f,smooth_list,fact
 
 
 
-def sieve_loop(n,root_hmap,primeslist,k,degree,primelist_f,smooth_list,factor_list,root_list,factor_list2,primelist,interval2):
+def sieve_loop(n,primeslist,k,degree,primelist_f,smooth_list,factor_list,root_list,factor_list2,primelist,interval2):
     
     found=0
     y_start=round((n*k)**0.3)
@@ -955,7 +956,7 @@ def sieve_loop(n,root_hmap,primeslist,k,degree,primelist_f,smooth_list,factor_li
     y=y_start
     while y < y_start+lin_sieve_size:
         found+=find_same(primeslist,primeslist,y,n,primelist_f,smooth_list,factor_list,root_list,factor_list2)
-        if found > 50:
+        if found > 100:
             print("Performing linear algebra")
             QS(n,primelist,smooth_list,factor_list,root_list,factor_list2)
             found=0
@@ -997,10 +998,10 @@ def launch(n,primeslist1,primeslist2,small_primeslist):
     primelist_f=array.array('q',primelist_f)
     print("[i]Pre-filtering lin_sieve_size")
     interval2=filter(primelist_f,lin_sieve_size)
-    print("[i]Building root map")
-    root_hmap=create_map(n,primeslist1,1,2)
+   # print("[i]Building root map")
+   # root_hmap=create_map(n,primeslist1,1,2)
     print("[i]Entering Sieve Loop")
-    sieve_loop(n,root_hmap,primeslist1,1,2,primelist_f,smooth_list,factor_list,root_list,factor_list2,primelist,interval2)
+    sieve_loop(n,primeslist1,1,2,primelist_f,smooth_list,factor_list,root_list,factor_list2,primelist,interval2)
     return 
 
 
