@@ -14,21 +14,8 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 60 -base 500 -debug 1 -lin_size 10_000 -quad_size 100_000 -t 30
 
-This is how this is supposed to be sieved! Finally got it. Let me begin improving this now :).
-This differs from quadratic sieve in that we are able to sieve with polynomials with non-zero derivatives, hence giving us more precision (adds a linear offset).
-
-To do:
-
--Ive already demonstrated how polynomials of degree bigger then 2 can also be used. But I need to re-implement this into the PoC. This is quite an important feature thats still missing.</br>
--Implement p-adic lifting.</br>
--Combine the above two items to hunt for similar factorizations such that success at the linear algebra step becomes independent from the factor base size, which happens to be the largest bottleneck in QS variants.</br>
--Bunch of optimizations.. including size of the binomials we sieve with.. and we can also sieve at different multiples of N using the k variable or the leading coefficient (i'll need to think if there is ever any point in using that leading coefficient).
-
-Update: Going to take a break for today. Technically this code will also work with degrees > 2 now. But tomorrow I will write a function, if we find a B-smooth at the second degree, we then call into a new function thats going to calcualte all the roots modulo the B-smooth for degrees > 2 and different multiples of N (the constant in our polynomials) and try to find B-smooths with similar factorization. It's going to work pretty smoothly, I've got it figured out now.
-
-Update: Ok ok, worked out the details for next steps. Tomorrow I'll implement a proper find_same() function. If it is going to work like I hope, then we should be able to succeed with just a handful of B-smooths. Big day tomorrow.... lets see. Will definitely need p-adic lifting for it.
-
-Update: Actually.. when a few days ago it was finding all these near identical smooths... I need to look at this some more. Bc its doing something interesting there...
+Update: I have rolled back to the version from a few days ago. You should actually sieve the multiples of N instead. Bc it will often cause us to hit very similar factorizations.
+And I thought that maybe these are just cases of hitting variations of the same smooth.. but they actually count as unique smooths. I need to sieve specifically for these cases actually.. let me do some digging and see. 
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
