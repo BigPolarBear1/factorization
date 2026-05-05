@@ -28,7 +28,7 @@ Update: Going to take a break for today. Technically this code will also work wi
 
 Update: Ok ok, worked out the details for next steps. Tomorrow I'll implement a proper find_same() function. If it is going to work like I hope, then we should be able to succeed with just a handful of B-smooths. Big day tomorrow.... lets see. Will definitely need p-adic lifting for it.
 
-Update: Going to take a quick detour today. Let me try something in CUDA_QS_Variant.. bc I know I can just multiply the root and multiple of N to basically add a factor.. and I wonder if I just multiply it with every large prime found.. and create multiple variantions of the same smooth.. is that going to help succeed at linear algebra soon? I need to atleast try it.. its 30min of work. That would be stupid if I had overlooked something obvious like that.
+Update: Actually.. when a few days ago it was finding all these near identical smooths... I need to look at this some more. Bc its doing something interesting there...
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
