@@ -14,8 +14,12 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 70 -base 500 -debug 1 -lin_size 10_000 -quad_size 100_000 -t 50
 
-Update: I have rolled back to the version from a few days ago. You should actually sieve the multiples of N instead. Bc it will often cause us to hit very similar factorizations.
-And I thought that maybe these are just cases of hitting variations of the same smooth.. but they actually count as unique smooths. I need to sieve specifically for these cases actually.. let me do some digging and see. 
+Update: Already, added it so that it creates a 2d interval. Now only the important part is still remaing. See To Do below.
+
+To Do:
+
+If you run the PoC, you will occasionally notice the PoC finding B-smooths that are a slight variant of each other (only 1 or 2 small factors are different) ... this happens a lot actually and these count as unique smooth candidates. The reason this is useful is because they cancel out eachothers large factors and give us just a handful of small factors for the linear algebra step. And if we can find a lot of these... we can potentially succeed at the linear algebra step much sooner.
+Now, the currently problem is, that these might fall outside our sieve interval.. but we can quickly check if they exist jusing using our residue map. So thats what needs to be done now. 
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
