@@ -21,6 +21,20 @@ To Do:
 If you run the PoC, you will occasionally notice the PoC finding B-smooths that are a slight variant of each other (only 1 or 2 small factors are different) ... this happens a lot actually and these count as unique smooth candidates. The reason this is useful is because they cancel out eachothers large factors and give us just a handful of small factors for the linear algebra step. And if we can find a lot of these... we can potentially succeed at the linear algebra step much sooner.
 Now, the currently problem is, that these might fall outside our sieve interval.. but we can quickly check if they exist jusing using our residue map. So thats what needs to be done now. 
 
+A good example is for example this: 
+
+Poly: [1, 4, -33032964601443606179686070] x: 4670 pval: -33032964601443606157858490 seen_primes: [-1, 2, 5, 17, 19, 89, 173, 317, 419, 467, 1949, 1949, 2819] k: 88730</br>
+Poly: [1, 4, -33089552121103466747017438] x: 4674 pval: -33089552121103466725152466 seen_primes: [-1, 2, 17, 19, 89, 173, 317, 419, 1949, 1949, 2339, 2819] k: 88882</br>
+
+These are near identical but have a handful of different factors. You will find case like this all the time. And this behavior is quite important.
+
+x1: 4670 = 2 x 5 x 467    </br>
+x2: 4674 = 2 x 3 x 19 x 41 </br>
+k1: 88730 = 2 x 5 x 19 x 467</br>
+k2: 88882 = 2 x 19 x 2339</br>
+
+Now if we look at the factorizations of the root and multiples of N, k ... we see that the factors that are different show up in these. So that gives us a clue how to help checking for these variations. These are unique because the non-unique ones are when you multiply a root by a factor and multiple k with the square of it. Which ends up adding a square to the polynomial value. These are non square factors being added. Hence these are completely valid for us to us during linear algebra. My work is nearing completion now.... perhaps finally the suffering will end... or perhaps it is only beginning.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
