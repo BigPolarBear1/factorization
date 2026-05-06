@@ -12,7 +12,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 
 #### To run from folder "binomial_sieve":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 60 -base 500 -debug 1 -lin_size 10_000 -quad_size 100_000 -t 30
+To run: python3 run_qs.py -keysize 70 -base 500 -debug 1 -lin_size 10_000 -quad_size 100_000 -t 50
 
 Update: I have rolled back to the version from a few days ago. You should actually sieve the multiples of N instead. Bc it will often cause us to hit very similar factorizations.
 And I thought that maybe these are just cases of hitting variations of the same smooth.. but they actually count as unique smooths. I need to sieve specifically for these cases actually.. let me do some digging and see. 
