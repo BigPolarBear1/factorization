@@ -26,7 +26,7 @@ A good example is for example this:
 Poly: [1, 4, -33032964601443606179686070] x: 4670 pval: -33032964601443606157858490 seen_primes: [-1, 2, 5, 17, 19, 89, 173, 317, 419, 467, 1949, 1949, 2819] k: 88730</br>
 Poly: [1, 4, -33089552121103466747017438] x: 4674 pval: -33089552121103466725152466 seen_primes: [-1, 2, 17, 19, 89, 173, 317, 419, 1949, 1949, 2339, 2819] k: 88882</br>
 
-These are near identical but have a handful of different factors. You will find case like this all the time. And this behavior is quite important.
+These are near identical but have a handful of different factors. You will find cases like this all the time. And this behavior is quite important.
 
 x1: 4670 = 2 x 5 x 467    </br>
 x2: 4674 = 2 x 3 x 19 x 41 </br>
