@@ -19,7 +19,7 @@ Update: Already, added it so that it creates a 2d interval. Now only the importa
 To Do:
 
 If you run the PoC, you will occasionally notice the PoC finding B-smooths that are a slight variant of each other (only 1 or 2 small factors are different) ... this happens a lot actually and these count as unique smooth candidates. The reason this is useful is because they cancel out eachothers large factors and give us just a handful of small factors for the linear algebra step. And if we can find a lot of these... we can potentially succeed at the linear algebra step much sooner.
-Now, the currently problem is, that these might fall outside our sieve interval.. but we can quickly check if they exist jusing using our residue map. So thats what needs to be done now. 
+Now, the current problem is, that these might fall outside our sieve interval.. but we can quickly check if they exist jusing using our residue map. So thats what needs to be done now. 
 
 A good example is for example this: 
 
