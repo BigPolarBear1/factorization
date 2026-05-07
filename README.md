@@ -35,7 +35,7 @@ k2: 88882 = 2 x 19 x 2339</br>
 
 Now if we look at the factorizations of the root and multiples of N, k ... we see that the factors that are different show up in these. So that gives us a clue how to help checking for these variations. These are unique because the non-unique ones are when you multiply a root by a factor and multiply k with the square of it. Which ends up adding a square to the polynomial value. These are non square factors being added. Hence these are completely valid for us to us during linear algebra. My work is nearing completion now.... perhaps finally the suffering will end... or perhaps it is only beginning.
 
-Update: Eh, starting to get there.. but need to optimize everything now. 
+Update: Eh, starting to get there.. but need to optimize everything now. And there will probably also be a benefit to adding p-adic lifting when we go into find_same2.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
