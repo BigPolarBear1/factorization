@@ -41,6 +41,8 @@ Update: Eh, starting to get there.. but need to optimize everything now. And the
 
 Update: After doing some testing and thinking today. I dont believe sieving is the correct approach for find_same2 ... just got to be more deliberate trying to find these near identical smooths by using the fact that those different factors show up in the k variable (the multiples of N). Anyway... it is the final thing that needs to be figured out somehow now.
 
+Update: I guess if we have i.e x^2+b\*x-N\*k then multiplying root x and multiplying k basically shifts the entire thing. And which "shifts" result in near identical smooth candidates..thats just residue math..I should be able to figure that out. I'll go for a run.. let me give it a go when I get back. Either this will work or fck it.. I'm just going to end my life. Fcking tired of shit.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
