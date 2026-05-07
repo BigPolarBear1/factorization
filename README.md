@@ -37,6 +37,8 @@ Now if we look at the factorizations of the root and multiples of N, k ... we se
 
 Update: Eh, starting to get there.. but need to optimize everything now. And there will probably also be a benefit to adding p-adic lifting when we go into find_same2.
 
+Update: After doing some testing and thinking today. I dont believe sieving is the correct approach for find_same2 ... just got to be more deliberate trying to find these near identical smooths by using the fact that those different factors show up in the k variable (the multiples of N). Anyway... it is the final thing that needs to be figured out somehow now.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
