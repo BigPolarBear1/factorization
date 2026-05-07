@@ -3,7 +3,7 @@ Disclaimer2: I never finished highschool. I started working on this 3 years ago,
 
 The day I break factorization will be day 0 of the gay future. A better world will be born. A world of human creativity. A world of art, science and spirituality. A world without suffering. I will see that world become reality, no matter the cost. 
 
-Been unemployed for years without income, still looking for work: big_polar_bear1@proton.me ... able to relocate to anywhere in the world except the US.
+Been unemployed for years without income, still looking for work: big_polar_bear1@proton.me ... able to relocate to anywhere in the world except the US. Depression man. Just really intense suicidal thoughts today. Everything that was good in my life has been gone for years now. Just been living a life without dignity, stuck in a tiny room, no income for years. Perhaps when it is an exceptionally nice day, I'll just do it, get it over with. Fck this bullshit. What a world filled with morrons.
 
 #### References (re-used many of the core number theoretical functions from these PoCs to fit my own algorithm): 
 https://stackoverflow.com/questions/79330304/optimizing-sieving-code-in-the-self-initializing-quadratic-sieve-for-pypy
