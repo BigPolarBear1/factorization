@@ -12,7 +12,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 
 #### To run from folder "binomial_sieve":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 60 -base 500 -debug 1 -lin_size 10_000 -quad_size 100_000 -t 50
+To run:  python3 run_qs.py -keysize 75 -base 500 -debug 1 -lin_size 1_000 -quad_size 1_000_000 -t 70
 
 Update: Already, added it so that it creates a 2d interval. Now only the important part is still remaing. See To Do below.
 
