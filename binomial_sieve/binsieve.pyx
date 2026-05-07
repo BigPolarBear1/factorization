@@ -889,7 +889,8 @@ def find_same(primeslist,factors,y,n,primelist_f,smooth_list,factor_list,root_li
         degree+=1
     return found
 
-def find_same2(primeslist,factors,y,n,primelist_f,smooth_list,factor_list,root_list,factor_list2,degree,resmap):
+def find_same2(primeslist,factors,y,n,primelist_f,smooth_list,factor_list,root_list,factor_list2,degree,resmap,old_k):
+    
     grays = get_gray_code(20)
     seen=[]
     facseen=[]
@@ -921,7 +922,7 @@ def find_same2(primeslist,factors,y,n,primelist_f,smooth_list,factor_list,root_l
     while i < len(primeslist):
         factor=primeslist[i]
         if factor in factors:
-            if factor == -1 or factor == 2 or factor < 100:
+            if factor == -1 or factor == 2 or old_k%factor==0:
                 i+=1
                 continue
             modfac.append(factor)
@@ -931,7 +932,7 @@ def find_same2(primeslist,factors,y,n,primelist_f,smooth_list,factor_list,root_l
     mod_item=[modulus,modfac,modind]
     print("[i]Done building root map, modulus factors: "+str(mod_item))
     xc=1
-    while xc < 100:
+    while xc < lin_sieve_size:
 
         x=y*xc
         poly[-1]=0
@@ -959,11 +960,13 @@ def find_same2(primeslist,factors,y,n,primelist_f,smooth_list,factor_list,root_l
         if pval%mod !=0:
             print("fatal error")
             sys.exit()
-        k_interval=array.array('i',[0]*quad_sieve_size)
+
+        k_interval=np.ones(quad_sieve_size,dtype=np.int16)
+       # k_interval=array.array('i',[0]*quad_sieve_size)
         i=0
         while i < len(primeslist):
             factor=primeslist[i]
-            if mod%factor ==0:
+            if mod%factor ==0:# or factor > lin_sieve_size:
                 i+=1
                 continue
             try:
@@ -973,49 +976,57 @@ def find_same2(primeslist,factors,y,n,primelist_f,smooth_list,factor_list,root_l
                     s=solve_lin_con(mod,re-k_start,factor)
                     if (k_start+s*mod)%factor !=re:
                         print("fail")
-                    j=s
-                    while j < len(k_interval):
-                        k_interval[j]+=round(math.log2(factor))
-                        j+=factor
+                   # j=s
+                   # while j < len(k_interval):
+                    log=round(math.log2(factor))
+                    k_interval[s::factor]+=log
+                       # j+=factor
             except Exception as e:
                 i+=1
                 continue
             i+=1
 
-           
-        i = 0
-        while i < len(k_interval):
-            if k_interval[i] > threshold:
-                k=k_start+i*mod
-                if k == 0:
-                    i+=1
-                    continue
-                poly[-1]=-n*k
+        np.putmask(k_interval, k_interval < threshold, 0)
+        indexlist=np.nonzero(k_interval)
+
+        indexlist_y=indexlist[0]
+        ind=0
+        length=len(indexlist_y)
+        
+        while ind < length:# length:  
+            i=int(indexlist_y[ind])
+            if i == 0:
+                ind+=1
+                continue              
+
+            k=k_start+i*mod
+
+            poly[-1]=-n*k
                  #   polyc=copy.deepcopy(poly)
-                lside=evaluate(poly,x)
+            lside=evaluate(poly,x)
                     
-                pval=lside
-                lside+=n*k
-                if lside%y**2 !=0:
-                    print("error")
-                lside//=y**2
-                factors1, value,seen_primes,seen_primes_indexes=factorise_fast(pval,primelist_f)
-                factors2, value2,seen_primes2,seen_primes_indexes2=factorise_fast(lside,primelist_f)
-                factors1=list(factors1)
-                factors1.sort()
+            pval=lside
+            lside+=n*k
+            if lside%y**2 !=0:
+                print("error")
+            lside//=y**2
+            factors1, value,seen_primes,seen_primes_indexes=factorise_fast(pval,primelist_f)
+            factors2, value2,seen_primes2,seen_primes_indexes2=factorise_fast(lside,primelist_f)
+            factors1=list(factors1)
+            factors1.sort()
                       #  seen_primes.sort()
                       #  print("pval: "+str(bitlen(pval))+" lside: "+str(lside)+" poly: "+str(poly)+" x: "+str(x)+" seen_primes: "+str(seen_primes)+" value: "+str(value)+" threshold: "+str(threshold)+" indicated threshold: "+str(k_interval[i])+" value2: "+str(value2)+" mod: "+str(mod))
-                if value == 1 and value2 == 1:
-                    if factors1 not in factor_list:# and factors2 not in factor_list2:
-                        found+=1
-                        smooth_list.append(pval)
-                        factor_list.append(factors1)
-                        root_list.append(lside*y**2)
-                        factor_list2.append(factors2)
-                        print("!!!!!!!!!!!!Smooth# "+str(len(smooth_list))+"/"+str(len(primeslist)*2+10)+" Poly: "+str(poly)+" x: "+str(x)+" pval: "+str(pval)+" pval/mod bits: "+str(bitlen(pval//mod))+" seen_primes: "+str(factors1)+" k: "+str(k)+" seen_primes2: "+str(factors2)+" threshold: "+str(threshold)+" indicated threshold: "+str(k_interval[i])+" k center: "+str(k_start+(quad_sieve_size//2)))
-                        if found > 500:
-                            return found
-            i+=1
+            if value == 1 and value2 == 1:
+                if factors1 not in factor_list:# and factors2 not in factor_list2:
+                    found+=1
+                    smooth_list.append(pval)
+                    factor_list.append(factors1)
+                    root_list.append(lside*y**2)
+                    factor_list2.append(factors2)
+                    print("[*]Smooth# "+str(len(smooth_list))+"/"+str(len(primeslist)*2+10)+" Poly: "+str(poly)+" x: "+str(x)+" pval/mod bits: "+str(bitlen(pval//mod))+" seen_primes: "+str(factors1)+" k: "+str(k))#+" seen_primes2: "+str(factors2)+" threshold: "+str(threshold)+" indicated threshold: "+str(k_interval[i])+" k center: "+str(k_start+(quad_sieve_size//2)))
+                    if found > 500:
+                        return found
+            ind+=1
         xc+=1
     return found
 
@@ -1167,8 +1178,8 @@ def find_same(primeslist,factors,y,n,primelist_f,smooth_list,factor_list,root_li
                     factor_list.append(factors1)
                     root_list.append(lside)
                     factor_list2.append(factors2)
-                    print("Found similar smooth# "+str(len(smooth_list))+"/"+str(len(primeslist)*2+10)+" Poly: "+str(poly)+" x: "+str(x)+" pval: "+str(pval)+" pval bits: "+str(bitlen(pval))+" seen_primes: "+str(seen_primes)+" k: "+str(k)+" seen_primes2: "+str(factors2)+" k center: "+str(k_start+(quad_sieve_size//2)))
-                    found+=find_same2(primeslist,factors1,y,n,primelist_f,smooth_list,factor_list,root_list,factor_list2,degree,resmap)
+                    print("[!]Smooth# "+str(len(smooth_list))+"/"+str(len(primeslist)*2+10)+" Poly: "+str(poly)+" x: "+str(x)+" pval: "+str(pval)+" pval bits: "+str(bitlen(pval))+" seen_primes: "+str(seen_primes)+" k: "+str(k)+" seen_primes2: "+str(factors2)+" k center: "+str(k_start+(quad_sieve_size//2)))
+                    found+=find_same2(primeslist,factors1,y,n,primelist_f,smooth_list,factor_list,root_list,factor_list2,degree,resmap,k)
 
                     if found > 500:
                         return found
@@ -1265,7 +1276,7 @@ def sieve_loop(n,primeslist,k,degree,primelist_f,smooth_list,factor_list,root_li
             y+=1
             continue
         found+=find_same(primeslist,primeslist,y,n,primelist_f,smooth_list,factor_list,root_list,factor_list2)
-        if found > 100:
+        if found > 500:
             print("Performing linear algebra")
             QS(n,primelist,smooth_list,factor_list,root_list,factor_list2)
             found=0
