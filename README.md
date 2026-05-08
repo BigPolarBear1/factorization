@@ -3,7 +3,7 @@ Disclaimer2: I never finished highschool. I started working on this 3 years ago,
 
 The day I break factorization will be day 0 of the gay future. A better world will be born. A world of human creativity. A world of art, science and spirituality. A world without suffering. I will see that world become reality, no matter the cost. 
 
-Been unemployed for years without income, still looking for work: big_polar_bear1@proton.me ... able to relocate to anywhere in the world except the US. Depression man. Just really intense suicidal thoughts today. Everything that was good in my life has been gone for years now. Just been living a life without dignity, stuck in a tiny room, no income for years. Perhaps when it is an exceptionally nice day, I'll just do it, get it over with. Fck this bullshit. What a world filled with morrons.
+Been unemployed for years without income, still looking for work: big_polar_bear1@proton.me ... able to relocate to anywhere in the world except the US.
 
 #### References (re-used many of the core number theoretical functions from these PoCs to fit my own algorithm): 
 https://stackoverflow.com/questions/79330304/optimizing-sieving-code-in-the-self-initializing-quadratic-sieve-for-pypy
@@ -41,7 +41,7 @@ Update: Eh, starting to get there.. but need to optimize everything now. And the
 
 Update: After doing some testing and thinking today. I dont believe sieving is the correct approach for find_same2 ... just got to be more deliberate trying to find these near identical smooths by using the fact that those different factors show up in the k variable (the multiples of N). Anyway... it is the final thing that needs to be figured out somehow now.
 
-Update: I guess if we have i.e x^2+b\*x-N\*k then multiplying root x and multiplying k basically shifts the entire thing. And which "shifts" result in near identical smooth candidates..thats just residue math..I should be able to figure that out. I'll go for a run.. let me give it a go when I get back. Either this will work or fck it.. I'm just going to end my life. Fcking tired of shit.
+Update: I guess if we have i.e x^2+b\*x-N\*k then multiplying root x and multiplying k basically shifts the entire thing. And which "shifts" result in near identical smooth candidates..thats just residue math..I should be able to figure that out. I'll go for a run.. let me give it a go when I get back.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
