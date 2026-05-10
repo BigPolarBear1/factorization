@@ -18,6 +18,8 @@ To run:  python3 run_qs.py -keysize 75 -base 500 -debug 1 -lin_size 1_000 -quad_
 
 Update: Removed some things from the paper. I did some testing with B-smooths where a small factor is added to be the polynomial value and N multiplier, k. Thinking these might count as unique B-smooths, but they dont and contribute nothing extra to the linear algebra step. Hence the only real option is to try and use our setup to get more factor overlap then what SIQS achieves while ignoring these trivial cases. I'll focus only this now. I.e Find a B-smooth...then use all these different dimensions we can sieve in (binomial expansions,multiples of N, different binomial terms, roots generating non-zero deratives.... etc) to just keep going until we get a hit on nearly identical b-smooths. It's the only way that it can be done. I've exhausted everything else at this point. So this is the final thing I'll try before continueing with my research in private.
 
+Update: Oh yea, for binomial expansions to different degrees, I believe we can just re-use the same root map (resmap in the poc) ... thats convenient and quite important. I'll fix that tomorrow.. that immediatly makes the approach I had in mind a lot more valid.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
