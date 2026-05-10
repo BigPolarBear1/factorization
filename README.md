@@ -16,32 +16,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 75 -base 500 -debug 1 -lin_size 1_000 -quad_size 1_000_000 -t 70
 
-Update: Already, added it so that it creates a 2d interval. Now only the important part is still remaing. See To Do below.
-
-To Do:
-
-If you run the PoC, you will occasionally notice the PoC finding B-smooths that are a slight variant of each other (only 1 or 2 small factors are different) ... this happens a lot actually and these count as unique smooth candidates. The reason this is useful is because they cancel out eachothers large factors and give us just a handful of small factors for the linear algebra step. And if we can find a lot of these... we can potentially succeed at the linear algebra step much sooner.
-Now, the current problem is, that these might fall outside our sieve interval.. but we can quickly check if they exist using our residue map. So thats what needs to be done now. 
-
-A good example is for example this: 
-
-Poly: [1, 4, -33032964601443606179686070] x: 4670 pval: -33032964601443606157858490 seen_primes: [-1, 2, 5, 17, 19, 89, 173, 317, 419, 467, 1949, 1949, 2819] k: 88730</br>
-Poly: [1, 4, -33089552121103466747017438] x: 4674 pval: -33089552121103466725152466 seen_primes: [-1, 2, 17, 19, 89, 173, 317, 419, 1949, 1949, 2339, 2819] k: 88882</br>
-
-These are near identical but have a handful of different factors. You will find cases like this all the time. And this behavior is quite important.
-
-x1: 4670 = 2 x 5 x 467    </br>
-x2: 4674 = 2 x 3 x 19 x 41 </br>
-k1: 88730 = 2 x 5 x 19 x 467</br>
-k2: 88882 = 2 x 19 x 2339</br>
-
-Now if we look at the factorizations of the root and multiples of N, k ... we see that the factors that are different show up in these. So that gives us a clue how to help checking for these variations. These are unique because the non-unique ones are when you multiply a root by a factor and multiply k with the square of it. Which ends up adding a square to the polynomial value. These are non square factors being added. Hence these are completely valid for us to us during linear algebra. My work is nearing completion now.... perhaps finally the suffering will end... or perhaps it is only beginning.
-
-Update: Eh, starting to get there.. but need to optimize everything now. And there will probably also be a benefit to adding p-adic lifting when we go into find_same2.
-
-Update: After doing some testing and thinking today. I dont believe sieving is the correct approach for find_same2 ... just got to be more deliberate trying to find these near identical smooths by using the fact that those different factors show up in the k variable (the multiples of N). Anyway... it is the final thing that needs to be figured out somehow now.
-
-Update: I guess if we have i.e x^2+b\*x-N\*k then multiplying root x and multiplying k basically shifts the entire thing. And which "shifts" result in near identical smooth candidates..thats just residue math..I should be able to figure that out. I'll go for a run.. let me give it a go when I get back.
+Update: Removed some things from the paper. I did some testing with B-smooths where a small factor is added to be the polynomial value and N multiplier, k. Thinking these might count as unique B-smooths, but they dont and contribute nothing extra to the linear algebra step. Hence the only real option is to try and use our setup to get more factor overlap then what SIQS achieves while ignoring these trivial cases.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
