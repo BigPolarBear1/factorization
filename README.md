@@ -20,6 +20,8 @@ Update: Removed some things from the paper. I did some testing with B-smooths wh
 
 Update: Been doing additional thinking. The best strategy will be starting like we do in CUDA_QS_Variant, using square moduli, so that any B-smooth we find will have as few odd exponent factors as possible (while still being able to sieve efficiently). Then we can sieve for those odd exponent factors in all these different dimensions using binomial expansions and everything.  This will be quite key, making sure our b-smooth with all the squares factored out, is as small as possible compared to N. 
 
+Update: Alright, so first thing I'm going to do is optimize find_same() to find the initial b-smooth as fast as possible and with as few odd exponent factors as possible. Once that is done we will shift our focus to find_same2().
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
