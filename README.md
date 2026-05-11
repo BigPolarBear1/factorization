@@ -22,6 +22,8 @@ Update: Been doing additional thinking. The best strategy will be starting like 
 
 Update: Alright, so first thing I'm going to do is optimize find_same() to find the initial b-smooth as fast as possible and with as few odd exponent factors as possible. Once that is done we will shift our focus to find_same2().
 
+Update: Eureka. That was it. Will upload PoC tomorrow :)
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
