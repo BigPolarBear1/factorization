@@ -24,6 +24,8 @@ Update: Alright, so first thing I'm going to do is optimize find_same() to find 
 
 Update: Eureka. That was it. Will upload PoC tomorrow :)
 
+Update: Need one more day. My intuition was good.. but the implementations I attempted these last few months were way to overcomplicated. The solutions ended up being fairly trivial in retrospect. I feel like standing on a tall mountain now after 3 years and finally have clarity. Will upload tomorrow. 
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
