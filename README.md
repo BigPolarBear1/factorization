@@ -26,6 +26,8 @@ Update: Eureka. That was it. Will upload PoC tomorrow :)
 
 Update: Need one more day. My intuition was good.. but the implementations I attempted these last few months were way to overcomplicated. The solutions ended up being fairly trivial in retrospect. I feel like standing on a tall mountain now after 3 years and finally have clarity. Will upload tomorrow. 
 
+You know... today is one of those days, where I feel an important milestone has been reached in my math career. I guess 3 years of hard work, starting from nothing is what it takes to master a niche. Tomorrow I am going to upload something beautiful. Perhaps after tomorrow life will somehow turn out alright... perhaps people will finally see what I see. 
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
