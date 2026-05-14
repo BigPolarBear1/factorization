@@ -805,7 +805,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
     k_range=2
     c_range=10_000
     l_range=10_000
-    bin_range=1000
+    bin_range=100
     found=0
     grays = get_gray_code(20)
     mod=1
@@ -826,7 +826,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
                 sys.exit()    
         i+=1
     for fac in primeslist:
-        if fac > 10_000:
+        if fac > 5_000:
             break
         if fac not in mod_fac and fac != -1:
             mod_fac.append(fac)
@@ -870,70 +870,120 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
         i+=1
    # print("resmap: "+str(resmap))
     print("CHECKING")
-    k=1
-    while k < k_range:
-        center_o=round((n*k)**0.10)
-        ch=0
-        bin=0
-        while bin < bin_range:
-            factors1, value1=factorise_fast((center_o+bin),primelist_f)
-            if value1 != 1:
-                bin+=1
-                continue
-            ch=1
-            c=1
-            while c < c_range:
-                center=(center_o+bin)*c
+    q=0
+    while q < len(mod_ind):
+        mdfac=mod_fac[mod_ind[q]]
+        if mdfac < 100:
+            q+=1
+            continue
+        k=1
+        while k < k_range:
+            center_o=round((n*k)**0.10)
+            ch=0
+            bin=0
+            while bin < bin_range:
+                factors1, value1=factorise_fast((center_o+bin),primelist_f)
+                if value1 != 1:
+                    bin+=1
+                    continue
+                ch=1
+                c=1
+                while c < c_range:
+                    center=(center_o+bin)*c
                 
-                opt1,opt2=solve_quadratic(poly[0],poly[1],poly[2])
-                istart=int(opt1//center)
-                istart-=(l_range//2)
-                interval=np.zeros(l_range,dtype=np.uint16)    #np[0]*100_000
-                i=0
-                while i < len(mod_fac):
-                    
-                    factor=mod_fac[i]
-                    if center%factor==0:
-                        i+=1
-                        continue
+                    opt1,opt2=solve_quadratic(poly[0],poly[1],poly[2])
+                    istart=int(opt1//(center))
+                    istart-=(l_range//2)
+                    #istart=0
+                    istart2=istart
+
                     poly=[1,center,-n*k]
                     try:
-                        s=resmap[i][poly[-2]%factor][k]
+                        mod_res=resmap[mod_ind[q]][poly[-2]%mdfac][k]
                     except Exception as e:
-                        i+=1
+                        c+=1
                         continue
+                    for mr in mod_res:
+                        interval=np.zeros(l_range,dtype=np.uint16)    #np[0]*100_000
+                        if center%mdfac ==0:
+                            continue
+                        sr=solve_lin_con(center,mr,mdfac)
+                        offset=(sr-istart2)%mdfac
+                        istart=istart2+offset
+                        
+                        pval=evaluate(poly,istart*center)
+                        if pval%mdfac!=0:
+                            print("damnit bail: "+str(mod_res)+" modfac: "+str(mdfac))
+                            sys.exit()
+                        i=0
+                        while i < len(mod_fac):
+                    
+                            factor=mod_fac[i]
+                            
+                            if center%factor==0 or mdfac%factor ==0 or factor ==2:
+                                i+=1
+                                continue
+                            
+                            try:
+                                s=resmap[i][poly[-2]%factor][k]
+                            except Exception as e:
+                                i+=1
+                                continue
 
-                    for d in s:
+                            for d in s:
+                                #note to self. Step one divide center
+                                #(sr+(mdfac*i)) = d
 
-                        s1=solve_lin_con((center)%factor,d,factor)
-                        offset=(s1-istart)%factor
-                        interval[offset::factor]+=round(math.log2(factor))
+                                divcenter=modinv(center,factor)
+                                d2=(d*divcenter)%factor#solve_lin_con(center,d,factor) 
+                                s1=solve_lin_con(mdfac,d2-istart,factor)
+                              #  if (center*(sr+mdfac*s1))%factor != d%factor or (center*(sr+mdfac*s1))%mdfac != sr%mdfac:
+                                  #  print("asdsaijdosaja")
+                                 #   sys.exit()
+                             #   else:
+                                  #  print("ok")
+                                if ((istart+(mdfac*s1))*center)%factor != d%factor:
+                                    print("catastrophic failure")
+                                    sys.exit()
+
+                                pval=evaluate(poly,(istart+(mdfac*s1))*center)
+                                if pval%(factor*mdfac)!=0:
+                                    print("fuck it bail: "+" factor:"+str(factor)+" mdfac: "+str(mdfac)+" sr: "+str(sr))
+                                    sys.exit()
+                               # s1=solve_lin_con((center)%factor,d,factor)
+                               # offset=(s1-istart)%factor
+                                interval[s1::factor]+=round(math.log2(factor))
                       #  while s1 < len(interval):
                            # interval[s1]+=round(math.log2(factor))
                           #  s1+=factor
         
-                    i+=1
+                            i+=1
             #    print("checking interval")
 
-                np.putmask(interval, interval < keysize-20, 0)
-                indexlist=np.nonzero(interval)
+                        np.putmask(interval, interval < keysize-25, 0)
+                        indexlist=np.nonzero(interval)
 
-                indexlist_x=indexlist[0]
-                ind=0
-                length=len(indexlist_x)
+                        indexlist_x=indexlist[0]
+                        ind=0
+                        length=len(indexlist_x)
             
-                while ind < length:# length: 
+                        while ind < length:# length: 
                     
                   #  center=(center_o+bin)*c
-                    poly=[1,center,-n*k]
-                    i=int(indexlist_x[ind])
+                            poly=[1,center,-n*k]
+                            i=int(indexlist_x[ind])
                     
 
-                    pval=evaluate(poly,(istart+i)*center)
-                    lside=pval+n*k
+                            pval=evaluate(poly,(istart+(mdfac*i))*center)
+                            if (istart+(mdfac*i))%mdfac != sr:
+                                print("the fck?")
+                            if pval%mdfac !=0:
+                                print("super big fail")
+                                sys.exit()
+                            lside=pval+n*k
                # factors1, value1=factorise_fast(pval,primelist_f)
               #  factors2, value2=factorise_fast(lside,primelist_f)
-              #  print("found one: "+str(interval[c,i])+" pval: "+str(bitlen(abs(pval)))+" co_sieve: "+str(c)+" poly: "+str(poly)+" factors1: "+str(factors1)+" value1: "+str(value1)+" factors2: "+str(factors2)+" value2: "+str(value2))
+                           # print("found one: "+str(interval[i])+" pval: "+str(bitlen(abs(pval)))+" co_sieve: "+str(c)+" poly: "+str(poly))#+" factors1: "+str(factors1)+" value1: "+str(value1)+" factors2: "+str(factors2)+" value2: "+str(value2))
                     #if bitlen(abs(pval)) < 55:
                     #    opt1,opt2=solve_quadratic(poly[0],poly[1],poly[2])
                     #    opt1//=center
@@ -942,34 +992,35 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
                    # ind+=1
                    # continue
                    
-                    factors1, value1=factorise_fast(pval,primelist_f2)
-                    factors2, value2=factorise_fast(lside,primelist_f)     
-                   # print("#smooths: "+str(len(ret_array[0]))+" found one: "+str(interval[i])+" pval: "+str(bitlen(abs(pval)))+" c: "+str(c)+" i: "+str(i)+" poly: "+str(poly)+" factors1: "+str(factors1)+" value1: "+str(value1)+" factors2: "+str(factors2)+" value2: "+str(value2))
+                            factors1, value1=factorise_fast(pval,primelist_f2)
+                            factors2, value2=factorise_fast(lside,primelist_f)     
+                          #  print("#smooths: "+str(len(ret_array[0]))+" mdfac: "+str(mdfac)+" found one: "+str(interval[i])+" pval: "+str(bitlen(abs(pval)))+" c: "+str(c)+" i: "+str(i)+" poly: "+str(poly)+" factors1: "+str(factors1)+" value1: "+str(value1)+" factors2: "+str(factors2)+" value2: "+str(value2))
                             
-                    if value2 == 1 and value1 == 1:
+                            if value2 == 1 and value1 == 1:
 
-                        factors1=list(factors1)
-                        factors1.sort()
-                        if factors1 in ret_array[2]:
-                            ind+=1
-                            continue
-                        found+=1
-                        ret_array[1].append(lside)
-                        ret_array[0].append(pval)
-                        ret_array[2].append(factors1)
-                        ret_array[3].append(factors2)
-                        if len(ret_array[0])>(base*2+10):
-                            return found
+                                factors1=list(factors1)
+                                factors1.sort()
+                                if factors1 in ret_array[2]:
+                                    ind+=1
+                                    continue
+                                found+=1
+                                ret_array[1].append(lside)
+                                ret_array[0].append(pval)
+                                ret_array[2].append(factors1)
+                                ret_array[3].append(factors2)
+                                if len(ret_array[0])>(base*2+10):
+                                    return found
 
-                        print("#smooths: "+str(len(ret_array[0]))+" found one: "+str(interval[i])+" pval: "+str(bitlen(abs(pval)))+" c: "+str(c)+" i: "+str(istart+i)+" poly: "+str(poly)+" factors1: "+str(factors1)+" value1: "+str(value1)+" factors2: "+str(factors2)+" value2: "+str(value2)+" opt1: "+str(int(opt1//center)))
+                                print("#smooths: "+str(len(ret_array[0]))+"/"+str(base*2+10)+" found one: "+str(interval[i])+" pval: "+str(bitlen(abs(pval)))+" c: "+str(c)+" i: "+str(istart+i)+" poly: "+str(poly)+" factors1: "+str(factors1)+" value1: "+str(value1)+" factors2: "+str(factors2)+" value2: "+str(value2)+" opt1: "+str(int(opt1//(center))))
                     
-                    ind+=1
-                c+=1
+                            ind+=1
+                    c+=1
                 #co_sieve+=1
 
-            bin+=1
+                bin+=1
         #print("distance: "+str(interval))
-        k+=1
+            k+=1
+        q+=1      
     return found
     
 
