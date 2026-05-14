@@ -23,6 +23,8 @@ If we have a polynomial, for example ax^2+bx-Nk, where N is the factor being fac
 
 Update: Added some stuff. So now it makes sure atleast one factor is included as we sieve. Let me try tomorrow to just sieve for the entire modulus.. and then just make sure we are hitting only small values. Figuring out all this residue math was the hardest part..but atleast that works now. I'll continue tomorrow.
 
+Update: Oh yea.. when I move up to higher degree and sieve different coefficients like this... it will work even better. Just ran the numbers. Its over for real. Few more days max.
+
 #### To run from folder "binomial_sieve":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 75 -base 500 -debug 1 -lin_size 1_000 -quad_size 1_000_000 -t 70
