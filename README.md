@@ -27,17 +27,7 @@ Update: Added some stuff. So now it makes sure atleast one factor is included as
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 75 -base 500 -debug 1 -lin_size 1_000 -quad_size 1_000_000 -t 70
 
-Update: Removed some things from the paper. I did some testing with B-smooths where a small factor is added to be the polynomial value and N multiplier, k. Thinking these might count as unique B-smooths, but they dont and contribute nothing extra to the linear algebra step. Hence the only real option is to try and use our setup to get more factor overlap then what SIQS achieves while ignoring these trivial cases. I'll focus only this now. I.e Find a B-smooth...then use all these different dimensions we can sieve in (binomial expansions,multiples of N, different binomial terms, roots generating non-zero deratives.... etc) to just keep going until we get a hit on nearly identical b-smooths. It's the only way that it can be done. I've exhausted everything else at this point. So this is the final thing I'll try before continueing with my research in private.
-
-Update: Been doing additional thinking. The best strategy will be starting like we do in CUDA_QS_Variant, using square moduli, so that any B-smooth we find will have as few odd exponent factors as possible (while still being able to sieve efficiently). Then we can sieve for those odd exponent factors in all these different dimensions using binomial expansions and everything.  This will be quite key, making sure our b-smooth with all the squares factored out, is as small as possible compared to N. 
-
-Update: Alright, so first thing I'm going to do is optimize find_same() to find the initial b-smooth as fast as possible and with as few odd exponent factors as possible. Once that is done we will shift our focus to find_same2().
-
-Update: Eureka. That was it. Will upload PoC tomorrow :)
-
-Update: Need one more day. My intuition was good.. but the implementations I attempted these last few months were way to overcomplicated. The solutions ended up being fairly trivial in retrospect. I feel like standing on a tall mountain now after 3 years and finally have clarity. Will upload tomorrow. 
-
-You know... today is one of those days, where I feel an important milestone has been reached in my math career. I guess 3 years of hard work, starting from nothing is what it takes to master a niche. Tomorrow I am going to upload something beautiful. Perhaps after tomorrow life will somehow turn out alright... perhaps people will finally see what I see. 
+Update: Porting the findings from this to the above algo. Will delete once that matures some more.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
