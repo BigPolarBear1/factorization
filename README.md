@@ -25,6 +25,8 @@ Update: Added some stuff. So now it makes sure atleast one factor is included as
 
 Update: Oh yea.. when I move up to higher degree and sieve different coefficients like this... it will work even better. Just ran the numbers. Its over for real. Few more days max.
 
+Update: Today was mental anguish. I'll finish this tomorrow. The way I'm sieving now, actually if we now increase the quadratic coefficient.. the factorazition of the polynomial value without the constant is still easy to factorize... so we just gain super good control. I'll add that tomorrow.. to also use the quadratic coefficient... and then work towards an implementation that can also use even larger degrees. But I should see big performance improvements by just using the quadratic coefficient already. 
+
 #### To run from folder "binomial_sieve":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 75 -base 500 -debug 1 -lin_size 1_000 -quad_size 1_000_000 -t 70
