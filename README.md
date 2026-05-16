@@ -29,6 +29,8 @@ Update: Today was mental anguish. I'll finish this tomorrow. The way I'm sieving
 
 Update: DAmnit. Going to refactor find_same tomorrow. You start with something like this, ie 4^4-4387\*4 = 0 mod 11 ... now we can add coefficients... 4^4+11\*4^3-4387\*4 = 0 mod 11  or 4^4+11\*2\*4^3-4387\*4 = 0 mod 11 ... bc that coefficient is in effect 0 mod 11 ... so any multiple of 11 can be used there. So we just find a B-smooth.. then do this for every factor in the B-smooth.. bc with this we have near perfect control linearly. Especially if we just use a small-ish factor, bc then adding multiples of that factor instead of the 0 coefficients gives us much more fine grain control. It's perfect. I know what I got.. I know this will work... I'm tired of this gaslighting... people acting like I have gone nuts.
 
+Yeap... thats it.. thats how you sieve.. starting with some x^4 .. or x^5 or x^7 .. whatever initial size we want there such that the result is 0 mod p.. and then using those "0 mod p coefficients" to fine tune.. i.e x^5+p\*x^4+2\*p\*x^3 etc.. thats it.. it works beautifully.. should have thought about it sooner I guess. Should be easy to refactor a little and implement this. 
+
 #### To run from folder "binomial_sieve":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 75 -base 500 -debug 1 -lin_size 1_000 -quad_size 1_000_000 -t 70
