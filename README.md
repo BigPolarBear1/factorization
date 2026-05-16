@@ -19,9 +19,6 @@ To run:  python3 run_qs.py -keysize 100 -base 2_000 -debug 0 -lin_size 100_000 -
 Alright. This will be the final variant.
 Still need to implement support for higher degrees in find_same() and then fine tune everything so that it actually does what it is supposed to do. Rather then sieving x^2-Nk this will sieve ax^2-Nk... once that is exhausted it also uses the linear coefficient ax^2+bx-Nk, by having b be a multiple of the prime we are looking for, we can quite trivially sieve this. etc
 
-Update: Thinking a little deeper. We should probably do it like this:
-If for example the degree=2, then create a sieve interval for ax^2-Nk, where we sieve the root for different leading coefficient values. If a B-smooth candidate is larger then a certain size, then we can create a sieve interval for the next coefficient... i.e ax^2+bx-Nk.. where b is some multiple of the modulus we are sieving for. If the degree is bigger then 2.. then we can repeat this process even more times. 
-
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
