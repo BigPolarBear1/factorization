@@ -31,6 +31,8 @@ Update: DAmnit. Going to refactor find_same tomorrow. You start with something l
 
 Yeap... thats it.. thats how you sieve.. starting with some x^4 .. or x^5 or x^7 .. whatever initial size we want there such that the result is 0 mod p.. and then using those "0 mod p coefficients" to fine tune.. i.e x^5+p\*x^4+2\*p\*x^3 etc.. thats it.. it works beautifully.. should have thought about it sooner I guess. Should be easy to refactor a little and implement this. 
 
+Update: Quickly changed things so it sieves like I described. Next let me improve it a little so it also sieves the quadratic coefficient. And after that implement support for arbitrary degrees... and after that make sure the b-smooth candidates generated end up as small as possible.. and then I'm done..
+
 #### To run from folder "binomial_sieve":</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 75 -base 500 -debug 1 -lin_size 1_000 -quad_size 1_000_000 -t 70
