@@ -797,14 +797,28 @@ def solve_quadratic(a,b,c):
     s = d**0.5
     return ((-b+s)/(2*a)), ((-b-s)/(2*a))
 
+def create_root_map(mod_fac,n,k,poly):
+    resmap=[]
+    i=0
+    while i < len(mod_fac):
+        resmap.append([])
+        factor=mod_fac[i]
+        #print("Building factor: "+str(factor))
 
+        polyc=copy.deepcopy(poly)
+        roots=find_roots_poly(polyc, factor)
+        if len(roots)>0:
+            res=resmap[-1].extend(roots)
+        i+=1
+    return resmap
 
 def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
-
+    k=1
     degree=2
+    z_range=100
     k_range=2
     c_range=10_000
-    l_range=100_000
+    l_range=10_000_000
     bin_range=100
     found=0
     grays = get_gray_code(20)
@@ -812,8 +826,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
     mod_fac=[]
 
     print("[i]Looking for: "+str(local_factors))
-    print("[i]Building residue map..this may take a while")
-    resmap=[]
+    
     leng=primelist_f[0]
     mod_ind=[]
     i=0
@@ -827,7 +840,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
                 sys.exit()    
         i+=1
     for fac in primeslist:
-        if fac > 3_000:
+        if fac > 100_000:
             break
         if fac not in mod_fac and fac != -1:
             mod_fac.append(fac)
@@ -835,40 +848,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
     primelist_f2=copy.copy(mod_fac)
     primelist_f2.insert(0,len(primelist_f2)+1)
     primelist_f2=array.array('q',primelist_f2)
-    i=0
-    while i < len(mod_fac):
-        resmap.append([])
-        factor=mod_fac[i]
-        #print("Building factor: "+str(factor))
-
-        coeff=[0]
-        d=degree
-        d_ind=0
-        while d_ind < d-1:
-            coeff.insert(0,0)
-            d_ind+=1
-
-        #coeff[0]+=1
-        ranges = [range(start, factor) for start in coeff[:-1]]
-        for combo in itertools.product(*ranges):
-            poly=[1]+list(combo)+[coeff[-1]]
-            resmap[i].append({})
-            k=0
-            while k < factor and k < k_range:
-                polyc=copy.deepcopy(poly)
-                polyc[-1]=-n*k
-                roots=find_roots_poly(polyc, factor)
-                if len(roots)>0:
-                    for r in roots:
-                        
-                        try:
-                            res=resmap[i][poly[-2]][k]
-                            
-                            res.append(r)
-                        except Exception as e:
-                            resmap[i][poly[-2]][k]=[r]
-                k+=1
-        i+=1
+   
    # print("resmap: "+str(resmap))
     print("[i]Sieving for B-smooths")
     q=0
@@ -878,91 +858,83 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
             q+=1
             continue
         k=1
-        while k < k_range:
-            poly=[1,0,-n*k]
-            try:
-                mod_res=resmap[mod_ind[q]][poly[-2]%mdfac][k]
-            except Exception as e:
-                k+=1
-                continue
+        b=0
+        while b < 10: ###to do: Need to calculate this above first
+            a=1
+            while a < 10_000:
+                poly_temp=[a,b*mdfac,-n*k]
+                mod_res=find_roots_poly(poly_temp, mdfac)
+                if len(mod_res) == 0:
+                    a+=1
+                    continue
+                #print("[i]Building residue map..this may take a while")
 
-
-            for r in mod_res:
-                a=0
-                while a < 1: ###to do: Need to calculate this above first
-                    b=0
-                    while b < 100_000:
-                        interval=np.zeros(l_range,dtype=np.uint16)
-
-                        poly_temp=[1+(mdfac*a),b*mdfac,-n*k]
-                        i=0
-                        while i < len(mod_fac):
-                            factor=mod_fac[i]
-                            if mdfac%factor ==0 or factor ==2:
-                                i+=1
-                                continue
-                            try:
-                                s=resmap[i][poly_temp[-2]%factor][k]
-                            except Exception as e:
-                                i+=1
-                                continue
-
-                            for d in s:
-
-         
-
-                                s1=solve_lin_con(mdfac,d-r,factor)
-                                if (r+(mdfac*s1))%factor != d:
-                                    print("euhm?:"+str(factor)+" r: "+str(r)+" s1: "+str(s1)+" mdfac: "+str(mdfac))
-                                    sys.exit(0)
-                                pval=evaluate(poly_temp,r+(mdfac*s1))
-                                if pval%(factor*mdfac) !=0:
-                                    print("fatal error: "+str(factor)+" r: "+str(r)+" d: "+str(d)+" s1: "+str(s1)+" mdfac: "+str(mdfac)+" pval: "+str(pval)+" poly: "+str(poly_temp)+" root: "+str(r+(mdfac*s1)))
-                                    sys.exit(0)
-                                interval[s1::factor]+=round(math.log2(factor))
-
+                resmap=create_root_map(mod_fac,n,k,poly_temp)
+    
+                for r in mod_res:
+                    interval=np.zeros(l_range,dtype=np.uint16)
+                    i=0
+                    while i < len(mod_fac):
+                        factor=mod_fac[i]
+                        if mdfac%factor ==0 or factor ==2:
                             i+=1
-                        np.putmask(interval, interval < keysize-30, 0)
-                        indexlist=np.nonzero(interval)
+                            continue
 
-                        indexlist_x=indexlist[0]
-                        ind=0
-                        length=len(indexlist_x)
+                        s=resmap[i]
+
+
+                        for d in s:
+                            s1=solve_lin_con(mdfac,d-r,factor)
+                            if (r+(mdfac*s1))%factor != d:
+                                print("euhm?:"+str(factor)+" r: "+str(r)+" s1: "+str(s1)+" mdfac: "+str(mdfac))
+                                sys.exit(0)
+                            pval=evaluate(poly_temp,r+(mdfac*s1))
+                            if pval%(factor*mdfac) !=0:
+                                print("fatal error: "+str(factor)+" r: "+str(r)+" d: "+str(d)+" s1: "+str(s1)+" mdfac: "+str(mdfac)+" pval: "+str(pval)+" poly: "+str(poly_temp)+" root: "+str(r+(mdfac*s1)))
+                                sys.exit(0)
+                            interval[s1::factor]+=round(math.log2(factor))
+
+                        i+=1
+                    np.putmask(interval, interval < keysize-30, 0)
+                    indexlist=np.nonzero(interval)
+
+                    indexlist_x=indexlist[0]
+                    ind=0
+                    length=len(indexlist_x)
             
-                        while ind < length:# length: 
-                            x_mul=int(indexlist_x[ind])
+                    while ind < length:# length: 
+                        x_mul=int(indexlist_x[ind])
                             
-                            pval=evaluate(poly_temp,r+(mdfac*x_mul))
-                            lside=pval+n*k
-                            if pval%mdfac!=0:
-                                print("error")
-                                sys.exit()
+                        pval=evaluate(poly_temp,r+(mdfac*x_mul))
+                        lside=pval+n*k
+                        if pval%mdfac!=0:
+                            print("error")
+                            sys.exit()
                         
                        #     print('res: '+str(pval)+" a: "+str(a)+" b: "+str(b)+" x_mul: "+str(x_mul)+" root: "+str(r)+" fac: "+str(mdfac))
-                            factors1, value1=factorise_fast(pval,primelist_f2)
-                            factors2, value2=factorise_fast(lside,primelist_f)     
+                        factors1, value1=factorise_fast(pval,primelist_f2)
+                        factors2, value2=factorise_fast(lside,primelist_f)     
                           #  print("#smooths: "+str(len(ret_array[0]))+" mdfac: "+str(mdfac)+" found one: "+str(interval[i])+" pval: "+str(bitlen(abs(pval)))+" c: "+str(c)+" i: "+str(i)+" poly: "+str(poly)+" factors1: "+str(factors1)+" value1: "+str(value1)+" factors2: "+str(factors2)+" value2: "+str(value2))
-                            
-                            if value2 == 1 and value1 == 1:
+                        if value2 == 1 and value1 == 1:
 
-                                factors1=list(factors1)
-                                factors1.sort()
-                                if factors1 in ret_array[2]:
-                                    ind+=1
-                                    continue
-                                found+=1
-                                ret_array[1].append(lside)
-                                ret_array[0].append(pval)
-                                ret_array[2].append(factors1)
-                                ret_array[3].append(factors2)
-                                print("#smooths: "+str(len(ret_array[0]))+"/"+str(base*2+10)+" factors1: "+str(factors1)+" factors2: "+str(factors2)+" a: "+str(a)+" b: "+str(b)+" x_mul: "+str(x_mul)+" root: "+str(r)+" fac: "+str(mdfac)+" pval: "+str(pval)+" lside: "+str(lside)+" root: "+str(r+(mdfac*x_mul)))#" found one: "+str(interval[i])+" pval: "+str(bitlen(abs(pval)))+" c: "+str(c)+" i: "+str(istart+i)+" poly: "+str(poly)+" factors1: "+str(factors1)+" value1: "+str(value1)+" factors2: "+str(factors2)+" value2: "+str(value2)+" opt1: "+str(int(opt1//(center))))
+                            factors1=list(factors1)
+                            factors1.sort()
+                            if factors1 in ret_array[2]:
+                                ind+=1
+                                continue
+                            found+=1
+                            ret_array[1].append(lside)
+                            ret_array[0].append(pval)
+                            ret_array[2].append(factors1)
+                            ret_array[3].append(factors2)
+                            print("#smooths: "+str(len(ret_array[0]))+"/"+str(base*2+10)+" factors1: "+str(factors1)+" factors2: "+str(factors2)+" a: "+str(a)+" b: "+str(b)+" x_mul: "+str(x_mul)+" root: "+str(r)+" fac: "+str(mdfac)+" pval: "+str(pval)+" lside: "+str(lside)+" root: "+str(r+(mdfac*x_mul)))#" found one: "+str(interval[i])+" pval: "+str(bitlen(abs(pval)))+" c: "+str(c)+" i: "+str(istart+i)+" poly: "+str(poly)+" factors1: "+str(factors1)+" value1: "+str(value1)+" factors2: "+str(factors2)+" value2: "+str(value2)+" opt1: "+str(int(opt1//(center))))
                     
-                                if len(ret_array[0])>(base*2+10):
-                                    return found
-                            ind+=1
-                        b+=1
-                    a+=1
-            k+=1
+                            if len(ret_array[0])>(base*2+10):
+                                return found
+                        ind+=1
+                a+=1
+            b+=1
+
         q+=1  
     return found
     
