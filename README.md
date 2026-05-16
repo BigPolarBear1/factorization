@@ -21,6 +21,8 @@ Still need to implement support for higher degrees in find_same() and then fine 
 
 Update: Added support for higher degrees.. now all that is left is optimize it so it finds B-smooths just containing the factors we are looking for without introducing any other large factors.
 
+Update: Been doing some thinking, tomorrow instead of a sieve interval for the root.. I'm just going to iterate the leading coefficient and then create a multi dimensional sieve interval for all the other coefficients for a specific root.. then we can change the root and leading coefficient.. that will be the best way to do it. Cant immediatly think of something that might work better.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
