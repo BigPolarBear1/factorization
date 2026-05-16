@@ -19,6 +19,8 @@ To run:  python3 run_qs.py -keysize 100 -base 2_000 -debug 0 -lin_size 100_000 -
 Alright. This will be the final variant.
 Still need to implement support for higher degrees in find_same() and then fine tune everything so that it actually does what it is supposed to do. Rather then sieving x^2-Nk this will sieve ax^2-Nk... once that is exhausted it also uses the linear coefficient ax^2+bx-Nk, by having b be a multiple of the prime we are looking for, we can quite trivially sieve this. etc
 
+Update: Added support for higher degrees.. now all that is left is optimize it so it finds B-smooths just containing the factors we are looking for without introducing any other large factors.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
