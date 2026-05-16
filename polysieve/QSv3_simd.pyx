@@ -814,7 +814,7 @@ def create_root_map(mod_fac,n,k,poly):
 
 def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
     k=1
-    degree=2
+    degree=3
     z_range=100
     k_range=2
     c_range=10_000
@@ -848,7 +848,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
     primelist_f2=copy.copy(mod_fac)
     primelist_f2.insert(0,len(primelist_f2)+1)
     primelist_f2=array.array('q',primelist_f2)
-   
+    k=1
    # print("resmap: "+str(resmap))
     print("[i]Sieving for B-smooths")
     q=0
@@ -857,12 +857,30 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
         if mdfac < 100:
             q+=1
             continue
-        k=1
-        b=0
-        while b < 10: ###to do: Need to calculate this above first
+
+
+        
+
+        coeff=[]
+        d=degree
+        d_ind=0
+        while d_ind < d-1:
+            coeff.append(0)
+
+            d_ind+=1
+        ranges = [range(start, 100) for start in coeff[:]]
+        for combo in itertools.product(*ranges):
+            cur_t=list(combo)
+            cur=[]
+            i=0
+            while i < len(cur_t):
+                cur.insert(0,cur_t[i]*mdfac)
+                i+=1
+      
+   
             a=1
-            while a < 10_000:
-                poly_temp=[a,b*mdfac,-n*k]
+            while a < 1_000:
+                poly_temp=[a]+cur+[-n*k]
                 mod_res=find_roots_poly(poly_temp, mdfac)
                 if len(mod_res) == 0:
                     a+=1
@@ -884,13 +902,15 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
 
 
                         for d in s:
+                            if evaluate(poly_temp,d)%factor !=0: ###Some bug here.. investigate this later. i.e if coefficients are [1,0,1,-n*k]
+                                continue
                             s1=solve_lin_con(mdfac,d-r,factor)
                             if (r+(mdfac*s1))%factor != d:
                                 print("euhm?:"+str(factor)+" r: "+str(r)+" s1: "+str(s1)+" mdfac: "+str(mdfac))
                                 sys.exit(0)
                             pval=evaluate(poly_temp,r+(mdfac*s1))
                             if pval%(factor*mdfac) !=0:
-                                print("fatal error: "+str(factor)+" r: "+str(r)+" d: "+str(d)+" s1: "+str(s1)+" mdfac: "+str(mdfac)+" pval: "+str(pval)+" poly: "+str(poly_temp)+" root: "+str(r+(mdfac*s1)))
+                                print("fatal error: "+str(factor)+" r: "+str(r)+" d: "+str(d)+" s1: "+str(s1)+" mdfac: "+str(mdfac)+" pval: "+str(pval)+" poly: "+str(poly_temp)+" root: "+str(r+(mdfac*s1))+" combo: "+str(cur))
                                 sys.exit(0)
                             interval[s1::factor]+=round(math.log2(factor))
 
@@ -927,13 +947,13 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
                             ret_array[0].append(pval)
                             ret_array[2].append(factors1)
                             ret_array[3].append(factors2)
-                            print("#smooths: "+str(len(ret_array[0]))+"/"+str(base*2+10)+" factors1: "+str(factors1)+" factors2: "+str(factors2)+" a: "+str(a)+" b: "+str(b)+" x_mul: "+str(x_mul)+" root: "+str(r)+" fac: "+str(mdfac)+" pval: "+str(pval)+" lside: "+str(lside)+" root: "+str(r+(mdfac*x_mul)))#" found one: "+str(interval[i])+" pval: "+str(bitlen(abs(pval)))+" c: "+str(c)+" i: "+str(istart+i)+" poly: "+str(poly)+" factors1: "+str(factors1)+" value1: "+str(value1)+" factors2: "+str(factors2)+" value2: "+str(value2)+" opt1: "+str(int(opt1//(center))))
+                            print("#smooths: "+str(len(ret_array[0]))+"/"+str(base*2+10)+" poly: "+str(poly_temp)+" factors1: "+str(factors1)+" factors2: "+str(factors2)+" a: "+str(a)+" x_mul: "+str(x_mul)+" root: "+str(r)+" fac: "+str(mdfac)+" pval: "+str(pval)+" lside: "+str(lside)+" root: "+str(r+(mdfac*x_mul))+" combo: "+str(cur))#" found one: "+str(interval[i])+" pval: "+str(bitlen(abs(pval)))+" c: "+str(c)+" i: "+str(istart+i)+" poly: "+str(poly)+" factors1: "+str(factors1)+" value1: "+str(value1)+" factors2: "+str(factors2)+" value2: "+str(value2)+" opt1: "+str(int(opt1//(center))))
                     
                             if len(ret_array[0])>(base*2+10):
                                 return found
                         ind+=1
                 a+=1
-            b+=1
+
 
         q+=1  
     return found
