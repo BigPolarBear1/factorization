@@ -21,6 +21,8 @@ Still need to implement support for higher degrees in find_same() and then fine 
 
 Update: Spent a little longer thinking about this now. Since both the polynomial value with the constant and without the constant must factorize, the best way to approach this is by building a residue map for both (for example: a<sub>1</sub>x^2+b<sub>1</sub>-Nk = a<sub>0</sub>x^2-b<sub>0</sub>+Nk) and working with that. The more factors all coefficients have incommon the great the part will be that factorizes. And we can reduce the size of coefficients by increasing the degree (or increase the root, but coefficients give us more granular control so its prefered over increasing the root) ...  so it can be done after all working purely with residue maps... *sigh* ... this solution should have been quite obvious
 
+Update: Starting out with binomial expansions is probably best.. and then adjust the coefficient using the binomial term.. worked out yesterday how to calculate the ideal coefficients to generate the smallest polynomial value.. so let me see how I can combine both these approaches.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
