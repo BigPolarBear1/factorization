@@ -19,9 +19,7 @@ To run:  python3 run_qs.py -keysize 100 -base 2_000 -debug 0 -lin_size 100_000 -
 Alright. This will be the final variant.
 Still need to implement support for higher degrees in find_same() and then fine tune everything so that it actually does what it is supposed to do. Rather then sieving x^2-Nk this will sieve ax^2-Nk... once that is exhausted it also uses the linear coefficient ax^2+bx-Nk, by having b be a multiple of the prime we are looking for, we can quite trivially sieve this. etc
 
-Update: Added support for higher degrees.. now all that is left is optimize it so it finds B-smooths just containing the factors we are looking for without introducing any other large factors.
-
-Update: Been doing some thinking, tomorrow instead of a sieve interval for the root.. I'm just going to iterate the leading coefficient and then create a multi dimensional sieve interval for all the other coefficients for a specific root.. then we can change the root and leading coefficient.. that will be the best way to do it. Cant immediatly think of something that might work better.
+Update: Spent a little longer thinking about this now. Since both the polynomial value with the constant and without the constant must factorize, the best way to approach this is by building a residue map for both (for example: a<sub>1</sub>x^2+b<sub>1</sub>-Nk = a<sub>0</sub>x^2-b<sub>0</sub>+Nk) and working with that. The more factors all coefficients have incommon the great the part will be that factorizes. And we can reduce the size of coefficients by increasing the degree (or increase the root, but coefficients give us more granular control so its prefered over increasing the root) ...  so it can be done after all working purely with residue maps... *sigh* ... this solution should have been quite obvious
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
