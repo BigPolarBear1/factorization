@@ -22,6 +22,8 @@ Anyway.. going for a run I think. I'll do some more work soon.
 
 Update: Added some code that will calculate the optimal coefficients. But right now we're only working with degree=2 and calculating the optimal coefficient for the linear term. Next step is to use higher degree and more coefficients.. I'll need to do some thinking how to best sieve that though... because the idea is that by using higher degree polynomials.. we'll have smaller coefficients.. so I'm hoping to use that somehow.
 
+Update: Yeap definitely need to move up in degree.. let me do some testing tomorrow. If it will work like it think it might.. then this will be over shortly.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
