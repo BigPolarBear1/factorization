@@ -25,7 +25,7 @@ Update: There actually is a way to do it using p-adic lifting.. something just h
 
 Update: Wait what am I saying. Not p-adic lifting. Actually just looking for 0 mod p roots... oh shit..... 
 
-Update: ok so if we have for example a5^4+b5^3+c5^2+d5-4387  ... we calculate residues for a,b,c,d mod p.. so a5^4+b5^3+c5^2+d5 is garantueed divisible by 5... to get the other part we demote the exponents and create the poly: a5^3+b5^2+c5+d ... now this one... will hopefully be 0 mod p^e for enough primes p. ah damnit. I'm moving too slow on this. Let me get my head in the game tomorrow.
+Update: ok so if we have for example a5^4+b5^3+c5^2+d5-Nk  ... we calculate residues for a,b,c,d mod p.. so a5^4+b5^3+c5^2+d5 is garantueed divisible by 5... to get the other part we demote the exponents and create the poly: a5^3+b5^2+c5+d ... now this one... will hopefully be 0 mod p^e for enough primes p. ah damnit. I'm moving too slow on this. Let me get my head in the game tomorrow.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
