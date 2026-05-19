@@ -14,11 +14,13 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 
 #### To run from folder "polysieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 60 -base 500 -debug 0 -lin_size 100_000 -quad_size 1_00
+To run:  python3 run_qs.py -keysize 80 -base 500 -debug 0 -lin_size 100_000 -quad_size 1_00
 
 Update: Did a quick refactor of find_same(). This illustrates how to sieve the polynomial value of the polynomial without -n*k. These residues can actually be saved on disk and re-used since they are not influenced by semiprime N. 
 Still to do now... implement support for higher degrees.. and selecting optimal coefficient ranges to sieve... such that the polynomial value of the polynomial with -n\*k is as small as possible.. because there we only want as factors, small factor and the big factors that were found in the original B-smooth (the B-smooth that ends up calling into find_same)
 Anyway.. going for a run I think. I'll do some more work soon.
+
+Update: Added some code that will calculate the optimal coefficients. But right now we're only working with degree=2 and calculating the optimal coefficient for the linear term. Next step is to use higher degree and more coefficients.. I'll need to do some thinking how to best sieve that though. 
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
