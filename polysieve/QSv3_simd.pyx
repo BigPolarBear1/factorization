@@ -913,7 +913,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
     z_range=100
     k_range=2
     c_range=10_000
-    l_range=1_000_000
+    l_range=10_000_000
     bin_range=100
     found=0
     grays = get_gray_code(20)
@@ -927,6 +927,9 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
     i=0
     while i < len(local_factors):
         fac=local_factors[i]
+        if fac < 100:
+            i+=1
+            continue
         if fac not in mod_fac and fac != -1:
             mod_ind.append(len(mod_fac))
             mod_fac.append(fac)
@@ -936,7 +939,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
         i+=1
     mod_fac2=[]
     for fac in primeslist:
-        if fac > 1_000:
+        if fac > 10_000:
             break
         if fac not in mod_fac and fac != -1:
             mod_fac2.append(fac)
@@ -958,9 +961,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
     q=0
     while q < len(mod_ind):
         mdfac=mod_fac[mod_ind[q]]
-        if mdfac < 100:
-            q+=1
-            continue
+
         facresmap=fac2resmap(mdfac,n,k,degree,[1])
         for key, value in facresmap.items():
           #  print("root: "+str(key)+" poly residues: "+str(value))
@@ -970,6 +971,35 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
             if test**2 == value1: ##to do: 1 or square  I guess.
                 for poly in value:
                     pval=evaluate(poly+[-n*k],key)
+
+                    optimal_coeff=[1]
+                    rem=pval
+                    i=degree-1
+                    thres=20
+                    while i>0:
+                        div=rem//key**i
+                        div//=mdfac
+
+                        rem-=(mdfac)*div*key**i
+                        optimal_coeff.append(poly[len(optimal_coeff)]+(-(mdfac)*div))
+                        i-=1
+                    pval=evaluate(optimal_coeff+[-n*k],key)
+                    optimal_coeff[-1]-=mdfac*(l_range//2)
+                    poly=optimal_coeff#+[-n*k]
+                  #  print("optimal_coeff: "+str(optimal_coeff)+" pval: "+str(pval)+" root: "+str(key)+" mdfac: "+str(mdfac))
+                  #  sys.exit()
+                   # co_ind=0
+                   # while co_ind < len(optimal_coeff):
+                   #     optco=[]
+                   #     i=0
+                   #     while i < len(optimal_coeff):
+                   #         if i < co_ind+1:
+                   #             optco+=[copy.deepcopy(optimal_coeff[i])]
+                   #         else:
+                   #             optco+=[0]
+                   #         i+=1
+
+                    
                     if pval%mdfac!=0:
                         print("fail: "+str(poly+[-n*k])+" root: "+str(key))
                         sys.exit()
@@ -986,14 +1016,22 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
                             ##to do: ergh.. we shouldnt just sieve this last coefficient
                             for p in res:
                                 s=solve_lin_con(mdfac,p[-1]-poly[-1],factor)
+                                if (poly[-1]+mdfac*s)%factor != p[-1]:
+                                    print("error error poly: "+str(poly)+" p: "+str(p)+" s: "+str(s)+" mdfac: "+str(mdfac)+" factor: "+str(factor))
                                 interval[s::factor]+=round(math.log2(factor))
+                                ptest=copy.deepcopy(poly)
+                                ptest[-1]+=mdfac*s
+                                pval=evaluate(ptest+[0],key)
+                                if pval%(key*factor)!=0:
+                                    print("something kind of went wrong..."+str(ptest)+" key: "+str(key)+" s: "+str(s)+" factor: "+str(factor)+" pval: "+str(pval))
+                                    sys.exit()
                         except Exception as e:
                             i+=1
                             continue
                         i+=1
                     
                     
-                    np.putmask(interval, interval < 20, 0)
+                    np.putmask(interval, interval < keysize-30, 0)
                     indexlist=np.nonzero(interval)
 
                     indexlist_x=indexlist[0]
@@ -1007,10 +1045,16 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
                         
                         pval=evaluate(ptest+[-n*k],key)
                         lside=pval+n*k
+                        if pval == 0 or lside == 0:
+                            ind+=1
+                            continue
                         factors1, value1=factorise_fast(pval,primelist_f)
                         factors2, value2=factorise_fast(lside,primelist_f)  
                         test=math.isqrt(value2)
                         test2=math.isqrt(value1)
+                       # if bitlen(abs(pval))<30:
+                       #     print("#print: "+str(len(ret_array[0]))+"/"+str(base*2+10)+" lside: "+str(lside)+" pval: "+str(pval%mdfac)+" mdfac: "+str(mdfac)+" ptest: "+str(ptest)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i])+" factors1: "+str(factors1)+" bitlen pval: "+str(bitlen(abs(pval)))+" bitlen lside: "+str(bitlen(abs(lside))))               
+
                         if test**2 == value2 and test2**2 == value1:
 
                             factors1=list(factors1)
@@ -1023,7 +1067,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
                             ret_array[0].append(pval)
                             ret_array[2].append(factors1)
                             ret_array[3].append(factors2)
-                            print("#smooths: "+str(len(ret_array[0]))+"/"+str(base*2+10)+" lside: "+str(lside)+" pval: "+str(pval%mdfac)+" mdfac: "+str(mdfac)+" ptest: "+str(ptest)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i]))                   
+                            print("#smooths: "+str(len(ret_array[0]))+"/"+str(base*2+10)+" lside: "+str(lside)+" pval: "+str(pval%mdfac)+" mdfac: "+str(mdfac)+" ptest: "+str(ptest)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i])+" factors1: "+str(factors1)+" bitlen pval: "+str(bitlen(abs(pval)))+" bitlen lside: "+str(bitlen(abs(lside)))+" i: "+str(i))               
                             if len(ret_array[0])>(base*2+10):
                                 return found     
                        # print("lside: "+str(lside)+" pval: "+str(pval%mdfac)+" mdfac: "+str(mdfac)+" ptest: "+str(ptest)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i]))
@@ -1032,8 +1076,6 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
                     
 
         q+=1
-    
-    sys.exit()
     return found
     
 
