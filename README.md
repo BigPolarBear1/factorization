@@ -20,7 +20,7 @@ To run:  python3 run_qs.py -keysize 60 -base 500 -debug 0 -lin_size 100_000 -qua
 There's two things still missing right now:
 
 1. Implement support for degrees > 2
-2. The current PoC just uses degree 2, select an optimal quadratic and linear coefficient to produce the smallest possible value for a given root. However, the linear and quadratic coefficient should be sieved such that they share a bunch of small factors.. that's going to garantuee the factorization of what I call in the PoC "lside" (left side) by atleast those factors and the root. And we can then also increase the degree to make this approach more potent. But yea.. the coefficients need to share factors.. that's the way that should be done. 
+2. The current PoC just uses degree 2, selects an optimal quadratic and linear coefficient to produce the smallest possible value for a given root. However, the linear and quadratic coefficient should be sieved such that they share a bunch of small factors.. that's going to garantuee the factorization of what I call in the PoC "lside" (left side) by atleast those factors and the root. And we can then also increase the degree to make this approach more potent. But yea.. the coefficients need to share factors.. that's the way that should be done. 
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
