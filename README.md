@@ -30,6 +30,8 @@ Update: Too many AI assisted "math expert" trolls on twitter shitting on my work
 
 Update: I'll be AFK from socials, email, everything.. going to focus for a week now on finishing this, at the end of it now. I do see how this allows me to achieve what I've been trying to do for a long time... rather then just shifting the burden of having to do trial factorization for x^2-Nk = y^2 from x to y. These morrons dont have the imagination to see what I see and neither does their AI.
 
+Update: Pushed another updates. Now what I need to do is have a small root. And coefficients with factors in common... bc that way, no matter if we sieve the root, one side of the congruence is garantueed to have those shared factors in the coefficients.. Thats going to be the easiest way to appraoch this. Cant really see another way that this would be practical otherwise.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
