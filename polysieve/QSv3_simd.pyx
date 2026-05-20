@@ -952,38 +952,50 @@ def fac2resmap(mdfac,n,k,degree,co):
 
     return resmap
 
-def fac2resmap2(mdfac,n,k,degree,co):
+def fac2resmap2(mdfac,n,k,degree,predefined_range,orig_poly):
+    ##Note: SLOP CODE, WRITTEN BY A BEAR, FIX THIS LATER.... 
+    predef=copy.deepcopy(predefined_range)
     i=0
-    while i < len(co):
-        co[i]=co[i]%mdfac
+    while i < len(predefined_range):
+        if predef[i] < mdfac:
+            predef[i]=(orig_poly[i],orig_poly[i]+predef[i])
+        else:
+            predef[i]=(orig_poly[i],orig_poly[i]+mdfac)
         i+=1
+
     if mdfac == -1 or mdfac == 2:
         return {}
     resmap={}
-    coeff=[]
-    d=degree
-    d_ind=0
-    while d_ind < d-len(co):
-        coeff.append(0)
-        d_ind+=1
 
-    ranges = [range(start, mdfac) for start in coeff[:]]
+    ranges = [range(start, limit) for (start,limit) in predef]
     for combo in itertools.product(*ranges):
-        cur=co+list(combo)
+
+
+
+
+        cur=list(combo)
+        i=0
+        while i < len(cur):
+            cur[i]=cur[i]%mdfac
+            i+=1
+
+        if combo[0]%mdfac ==0:  ###to do: Solve linear congruence...
+            continue
         tot=0
         for c in cur: ##To do: Just refactor this entire thing eventually.. this is sloppy
-            tot+=c 
+            tot+=c%mdfac 
         if tot == 0:
             continue
-      #  print("cur: "+str(cur))
-        roots=find_roots_poly(cur, mdfac)
+     #   print("cur: "+str(cur)+" mdfac: "+str(mdfac))
+        cur_c=copy.deepcopy(cur)
+        roots=find_roots_poly(cur_c, mdfac)
         if len(roots)>0:
             for root in roots:
                 try:
                     res=resmap[root]
-                    res.append(co+list(combo))
+                    res.append(cur)
                 except Exception as e: 
-                    resmap[root]=[co+list(combo)]
+                    resmap[root]=[cur]
 
     return resmap
 
@@ -1032,10 +1044,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
 
 
     ##To do: Shouldnt this only have to be calculated once? Regardless of N? Can just have it sitting on disk and re-use then..
-    resmaps=[]
-    for fac in mod_fac2:
-        resmaps.append(fac2resmap2(fac,n,k,degree,[1]))
-    #    print("prime: "+str(fac)+" facresmap: "+str(resmaps[-1]))
+
         
    # print("resmap: "+str(resmap))
     print("[i]Sieving for B-smooths")
@@ -1043,19 +1052,19 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
     while q < len(mod_ind):
         mdfac=mod_fac[mod_ind[q]]
 
-        facresmap=fac2resmap(mdfac,n,k,degree,[1])
-        for key, value in facresmap.items():
+        facresmap=fac2resmap(mdfac,n,k,degree,[])
+        for key, value in facresmap.items():           
           #  print("root: "+str(key)+" poly residues: "+str(value))
-           
+
             factors1, value1=factorise_fast(key,primelist_f)
             test=math.isqrt(value1)
             if test**2 == value1: ##to do: 1 or square  I guess.
                 for poly in value:
                     pval=evaluate(poly+[-n*k],key)
 
-                    optimal_coeff=[1]
+                    optimal_coeff=[]
                     rem=pval
-                    i=degree-1
+                    i=degree
                     thres=20
                     while i>0:
                         div=rem//key**i
@@ -1067,8 +1076,12 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
                     pval=evaluate(optimal_coeff+[-n*k],key)
                     optimal_coeff[-1]-=mdfac*(l_range//2)
                     poly=optimal_coeff#+[-n*k]
-                  #  print("optimal_coeff: "+str(optimal_coeff)+" pval: "+str(pval)+" root: "+str(key)+" mdfac: "+str(mdfac))
-                  #  sys.exit()
+                    print("optimal_coeff: "+str(optimal_coeff)+" pval: "+str(pval)+" root: "+str(key)+" mdfac: "+str(mdfac))
+                    resmaps=[]
+                    for fac in mod_fac2:
+                        resmaps.append(fac2resmap2(fac,n,k,degree,[0+1,l_range+1],poly))
+    #    print("prime: "+str(fac)+" facresmap: "+str(resmaps[-1]))
+                    #sys.exit()
                    # co_ind=0
                    # while co_ind < len(optimal_coeff):
                    #     optco=[]
@@ -1112,7 +1125,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
                         i+=1
                     
                     
-                    np.putmask(interval, interval < keysize-30, 0)
+                    np.putmask(interval, interval < keysize-40, 0)
                     indexlist=np.nonzero(interval)
 
                     indexlist_x=indexlist[0]
@@ -1134,7 +1147,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
                         test=math.isqrt(value2)
                         test2=math.isqrt(value1)
                        # if bitlen(abs(pval))<30:
-                       #     print("#print: "+str(len(ret_array[0]))+"/"+str(base*2+10)+" lside: "+str(lside)+" pval: "+str(pval%mdfac)+" mdfac: "+str(mdfac)+" ptest: "+str(ptest)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i])+" factors1: "+str(factors1)+" bitlen pval: "+str(bitlen(abs(pval)))+" bitlen lside: "+str(bitlen(abs(lside))))               
+                  #      print("#print: "+str(len(ret_array[0]))+"/"+str(base*2+10)+" lside: "+str(lside)+" pval: "+str(pval%mdfac)+" mdfac: "+str(mdfac)+" ptest: "+str(ptest)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i])+" factors1: "+str(factors1)+" bitlen pval: "+str(bitlen(abs(pval)))+" bitlen lside: "+str(bitlen(abs(lside))))               
 
                         if test**2 == value2 and test2**2 == value1:
 
@@ -1154,6 +1167,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
                        # print("lside: "+str(lside)+" pval: "+str(pval%mdfac)+" mdfac: "+str(mdfac)+" ptest: "+str(ptest)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i]))
                        # sys.exit()
                         ind+=1
+                    break #note: Dont sieve the same root twice...
                     
 
         q+=1
