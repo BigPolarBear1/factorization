@@ -35,6 +35,8 @@ Update: Pushed another updates. Now what I need to do is have a small root. And 
 
 Update: I think I worked out the details. Dont calculate any residue maps. Only for the factor we are trying to find. Then find a coefficient set where all coefficients have a bunch of small factors in common... and only then proceed to calculating all the other residue maps and create a sieve interval. It's the only way. There is no other way to do it. This however shouldnt be more then an hour of coding. Going to take a break now, will upload this later tonight.
 
+Update: Doing some more testing. And actually, in find_same we really never want to sieve the root. Let me focus on sieving the coefficients instead. One sec.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
