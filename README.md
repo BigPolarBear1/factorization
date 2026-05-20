@@ -28,6 +28,8 @@ Update: Did some more 3am pondering. So definitely need to use p-adic lifting an
 
 Update: Too many AI assisted "math expert" trolls on twitter shitting on my work. Anyway.. time to grind. Fck those losers. The one challenge left now.. is use p-adic lifting and building residue maps for polynomials of arbitrary degree so that we can actually quickly look up if for a given root a solution is found near some polynomial without the constant -Nk which factors completely over the factor base (well only small factors from the factor base, since we dont want to introduce large factors there). That part I'm stll working on.. because right now its just simply shifting the burden from one side of the square relation x^2-Nk=y^2 to the other, but this setup should give use a lot more fine grain control to get specific B-smooths. Just need to make it practical now. Morrons dont have the brains to understand even half of what I'm doing. Literally just harassing me with what is clearly AI generated shit that is completely missing the point.
 
+Update: I'll be AFK from socials, email, everything.. going to focus for a week now on finishing this, at the end of it now. I do see how this allows me to achieve what I've been trying to do for a long time... rather then just shifting the burden of having to do trial factorization for x^2-Nk = y^2 from x to y. These morrons dont have the imagination to see what I see and neither does their AI.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
