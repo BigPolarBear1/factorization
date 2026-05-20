@@ -32,6 +32,8 @@ Update: I'll be AFK from socials, email, everything.. going to focus for a week 
 
 Update: Pushed another updates. Now what I need to do is have a small root. And coefficients with factors in common... bc that way, no matter if we sieve the root, one side of the congruence is garantueed to have those shared factors in the coefficients.. Thats going to be the easiest way to appraoch this. Cant really see another way that this would be practical otherwise. So next step is, just increasing the size of the coefficients to be closer to this optimal coefficients that are going to produce small polynomial values. Then before deciding wether or not to build a sieve interval... just calculate the GCD between coefficient and only proceed is its bigger then some bit length.. then later we can come up with something more elaborate.
 
+Update: I think I worked out the details. Dont calculate any residue maps. Only for the factor we are trying to find. Then find a coefficient set where all coefficients have a bunch of small factors in common... and only then proceed to calculating all the other residue maps and create a sieve interval. It's the only way. There is no other way to do it. This however shouldnt be more then an hour of coding. Going to take a break now, will upload this later tonight.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
