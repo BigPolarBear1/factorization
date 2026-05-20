@@ -841,7 +841,7 @@ cdef binomial_coeffs_fast(y, n):
         coeffs.append(c*yk)
     return coeffs
 
-def fac2resmap(mdfac,n,k,degree,predefined_range):
+def fac2resmapb(mdfac,n,k,degree,predefined_range):
     predef=copy.deepcopy(predefined_range)
     i=0
     while i < len(predefined_range):
@@ -880,64 +880,286 @@ def fac2resmap(mdfac,n,k,degree,predefined_range):
 
     return resmap
 
-def fac2resmap2(mdfac,n,k,degree,predefined_range):
-    predef=copy.deepcopy(predefined_range)
-    i=0
-    while i < len(predefined_range):
-        if predef[i]>mdfac:
-            predef[i]=mdfac
-
-        i+=1
+def fac2resmap2b(mdfac,n,k,degree,poly):
+    tot=0
+    for co in poly:
+        tot+=co%mdfac
+    if tot == 0:
+        return {},{}
 
     if mdfac == -1 or mdfac == 2:
         return {}
     resmap={}
     resmap2={}
-    
 
+    cur=copy.deepcopy(poly)
+ #   print("cur: "+str(cur)+" mdfac: "+str(mdfac))
+        
+    roots=find_roots_poly(cur, mdfac)
+       # print("cur: "+str(cur)+" combo: "+str(combo)+" prime: "+str(mdfac)+" roots: "+str(roots))
+    if len(roots)>0:
+        for root in roots:
+            try:
+                res=resmap[tuple(poly)]
+                res.append(root)
+            except Exception as e: 
+                resmap[tuple(poly)]=[root]
+    cur=copy.deepcopy(poly)
 
-    ranges = [range(0, limit) for limit in predef]
-  #  print("ranges: "+str(ranges))
+    roots=find_roots_poly(cur+[-n*k], mdfac)
+       # print("cur: "+str(cur)+" combo: "+str(combo)+" prime: "+str(mdfac)+" roots: "+str(roots))
+    if len(roots)>0:
+        for root in roots:
+            pval=evaluate(poly+[-n*k],root)
+            if pval%mdfac != 0:
+                 #   print("todo: some bug we need to fix eventually.. "+str(list(combo))+" mdfac: "+str(mdfac)+" root: "+str(root))
+                continue
+            try:
+                res=resmap2[tuple(poly)]
+                res.append(root)
+            except Exception as e: 
+                resmap2[tuple(poly)]=[root]
 
+    return resmap,resmap2
+
+def fac2resmap(mdfac,n,k,degree,co):
+    if mdfac == -1 or mdfac == 2:
+        return {}
+    resmap={}
+    coeff=[]
+    d=degree
+    d_ind=0
+    while d_ind < d-len(co):
+        coeff.append(0)
+        d_ind+=1
+
+    ranges = [range(start, mdfac) for start in coeff[:]]
     for combo in itertools.product(*ranges):
-    #    print("combo: "+str(combo)+" predef: "+str(predef))
-        cur=list(combo)
-        if cur[0]==0: ##to do: Probably should just add code to solve a lienar congruence instead
-            continue
+        cur=co+list(combo)+[-n*k]
+        roots=find_roots_poly(cur, mdfac)
+        if len(roots)>0:
+            for root in roots:
+                pval=evaluate(co+list(combo)+[-n*k],root)
+           #     print("added: "+str(co+list(combo)+[-n*k])+" root: "+str(root))
+                if pval%mdfac!=0:
+                    print("epic fail")
+                    sys.exit()
+                try:
+                    res=resmap[root]
+                    res.append(co+list(combo))
+                except Exception as e: 
+                    resmap[root]=[co+list(combo)]
+
+    return resmap
+
+def fac2resmap2(mdfac,n,k,degree,co):
+    i=0
+    while i < len(co):
+        co[i]=co[i]%mdfac
+        i+=1
+    if mdfac == -1 or mdfac == 2:
+        return {}
+    resmap={}
+    coeff=[]
+    d=degree
+    d_ind=0
+    while d_ind < d-len(co):
+        coeff.append(0)
+        d_ind+=1
+
+    ranges = [range(start, mdfac) for start in coeff[:]]
+    for combo in itertools.product(*ranges):
+        cur=co+list(combo)
         tot=0
         for c in cur: ##To do: Just refactor this entire thing eventually.. this is sloppy
             tot+=c 
         if tot == 0:
             continue
-        
+      #  print("cur: "+str(cur))
         roots=find_roots_poly(cur, mdfac)
-       # print("cur: "+str(cur)+" combo: "+str(combo)+" prime: "+str(mdfac)+" roots: "+str(roots))
         if len(roots)>0:
             for root in roots:
                 try:
-                    res=resmap[combo]
-                    res.append(root)
+                    res=resmap[root]
+                    res.append(co+list(combo))
                 except Exception as e: 
-                    resmap[combo]=[root]
-        cur=list(combo)
+                    resmap[root]=[co+list(combo)]
 
-        roots=find_roots_poly(cur+[-n*k], mdfac)
-       # print("cur: "+str(cur)+" combo: "+str(combo)+" prime: "+str(mdfac)+" roots: "+str(roots))
-        if len(roots)>0:
-            for root in roots:
-                pval=evaluate(list(combo)+[-n*k],root)
-                if pval%mdfac != 0:
-                 #   print("todo: some bug we need to fix eventually.. "+str(list(combo))+" mdfac: "+str(mdfac)+" root: "+str(root))
-                    continue
-                try:
-                    res=resmap2[combo]
-                    res.append(root)
-                except Exception as e: 
-                    resmap2[combo]=[root]
-
-    return resmap,resmap2
+    return resmap
 
 def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
+
+    k=1
+    degree=2
+    z_range=100
+    k_range=2
+    c_range=10_000
+    l_range=10_000_000
+    bin_range=100
+    found=0
+    grays = get_gray_code(20)
+    mod=1
+    mod_fac=[]
+
+    print("[i]Looking for: "+str(local_factors))
+    
+    leng=primelist_f[0]
+    mod_ind=[]
+    i=0
+    while i < len(local_factors):
+        fac=local_factors[i]
+        if fac < 100:
+            i+=1
+            continue
+        if fac not in mod_fac and fac != -1:
+            mod_ind.append(len(mod_fac))
+            mod_fac.append(fac)
+            if mod_fac[mod_ind[-1]] != fac:
+                print("fatal")
+                sys.exit()    
+        i+=1
+    mod_fac2=[]
+    for fac in primeslist:
+        if fac > 10_000:
+            break
+        if fac not in mod_fac and fac != -1:
+            mod_fac2.append(fac)
+
+    primelist_f2=copy.copy(mod_fac)
+    primelist_f2.insert(0,len(primelist_f2)+1)
+    primelist_f2=array.array('q',primelist_f2)
+    k=1
+
+
+    ##To do: Shouldnt this only have to be calculated once? Regardless of N? Can just have it sitting on disk and re-use then..
+    resmaps=[]
+    for fac in mod_fac2:
+        resmaps.append(fac2resmap2(fac,n,k,degree,[1]))
+    #    print("prime: "+str(fac)+" facresmap: "+str(resmaps[-1]))
+        
+   # print("resmap: "+str(resmap))
+    print("[i]Sieving for B-smooths")
+    q=0
+    while q < len(mod_ind):
+        mdfac=mod_fac[mod_ind[q]]
+
+        facresmap=fac2resmap(mdfac,n,k,degree,[1])
+        for key, value in facresmap.items():
+          #  print("root: "+str(key)+" poly residues: "+str(value))
+           
+            factors1, value1=factorise_fast(key,primelist_f)
+            test=math.isqrt(value1)
+            if test**2 == value1: ##to do: 1 or square  I guess.
+                for poly in value:
+                    pval=evaluate(poly+[-n*k],key)
+
+                    optimal_coeff=[1]
+                    rem=pval
+                    i=degree-1
+                    thres=20
+                    while i>0:
+                        div=rem//key**i
+                        div//=mdfac
+
+                        rem-=(mdfac)*div*key**i
+                        optimal_coeff.append(poly[len(optimal_coeff)]+(-(mdfac)*div))
+                        i-=1
+                    pval=evaluate(optimal_coeff+[-n*k],key)
+                    optimal_coeff[-1]-=mdfac*(l_range//2)
+                    poly=optimal_coeff#+[-n*k]
+                  #  print("optimal_coeff: "+str(optimal_coeff)+" pval: "+str(pval)+" root: "+str(key)+" mdfac: "+str(mdfac))
+                  #  sys.exit()
+                   # co_ind=0
+                   # while co_ind < len(optimal_coeff):
+                   #     optco=[]
+                   #     i=0
+                   #     while i < len(optimal_coeff):
+                   #         if i < co_ind+1:
+                   #             optco+=[copy.deepcopy(optimal_coeff[i])]
+                   #         else:
+                   #             optco+=[0]
+                   #         i+=1
+
+                    
+                    if pval%mdfac!=0:
+                        print("fail: "+str(poly+[-n*k])+" root: "+str(key))
+                        sys.exit()
+                    interval=np.zeros(l_range,dtype=np.uint16)
+                    i=0
+                    while i < len(mod_fac2):
+                        factor=mod_fac2[i]
+                        if mdfac%factor ==0:
+                            i+=1 
+                            continue
+                        try:
+                            res=resmaps[i][key%factor]
+                        #    print("res: "+str(res))
+                            ##to do: ergh.. we shouldnt just sieve this last coefficient
+                            for p in res:
+                                s=solve_lin_con(mdfac,p[-1]-poly[-1],factor)
+                                if (poly[-1]+mdfac*s)%factor != p[-1]:
+                                    print("error error poly: "+str(poly)+" p: "+str(p)+" s: "+str(s)+" mdfac: "+str(mdfac)+" factor: "+str(factor))
+                                interval[s::factor]+=round(math.log2(factor))
+                                ptest=copy.deepcopy(poly)
+                                ptest[-1]+=mdfac*s
+                                pval=evaluate(ptest+[0],key)
+                                if pval%(key*factor)!=0:
+                                    print("something kind of went wrong..."+str(ptest)+" key: "+str(key)+" s: "+str(s)+" factor: "+str(factor)+" pval: "+str(pval))
+                                    sys.exit()
+                        except Exception as e:
+                            i+=1
+                            continue
+                        i+=1
+                    
+                    
+                    np.putmask(interval, interval < keysize-30, 0)
+                    indexlist=np.nonzero(interval)
+
+                    indexlist_x=indexlist[0]
+                    ind=0
+                    length=len(indexlist_x)
+            
+                    while ind < length:# length: 
+                        i=int(indexlist_x[ind])
+                        ptest=copy.deepcopy(poly)
+                        ptest[-1]+=mdfac*i
+                        
+                        pval=evaluate(ptest+[-n*k],key)
+                        lside=pval+n*k
+                        if pval == 0 or lside == 0:
+                            ind+=1
+                            continue
+                        factors1, value1=factorise_fast(pval,primelist_f)
+                        factors2, value2=factorise_fast(lside,primelist_f)  
+                        test=math.isqrt(value2)
+                        test2=math.isqrt(value1)
+                       # if bitlen(abs(pval))<30:
+                       #     print("#print: "+str(len(ret_array[0]))+"/"+str(base*2+10)+" lside: "+str(lside)+" pval: "+str(pval%mdfac)+" mdfac: "+str(mdfac)+" ptest: "+str(ptest)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i])+" factors1: "+str(factors1)+" bitlen pval: "+str(bitlen(abs(pval)))+" bitlen lside: "+str(bitlen(abs(lside))))               
+
+                        if test**2 == value2 and test2**2 == value1:
+
+                            factors1=list(factors1)
+                            factors1.sort()
+                            if factors1 in ret_array[2]:
+                                ind+=1
+                                continue
+                            found+=1
+                            ret_array[1].append(lside)
+                            ret_array[0].append(pval)
+                            ret_array[2].append(factors1)
+                            ret_array[3].append(factors2)
+                            print("#smooths: "+str(len(ret_array[0]))+"/"+str(base*2+10)+" lside: "+str(lside)+" pval: "+str(pval%mdfac)+" mdfac: "+str(mdfac)+" ptest: "+str(ptest)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i])+" factors1: "+str(factors1)+" bitlen pval: "+str(bitlen(abs(pval)))+" bitlen lside: "+str(bitlen(abs(lside)))+" i: "+str(i))               
+                            if len(ret_array[0])>(base*2+10):
+                                return found     
+                       # print("lside: "+str(lside)+" pval: "+str(pval%mdfac)+" mdfac: "+str(mdfac)+" ptest: "+str(ptest)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i]))
+                       # sys.exit()
+                        ind+=1
+                    
+
+        q+=1
+    return found
+
+def find_same2(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
 
     k=1
 
@@ -949,7 +1171,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
     z_range=100
     k_range=2
     c_range=10_000
-    l_range=1_000_000
+    l_range=100
     bin_range=100
     found=0
     grays = get_gray_code(20)
@@ -988,12 +1210,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
 
     ##To do: Shouldnt this only have to be calculated once? Regardless of N? Can just have it sitting on disk and re-use then..
     print("[i]Preparing residue maps (to do: These should actually only be calculated once and resmaps can be saved to disk and re-used for any N.. fix later)")
-    resmaps=[]
-    resmaps2=[]
-    for fac in mod_fac2:
-        r1,r2=fac2resmap2(fac,n,k,degree,predefined_range)
-        resmaps.append(r1)
-        resmaps2.append(r2)
+
      #   print("prime: "+str(fac)+" facresmap: "+str(resmaps[-1]))
   
    # print("resmap: "+str(resmaps))
@@ -1019,20 +1236,19 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
                     optimal_coeff=[]
                     rem=pval
                     i=degree
-                    thres=20
                     while i>0:
-                        div=rem//key**i
+                        div=rem//(key+(mdfac*l_range//2))**i
                         div//=mdfac**exp
 
-                        rem-=(mdfac**exp)*div*key**i
+                        rem-=(mdfac**exp)*div*(key+(mdfac*l_range//2))**i
                         optimal_coeff.append(poly[len(optimal_coeff)]+(-(mdfac**exp)*div))
                         i-=1
                  #   print("optimal_coeeff: "+str(optimal_coeff))
 
-                    pval=evaluate(optimal_coeff+[-n*k],key)
-                    optimal_coeff[-1]-=mdfac*(l_range//2)
-                 #   poly=optimal_coeff#+[-n*k]
-                  #  print("optimal_coeff: "+str(optimal_coeff)+" pval: "+str(pval)+" root: "+str(key)+" mdfac: "+str(mdfac))
+                    pval=evaluate(optimal_coeff+[-n*k],(key+(mdfac*l_range//2)))
+                  
+                    poly=optimal_coeff#+[-n*k]
+                   # print("optimal_coeff: "+str(optimal_coeff)+" pval: "+str(pval)+" root: "+str(key)+" mdfac: "+str(mdfac))
                   #  sys.exit()
                    # co_ind=0
                    # while co_ind < len(optimal_coeff):
@@ -1044,7 +1260,13 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
                    #         else:
                    #             optco+=[0]
                    #         i+=1
-
+                    resmaps=[]
+                    resmaps2=[]
+                    for fac in mod_fac2:
+                        ###TO DO: DONT NEED TO CREATE HASHMAPS HERE IF WE ONLY DO ONE POLY......FIX LATER
+                        r1,r2=fac2resmap2(fac,n,k,degree,poly)
+                        resmaps.append(r1)
+                        resmaps2.append(r2)
                     
                     if pval%mdfac!=0:
                         print("fail: "+str(poly+[-n*k])+" root: "+str(key))
@@ -1053,17 +1275,12 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
                     i=0
                     while i < len(mod_fac2):
                         factor=mod_fac2[i]
-                        pc=copy.deepcopy(poly)
-                        j=0
-                        while j < len(pc):
-                            pc[j]=pc[j]%factor
-                            j+=1
-                        pc=tuple(pc)
+                       
                         if mdfac%factor ==0:
                             i+=1 
                             continue
                         try:
-                            res=resmaps[i][pc]
+                            res=resmaps[i][tuple(poly)]
                           #  print("res: "+str(res)+" mdfac: "+str(mdfac)+" factor: "+str(factor)+" poly: "+str(poly))
                             for root in res:
                                 s=solve_lin_con(mdfac,root-key,factor)
@@ -1081,7 +1298,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
                             pass
                         
                         try:
-                            res=resmaps2[i][pc]
+                            res=resmaps2[i][tuple(poly)]
                           #  print("res: "+str(res)+" mdfac: "+str(mdfac)+" factor: "+str(factor)+" poly: "+str(poly))
                             for root in res:
                                 s=solve_lin_con(mdfac,root-key,factor)
@@ -1100,8 +1317,8 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
                             pass
                         i+=1
                     
-                    
-                    np.putmask(interval, interval < keysize-10, 0)
+                #    print("interval: "+str(interval))
+                    np.putmask(interval, interval < keysize-50, 0)
                     indexlist=np.nonzero(interval)
 
                     indexlist_x=indexlist[0]
@@ -1109,7 +1326,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
                     length=len(indexlist_x)
             
                     while ind < length:# length: 
-                      #  print("checking")
+                       # print("checking")
                         i=int(indexlist_x[ind])
                         #ptest=copy.deepcopy(poly)
                        # ptest[-1]+=mdfac*i
@@ -1123,8 +1340,8 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
                         factors2, value2=factorise_fast(lside,primelist_f)  
                         test=math.isqrt(value2)
                         test2=math.isqrt(value1)
-                       # if bitlen(abs(pval))<30:
-                       #     print("#print: "+str(len(ret_array[0]))+"/"+str(base*2+10)+" lside: "+str(lside)+" pval: "+str(pval%mdfac)+" mdfac: "+str(mdfac)+" ptest: "+str(ptest)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i])+" factors1: "+str(factors1)+" bitlen pval: "+str(bitlen(abs(pval)))+" bitlen lside: "+str(bitlen(abs(lside))))               
+                        if bitlen(abs(pval))<50:
+                            print("#print: "+str(len(ret_array[0]))+"/"+str(base*2+10)+" lside: "+str(lside)+" pval: "+str(pval%mdfac)+" mdfac: "+str(mdfac)+" ptest: "+str(poly)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i])+" factors1: "+str(factors1)+" bitlen pval: "+str(bitlen(abs(pval)))+" bitlen lside: "+str(bitlen(abs(lside)))+" ind: "+str(i))               
 
                         if test**2 == value2 and test2**2 == value1:
 
