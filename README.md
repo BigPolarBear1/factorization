@@ -24,6 +24,8 @@ Update: Added some code that will calculate the optimal coefficients. But right 
 
 Update: Yeap definitely need to move up in degree.. let me do some testing tomorrow. If it will work like it think it might.. then this will be over shortly.
 
+Update: Did some more 3am pondering. So definitely need to use p-adic lifting and higher degrees here. And just precompute a bunch of stuff and have it sitting on disk. We dont need to calculate all possible coefficients mod p ... just up to a certain range. so its not too bad. And the thing is, with higher degree polynomials... the coefficients we want wont be obscured by the modulus so we can directly query a database. 
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
