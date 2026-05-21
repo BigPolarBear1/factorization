@@ -362,9 +362,12 @@ def launch(n,primeslist1,primeslist2):
     #complete_hmap=create_hashmap(n,primeslist1)
     duration = default_timer() - start
     print("[i]Creating iN datastructure in total took: "+str(duration))
-
+    print("[i]Building residue map.. this can take a while..(note-to-self: this one can be saved to disk and reused for any N easily)")
+    resmaps=[]
+    for fac in primeslist1[:50]:
+        resmaps.append(fac2resmap2(fac,2))
     print("[*]Launching attack with "+str(workers)+" workers\n")
-    find_comb(n,complete_hmap,primeslist1,primeslist2)
+    find_comb(n,complete_hmap,primeslist1,primeslist2,resmaps)
 
     return 
 
@@ -952,21 +955,11 @@ def fac2resmap(mdfac,n,k,degree,co):
 
     return resmap
 
-def fac2resmap2(mdfac,n,k,degree,predefined_range,orig_poly):
-    ##Note: SLOP CODE, WRITTEN BY A BEAR, FIX THIS LATER.... 
-    predef=copy.deepcopy(predefined_range)
-    i=0
-    while i < len(predefined_range):
-        if predef[i] < mdfac:
-            predef[i]=(orig_poly[i],orig_poly[i]+predef[i])
-        else:
-            predef[i]=(orig_poly[i],orig_poly[i]+mdfac)
-        i+=1
-
+def fac2resmap2(mdfac,degree):
     if mdfac == -1 or mdfac == 2:
         return {}
     resmap={}
-
+    predef=[(0,mdfac),(0,mdfac)]##to do: change when we change degree
     ranges = [range(start, limit) for (start,limit) in predef]
     for combo in itertools.product(*ranges):
 
@@ -999,14 +992,14 @@ def fac2resmap2(mdfac,n,k,degree,predefined_range,orig_poly):
 
     return resmap
 
-def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
+def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps):
 
     k=1
     degree=2
     z_range=100
     k_range=2
     c_range=10_000
-    l_range=10_000_000
+    l_range=100_000
     bin_range=100
     found=0
     grays = get_gray_code(20)
@@ -1030,18 +1023,12 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
                 print("fatal")
                 sys.exit()    
         i+=1
-    mod_fac2=[]
-    for fac in primeslist:
-        if fac > 10_000:
-            break
-        if fac not in mod_fac and fac != -1:
-            mod_fac2.append(fac)
 
+    mod_fac2=primeslist[:50]
     primelist_f2=copy.copy(mod_fac)
     primelist_f2.insert(0,len(primelist_f2)+1)
     primelist_f2=array.array('q',primelist_f2)
     k=1
-
 
     ##To do: Shouldnt this only have to be calculated once? Regardless of N? Can just have it sitting on disk and re-use then..
 
@@ -1051,8 +1038,31 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
     q=0
     while q < len(mod_ind):
         mdfac=mod_fac[mod_ind[q]]
+       # close_range=10
+       # too_close=1
+       # LOWER_BOUND_SIQS=1
+       # UPPER_BOUND_SIQS=4000
+       # tnum=int(((n*k)**0.40) /(l_range))
+       # seen=[]
+       # quad=1
+       # mod=mdfac
+       # retry=0
+        mod=64
+        #while retry < 1000: 
+           # mod,cfact,indexes=generate_modulus2(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,bitlen(tnum),quad)
+           # if mod !=0 and mdfac in cfact:
+           #     mod=0
+           # if mod == 0:
+           #     retry+=1
+           # else:
+           #     break
 
-        facresmap=fac2resmap(mdfac,n,k,degree,[])
+       # if retry ==1000 or mod ==0:
+      #      print("unable to find a modulus")
+        #    sys.exit()
+        facresmap=fac2resmap(mdfac,n,k,degree,[mod])
+       # print("mod: "+str(mod)+" facresmap: "+str(cfact)+" mdfac: "+str(mdfac))
+       # sys.exit()
         for key, value in facresmap.items():           
           #  print("root: "+str(key)+" poly residues: "+str(value))
 
@@ -1060,26 +1070,27 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
             test=math.isqrt(value1)
             if test**2 == value1: ##to do: 1 or square  I guess.
                 for poly in value:
+                    s=solve_lin_con(mdfac,-poly[-1],mod)
+                    poly[-1]=poly[-1]+mdfac*s
+ 
                     pval=evaluate(poly+[-n*k],key)
 
-                    optimal_coeff=[]
+                    optimal_coeff=[poly[0]]
                     rem=pval
-                    i=degree
+                    i=degree-1
                     thres=20
                     while i>0:
                         div=rem//key**i
-                        div//=mdfac
+                        div//=(mdfac*mod)
 
-                        rem-=(mdfac)*div*key**i
-                        optimal_coeff.append(poly[len(optimal_coeff)]+(-(mdfac)*div))
+                        rem-=((mdfac*mod))*div*key**i
+                        optimal_coeff.append(poly[len(optimal_coeff)]+(-((mdfac*mod))*div))
                         i-=1
                     pval=evaluate(optimal_coeff+[-n*k],key)
-                    optimal_coeff[-1]-=mdfac*(l_range//2)
+                    optimal_coeff[-1]-=(mdfac*mod)*(l_range//2)
                     poly=optimal_coeff#+[-n*k]
-                    print("optimal_coeff: "+str(optimal_coeff)+" pval: "+str(pval)+" root: "+str(key)+" mdfac: "+str(mdfac))
-                    resmaps=[]
-                    for fac in mod_fac2:
-                        resmaps.append(fac2resmap2(fac,n,k,degree,[0+1,l_range+1],poly))
+                 #   print("optimal_coeff: "+str(optimal_coeff)+" pval: "+str(pval)+" root: "+str(key)+" mdfac: "+str(mdfac))
+
     #    print("prime: "+str(fac)+" facresmap: "+str(resmaps[-1]))
                     #sys.exit()
                    # co_ind=0
@@ -1101,7 +1112,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
                     i=0
                     while i < len(mod_fac2):
                         factor=mod_fac2[i]
-                        if mdfac%factor ==0:
+                        if (mdfac*mod)%factor ==0:
                             i+=1 
                             continue
                         try:
@@ -1109,15 +1120,17 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
                         #    print("res: "+str(res))
                             ##to do: ergh.. we shouldnt just sieve this last coefficient
                             for p in res:
-                                s=solve_lin_con(mdfac,p[-1]-poly[-1],factor)
-                                if (poly[-1]+mdfac*s)%factor != p[-1]:
-                                    print("error error poly: "+str(poly)+" p: "+str(p)+" s: "+str(s)+" mdfac: "+str(mdfac)+" factor: "+str(factor))
+                                if p[0]%factor != poly[0]%factor: ##to do: This wont scale to degree higher then 2... fix later
+                                    continue
+                                s=solve_lin_con((mdfac*mod),p[-1]-poly[-1],factor)
+                                if (poly[-1]+(mdfac*mod)*s)%factor != p[-1]:
+                                    print("error error poly: "+str(poly)+" p: "+str(p)+" s: "+str(s)+" mdfac: "+str((mdfac*mod))+" factor: "+str(factor))
                                 interval[s::factor]+=round(math.log2(factor))
                                 ptest=copy.deepcopy(poly)
-                                ptest[-1]+=mdfac*s
+                                ptest[-1]+=(mdfac*mod)*s
                                 pval=evaluate(ptest+[0],key)
                                 if pval%(key*factor)!=0:
-                                    print("something kind of went wrong..."+str(ptest)+" key: "+str(key)+" s: "+str(s)+" factor: "+str(factor)+" pval: "+str(pval))
+                                    print("something kind of went wrong..."+str(ptest)+" key: "+str(key)+" s: "+str(s)+" factor: "+str(factor)+" pval: "+str(pval)+" p: "+str(p))
                                     sys.exit()
                         except Exception as e:
                             i+=1
@@ -1135,7 +1148,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
                     while ind < length:# length: 
                         i=int(indexlist_x[ind])
                         ptest=copy.deepcopy(poly)
-                        ptest[-1]+=mdfac*i
+                        ptest[-1]+=(mdfac*mod)*i
                         
                         pval=evaluate(ptest+[-n*k],key)
                         lside=pval+n*k
@@ -1382,7 +1395,7 @@ def find_same2(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
     
 
 
-cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,partials,lin,cmod,factor_ranking,fb_map,bSeenOnly,seen_factors,interval,primeslist):#,lin,cmod,sum_list):
+cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,partials,lin,cmod,factor_ranking,fb_map,bSeenOnly,seen_factors,interval,primeslist,resmaps):#,lin,cmod,sum_list):
     linsize=lin_sieve_size
     if bSeenOnly==1:
         linsize=lin_sieve_size2
@@ -1474,7 +1487,7 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                 ret_array[0].append(poly_val)
                 ret_array[2].append(local_factors)
                 ret_array[3].append([])
-                found+=find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist)
+                found+=find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps)
                 if len(ret_array[0])>(base*2+10):
                     return found
         k+=1
@@ -1532,6 +1545,123 @@ def filter_quads(qbase,n,score):
 #@cython.boundscheck(False)
 #@cython.wraparound(False)
 def generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,tnum_bit,hmap,quad):
+    const_1=1_000
+    const_2=1_000_000
+
+    small_B = base#len(primeslist)
+    lower_polypool_index = 2
+    upper_polypool_index = small_B - 1
+    poly_low_found = False
+    
+    for i in range(small_B):  ##To do: Can be moved outside mainloop
+        if primeslist[i]**2 > LOWER_BOUND_SIQS and not poly_low_found:
+            lower_polypool_index = i
+            poly_low_found = True
+            break
+        if primeslist[i]**2 > UPPER_BOUND_SIQS:
+            upper_polypool_index = i - 1
+            break
+    small_B=upper_polypool_index
+    counter4=0
+    while counter4 < const_1:
+        counter4+=1
+        cmod = 1
+        cfact = []#[0]*base
+        indexes=[]
+        counter2=0
+        while counter2 < const_2:
+            found_a_factor = False
+            counter=0
+            while(found_a_factor == False) and counter < const_2:
+                randindex = random.randint(lower_polypool_index, upper_polypool_index)
+                if  jacobi((-quad*n)%primeslist[randindex],primeslist[randindex])!=1:
+                    counter+=1
+                    continue
+                potential_a_factor = primeslist[randindex]**2
+                found_a_factor = True
+                it=0
+                length=len(cfact)
+                while it < length:
+                    if potential_a_factor ==cfact[it]:
+                        found_a_factor = False
+                        break
+                    it+=1
+                counter+=1
+            if counter == const_2:
+                cmod = 1
+                s = 0
+                cfact = []#[0]*base
+                indexes=[]
+                continue                
+            cmod = cmod * potential_a_factor
+            cfact.append(potential_a_factor)
+            if  jacobi((-quad*n)%primeslist[randindex],primeslist[randindex])!=1:#hmap[randindex][1]!=quad%primeslist[randindex]:
+                print("THE FUC")
+                time.sleep(1000000)
+            indexes.append(randindex)
+            j = tnum_bit - cmod.bit_length()
+            counter2+=1
+            if j < too_close:
+                cmod = 1
+                s = 0
+                cfact = []#[0]*base
+                indexes=[]
+                continue
+            elif j < (too_close + close_range):
+                break
+        a1 = tnum // cmod
+        mindiff = 100000000000000000
+        randindex = 0
+        for i in range(small_B):
+            if abs(a1 - primeslist[i]**2) < mindiff:
+                randindex = i
+                mindiff = abs(a1 - primeslist[i]**2)
+                
+        
+
+        found_a_factor = False
+        counter3=0
+        while not found_a_factor and counter3< const_2 and randindex <base:
+            if  jacobi((-quad*n)%primeslist[randindex],primeslist[randindex])!=1:
+                randindex += 1
+                continue
+            potential_a_factor = primeslist[randindex]**2
+
+            found_a_factor = True
+            it=0
+            length=len(cfact)
+            while it < length:
+                if potential_a_factor ==cfact[it]:
+                    found_a_factor = False
+                    break
+                it+=1
+            if not found_a_factor:
+                randindex += 1
+            counter3+=1
+        if randindex > small_B:
+            continue
+        if counter3==const_2:
+            continue
+
+        cmod = cmod * potential_a_factor
+        if  jacobi((-quad*n)%primeslist[randindex],primeslist[randindex])!=1:
+            print("THE FUC: ",randindex)
+            time.sleep(1000000)
+        cfact.append(potential_a_factor)
+        indexes.append(randindex)
+
+        diff_bits = (tnum - cmod).bit_length()
+        if diff_bits < tnum_bit:
+            if cmod in seen:
+                continue
+            else:
+                seen.append(cmod)
+                return cmod,cfact,indexes
+    return 0,0,0
+
+#@cython.boundscheck(False)
+#@cython.wraparound(False)
+def generate_modulus2(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,tnum_bit,quad):
     const_1=1_000
     const_2=1_000_000
 
@@ -1826,7 +1956,7 @@ def build_2drootmap(primeslist,hmap,n):
 
 
 
-def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,primeslist2):
+def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,primeslist2,resmaps):
     grays = get_gray_code(20)
     np.set_printoptions(
     linewidth=500,   # Max characters per line before wrapping
@@ -1903,7 +2033,7 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
                 print("super big error")
                 time.sleep(1000)
             interval=build_database2interval(primeslist_a,quad,n,lin,new_mod,roots2d,0,factor_ranking)
-            found+=process_interval2d(n,ret_array,quad,primelist_f,large_prime_bound,partials,lin,new_mod,factor_ranking,fb_map,0,seen_factors,interval,primeslist)#,lin,new_mod,sum_list)
+            found+=process_interval2d(n,ret_array,quad,primelist_f,large_prime_bound,partials,lin,new_mod,factor_ranking,fb_map,0,seen_factors,interval,primeslist,resmaps)#,lin,new_mod,sum_list)
             if found > 500 or len(ret_array[0]) > base*2+10:
                 if g_debug ==1:
                     print("seen_factors: ",seen_factors)
@@ -1983,12 +2113,12 @@ def lift_root(r,prime,n,quad_co,exp):
     root2=(new_r*z_inv)%prime**exp
     return root2
 
-def find_comb(n,hmap,primeslist1,primeslist2):
+def find_comb(n,hmap,primeslist1,primeslist2,resmaps):
     #To do: Pointless function
     ret_array=[[],[],[],[]]
     partials={}
     large_prime_bound = primeslist1[-1] ** lp_multiplier
-    construct_interval(ret_array,partials,n,primeslist1,hmap,large_prime_bound,primeslist2)
+    construct_interval(ret_array,partials,n,primeslist1,hmap,large_prime_bound,primeslist2,resmaps)
     return 0
 
 def get_primes(start,stop):
