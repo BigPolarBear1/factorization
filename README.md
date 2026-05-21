@@ -15,12 +15,14 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 
 #### To run from folder "polysieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 60 -base 500 -debug 0 -lin_size 100_000 -quad_size 1_00
+To run: python3 run_qs.py -keysize 70 -base 500 -debug 0 -lin_size 100_000 -quad_size 1_00
 
 There's two things still missing right now:
 
 1. Implement support for degrees > 2
 2. The current PoC just uses degree 2, selects an optimal quadratic and linear coefficient to produce the smallest possible value for a given root. However, the linear and quadratic coefficient should be sieved such that they share a bunch of small factors.. that's going to garantuee the factorization of what I call in the PoC "lside" (left side) by atleast those factors and the root. And we can then also increase the degree to make this approach more potent. But yea.. the coefficients need to share factors.. that's the way that should be done. 
+
+Updat: Sieving isnt going to be the right approach for find_same(). Need to use the residue map here to just find a good set of coefficients, thats really what this boils down to now. Let me come up with an elegant algorithm for this. Probably should also p-adically lift those solutions.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
