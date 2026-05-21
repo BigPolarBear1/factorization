@@ -15,16 +15,10 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 
 #### To run from folder "polysieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 70 -base 500 -debug 0 -lin_size 100_000 -quad_size 1_00
+To run: python3 run_qs.py -keysize 60 -base 500 -debug 0 -lin_size 100_000 -quad_size 1_00
 
-There's two things still missing right now:
-
-1. Implement support for degrees > 2
-2. The current PoC just uses degree 2, selects an optimal quadratic and linear coefficient to produce the smallest possible value for a given root. However, the linear and quadratic coefficient should be sieved such that they share a bunch of small factors.. that's going to garantuee the factorization of what I call in the PoC "lside" (left side) by atleast those factors and the root. And we can then also increase the degree to make this approach more potent. But yea.. the coefficients need to share factors.. that's the way that should be done. 
-
-Updat: Sieving isnt going to be the right approach for find_same(). Need to use the residue map here to just find a good set of coefficients, thats really what this boils down to now. Let me come up with an elegant algorithm for this. Probably should also p-adically lift those solutions. Let me try something tomorrow... rather then looking for each seperate factor of the original B-smooth.. let me calculate the root modulo the entire B-smooth.. which with the way it is set up should be on average of size keysize/2...then thats going to result in really small "optimal" coefficients and we should be able to use the residue map to pretty much immediatly figure out if there exist a good coefficient selection or not. Then we can iterate that N multiplier k.. until we get a good hit. That's going to be a much better approach then trying to work with huge coefficient. I'm not completely sure yet if there is any point in going beyond the second degree.. it would shrink coefficients even more, but not sure if that's even needed, lets see tomorrow.
-
-Update: After deep 3am thinking. Yes exactly.. just use much bigger roots.. then the residue map we need to precalculate... we can just set a ceiling for those coefficient... so it doesnt take as long.. then add some p-adic lifting.. and also calculate for different multiples of N ... then that should be fairly easy to use to figure out of a near similar B-smooth exists. 
+Did a quick refactor of find_same() ... the goal there wont be fast sieving but to find near identical b-smooths and terminate factorization much sooner.
+Next we need to use the residue map for lside (poly without -nk) as a hashmap to quickly test the factorization.. the idea being that we can precalculate residues and p-adically lift them to squares for as many primes as we want. once that's done.. we also need a quick heuristic to keep the polynomial value for the polynomial with -nk as small as possible once divided by the modulus, because we dont want to introduce new large factors there. Once that is done.. just optimize and experiment with higher degree polynomials.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
