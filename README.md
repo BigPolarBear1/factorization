@@ -26,6 +26,8 @@ UPDATE: BAAAAAAAAAAH I'M OVERCOMPLICATING IT. Just change the PoC a little so it
 
 Update: Quickly changed it. Now we dont need to worry about damned left side. Just a matter now of findings roots that are within a certain range.
 
+Update: The only reason to move up in degree is when you try to find similar factorization when then N multiplier, k becomes very large. But we shouldnt have to worry about that just yet unless we're attacking very large numbers. So let me just get it working with quadratics where we just change the quadratic coefficient. Shoudln't overcomplicated things. Keep it simple, keep it fast.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
