@@ -956,34 +956,38 @@ def fac2resmap(mdfac,n,k,degree,co):
 
     return resmap
 
-def f2res(mdfac,n,k,degree,co):
+def f2res(mdfac,n,k,degree,predefined_range):
+    predef=copy.deepcopy(predefined_range)
+    i=0
+    while i < len(predefined_range):
+        if predef[i]>mdfac:
+            predef[i]=mdfac
+
+        i+=1
     if mdfac == -1 or mdfac == 2:
         return []
     resmap={}
-    coeff=[]
-    d=degree
-    d_ind=0
-    while d_ind < d-len(co):
-        coeff.append(0)
-        d_ind+=1
 
-    ranges = [range(start, mdfac) for start in coeff[:]]
+
+    ranges = [range(0, limit) for limit in predef]
+ #   print("ranges: "+str(ranges))
+
     for combo in itertools.product(*ranges):
-        cur=co+list(combo)+[-n*k]
+        cur=list(combo)+[-n*k]
         roots=find_roots_poly(cur, mdfac)
         if len(roots)>0:
             for root in roots:
-                pval=evaluate(co+list(combo)+[-n*k],root)
+                pval=evaluate(list(combo)+[-n*k],root)
            #     print("added: "+str(co+list(combo)+[-n*k])+" root: "+str(root))
                 if pval%mdfac!=0:
                     print("epic fail")
                     sys.exit()
 
                 try:
-                    res=resmap[tuple(co+list(combo))]
+                    res=resmap[tuple(list(combo))]
                     res.append(root)
                 except Exception as e:
-                    resmap[tuple(co+list(combo))]=[root]
+                    resmap[tuple(list(combo))]=[root]
              #   resmap.append([root,co+list(combo)])
                     #res=resmap[root]
                    # res.append(co+list(combo))
@@ -1090,7 +1094,8 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps)
     while q < len(mod_ind):
         mdfac=mod_fac[mod_ind[q]]
         mod*=mdfac
-        facresmap=f2res(mdfac,n,k,degree,[1])
+        predefined_range=[1000+1,0+1]
+        facresmap=f2res(mdfac,n,k,degree,predefined_range)
         residues.append(facresmap)
        # print("facresmap: ",facresmap)
         q+=1
@@ -1105,7 +1110,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps)
             
   #         j+=1
    #     i+=1
-    predef=[(1,2),(0,100_000)]##to do: change when we change degree
+    predef=[(1,1000),(0,1)]##to do: change when we change degree
     ranges = [range(start, limit) for (start,limit) in predef]
     for combo in itertools.product(*ranges):
         fail=0
@@ -1174,7 +1179,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps)
                     ret_array[2].append(factors1)
                     ret_array[3].append(factors2)
                 
-                    print("#smooths: "+str(len(ret_array[0]))+"/"+str(base*2+10)+" lside bitlen: "+str(bitlen(lside))+" pval/mod bitlen: "+str(bitlen(pval//mod))+" mod: "+str(mod))#+" opt_roots: "+str(opt_roots))#+" ptest: "+str(ptest)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i])+" factors1: "+str(factors1)+" bitlen pval: "+str(bitlen(abs(pval)))+" bitlen lside: "+str(bitlen(abs(lside)))+" i: "+str(i))               
+                    print("#smooths: "+str(len(ret_array[0]))+"/"+str(base*2+10)+" lside bitlen: "+str(bitlen(lside))+" pval/mod bitlen: "+str(bitlen(pval//mod))+" mod: "+str(mod)+" poly: "+str(poly))#+" opt_roots: "+str(opt_roots))#+" ptest: "+str(ptest)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i])+" factors1: "+str(factors1)+" bitlen pval: "+str(bitlen(abs(pval)))+" bitlen lside: "+str(bitlen(abs(lside)))+" i: "+str(i))               
                     if len(ret_array[0])>(base*2+10):
                         return found     
     return found
