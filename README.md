@@ -15,18 +15,9 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 
 #### To run from folder "polysieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 60 -base 500 -debug 0 -lin_size 100_000 -quad_size 1_00
+To run: python3 run_qs.py -keysize 100 -base 10_000 -debug 0 -lin_size 100 -quad_size 1_00
 
-Did a quick refactor of find_same() ... the goal there wont be fast sieving but to find near identical b-smooths and terminate factorization much sooner.
-Next we need to use the residue map for lside (poly without -nk) as a hashmap to quickly test the factorization.. the idea being that we can precalculate residues and p-adically lift them to squares for as many primes as we want. once that's done.. we also need a quick heuristic to keep the polynomial value for the polynomial with -nk as small as possible once divided by the modulus, because we dont want to introduce new large factors there. Once that is done.. just optimize and experiment with higher degree polynomials.
-
-Update: Quickly added a check which compares roots to an optimal root value and only proceed if the bitlength of the difference is smaller then 25 bits. Such that when the polynomial value is divided by the modulus, we end up with a small value that is more likely to only contain small-ish factors. Now the only thing left to solve is the left side... and for that we're going to construct a hashmap with large squares (these large squares dont need to be part of the factor base.. so we can calculate as much as we have disk space.. that's the critical part here.. plus these residues can be re-used for any N.. that's the very critical part here :) ), indexed by roots. But we'll add all the possible roots within a certain range into a single hashmap for all primes.. so that we need to query it only once and immediatly see if a lside value contains any large squares. We want to avoind doing any kind of trial factorization there... just a quick hashmap query. The speed at which it finds smooths in find_same will be very slow.. but once this is implemented, it will yield smooths that have a high chance of succeeding during the linear algebra step. That will be good as an initial proof of concept... then we just come up with ways to gain speed for the algorithm.
-
-UPDATE: BAAAAAAAAAAH I'M OVERCOMPLICATING IT. Just change the PoC a little so it sieves zx^2 where z is small... then just iterate k and find roots that yield a small polynomial value after division by the modulus. I dont know why the fuck i'm making things so complicated. Simple is better. And I know I experimented with it in CUDA_QS_Variant.. but my problem with that was trying to sieve it.. rather then just quickly iterating roots and coefficients.
-
-Update: Quickly changed it. Now we dont need to worry about damned left side. Just a matter now of findings roots that are within a certain range.
-
-Update: The only reason to move up in degree is when you try to find similar factorization when then N multiplier, k becomes very large. But we shouldnt have to worry about that just yet unless we're attacking very large numbers. So let me just get it working with quadratics where we just change the quadratic coefficient. Shoudln't overcomplicated things. Keep it simple, keep it fast.
+OMG. The actual solution was super simple and basically what I had been doing already a year ago. ASSYMETRY BETWEEN FACTOR BASE AND REQUIRED NUMBER OF B-SMOOTHS, ACHIEVED! Will optimize now and then "formally" announce my breakthrough (well, as formally as an amateur can).
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
