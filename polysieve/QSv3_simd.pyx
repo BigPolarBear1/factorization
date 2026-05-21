@@ -1058,17 +1058,21 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps)
     i=0
     while i < len(local_factors):
         fac=local_factors[i]
-        if fac < 100:
+        if fac < 10:
             i+=1
             continue
         if fac not in mod_fac and fac != -1:
             mod_ind.append(len(mod_fac))
             mod_fac.append(fac)
+            if bitlen(mod*fac)>keysize//2:
+                break 
+            mod*=fac
             if mod_fac[mod_ind[-1]] != fac:
                 print("fatal")
-                sys.exit()    
-        i+=1
+                sys.exit()   
 
+        i+=1
+    
     mod_fac2=primeslist[:50]
     primelist_f2=copy.copy(mod_fac)
     primelist_f2.insert(0,len(primelist_f2)+1)
@@ -1128,6 +1132,8 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps)
             i+=1
         if fail == 1:
             continue
+            
+        opt_roots=solve_quadratic(poly[0],poly[1],-n*k)##to do: change me when implement support for higher degree.. probably replace with a root estimation function
         roots=get_partials(mod,roots)
         enum=[]
         i=0
@@ -1141,32 +1147,36 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps)
             tot%=mod
             poly=list(combo)
             pval=evaluate(poly+[-n*k],tot)
+
             lside=pval+n*k
             if pval%mod !=0:
                 print("extremelyfatalerrror")
                 sys.exit()
-        #   print("root: "+str(tot)+" mod: "+str(mod)+" poly: "+str(poly)+" pval: "+str(pval)+" pval%mod: "+str(pval%mod))
-            if pval == 0 or lside == 0:
-                continue
-            factors1, value1=factorise_fast(pval,primelist_f)
-            factors2, value2=factorise_fast(lside,primelist_f)  
-            test=math.isqrt(value2)
-            test2=math.isqrt(value1)
-
-            if test**2 == value2 and test2**2 == value1:
-
-                factors1=list(factors1)
-                factors1.sort()
-                if factors1 in ret_array[2]:
+            diff=int(opt_roots[0])-tot
+            if bitlen(diff)<25:
+               # print("root: "+str(tot)+" mod: "+str(mod)+" poly: "+str(poly)+" pval: "+str(pval)+" pval/mod bits: "+str(bitlen(pval//mod))+" opt_roots"+str(opt_roots)+" bits mod: "+str(bitlen(mod))+" bits root: "+str(bitlen(tot))+" bits opt root: "+str(bitlen(round(opt_roots[0]))))
+                if pval == 0 or lside == 0:
                     continue
-                found+=1
-                ret_array[1].append(lside)
-                ret_array[0].append(pval)
-                ret_array[2].append(factors1)
-                ret_array[3].append(factors2)
-                print("#smooths: "+str(len(ret_array[0]))+"/"+str(base*2+10)+" lside bitlen: "+str(bitlen(lside))+" pval/mod bitlen: "+str(bitlen(pval//mod))+" mod: "+str(mod))#+" ptest: "+str(ptest)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i])+" factors1: "+str(factors1)+" bitlen pval: "+str(bitlen(abs(pval)))+" bitlen lside: "+str(bitlen(abs(lside)))+" i: "+str(i))               
-                if len(ret_array[0])>(base*2+10):
-                    return found     
+                factors1, value1=factorise_fast(pval,primelist_f)
+                factors2, value2=factorise_fast(lside,primelist_f)  
+                test=math.isqrt(value2)
+                test2=math.isqrt(value1)
+
+                if test**2 == value2 and test2**2 == value1:
+
+                    factors1=list(factors1)
+                    factors1.sort()
+                    if factors1 in ret_array[2]:
+                        continue
+                    found+=1
+                    ret_array[1].append(lside)
+                    ret_array[0].append(pval)
+                    ret_array[2].append(factors1)
+                    ret_array[3].append(factors2)
+                
+                    print("#smooths: "+str(len(ret_array[0]))+"/"+str(base*2+10)+" lside bitlen: "+str(bitlen(lside))+" pval/mod bitlen: "+str(bitlen(pval//mod))+" mod: "+str(mod))#+" opt_roots: "+str(opt_roots))#+" ptest: "+str(ptest)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i])+" factors1: "+str(factors1)+" bitlen pval: "+str(bitlen(abs(pval)))+" bitlen lside: "+str(bitlen(abs(lside)))+" i: "+str(i))               
+                    if len(ret_array[0])>(base*2+10):
+                        return found     
     return found
 
 def find_same2(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
