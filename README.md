@@ -24,7 +24,7 @@ There's two things still missing right now:
 
 Updat: Sieving isnt going to be the right approach for find_same(). Need to use the residue map here to just find a good set of coefficients, thats really what this boils down to now. Let me come up with an elegant algorithm for this. Probably should also p-adically lift those solutions. Let me try something tomorrow... rather then looking for each seperate factor of the original B-smooth.. let me calculate the root modulo the entire B-smooth.. which with the way it is set up should be on average of size keysize/2...then thats going to result in really small "optimal" coefficients and we should be able to use the residue map to pretty much immediatly figure out if there exist a good coefficient selection or not. Then we can iterate that N multiplier k.. until we get a good hit. That's going to be a much better approach then trying to work with huge coefficient. I'm not completely sure yet if there is any point in going beyond the second degree.. it would shrink coefficients even more, but not sure if that's even needed, lets see tomorrow.
 
-
+Update: After deep 3am thinking. Yes exactly.. just use much bigger roots.. then the residue map we need to precalculate... we can just set a ceiling for those coefficient... so it doesnt take as long.. then add some p-adic lifting.. and also calculate for different multiples of N ... then that should be fairly easy to use to figure out of a near similar B-smooth exists. 
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
