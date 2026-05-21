@@ -365,8 +365,8 @@ def launch(n,primeslist1,primeslist2):
     print("[i]Creating iN datastructure in total took: "+str(duration))
     print("[i]Building residue map.. this can take a while..(note-to-self: this one can be saved to disk and reused for any N easily)")
     resmaps=[]
-    for fac in primeslist1[:50]:
-        resmaps.append(fac2resmap2(fac,2))
+   # for fac in primeslist1[:50]:
+   #     resmaps.append(fac2resmap2(fac,2))
     print("[*]Launching attack with "+str(workers)+" workers\n")
     find_comb(n,complete_hmap,primeslist1,primeslist2,resmaps)
 
@@ -578,6 +578,32 @@ cdef factorise_fast(value,long long [::1] factor_base):
             value //= factor
         i+=1
     return factors, value
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+cdef factorise_fast2(value,long long [::1] factor_base):
+    seen_primes=[]
+    if value == 0:
+        print("blah")
+        return [],-1,[]
+    factors = set()
+    if value < 0:
+        factors ^= {-1}
+        value = -value
+    while value % 2 == 0:
+        factors ^= {2}
+        value //= 2
+
+    length=factor_base[0]#len(factor_base)#factor_base[0]
+    cdef Py_ssize_t i=1
+    while i < length:
+        factor=factor_base[i]
+        while value % factor == 0:
+            seen_primes.append(factor)
+            factors ^= {factor}
+            value //= factor
+        i+=1
+    return factors, value,seen_primes
 
 def get_root(p,b,a):
     a_inv=modinv((a%p),p)
@@ -798,8 +824,8 @@ def solve_quadratic(a,b,c):
     d=b**2-4*a*c
     if d < 0:
         return None
-    s = d**0.5
-    return ((-b+s)/(2*a)), ((-b-s)/(2*a))
+    s = math.isqrt(d)# d**0.5
+    return ((-b+s)//(2*a)), ((-b-s)//(2*a))
 
 def create_root_map(mod_fac,n,k,poly,ind):
     resmap=[]
@@ -1042,7 +1068,7 @@ def cpartial(r1,prime,mod):
     return aq*gamma
 
 def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps):
-
+    unique_factors=[]
     k=1
     degree=2
     z_range=100
@@ -1055,51 +1081,62 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps)
     mod=1
     mod_fac=[]
 
-    print("[i]Looking for: "+str(local_factors))
+
     
     leng=primelist_f[0]
     mod_ind=[]
-    i=0
-    while i < len(local_factors):
+    i=len(local_factors)-1
+    while i>-1:
         fac=local_factors[i]
         if fac < 10:
-            i+=1
+            i-=1
             continue
         if fac not in mod_fac and fac != -1:
-            mod_ind.append(len(mod_fac))
-            mod_fac.append(fac)
             if bitlen(mod*fac)>keysize//2:
                 break 
+            mod_ind.append(len(mod_fac))
+            mod_fac.append(fac)
+
             mod*=fac
             if mod_fac[mod_ind[-1]] != fac:
                 print("fatal")
                 sys.exit()   
 
-        i+=1
+        i-=1
+    diff=bitlen(mod)-(keysize//2)
+    if abs(diff) > 1:
+        return 0
+    print("[i]Looking for: "+str(local_factors)+" mod bits: "+str(bitlen(mod)))
     
     mod_fac2=primeslist[:50]
     primelist_f2=copy.copy(mod_fac)
     primelist_f2.insert(0,len(primelist_f2)+1)
     primelist_f2=array.array('q',primelist_f2)
     k=1
-
+    while k < 100:
     ##To do: Shouldnt this only have to be calculated once? Regardless of N? Can just have it sitting on disk and re-use then..
-
+        if math.gcd(k,mod)!=1:
+            k+=1
+            continue
         
    # print("resmap: "+str(resmap))
-    print("[i]Sieving for B-smooths")
-    residues=[]
-    mod=1
-    q=0
-    while q < len(mod_ind):
-        mdfac=mod_fac[mod_ind[q]]
-        mod*=mdfac
-        predefined_range=[1000+1,0+1]
-        facresmap=f2res(mdfac,n,k,degree,predefined_range)
-        residues.append(facresmap)
+  #  print("[i]Sieving for B-smooths")
+        residues=[]
+        mod=1
+        q=0
+        while q < len(mod_ind):
+            
+            mdfac=mod_fac[mod_ind[q]]
+            if k%mdfac==0:
+                q+=1
+                continue
+            mod*=mdfac
+            predefined_range=[1_000+1,0+1]
+            facresmap=f2res(mdfac,n,k,degree,predefined_range)
+            residues.append(facresmap)
        # print("facresmap: ",facresmap)
-        q+=1
-        continue
+            q+=1
+            continue
    # i=0
   #  while i < len(residues):
    #     j=0
@@ -1110,78 +1147,94 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps)
             
   #         j+=1
    #     i+=1
-    predef=[(1,1000),(0,1)]##to do: change when we change degree
-    ranges = [range(start, limit) for (start,limit) in predef]
-    for combo in itertools.product(*ranges):
-        fail=0
+        predef=[(1,1_000),(0,1)]##to do: change when we change degree
+        ranges = [range(start, limit) for (start,limit) in predef]
+        for combo in itertools.product(*ranges):
+            fail=0
 
      #   lin=0
      #   root=0
-        roots=[]
-        i=0
-        while i < len(residues):
-            prime=mod_fac[i]
-            poly=[]
-            j=0
-            while j< len(combo):
-                poly.append(combo[j]%prime)
-                j+=1
-            roots.append(mod_fac[i])
+            roots=[]
+            i=0
+            while i < len(residues):
+                prime=mod_fac[i]
+                poly=[]
+                j=0
+                while j< len(combo):
+                    poly.append(combo[j]%prime)
+                    j+=1
+                roots.append(mod_fac[i])
 
-            try:
-                root=residues[i][tuple(poly)]
-                roots.append(root)
-            except Exception as e:
-                fail=1
-                break
-            i+=1
-        if fail == 1:
-            continue
+                try:
+                    root=residues[i][tuple(poly)]
+                    roots.append(root)
+                except Exception as e:
+                    fail=1
+                    break
+                i+=1
+            if fail == 1:
+                continue
+            poly=list(combo)     
+            opt_roots=solve_quadratic(poly[0],poly[1],-n*k)##to do: change me when implement support for higher degree.. probably replace with a root estimation function
+            roots=get_partials(mod,roots)
+            enum=[]
+            i=0
+            while i < len(roots):
+                enum.append(roots[i+1])
+                i+=2
+            for combo2 in itertools.product(*enum):
+                tot=0
+                for r in combo2:
+                    tot+=r
+                tot%=mod
             
-        opt_roots=solve_quadratic(poly[0],poly[1],-n*k)##to do: change me when implement support for higher degree.. probably replace with a root estimation function
-        roots=get_partials(mod,roots)
-        enum=[]
-        i=0
-        while i < len(roots):
-            enum.append(roots[i+1])
-            i+=2
-        for combo2 in itertools.product(*enum):
-            tot=0
-            for r in combo2:
-                tot+=r
-            tot%=mod
-            poly=list(combo)
-            pval=evaluate(poly+[-n*k],tot)
+                pval=evaluate(poly+[-n*k],tot)
 
-            lside=pval+n*k
-            if pval%mod !=0:
-                print("extremelyfatalerrror")
-                sys.exit()
-            diff=int(opt_roots[0])-tot
-            if bitlen(diff)<25:
+                lside=pval+n*k
+                if pval%mod !=0:
+                    print("extremelyfatalerrror: "+str(k)+" mod: "+str(mod)+" pval: "+str(pval)+" tot: "+str(tot))
+                    sys.exit()
+               # diff=bitlen(opt_roots[0])-bitlen(tot)
+                if bitlen(pval//mod)<keysize*0.6:
                # print("root: "+str(tot)+" mod: "+str(mod)+" poly: "+str(poly)+" pval: "+str(pval)+" pval/mod bits: "+str(bitlen(pval//mod))+" opt_roots"+str(opt_roots)+" bits mod: "+str(bitlen(mod))+" bits root: "+str(bitlen(tot))+" bits opt root: "+str(bitlen(round(opt_roots[0]))))
-                if pval == 0 or lside == 0:
-                    continue
-                factors1, value1=factorise_fast(pval,primelist_f)
-                factors2, value2=factorise_fast(lside,primelist_f)  
-                test=math.isqrt(value2)
-                test2=math.isqrt(value1)
-
-                if test**2 == value2 and test2**2 == value1:
-
-                    factors1=list(factors1)
-                    factors1.sort()
-                    if factors1 in ret_array[2]:
+                    if pval == 0 or lside == 0:
                         continue
-                    found+=1
-                    ret_array[1].append(lside)
-                    ret_array[0].append(pval)
-                    ret_array[2].append(factors1)
-                    ret_array[3].append(factors2)
+                    factors1, value1,seen_primes=factorise_fast2(pval,primelist_f)
+                    test2=math.isqrt(value1)
+
+                    if test2**2 != value1:
+                        continue
+                    factors2, value2,seen_primes2=factorise_fast2(lside,primelist_f)  
+
+                    
+                    test=math.isqrt(value2)
+                    
+                    if test**2 == value2:# and test2**2 == value1:
+                        un=[]
+                        for fac in seen_primes:
+                            if fac not in un and k%fac !=0:
+                                un.append(fac)
+                        for fac in seen_primes2:
+                            if fac not in un and k%fac !=0:
+                                un.append(fac) 
+                        un.sort()                     
+                        if un in unique_factors:
+                            continue
+                        unique_factors.append(un)
+                        factors1=list(factors1)
+                        factors1.sort()
+                        if factors1 in ret_array[2]:
+                            continue
+                        found+=1
+                        ret_array[1].append(lside)
+                        ret_array[0].append(pval)
+                        ret_array[2].append(factors1)
+                        ret_array[3].append(factors2)
                 
-                    print("#smooths: "+str(len(ret_array[0]))+"/"+str(base*2+10)+" lside bitlen: "+str(bitlen(lside))+" pval/mod bitlen: "+str(bitlen(pval//mod))+" mod: "+str(mod)+" poly: "+str(poly))#+" opt_roots: "+str(opt_roots))#+" ptest: "+str(ptest)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i])+" factors1: "+str(factors1)+" bitlen pval: "+str(bitlen(abs(pval)))+" bitlen lside: "+str(bitlen(abs(lside)))+" i: "+str(i))               
-                    if len(ret_array[0])>(base*2+10):
-                        return found     
+                        print("#smooths: "+str(len(ret_array[0]))+"/"+str(base*2+10)+" k: "+str(k)+" lside bitlen: "+str(bitlen(lside))+" pval/mod bitlen: "+str(bitlen(pval//mod))+" bits mod: "+str(bitlen(mod))+" bits root: "+str(bitlen(tot))+" poly: "+str(poly)+" factors1: "+str(factors1)+" factors2: "+str(factors2))#+" opt_roots: "+str(opt_roots))#+" ptest: "+str(ptest)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i])+" factors1: "+str(factors1)+" bitlen pval: "+str(bitlen(abs(pval)))+" bitlen lside: "+str(bitlen(abs(lside)))+" i: "+str(i))               
+                        if len(ret_array[0])>(base*2+10):
+                            return found     
+        k+=1
     return found
 
 def find_same2(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
@@ -2032,7 +2085,7 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
                 time.sleep(1000)
             interval=build_database2interval(primeslist_a,quad,n,lin,new_mod,roots2d,0,factor_ranking)
             found+=process_interval2d(n,ret_array,quad,primelist_f,large_prime_bound,partials,lin,new_mod,factor_ranking,fb_map,0,seen_factors,interval,primeslist,resmaps)#,lin,new_mod,sum_list)
-            if found > 500 or len(ret_array[0]) > base*2+10:
+            if found > 100 or len(ret_array[0]) > base*2+10:
                 if g_debug ==1:
                     print("seen_factors: ",seen_factors)
                 print("[i]Performing linear algebra")
