@@ -24,7 +24,7 @@ Update: Quickly added a check which compares roots to an optimal root value and 
 
 UPDATE: BAAAAAAAAAAH I'M OVERCOMPLICATING IT. Just change the PoC a little so it sieves zx^2 where z is small... then just iterate k and find roots that yield a small polynomial value after division by the modulus. I dont know why the fuck i'm making things so complicated. Simple is better. And I know I experimented with it in CUDA_QS_Variant.. but my problem with that was trying to sieve it.. rather then just quickly iterating roots and coefficients.
 
-Update: Anyway,going to go for a run first.. then I'll begin work on this last thing. It will be good.
+Update: Quickly changed it. Now we dont need to worry about damned left side. Just a matter now of findings roots that are within a certain range.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
