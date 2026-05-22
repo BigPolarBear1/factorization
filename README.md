@@ -21,6 +21,16 @@ OMG. The actual solution was super simple and basically what I had been doing al
 
 Update: Slept very poorly last night. Might take a break today and just go running soon. Something we can also do in the PoC, is p-adically lift those roots to any other odd exponent.. but by adding bits to the root, we need to offset that using that k multiplier to N so we keep in that sweet spot where the bits after dividing by the modulus are as few as possible. Plus I'm also seeing some potential other big improvements based on the stuff I was doing in recent weeks... let me do some thinking.
 
+What this PoC does:
+
+1. Uses residue sieving and sieve for b-smooths with a garantueed square moduli as factor.
+2. Once a b-smooth is found, bc of the square moduli we can +/- ignore half the factor.. since even exponents can be ignored during guassian elimination over gf(2).
+3. Now we jump into find_same(), and we set as modulus, what remains after dividing the b-smooth we found by the square modulus and now we go looking for b-smooths with this modulus.
+We use the leading coefficient and multiples of N to keep control over the size of generated b-smooth candidates.
+4. Because this results in b-smooth pairings where half the factors can be ignored, we reduce the amount of B-smooths required by half. THIS IS DEMONSTRATED BY THE POC SO I'M NOT GOING TO ARGUE ABOUT THIS WITH IDIOT NERDS USING AI. READ THE F*CKING POC. Dont have patience for idiots.
+
+Now we can reduce the required amount of B-smooths even further (although reducing it by half is already a big milestone/breakthrough).. by making sure in step 3, any polynomial values generated are as small as possible after dividing by the modulus.. meaning fewer new factors are introduced that need to be matched. Which we can do by using polynomials... but I'll demonstrate this later on when everything is optimized.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
