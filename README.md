@@ -19,6 +19,8 @@ To run: python3 run_qs.py -keysize 100 -base 10_000 -debug 0 -lin_size 100 -quad
 
 OMG. The actual solution was super simple and basically what I had been doing already a year ago. ASSYMETRY BETWEEN FACTOR BASE AND REQUIRED NUMBER OF B-SMOOTHS, ACHIEVED! Will optimize now and then "formally" announce my breakthrough (well, as formally as an amateur can).
 
+Update: Slept very poorly last night. Might take a break today and just go running soon. Something we can also do in the PoC, is p-adically lift those roots to any other odd exponent.. but by adding bits to the root, we need to offset that using that k multiplier to N so we keep in that sweet spot where the bits after dividing by the modulus are as few as possible. Plus I'm also seeing some potential other big improvements based on the stuff I was doing in recent weeks... let me do some thinking.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
