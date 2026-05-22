@@ -23,7 +23,7 @@ Update: Slept very poorly last night. Might take a break today and just go runni
 
 What this PoC does:
 
-1. Uses residue sieving and sievse for b-smooths with a garantueed square modulus as factor.
+1. Uses residue sieving and sieves for b-smooths with a garantueed square modulus as factor.
 2. Once a b-smooth is found, bc of the square moduli we can +/- ignore half the factor.. since even exponents can be ignored during guassian elimination over gf(2).
 3. Now we jump into find_same(), and we set as modulus, what remains after dividing the b-smooth we found by the square modulus and now we go looking for b-smooths with this modulus.
 We use the leading coefficient and multiples of N to keep control over the size of generated b-smooth candidates.
