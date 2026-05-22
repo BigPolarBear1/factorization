@@ -24,7 +24,7 @@ Update: Slept very poorly last night. Might take a break today and just go runni
 What this PoC does:
 
 1. Uses residue sieving and sieves for b-smooths with a garantueed square modulus as factor.
-2. Once a b-smooth is found, bc of the square modulus we can +/- ignore half the factor.. since even exponents can be ignored during guassian elimination over gf(2).
+2. Once a b-smooth is found, bc of the square modulus we can +/- ignore half the bitlength of the b-smooth.. since even exponents can be ignored during guassian elimination over gf(2).
 3. Now we jump into find_same(), and we set as modulus, what remains after dividing the b-smooth we found by the square modulus and now we go looking for b-smooths with this modulus.
 We use the leading coefficient and multiples of N to keep control over the size of generated b-smooth candidates.
 4. Because this results in b-smooth pairings where half the factors can be ignored, we reduce the amount of B-smooths required by half. THIS IS DEMONSTRATED BY THE POC SO I'M NOT GOING TO ARGUE ABOUT THIS WITH IDIOT NERDS USING AI. READ THE F*CKING POC. Dont have patience for idiots.
