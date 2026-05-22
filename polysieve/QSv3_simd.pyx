@@ -1108,10 +1108,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps)
         return 0
     print("[i]Looking for: "+str(local_factors)+" mod bits: "+str(bitlen(mod)))
     
-    mod_fac2=primeslist[:50]
-    primelist_f2=copy.copy(mod_fac)
-    primelist_f2.insert(0,len(primelist_f2)+1)
-    primelist_f2=array.array('q',primelist_f2)
+
     k=1
     while k < 100:
     ##To do: Shouldnt this only have to be calculated once? Regardless of N? Can just have it sitting on disk and re-use then..
@@ -1131,7 +1128,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps)
                 q+=1
                 continue
             mod*=mdfac
-            predefined_range=[1_000+1,0+1]
+            predefined_range=[1_00+1,0+1]
             facresmap=f2res(mdfac,n,k,degree,predefined_range)
             residues.append(facresmap)
        # print("facresmap: ",facresmap)
@@ -1147,7 +1144,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps)
             
   #         j+=1
    #     i+=1
-        predef=[(1,1_000),(0,1)]##to do: change when we change degree
+        predef=[(1,1_00),(0,1)]##to do: change when we change degree
         ranges = [range(start, limit) for (start,limit) in predef]
         for combo in itertools.product(*ranges):
             fail=0
@@ -1195,7 +1192,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps)
                     print("extremelyfatalerrror: "+str(k)+" mod: "+str(mod)+" pval: "+str(pval)+" tot: "+str(tot))
                     sys.exit()
                # diff=bitlen(opt_roots[0])-bitlen(tot)
-                if bitlen(pval//mod)<keysize*0.6:
+                if bitlen(pval//mod)<keysize*0.55:
                # print("root: "+str(tot)+" mod: "+str(mod)+" poly: "+str(poly)+" pval: "+str(pval)+" pval/mod bits: "+str(bitlen(pval//mod))+" opt_roots"+str(opt_roots)+" bits mod: "+str(bitlen(mod))+" bits root: "+str(bitlen(tot))+" bits opt root: "+str(bitlen(round(opt_roots[0]))))
                     if pval == 0 or lside == 0:
                         continue
@@ -1231,220 +1228,11 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps)
                         ret_array[2].append(factors1)
                         ret_array[3].append(factors2)
                 
-                        print("#smooths: "+str(len(ret_array[0]))+"/"+str(base*2+10)+" k: "+str(k)+" lside bitlen: "+str(bitlen(lside))+" pval/mod bitlen: "+str(bitlen(pval//mod))+" bits mod: "+str(bitlen(mod))+" bits root: "+str(bitlen(tot))+" poly: "+str(poly)+" factors1: "+str(factors1)+" factors2: "+str(factors2))#+" opt_roots: "+str(opt_roots))#+" ptest: "+str(ptest)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i])+" factors1: "+str(factors1)+" bitlen pval: "+str(bitlen(abs(pval)))+" bitlen lside: "+str(bitlen(abs(lside)))+" i: "+str(i))               
-                        if len(ret_array[0])>(base*2+10):
+                        print("#smooths: "+str(len(ret_array[0]))+"/"+str(base+10)+" k: "+str(k)+" lside bitlen: "+str(bitlen(lside))+" pval/mod bitlen: "+str(bitlen(pval//mod))+" bits mod: "+str(bitlen(mod))+" bits root: "+str(bitlen(tot))+" poly: "+str(poly)+" factors1: "+str(factors1)+" factors2: "+str(factors2))#+" opt_roots: "+str(opt_roots))#+" ptest: "+str(ptest)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i])+" factors1: "+str(factors1)+" bitlen pval: "+str(bitlen(abs(pval)))+" bitlen lside: "+str(bitlen(abs(lside)))+" i: "+str(i))               
+                        if len(ret_array[0])>(base+10):
                             return found     
         k+=1
     return found
-
-def find_same2(n,local_factors,poly_val,primelist_f,ret_array,primeslist):
-
-    k=1
-
-    ###CHANGE ME
-    #to do: Should calculate these optimal ranges based on degree.. but do it manually here for now
-    degree=2
-    predefined_range=[10+1,100+1]
-    ###CHANGE ME
-    z_range=100
-    k_range=2
-    c_range=10_000
-    l_range=100
-    bin_range=100
-    found=0
-    grays = get_gray_code(20)
-    mod=1
-    mod_fac=[]
-
-    print("[i]Looking for: "+str(local_factors))
-    
-    leng=primelist_f[0]
-    mod_ind=[]
-    i=0
-    while i < len(local_factors):
-        fac=local_factors[i]
-        if fac < 100:
-            i+=1
-            continue
-        if fac not in mod_fac and fac != -1:
-            mod_ind.append(len(mod_fac))
-            mod_fac.append(fac)
-            if mod_fac[mod_ind[-1]] != fac:
-                print("fatal")
-                sys.exit()    
-        i+=1
-    mod_fac2=[]
-    for fac in primeslist:
-        if fac > 10_000:
-            break
-        if fac not in mod_fac and fac != -1:
-            mod_fac2.append(fac)
-
-    primelist_f2=copy.copy(mod_fac)
-    primelist_f2.insert(0,len(primelist_f2)+1)
-    primelist_f2=array.array('q',primelist_f2)
-    k=1
-
-
-    ##To do: Shouldnt this only have to be calculated once? Regardless of N? Can just have it sitting on disk and re-use then..
-    print("[i]Preparing residue maps (to do: These should actually only be calculated once and resmaps can be saved to disk and re-used for any N.. fix later)")
-
-     #   print("prime: "+str(fac)+" facresmap: "+str(resmaps[-1]))
-  
-   # print("resmap: "+str(resmaps))
-    print("[i]Sieving for B-smooths")
-    q=0
-    while q < len(mod_ind):
-        mdfac=mod_fac[mod_ind[q]]
-
-        facresmap=fac2resmap(mdfac,n,k,degree,predefined_range)
-      #  print("facresmap: "+str(facresmap))
-        for key, value in facresmap.items():
-          #  print("root: "+str(key)+" poly residues: "+str(value))
-            exp=1
-
-            factors1, value1=factorise_fast(key,primelist_f)
-            test=math.isqrt(value1)
-            if 1:#test**2 == value1: ##to do: 1 or square  I guess.
-                for poly in value:
-                  #  key=lift_root2(poly+[-n*k], key, mdfac, exp)
-                    #print("key: "+str(key))
-                    pval=evaluate(poly+[-n*k],key)
-
-                    optimal_coeff=[]
-                    rem=pval
-                    i=degree
-                    while i>0:
-                        div=rem//(key+(mdfac*l_range//2))**i
-                        div//=mdfac**exp
-
-                        rem-=(mdfac**exp)*div*(key+(mdfac*l_range//2))**i
-                        optimal_coeff.append(poly[len(optimal_coeff)]+(-(mdfac**exp)*div))
-                        i-=1
-                 #   print("optimal_coeeff: "+str(optimal_coeff))
-
-                    pval=evaluate(optimal_coeff+[-n*k],(key+(mdfac*l_range//2)))
-                  
-                    poly=optimal_coeff#+[-n*k]
-                   # print("optimal_coeff: "+str(optimal_coeff)+" pval: "+str(pval)+" root: "+str(key)+" mdfac: "+str(mdfac))
-                  #  sys.exit()
-                   # co_ind=0
-                   # while co_ind < len(optimal_coeff):
-                   #     optco=[]
-                   #     i=0
-                   #     while i < len(optimal_coeff):
-                   #         if i < co_ind+1:
-                   #             optco+=[copy.deepcopy(optimal_coeff[i])]
-                   #         else:
-                   #             optco+=[0]
-                   #         i+=1
-                    resmaps=[]
-                    resmaps2=[]
-                    for fac in mod_fac2:
-                        ###TO DO: DONT NEED TO CREATE HASHMAPS HERE IF WE ONLY DO ONE POLY......FIX LATER
-                        r1,r2=fac2resmap2(fac,n,k,degree,poly)
-                        resmaps.append(r1)
-                        resmaps2.append(r2)
-                    
-                    if pval%mdfac!=0:
-                        print("fail: "+str(poly+[-n*k])+" root: "+str(key))
-                        sys.exit()
-                    interval=np.zeros(l_range,dtype=np.uint16)
-                    i=0
-                    while i < len(mod_fac2):
-                        factor=mod_fac2[i]
-                       
-                        if mdfac%factor ==0:
-                            i+=1 
-                            continue
-                        try:
-                            res=resmaps[i][tuple(poly)]
-                          #  print("res: "+str(res)+" mdfac: "+str(mdfac)+" factor: "+str(factor)+" poly: "+str(poly))
-                            for root in res:
-                                s=solve_lin_con(mdfac,root-key,factor)
-
-                                interval[s::factor]+=round(math.log2(factor))
-                                pval=evaluate(poly+[0],key+mdfac*s)
-                                if pval%(factor)!=0:
-                                    print("fatal errorr poly: "+str(poly)+" mdfac: "+str(mdfac)+" key: "+str(key)+" factor: "+str(factor)+" s: "+str(s)+" pval: "+str(pval)+" root: "+str(root))
-                                    sys.exit()
-                            ##to do: ergh.. we shouldnt just sieve this last coefficient
-                           # for p in res:
-                                
-                      #      sys.exit()
-                        except Exception as e:
-                            pass
-                        
-                        try:
-                            res=resmaps2[i][tuple(poly)]
-                          #  print("res: "+str(res)+" mdfac: "+str(mdfac)+" factor: "+str(factor)+" poly: "+str(poly))
-                            for root in res:
-                                s=solve_lin_con(mdfac,root-key,factor)
-                             #   print("marking")
-                                interval[s::factor]+=round(math.log2(factor))
-                                pval=evaluate(poly+[-n*k],key+mdfac*s)
-                                if pval%(factor*mdfac)!=0:
-                                    print("123123fatal errorr poly: "+str(poly)+" mdfac: "+str(mdfac)+" key: "+str(key)+" factor: "+str(factor)+" s: "+str(s)+" pval: "+str(pval)+" root: "+str(root))
-                                    sys.exit()
-                            ##to do: ergh.. we shouldnt just sieve this last coefficient
-                           # for p in res:
-                                
-                      #      sys.exit()
-                        except Exception as e:
-                          #  print(e)
-                            pass
-                        i+=1
-                    
-                #    print("interval: "+str(interval))
-                    np.putmask(interval, interval < keysize-50, 0)
-                    indexlist=np.nonzero(interval)
-
-                    indexlist_x=indexlist[0]
-                    ind=0
-                    length=len(indexlist_x)
-            
-                    while ind < length:# length: 
-                       # print("checking")
-                        i=int(indexlist_x[ind])
-                        #ptest=copy.deepcopy(poly)
-                       # ptest[-1]+=mdfac*i
-                        
-                        pval=evaluate(poly+[-n*k],key+mdfac*i)
-                        lside=pval+n*k
-                        if pval == 0 or lside == 0:
-                            ind+=1
-                            continue
-                        factors1, value1=factorise_fast(pval,primelist_f)
-                        factors2, value2=factorise_fast(lside,primelist_f)  
-                        test=math.isqrt(value2)
-                        test2=math.isqrt(value1)
-                        if bitlen(abs(pval))<50:
-                            print("#print: "+str(len(ret_array[0]))+"/"+str(base*2+10)+" lside: "+str(lside)+" pval: "+str(pval%mdfac)+" mdfac: "+str(mdfac)+" ptest: "+str(poly)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i])+" factors1: "+str(factors1)+" bitlen pval: "+str(bitlen(abs(pval)))+" bitlen lside: "+str(bitlen(abs(lside)))+" ind: "+str(i))               
-
-                        if test**2 == value2 and test2**2 == value1:
-
-                            factors1=list(factors1)
-                            factors1.sort()
-                            if factors1 in ret_array[2]:
-                                ind+=1
-                                continue
-                            found+=1
-                            ret_array[1].append(lside)
-                            ret_array[0].append(pval)
-                            ret_array[2].append(factors1)
-                            ret_array[3].append(factors2)
-                            print("#smooths: "+str(len(ret_array[0]))+"/"+str(base*2+10)+" lside: "+str(lside)+" pval: "+str(pval%mdfac)+" mdfac: "+str(mdfac)+" ptest: "+str(poly)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i])+" factors1: "+str(factors1)+" bitlen pval: "+str(bitlen(abs(pval)))+" bitlen lside: "+str(bitlen(abs(lside)))+" i: "+str(i))               
-                            if len(ret_array[0])>(base*2+10):
-                                return found     
-                       # print("lside: "+str(lside)+" pval: "+str(pval%mdfac)+" mdfac: "+str(mdfac)+" ptest: "+str(ptest)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i]))
-                       # sys.exit()
-                        ind+=1
-                    
-
-        q+=1
-    return found
-    
-
 
 cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,partials,lin,cmod,factor_ranking,fb_map,bSeenOnly,seen_factors,interval,primeslist,resmaps):#,lin,cmod,sum_list):
     linsize=lin_sieve_size
@@ -1539,7 +1327,7 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                 ret_array[2].append(local_factors)
                 ret_array[3].append([])
                 found+=find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps)
-                if len(ret_array[0])>(base*2+10):
+                if len(ret_array[0])>(base+10):
                     return found
         k+=1
 
@@ -2085,7 +1873,7 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
                 time.sleep(1000)
             interval=build_database2interval(primeslist_a,quad,n,lin,new_mod,roots2d,0,factor_ranking)
             found+=process_interval2d(n,ret_array,quad,primelist_f,large_prime_bound,partials,lin,new_mod,factor_ranking,fb_map,0,seen_factors,interval,primeslist,resmaps)#,lin,new_mod,sum_list)
-            if found > 100 or len(ret_array[0]) > base*2+10:
+            if found > 500 or len(ret_array[0]) > base+10:
                 if g_debug ==1:
                     print("seen_factors: ",seen_factors)
                 print("[i]Performing linear algebra")
