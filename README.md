@@ -34,6 +34,7 @@ Now we can reduce the required amount of B-smooths even further (although reduci
 Update: Added some more stuff to the paper. But I was just pondering everything.. and actually the most straight forward way to get a get greater reduction in required B-smooths would be pre-sieve numbers, of i.e keysize/2.. just pre-sieve a bunch of numbers of that specific bitlengths.. regardless of which N we try to factorize. And find cases where they factor over a very small factor base. Then we use this as quadratic coefficient (edit: no this is not correct, see update below), right from the start of the algorithm.. generate a square modulus.. which bc of the much greater quadratic coefficient will yield a much smaller root and then just repeat everything else like we did before but with these much larger quadratic coefficients.. and smaller roots... which gives us much more fine grain control. Actually let me quickly add this to the paper.
 
 Update: Correction* you wouldnt use these presieved values simply as quadratic coefficient. But as for example this would allow you to use linear coefficients. Or if we move up to the third degree, use the coefficients for the other terms. And we choose the coefficients based on these presieved values. I've added examples to the bottom of the paper.
+I'll make it my goal for tomorrow to get atleast a simple first version of this introduced into the PoC tomorrow.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
