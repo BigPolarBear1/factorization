@@ -31,6 +31,8 @@ We use the leading coefficient and multiples of N to keep control over the size 
 
 Now we can reduce the required amount of B-smooths even further (although reducing it by half is already a big milestone/breakthrough).. by making sure in step 3, any polynomial values generated are as small as possible after dividing by the modulus.. meaning fewer new factors are introduced that need to be matched. Which we can do by using polynomials... but I'll demonstrate this later on when everything is optimized.
 
+Update: Added some more stuff to the paper. But I was just pondering everything.. and actually the most straight forward way to get a get greater reduction in required B-smooths would be pre-sieve numbers, of i.e keysize/2.. just pre-sieve a bunch of numbers of that specific bitlengths.. regardless of which N we try to factorize. And find cases where they factor over a very small factor base. Then we use this as quadratic coefficient, right from the start of the algorithm.. generate a square modulus.. which bc of the much greater quadratic coefficient will yield a much smaller root and then just repeat everything else like we did before but with these much larger quadratic coefficients.. and smaller roots... which gives us much more fine grain control. Actually let me quickly add this to the paper.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
