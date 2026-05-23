@@ -1104,7 +1104,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps)
 
         i-=1
     diff=bitlen(mod)-(keysize//2)
-    if abs(diff) > 1:
+    if abs(diff) > 5:
         return 0
     print("[i]Looking for: "+str(local_factors)+" mod bits: "+str(bitlen(mod)))
     
@@ -1184,53 +1184,59 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps)
                 for r in combo2:
                     tot+=r
                 tot%=mod
-            
-                pval=evaluate(poly+[-n*k],tot)
+                x_ind=0
+                while x_ind <100:
+                    pval=evaluate(poly+[-n*k],tot+mod*x_ind)
 
-                lside=pval+n*k
-                if pval%mod !=0:
-                    print("extremelyfatalerrror: "+str(k)+" mod: "+str(mod)+" pval: "+str(pval)+" tot: "+str(tot))
-                    sys.exit()
+                    lside=pval+n*k
+                    if pval%mod !=0:
+                        print("extremelyfatalerrror: "+str(k)+" mod: "+str(mod)+" pval: "+str(pval)+" tot: "+str(tot))
+                        sys.exit()
                # diff=bitlen(opt_roots[0])-bitlen(tot)
-                if bitlen(pval//mod)<keysize*0.55:
+                    if bitlen(pval//mod)<keysize*0.55:
                # print("root: "+str(tot)+" mod: "+str(mod)+" poly: "+str(poly)+" pval: "+str(pval)+" pval/mod bits: "+str(bitlen(pval//mod))+" opt_roots"+str(opt_roots)+" bits mod: "+str(bitlen(mod))+" bits root: "+str(bitlen(tot))+" bits opt root: "+str(bitlen(round(opt_roots[0]))))
-                    if pval == 0 or lside == 0:
-                        continue
-                    factors1, value1,seen_primes=factorise_fast2(pval,primelist_f)
-                    test2=math.isqrt(value1)
+                        if pval == 0 or lside == 0:
+                            x_ind+=1
+                            continue
+                        factors1, value1,seen_primes=factorise_fast2(pval,primelist_f)
+                        test2=math.isqrt(value1)
 
-                    if test2**2 != value1:
-                        continue
-                    factors2, value2,seen_primes2=factorise_fast2(lside,primelist_f)  
+                        if test2**2 != value1:
+                            x_ind+=1
+                            continue
+                        factors2, value2,seen_primes2=factorise_fast2(lside,primelist_f)  
 
                     
-                    test=math.isqrt(value2)
+                        test=math.isqrt(value2)
                     
-                    if test**2 == value2:# and test2**2 == value1:
-                        un=[]
-                        for fac in seen_primes:
-                            if fac not in un and k%fac !=0:
-                                un.append(fac)
-                        for fac in seen_primes2:
-                            if fac not in un and k%fac !=0:
-                                un.append(fac) 
-                        un.sort()                     
-                        if un in unique_factors:
-                            continue
-                        unique_factors.append(un)
-                        factors1=list(factors1)
-                        factors1.sort()
-                        if factors1 in ret_array[2]:
-                            continue
-                        found+=1
-                        ret_array[1].append(lside)
-                        ret_array[0].append(pval)
-                        ret_array[2].append(factors1)
-                        ret_array[3].append(factors2)
+                        if test**2 == value2:# and test2**2 == value1:
+                            un=[]
+                            for fac in seen_primes:
+                                if fac not in un and k%fac !=0:
+                                    un.append(fac)
+                            for fac in seen_primes2:
+                                if fac not in un and k%fac !=0:
+                                    un.append(fac) 
+                            un.sort()                     
+                            if un in unique_factors:
+                                x_ind+=1
+                                continue
+                            unique_factors.append(un)
+                            factors1=list(factors1)
+                            factors1.sort()
+                            if factors1 in ret_array[2]:
+                                x_ind+=1
+                                continue
+                            found+=1
+                            ret_array[1].append(lside)
+                            ret_array[0].append(pval)
+                            ret_array[2].append(factors1)
+                            ret_array[3].append(factors2)
                 
-                        print("#smooths: "+str(len(ret_array[0]))+"/"+str(base+10)+" k: "+str(k)+" lside bitlen: "+str(bitlen(lside))+" pval/mod bitlen: "+str(bitlen(pval//mod))+" bits mod: "+str(bitlen(mod))+" bits root: "+str(bitlen(tot))+" poly: "+str(poly)+" factors1: "+str(factors1)+" factors2: "+str(factors2))#+" opt_roots: "+str(opt_roots))#+" ptest: "+str(ptest)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i])+" factors1: "+str(factors1)+" bitlen pval: "+str(bitlen(abs(pval)))+" bitlen lside: "+str(bitlen(abs(lside)))+" i: "+str(i))               
-                        if len(ret_array[0])>(base+10):
-                            return found     
+                            print("#smooths: "+str(len(ret_array[0]))+"/"+str(base+10)+" k: "+str(k)+" lside bitlen: "+str(bitlen(lside))+" pval/mod bitlen: "+str(bitlen(pval//mod))+" bits mod: "+str(bitlen(mod))+" bits root: "+str(bitlen(tot))+" poly: "+str(poly)+" factors1: "+str(factors1)+" factors2: "+str(factors2)+" x_ind: "+str(x_ind))#+" opt_roots: "+str(opt_roots))#+" ptest: "+str(ptest)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i])+" factors1: "+str(factors1)+" bitlen pval: "+str(bitlen(abs(pval)))+" bitlen lside: "+str(bitlen(abs(lside)))+" i: "+str(i))               
+                            if len(ret_array[0])>(base+10):
+                                return found     
+                    x_ind+=1
         k+=1
     return found
 
