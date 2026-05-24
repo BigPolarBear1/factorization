@@ -15,28 +15,17 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 
 #### To run from folder "polysieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 100 -base 10_000 -debug 0 -lin_size 100 -quad_size 1_00
+To run: python3 run_qs.py -keysize 70 -base 5_000 -debug 0 -lin_size 100 -quad_size 100
 
-OMG. The actual solution was super simple and basically what I had been doing already a year ago. ASSYMETRY BETWEEN FACTOR BASE AND REQUIRED NUMBER OF B-SMOOTHS, ACHIEVED! Will optimize now and then "formally" announce my breakthrough (well, as formally as an amateur can).
+This PoC now requires as number of B-smooths to succeed around 1/4th the size of the factor base. Beyond a doubt proving my ideas. It can be reduced much more though. 
+It achieves this by finding an initial B-smooth using square moduli, such that half the bitlength can be discarded as the factor of the square modulus are irrelevant as far as guassian elimination over Z/2 is concerned, and then trying to find more B-smooth that have factor overlap with the initial B-smooth.. but by using much smaller moduli and using the coefficients to generate smaller B-smooth.. far few new factors are introduced.. because of how these factors end up canceling eachother out (see final chapter paper for an example) we can succeed much easier. There is no trickery involved here. It works like I had theorized it might since september already.
 
-Update: Slept very poorly last night. Might take a break today and just go running soon. Something we can also do in the PoC, is p-adically lift those roots to any other odd exponent.. but by adding bits to the root, we need to offset that using that k multiplier to N so we keep in that sweet spot where the bits after dividing by the modulus are as few as possible. Plus I'm also seeing some potential other big improvements based on the stuff I was doing in recent weeks... let me do some thinking.
+To do:
 
-What this PoC does:
+1. Need to presieve a bunch of numbers, so that whatever coefficient we end up using factorizes over the factor base.
+2. The paper demostrated using third degree polynomials.. this has the benefit of having more roots.. but I'm still unsure if it yield a performance increase.
 
-1. Uses residue sieving and sieves for b-smooths with a garantueed square modulus as factor.
-2. Once a b-smooth is found, bc of the square modulus we can +/- ignore half the bitlength of the b-smooth.. since even exponents can be ignored during guassian elimination over gf(2).
-3. Now we jump into find_same(), and we set as modulus, what remains after dividing the b-smooth we found by the square modulus and now we go looking for b-smooths with this modulus.
-We use the leading coefficient and multiples of N to keep control over the size of generated b-smooth candidates. Note: We can use other coefficients too to get even more fine grain control and reduce the amount of requried b-smooth, see remark at the bottom.
-4. Because this results in b-smooth pairings where half the factors can be ignored, we reduce the amount of B-smooths required by half. THIS IS DEMONSTRATED BY THE POC SO I'M NOT GOING TO ARGUE ABOUT THIS WITH IDIOT NERDS USING AI. READ THE F*CKING POC. Dont have patience for idiots.
-
-Now we can reduce the required amount of B-smooths even further (although reducing it by half is already a big milestone/breakthrough).. by making sure in step 3, any polynomial values generated are as small as possible after dividing by the modulus.. meaning fewer new factors are introduced that need to be matched. Which we can do by using polynomials... but I'll demonstrate this later on when everything is optimized.
-
-Update: Added some more stuff to the paper. But I was just pondering everything.. and actually the most straight forward way to get a get greater reduction in required B-smooths would be pre-sieve numbers, of i.e keysize/2.. just pre-sieve a bunch of numbers of that specific bitlengths.. regardless of which N we try to factorize. And find cases where they factor over a very small factor base. Then we use this as quadratic coefficient (edit: no this is not correct, see update below), right from the start of the algorithm.. generate a square modulus.. which bc of the much greater quadratic coefficient will yield a much smaller root and then just repeat everything else like we did before but with these much larger quadratic coefficients.. and smaller roots... which gives us much more fine grain control. Actually let me quickly add this to the paper.
-
-Update: Correction* you wouldnt use these presieved values simply as quadratic coefficient. But as for example this would allow you to use linear coefficients. Or if we move up to the third degree, use the coefficients for the other terms. And we choose the coefficients based on these presieved values. I've added examples to the bottom of the paper.
-I'll make it my goal for tomorrow to get atleast a simple first version of this introduced into the PoC tomorrow.
-
-UPDATE! EUREKA! I have managed to reduce the required amount of B-smooths to 1/5 the size of the factor base. Proving beyond a shadow of a doubt that my ideas are correct. This can simply be achieved by using smaller moduli, and generating smaller polyomial values in find_same() but with the same factor overlap with the initial B-smooth. I've implemented it using 3rd degree polynomials and using the quadratic term to reduce the size of polynomial values.. although it may also be possible to just use 2nd degree polynomials with smaller moduli.. I need to double check those things and then I'll upload this further reduction in the coming days.
+I'll add some presieving logic next.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
