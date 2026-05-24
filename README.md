@@ -18,14 +18,14 @@ To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 70 -base 5_000 -debug 0 -lin_size 100 -quad_size 100
 
 This PoC now requires as number of B-smooths to succeed around 1/4th the size of the factor base. Beyond a doubt proving my ideas. It can be reduced much more though. 
-It achieves this by finding an initial B-smooth using square moduli, such that half the bitlength can be discarded as the factor of the square modulus are irrelevant as far as guassian elimination over Z/2 is concerned, and then trying to find more B-smooth that have factor overlap with the initial B-smooth.. but by using much smaller moduli and using the coefficients to generate smaller B-smooth.. far few new factors are introduced.. because of how these factors end up canceling eachother out (see final chapter paper for an example) we can succeed much easier. There is no trickery involved here. It works like I had theorized it might since september already.
+It achieves this by finding an initial B-smooth using square moduli, such that half the bitlength can be discarded as the factors of the square modulus are irrelevant as far as guassian elimination over Z/2 is concerned, and then trying to find more B-smooths that have factor overlap with the initial B-smooth.. but by using much smaller moduli and using the coefficients to generate smaller B-smooth candidates.. far fewer new factors are introduced.. because of how these factors end up canceling eachother out (see final chapter paper for an example) we can succeed much easier. There is no trickery involved here. It works like I had theorized it might since september already.
 
 To do:
 
-1. Need to presieve a bunch of numbers, so that whatever coefficient we end up using factorizes over the factor base.
-2. The paper demostrated using third degree polynomials.. this has the benefit of having more roots.. but I'm still unsure if it yield a performance increase.
+1. Need to presieve a bunch of numbers roughly within range of what these quadratic coefficients will end up being, so that we can quickly check if there is a leading coefficient nearby that factors over the factor base.
+2. The paper demostrated using third degree polynomials.. this has the benefit of having more roots.. but I'm still unsure if it yield a performance increase. So let me just go ahead and implement the POC using purely quadratics and large quadratic coefficients. If I come across a scenario where having more roots per prime ends up as an advantage then I'll implement that later.
 
-I'll add some presieving logic next.
+I'll add some pre-sieving logic next.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
