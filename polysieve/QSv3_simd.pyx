@@ -310,6 +310,7 @@ def build_matrix(factor_base, smooth_nums, factors,factor_list2):#,pflist):
     return M2
 
 def launch(n,primeslist1,primeslist2):
+
     print("[i]Total lin_sieve_size: ",lin_sieve_size)
     manager=multiprocessing.Manager()
     return_dict=manager.dict()
@@ -1067,180 +1068,209 @@ def cpartial(r1,prime,mod):
 
     return aq*gamma
 
-def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps):
+def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,valid_quads,valid_quads_factors,qlist):
+   # print("valid_quads: "+str(valid_quads))
     unique_factors=[]
-    k=1
+
     degree=2
     z_range=100
     k_range=2
     c_range=10_000
-    l_range=100_000
+    l_range=1
     bin_range=100
     found=0
     grays = get_gray_code(20)
-    mod=1
-    mod_fac=[]
-
-
-    
-    leng=primelist_f[0]
-    mod_ind=[]
-    i=len(local_factors)-1
-    while i>-1:
-        fac=local_factors[i]
-        if fac < 10:
-            i-=1
-            continue
-        if fac not in mod_fac and fac != -1:
-            if bitlen(mod*fac)>keysize//2:
-                break 
-            mod_ind.append(len(mod_fac))
-            mod_fac.append(fac)
-
-            mod*=fac
-            if mod_fac[mod_ind[-1]] != fac:
-                print("fatal")
-                sys.exit()   
-
-        i-=1
-    diff=bitlen(mod)-(keysize//2)
-    if abs(diff) > 5:
-        return 0
-    print("[i]Looking for: "+str(local_factors)+" mod bits: "+str(bitlen(mod)))
-    
-
-    k=1
-    while k < 100:
-    ##To do: Shouldnt this only have to be calculated once? Regardless of N? Can just have it sitting on disk and re-use then..
-        if math.gcd(k,mod)!=1:
-            k+=1
-            continue
-        
-   # print("resmap: "+str(resmap))
-  #  print("[i]Sieving for B-smooths")
-        residues=[]
+    seen=[]
+    max_iterations=1000
+    t=0
+    while t < max_iterations:
         mod=1
-        q=0
-        while q < len(mod_ind):
-            
-            mdfac=mod_fac[mod_ind[q]]
-            if k%mdfac==0:
-                q+=1
-                continue
-            mod*=mdfac
-            predefined_range=[1_00+1,0+1]
-            facresmap=f2res(mdfac,n,k,degree,predefined_range)
-            residues.append(facresmap)
-       # print("facresmap: ",facresmap)
-            q+=1
+        mod_fac=[]
+
+
+    
+        leng=primelist_f[0]
+        mod_ind=[]
+
+        while 1:
+            i = random.randrange(len(local_factors))
+            fac=local_factors[i]
+            if fac not in mod_fac and fac != -1:
+                if bitlen(mod*fac)>keysize//5:
+                    break 
+                mod_ind.append(len(mod_fac))
+                mod_fac.append(fac)
+
+                mod*=fac
+                if mod_fac[mod_ind[-1]] != fac:
+                    print("fatal")
+                    sys.exit()   
+        diff=bitlen(mod)-(keysize//5)
+        if abs(diff) > 2 or mod in seen:
+            t+=1
             continue
-   # i=0
-  #  while i < len(residues):
-   #     j=0
-   #     while j < len(residues[i]):
-   #         prime=mod_fac[i]
-   #         residues[i][j][0]=cpartial(residues[i][j][0],prime,mod)
-   #         residues[i][j][1][1]=cpartial(residues[i][j][1][1],prime,mod)
-            
-  #         j+=1
-   #     i+=1
-        predef=[(1,1_00),(0,1)]##to do: change when we change degree
-        ranges = [range(start, limit) for (start,limit) in predef]
-        for combo in itertools.product(*ranges):
-            fail=0
 
-     #   lin=0
-     #   root=0
-            roots=[]
-            i=0
-            while i < len(residues):
-                prime=mod_fac[i]
-                poly=[]
-                j=0
-                while j< len(combo):
-                    poly.append(combo[j]%prime)
-                    j+=1
-                roots.append(mod_fac[i])
+        seen.append(mod)
 
-                try:
-                    root=residues[i][tuple(poly)]
-                    roots.append(root)
-                except Exception as e:
-                    fail=1
-                    break
-                i+=1
-            if fail == 1:
+        print("[i]Looking for: "+str(local_factors)+" mod bits: "+str(bitlen(mod)))
+    
+
+        k=1
+        while k < 20:
+    ##To do: Shouldnt this only have to be calculated once? Regardless of N? Can just have it sitting on disk and re-use then..
+            if math.gcd(k,mod)!=1:
+                k+=1
                 continue
-            poly=list(combo)     
-            opt_roots=solve_quadratic(poly[0],poly[1],-n*k)##to do: change me when implement support for higher degree.. probably replace with a root estimation function
-            roots=get_partials(mod,roots)
-            enum=[]
-            i=0
-            while i < len(roots):
-                enum.append(roots[i+1])
-                i+=2
-            for combo2 in itertools.product(*enum):
-                tot=0
-                for r in combo2:
-                    tot+=r
-                tot%=mod
-                x_ind=0
-                while x_ind <100:
-                    pval=evaluate(poly+[-n*k],tot+mod*x_ind)
 
-                    lside=pval+n*k
-                    if pval%mod !=0:
-                        print("extremelyfatalerrror: "+str(k)+" mod: "+str(mod)+" pval: "+str(pval)+" tot: "+str(tot))
-                        sys.exit()
+            residues=[]
+            mod=1
+            q=0
+            while q < len(mod_ind):
+            
+                mdfac=mod_fac[mod_ind[q]]
+                if k%mdfac==0:
+                    q+=1
+                    continue
+                mod*=mdfac
+                predefined_range=[quad_sieve_size+1,0+1]
+                facresmap=f2res(mdfac,n,k,degree,predefined_range)
+                residues.append(facresmap)
+                q+=1
+            a=0
+            while a < len(valid_quads):
+                combo=[valid_quads[a]]#,0,0] ##to do: rename this variable to poly or something
+                i=0
+                while i < degree-1:
+                    combo.append(0)
+                    i+=1
+                fail=0
+                roots=[]
+                i=0
+                while i < len(residues):
+                    prime=mod_fac[i]
+                    poly=[]
+                    j=0
+                    while j< len(combo):
+                        poly.append(combo[j]%prime)
+                        j+=1
+                    roots.append(mod_fac[i])
+
+                    try:
+                        root=residues[i][tuple(poly)]
+                        roots.append(root)
+                    except Exception as e:
+                        fail=1
+                        break
+                    i+=1
+                if fail == 1:
+                    a+=1
+                    continue
+                poly=list(combo)     
+                roots=get_partials(mod,roots)
+                enum=[]
+                i=0
+                while i < len(roots):
+                    enum.append(roots[i+1])
+                    i+=2
+                for combo2 in itertools.product(*enum):
+                    tot=0
+                    for r in combo2:
+                        tot+=r
+                    tot%=mod
+            #    tot=2**4
+                    x_ind=0
+                    while x_ind <10:
+                        pval=evaluate(poly+[-n*k],tot+mod*x_ind)
+                        optimal_coeff=[]
+                        rem=pval
+                        i=degree
+                        key=tot+mod*x_ind
+                        while i>0:
+                            if i == 1:
+                                optimal_coeff.append(0)
+                                i-=1
+                                continue
+                            div=rem//key**i
+                            div//=mod
+
+                            rem-=(mod)*div*(key)**i
+                            optimal_coeff.append(poly[len(optimal_coeff)]+(-(mod)*div))
+                            i-=1
+                    
+                    
+                        l=0
+                        while l < l_range:
+                            pval_optimal=evaluate(optimal_coeff+[-n*k],tot+mod*x_ind)
+                       # poly=optimal_coeff
+                            optimal_coeff[0]-=mod
+                        
+                            pval=pval_optimal
+                  #      print("optimal_coeeff: "+str(optimal_coeff)+" pval_optimal: "+str(bitlen(pval_optimal//mod))+" "+str(pval_optimal)+" key: "+str(key)+" l: "+str(l)+" mod: "+str(mod))
+                            lside=pval+n*k
+                            if pval%mod !=0:
+                                print("extremelyfatalerrror: "+str(k)+" mod: "+str(mod)+" pval: "+str(pval)+" tot: "+str(tot))
+                                sys.exit()
+                #    print("root: "+str(tot)+" mod: "+str(mod)+" poly: "+str(poly)+" pval: "+str(pval)+" pval/mod bits: "+str(bitlen(pval//mod))+" bits mod: "+str(bitlen(mod))+" bits root: "+str(bitlen(tot)))
+               
                # diff=bitlen(opt_roots[0])-bitlen(tot)
-                    if bitlen(pval//mod)<keysize*0.55:
-               # print("root: "+str(tot)+" mod: "+str(mod)+" poly: "+str(poly)+" pval: "+str(pval)+" pval/mod bits: "+str(bitlen(pval//mod))+" opt_roots"+str(opt_roots)+" bits mod: "+str(bitlen(mod))+" bits root: "+str(bitlen(tot))+" bits opt root: "+str(bitlen(round(opt_roots[0]))))
-                        if pval == 0 or lside == 0:
-                            x_ind+=1
-                            continue
-                        factors1, value1,seen_primes=factorise_fast2(pval,primelist_f)
-                        test2=math.isqrt(value1)
+                            if bitlen(pval//mod)<keysize*0.55:#*0.55:  ###note: This determines how many b-smooths need to be found
+                        #print("root: "+str(tot)+" mod: "+str(mod)+" poly: "+str(poly)+" pval: "+str(pval)+" pval/mod bits: "+str(bitlen(pval//mod))+" bits mod: "+str(bitlen(mod))+" bits root: "+str(bitlen(tot))+" x_ind: "+str(x_ind)+" k: "+str(k))
+                                if pval == 0 or lside == 0:
+                                    x_ind+=1
+                                    continue
+                                factors1, value1,seen_primes=factorise_fast2(pval,primelist_f)
+                                test2=math.isqrt(value1)
 
-                        if test2**2 != value1:
-                            x_ind+=1
-                            continue
-                        factors2, value2,seen_primes2=factorise_fast2(lside,primelist_f)  
-
+                                if test2**2 != value1:
+                                    x_ind+=1
+                                    continue
+                                factors2, value2,seen_primes2=factorise_fast2(lside,qlist)  
+                                test=math.isqrt(value2)
+                    #    if test**2 != value2:
+                    #        print("something went wrong: "+str(poly)+" "+str(valid_quads[a])+" value2: "+str(value2))
+                    #        sys.exit()
                     
-                        test=math.isqrt(value2)
+                        
                     
-                        if test**2 == value2:# and test2**2 == value1:
-                            un=[]
-                            for fac in seen_primes:
-                                if fac not in un and k%fac !=0:
-                                    un.append(fac)
-                            for fac in seen_primes2:
-                                if fac not in un and k%fac !=0:
-                                    un.append(fac) 
-                            un.sort()                     
-                            if un in unique_factors:
-                                x_ind+=1
-                                continue
-                            unique_factors.append(un)
-                            factors1=list(factors1)
-                            factors1.sort()
-                            if factors1 in ret_array[2]:
-                                x_ind+=1
-                                continue
-                            found+=1
-                            ret_array[1].append(lside)
-                            ret_array[0].append(pval)
-                            ret_array[2].append(factors1)
-                            ret_array[3].append(factors2)
+                                if test**2 == value2:# and test2**2 == value1:
+                                    un=[]
+                            #    for fac in factors1:
+                           #         if fac not in un and k%fac !=0:
+                           #             un.append(fac)
+                                    for fac in factors2:
+                                        if fac not in un and k%fac !=0:
+                                            un.append(fac) 
+                                    un.sort()                     
+                                    if un in unique_factors:
+                                        x_ind+=1
+                                        continue
+                                ##TO DO!!!!: This isnt catching all cases.. let me debug this later....
+                                    unique_factors.append(un)
+                                    factors1=list(factors1)
+                                    factors1.sort()
+                                    if factors1 in ret_array[2]:
+                                        x_ind+=1
+                                        continue
+                                    found+=1
+                                    ret_array[1].append(lside)
+                                    ret_array[0].append(pval)
+                                    ret_array[2].append(factors1)
+                                    ret_array[3].append(factors2)
                 
-                            print("#smooths: "+str(len(ret_array[0]))+"/"+str(base+10)+" k: "+str(k)+" lside bitlen: "+str(bitlen(lside))+" pval/mod bitlen: "+str(bitlen(pval//mod))+" bits mod: "+str(bitlen(mod))+" bits root: "+str(bitlen(tot))+" poly: "+str(poly)+" factors1: "+str(factors1)+" factors2: "+str(factors2)+" x_ind: "+str(x_ind))#+" opt_roots: "+str(opt_roots))#+" ptest: "+str(ptest)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i])+" factors1: "+str(factors1)+" bitlen pval: "+str(bitlen(abs(pval)))+" bitlen lside: "+str(bitlen(abs(lside)))+" i: "+str(i))               
-                            if len(ret_array[0])>(base+10):
-                                return found     
-                    x_ind+=1
-        k+=1
+                                    print("#smooths: "+str(len(ret_array[0]))+"/"+str(base+10)+" k: "+str(k)+" lside bitlen: "+str(bitlen(lside))+" pval/mod bitlen: "+str(bitlen(pval//mod))+" mod: "+str(mod)+" bits mod: "+str(bitlen(mod))+" bits root: "+str(bitlen(tot))+" poly: "+str(optimal_coeff)+" factors1: "+str(factors1)+" factors2: "+str(factors2)+" x_ind: "+str(x_ind))#+" l: "+str(l))#+" opt_roots: "+str(opt_roots))#+" ptest: "+str(ptest)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i])+" factors1: "+str(factors1)+" bitlen pval: "+str(bitlen(abs(pval)))+" bitlen lside: "+str(bitlen(abs(lside)))+" i: "+str(i))               
+                                    if len(ret_array[0])>(base+10):
+                                        return found   
+                            else:
+                                break
+                            l+=1      
+                        x_ind+=1
+                  #  sys.exit()
+                a+=1
+            k+=1
+        t+=1
     return found
 
-cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,partials,lin,cmod,factor_ranking,fb_map,bSeenOnly,seen_factors,interval,primeslist,resmaps):#,lin,cmod,sum_list):
+cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,partials,lin,cmod,factor_ranking,fb_map,bSeenOnly,seen_factors,interval,primeslist,resmaps,valid_quads,valid_quads_factors,qlist):#,lin,cmod,sum_list):
     linsize=lin_sieve_size
     if bSeenOnly==1:
         linsize=lin_sieve_size2
@@ -1332,7 +1362,8 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                 ret_array[0].append(poly_val)
                 ret_array[2].append(local_factors)
                 ret_array[3].append([])
-                found+=find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps)
+            #    print("***seen_primes: "+str(local_factors)+" cmod: "+str(cmod)+" root: "+str(new_root)+" polyval: "+str(poly_val))
+                found+=find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,valid_quads,valid_quads_factors,qlist)
                 if len(ret_array[0])>(base+10):
                     return found
         k+=1
@@ -1368,22 +1399,24 @@ cdef factorise_fast_quads(value,long long [::1] factor_base):
     return factors, value
 
 
-def filter_quads(qbase,n,score):
+def filter_quads(qbase,n):
     ###Note: We look for quadratic coefficients that factor over the factor base but have no even exponents. This garantuees unique results
     valid_quads=[]
     valid_quads_factors=[]
 
     roots=[]
-    i=1
-    while i < quad_sieve_size+1:
-        if score[i]>10:
-            quad_local_factors, quad_value = factorise_fast_quads(i,qbase) 
-            if quad_value != 1:
-                i+=1
-                continue
-            valid_quads.append(i)
-            valid_quads_factors.append(quad_local_factors)
+    i=1#2**(keysize//2)
+    while len(valid_quads) < quad_sieve_size+1:
+
+        quad_local_factors, quad_value = factorise_fast(i,qbase) 
+        if quad_value != 1:
+            i+=1
+            continue
+        print("found quad: "+str(len(valid_quads)))
+        valid_quads.append(i)
+        valid_quads_factors.append(quad_local_factors)
         i+=1
+    print("valid_quads: "+str(valid_quads))
     return valid_quads,valid_quads_factors
 
 
@@ -1760,15 +1793,12 @@ cdef build_database2interval(long long [:] primeslist,quad,n,lin,cmod,roots2d,bS
     return interval_single
 
 def build_2drootmap(primeslist,hmap,n):       
-
-
-    score=np.zeros(quad_sieve_size+1,dtype=np.int32)
     roots2d=np.zeros([quad_sieve_size+1,base],dtype=np.int32)
     i=0
     while i < len(primeslist):
         prime=primeslist[i]
         j=0
-        while j < prime and j < quad_sieve_size+1: ###To do: Only go up to prime
+        while j < prime and j < 1+1: ###To do: Only go up to prime
             quad=j#+offset
             #print("Building quad: "+str(quad))
             z=hmap[i][1]
@@ -1779,10 +1809,7 @@ def build_2drootmap(primeslist,hmap,n):
                 continue  
             
             
-            if prime < 100:
-                k=quad
-                
-                score[k::prime]+=1
+
             x=hmap[i][2]
             root_mult=tonelli(z_inv,prime)
             x=(x*root_mult)%prime
@@ -1796,7 +1823,7 @@ def build_2drootmap(primeslist,hmap,n):
             j+=1
         i+=1
     i=0
-    return roots2d,score
+    return roots2d
 
 
 
@@ -1840,9 +1867,9 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
     seen=[]
 
     print("[i]Building 2d root map")
-    roots2d,score=build_2drootmap(primeslist_a,hmap,n)
+    roots2d=build_2drootmap(primeslist_a,hmap,n)
     print("[i]Entering attack loop")
-    valid_quads,valid_quads_factors=filter_quads(qlist,n,score)
+    valid_quads,valid_quads_factors=filter_quads(qlist,n)
     fb_map = {val: i for i, val in enumerate(primeslist)}
    # print("fb_map: ",fb_map)
    # factor_ranking=[]#np.zeros(len(primeslist),dtype=np.uint16)
@@ -1878,8 +1905,8 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
                 print("super big error")
                 time.sleep(1000)
             interval=build_database2interval(primeslist_a,quad,n,lin,new_mod,roots2d,0,factor_ranking)
-            found+=process_interval2d(n,ret_array,quad,primelist_f,large_prime_bound,partials,lin,new_mod,factor_ranking,fb_map,0,seen_factors,interval,primeslist,resmaps)#,lin,new_mod,sum_list)
-            if found > 500 or len(ret_array[0]) > base+10:
+            found+=process_interval2d(n,ret_array,quad,primelist_f,large_prime_bound,partials,lin,new_mod,factor_ranking,fb_map,0,seen_factors,interval,primeslist,resmaps,valid_quads,valid_quads_factors,qlist)#,lin,new_mod,sum_list)
+            if found > 50 or len(ret_array[0]) > base+10:
                 if g_debug ==1:
                     print("seen_factors: ",seen_factors)
                 print("[i]Performing linear algebra")
@@ -2010,8 +2037,9 @@ def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_
         if n%primeslist[i] !=0:
             primeslist1.append(primeslist[i])
         i+=1
+    primeslist2.append(2)
     i=0
-    while len(primeslist2) < base:
+    while len(primeslist2) < 200:
         if n%primeslist[i] !=0:
             primeslist2.append(primeslist[i])
         i+=1
