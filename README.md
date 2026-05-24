@@ -36,6 +36,8 @@ Update: Added some more stuff to the paper. But I was just pondering everything.
 Update: Correction* you wouldnt use these presieved values simply as quadratic coefficient. But as for example this would allow you to use linear coefficients. Or if we move up to the third degree, use the coefficients for the other terms. And we choose the coefficients based on these presieved values. I've added examples to the bottom of the paper.
 I'll make it my goal for tomorrow to get atleast a simple first version of this introduced into the PoC tomorrow.
 
+UPDATE! EUREKA! I have managed to reduce the required amount of B-smooths to 1/5 the size of the factor base. Proving beyond a shadow of a doubt that my ideas are correct. This can simply be achieved by using smaller moduli, and generating smaller polyomial values in find_same() but with the same factor overlap with the initial B-smooth. I've implemented it using 3rd degree polynomials and using the quadratic term to reduce the size of polynomial values.. although it may also be possible to just use 2nd degree polynomials with smaller moduli.. I need to double check those things and then I'll upload this further reduction in the coming days.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
