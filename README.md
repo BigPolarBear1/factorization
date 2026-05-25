@@ -30,7 +30,7 @@ I'll add some pre-sieving logic next.
 Update: Quickly added some bug fixes. Will go ahead and slowly start implementing pre-sieving values at a certain bit lenght now. Let me just start by pre-calculating residues and creating an interval, and then implement something more elaborate.
 
 Update: Quickly added a sieve interval to make the PoC a little less crappy. If you run the above command, using a factor base of 10_000 primes (that is 10_000 primes, not primes up to 10_000.. important distinction), it will succeed at around 3000 B-smooths. Which is less then half.
-Now the thing is... we can precompute numbers that factor over a small factor base within a certain range.. and then only check roots of a certain bitlength that we know will end up inside or near that range. That's how you factorize! People would have known I was right. Yet my life has been reduced to literally living like a fcking cockroach. I'm not what slander and lies they will weaponize against me when this finally gets out... I guess they are hoping by that time I'm dead and unable to speak for the truth.
+Now the thing is... we can precompute numbers that factor over a small factor base within a certain range.. and then only check roots of a certain bitlength that we know will end up inside or near that range. That's how you factorize! People would have known I was right. Yet my life has been reduced to literally living like a fcking cockroach. I'm not sure what slander and lies they will weaponize against me when this finally gets out... I guess they are hoping by that time I'm dead and unable to speak for the truth.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
