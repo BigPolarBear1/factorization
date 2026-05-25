@@ -27,6 +27,8 @@ To do:
 
 I'll add some pre-sieving logic next.
 
+Update: Quickly added some bug fixes. Will go ahead and slowly start implementing pre-sieving values at a certain bit lenght now. Let me just start by pre-calculating residues and creating an interval, and then implement something more elaborate.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
