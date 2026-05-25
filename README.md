@@ -15,7 +15,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 
 #### To run from folder "polysieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 70 -base 5_000 -debug 0 -lin_size 100 -quad_size 100
+To run: python3 run_qs.py -keysize 80 -base 10_000 -debug 0 -lin_size 100 -quad_size 100
 
 This PoC now requires as number of B-smooths to succeed around 1/4th the size of the factor base. Beyond a doubt proving my ideas. It can be reduced much more though. 
 It achieves this by finding an initial B-smooth using square moduli, such that half the bitlength can be discarded as the factors of the square modulus are irrelevant as far as guassian elimination over Z/2 is concerned, and then trying to find more B-smooths that have factor overlap with the initial B-smooth.. but by using much smaller moduli and using the coefficients to generate smaller B-smooth candidates.. far fewer new factors are introduced.. because of how these factors end up canceling eachother out (see final chapter paper for an example) we can succeed much easier. There is no trickery involved here. It works like I had theorized it might since september already.
