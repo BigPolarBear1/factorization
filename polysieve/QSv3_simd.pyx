@@ -1116,7 +1116,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
     
 
         k=1
-        while k < 20:
+        while k < 10:
     ##To do: Shouldnt this only have to be calculated once? Regardless of N? Can just have it sitting on disk and re-use then..
             if math.gcd(k,mod)!=1:
                 k+=1
@@ -1179,7 +1179,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
                     tot%=mod
             #    tot=2**4
                     x_ind=0
-                    while x_ind <10:
+                    while x_ind <50:
                         pval=evaluate(poly+[-n*k],tot+mod*x_ind)
                         optimal_coeff=[]
                         rem=pval
@@ -1202,7 +1202,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
                         while l < l_range:
                             pval_optimal=evaluate(optimal_coeff+[-n*k],tot+mod*x_ind)
                        # poly=optimal_coeff
-                            optimal_coeff[0]-=mod
+                            
                         
                             pval=pval_optimal
                   #      print("optimal_coeeff: "+str(optimal_coeff)+" pval_optimal: "+str(bitlen(pval_optimal//mod))+" "+str(pval_optimal)+" key: "+str(key)+" l: "+str(l)+" mod: "+str(mod))
@@ -1210,19 +1210,19 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
                             if pval%mod !=0:
                                 print("extremelyfatalerrror: "+str(k)+" mod: "+str(mod)+" pval: "+str(pval)+" tot: "+str(tot))
                                 sys.exit()
-                #    print("root: "+str(tot)+" mod: "+str(mod)+" poly: "+str(poly)+" pval: "+str(pval)+" pval/mod bits: "+str(bitlen(pval//mod))+" bits mod: "+str(bitlen(mod))+" bits root: "+str(bitlen(tot)))
+                      #      print("root: "+str(tot)+" mod: "+str(mod)+" poly: "+str(optimal_coeff)+" pval: "+str(pval)+" pval/mod bits: "+str(bitlen(pval//mod))+" bits mod: "+str(bitlen(mod))+" bits root: "+str(bitlen(tot))+" x_ind: "+str(x_ind)+" l: "+str(l)+" k: "+str(k)+" n: "+str(n))
                
                # diff=bitlen(opt_roots[0])-bitlen(tot)
-                            if bitlen(pval//mod)<keysize*0.55:#*0.55:  ###note: This determines how many b-smooths need to be found
+                            if bitlen(pval//mod)<keysize*0.50:#*0.55:  ###note: This determines how many b-smooths need to be found
                         #print("root: "+str(tot)+" mod: "+str(mod)+" poly: "+str(poly)+" pval: "+str(pval)+" pval/mod bits: "+str(bitlen(pval//mod))+" bits mod: "+str(bitlen(mod))+" bits root: "+str(bitlen(tot))+" x_ind: "+str(x_ind)+" k: "+str(k))
                                 if pval == 0 or lside == 0:
-                                    x_ind+=1
+                                    l+=1
                                     continue
                                 factors1, value1,seen_primes=factorise_fast2(pval,primelist_f)
                                 test2=math.isqrt(value1)
 
                                 if test2**2 != value1:
-                                    x_ind+=1
+                                    l+=1
                                     continue
                                 factors2, value2,seen_primes2=factorise_fast2(lside,qlist)  
                                 test=math.isqrt(value2)
@@ -1242,14 +1242,14 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
                                             un.append(fac) 
                                     un.sort()                     
                                     if un in unique_factors:
-                                        x_ind+=1
+                                        l+=1
                                         continue
                                 ##TO DO!!!!: This isnt catching all cases.. let me debug this later....
                                     unique_factors.append(un)
                                     factors1=list(factors1)
                                     factors1.sort()
                                     if factors1 in ret_array[2]:
-                                        x_ind+=1
+                                        l+=1
                                         continue
                                     found+=1
                                     ret_array[1].append(lside)
@@ -1262,6 +1262,8 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
                                         return found   
                             else:
                                 break
+
+                            optimal_coeff[0]-=mod
                             l+=1      
                         x_ind+=1
                   #  sys.exit()
@@ -2039,7 +2041,7 @@ def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_
         i+=1
     primeslist2.append(2)
     i=0
-    while len(primeslist2) < 200:
+    while len(primeslist2) < 150:
         if n%primeslist[i] !=0:
             primeslist2.append(primeslist[i])
         i+=1
