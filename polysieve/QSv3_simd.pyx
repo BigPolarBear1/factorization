@@ -1076,7 +1076,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
     z_range=100
     k_range=2
     c_range=10_000
-    l_range=1
+    l_range=50
     bin_range=100
     found=0
     grays = get_gray_code(20)
@@ -1116,7 +1116,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
     
 
         k=1
-        while k < 10:
+        while k < 2:
     ##To do: Shouldnt this only have to be calculated once? Regardless of N? Can just have it sitting on disk and re-use then..
             if math.gcd(k,mod)!=1:
                 k+=1
@@ -1179,7 +1179,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
                     tot%=mod
             #    tot=2**4
                     x_ind=0
-                    while x_ind <50:
+                    while x_ind <10:
                         pval=evaluate(poly+[-n*k],tot+mod*x_ind)
                         optimal_coeff=[]
                         rem=pval
@@ -1216,12 +1216,14 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
                             if bitlen(pval//mod)<keysize*0.50:#*0.55:  ###note: This determines how many b-smooths need to be found
                         #print("root: "+str(tot)+" mod: "+str(mod)+" poly: "+str(poly)+" pval: "+str(pval)+" pval/mod bits: "+str(bitlen(pval//mod))+" bits mod: "+str(bitlen(mod))+" bits root: "+str(bitlen(tot))+" x_ind: "+str(x_ind)+" k: "+str(k))
                                 if pval == 0 or lside == 0:
+                                    optimal_coeff[0]-=mod
                                     l+=1
                                     continue
                                 factors1, value1,seen_primes=factorise_fast2(pval,primelist_f)
                                 test2=math.isqrt(value1)
 
                                 if test2**2 != value1:
+                                    optimal_coeff[0]-=mod
                                     l+=1
                                     continue
                                 factors2, value2,seen_primes2=factorise_fast2(lside,qlist)  
@@ -1242,6 +1244,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
                                             un.append(fac) 
                                     un.sort()                     
                                     if un in unique_factors:
+                                        optimal_coeff[0]-=mod
                                         l+=1
                                         continue
                                 ##TO DO!!!!: This isnt catching all cases.. let me debug this later....
@@ -1249,6 +1252,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
                                     factors1=list(factors1)
                                     factors1.sort()
                                     if factors1 in ret_array[2]:
+                                        optimal_coeff[0]-=mod
                                         l+=1
                                         continue
                                     found+=1
@@ -1257,7 +1261,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
                                     ret_array[2].append(factors1)
                                     ret_array[3].append(factors2)
                 
-                                    print("#smooths: "+str(len(ret_array[0]))+"/"+str(base+10)+" k: "+str(k)+" lside bitlen: "+str(bitlen(lside))+" pval/mod bitlen: "+str(bitlen(pval//mod))+" mod: "+str(mod)+" bits mod: "+str(bitlen(mod))+" bits root: "+str(bitlen(tot))+" poly: "+str(optimal_coeff)+" factors1: "+str(factors1)+" factors2: "+str(factors2)+" x_ind: "+str(x_ind))#+" l: "+str(l))#+" opt_roots: "+str(opt_roots))#+" ptest: "+str(ptest)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i])+" factors1: "+str(factors1)+" bitlen pval: "+str(bitlen(abs(pval)))+" bitlen lside: "+str(bitlen(abs(lside)))+" i: "+str(i))               
+                                    print("#smooths: "+str(len(ret_array[0]))+"/"+str(base+10)+" k: "+str(k)+" lside bitlen: "+str(bitlen(lside))+" pval/mod bitlen: "+str(bitlen(pval//mod))+" mod: "+str(mod)+" bits mod: "+str(bitlen(mod))+" bits root: "+str(bitlen(tot))+" poly: "+str(optimal_coeff)+" factors1: "+str(factors1)+" factors2: "+str(factors2)+" x_ind: "+str(x_ind)+" l: "+str(l))#+" l: "+str(l))#+" opt_roots: "+str(opt_roots))#+" ptest: "+str(ptest)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i])+" factors1: "+str(factors1)+" bitlen pval: "+str(bitlen(abs(pval)))+" bitlen lside: "+str(bitlen(abs(lside)))+" i: "+str(i))               
                                     if len(ret_array[0])>(base+10):
                                         return found   
                             else:
