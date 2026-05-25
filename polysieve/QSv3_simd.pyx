@@ -1189,8 +1189,9 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,primesli
                             rem-=(mod)*div*(key)**i
                             optimal_coeff.append(poly[len(optimal_coeff)]+(-(mod)*div))
                             i-=1
-                    
+                        
                         interval=np.zeros(10_000,dtype=np.int16)
+                        optimal_coeff[0]-=mod*(len(interval)//2)
                       #  print("primeslist2: "+str(primeslist2)+" qlist: "+str(qlist))
                         i=0
                         while i < len(primeslist2):
@@ -1219,7 +1220,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,primesli
                             i+=1
                        # print("interval: "+str(interval))
 
-                        np.putmask(interval, interval < keysize*0.4, 0)
+                        np.putmask(interval, interval < keysize*0.45, 0)
                         indexlist=np.nonzero(interval)
 
                         indexlist_x=indexlist[0]
@@ -1291,7 +1292,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,primesli
                                     ret_array[2].append(factors1)
                                     ret_array[3].append(factors2)
                 
-                                    print("#smooths: "+str(len(ret_array[0]))+"/"+str(base+10)+" k: "+str(k)+" lside bitlen: "+str(bitlen(lside))+" pval/mod bitlen: "+str(bitlen(pval//mod))+" mod: "+str(mod)+" bits mod: "+str(bitlen(mod))+" bits root: "+str(bitlen(tot))+" poly: "+str(optimal_co)+" factors1: "+str(factors1)+" factors2: "+str(seen_primes2)+" indicated: "+str(interval[l])+" x_ind: "+str(x_ind)+" l: "+str(l))#+" l: "+str(l))#+" opt_roots: "+str(opt_roots))#+" ptest: "+str(ptest)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i])+" factors1: "+str(factors1)+" bitlen pval: "+str(bitlen(abs(pval)))+" bitlen lside: "+str(bitlen(abs(lside)))+" i: "+str(i))               
+                                    print("#smooths: "+str(len(ret_array[0]))+"/"+str(base+10)+" k: "+str(k)+" lside bitlen: "+str(bitlen(lside))+" pval/mod bitlen: "+str(bitlen(pval//mod))+" mod: "+str(mod)+" bits mod: "+str(bitlen(mod))+" bits root: "+str(bitlen(tot+mod*x_ind))+" poly: "+str(optimal_co)+" factors1: "+str(factors1)+" factors2: "+str(seen_primes2)+" indicated: "+str(interval[l])+" x_ind: "+str(x_ind)+" l: "+str(l))#+" l: "+str(l))#+" opt_roots: "+str(opt_roots))#+" ptest: "+str(ptest)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i])+" factors1: "+str(factors1)+" bitlen pval: "+str(bitlen(abs(pval)))+" bitlen lside: "+str(bitlen(abs(lside)))+" i: "+str(i))               
                                     if len(ret_array[0])>(base+10):
                                         return found   
                             else:
@@ -2074,7 +2075,7 @@ def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_
         i+=1
     primeslist2.append(2)
     i=0
-    while len(primeslist2) < 100:
+    while len(primeslist2) < 200:
         if n%primeslist[i] !=0:
             primeslist2.append(primeslist[i])
         i+=1
