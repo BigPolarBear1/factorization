@@ -1069,12 +1069,12 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,primesli
     z_range=100
     k_range=2
     c_range=10_000
-    l_range=50
+    l_range=100_000
     bin_range=100
     found=0
     grays = get_gray_code(20)
     seen=[]
-    max_iterations=10
+    max_iterations=1000
     t=0
     while t < max_iterations:
         mod=1
@@ -1089,7 +1089,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,primesli
             i = random.randrange(len(local_factors))
             fac=local_factors[i]
             if fac not in mod_fac and fac != -1:
-                if bitlen(mod*fac)>keysize//5:
+                if bitlen(mod*fac)>keysize//6:
                     break 
                 mod_ind.append(len(mod_fac))
                 mod_fac.append(fac)
@@ -1098,7 +1098,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,primesli
                 if mod_fac[mod_ind[-1]] != fac:
                     print("fatal")
                     sys.exit()   
-        diff=bitlen(mod)-(keysize//5)
+        diff=bitlen(mod)-(keysize//6)
         if abs(diff) > 2 or mod in seen:
             t+=1
             continue
@@ -1109,7 +1109,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,primesli
     
 
         k=1
-        while k < 2:
+        while k < 10:
     ##To do: Shouldnt this only have to be calculated once? Regardless of N? Can just have it sitting on disk and re-use then..
             if math.gcd(k,mod)!=1:
                 k+=1
@@ -1171,8 +1171,10 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,primesli
                         tot+=r
                     tot%=mod
             #    tot=2**4
-                    x_ind=0
-                    while x_ind <20:
+                    optimal_root=2**(keysize//6)
+                    root_diff=round((optimal_root-tot)/mod)
+                    x_ind=root_diff
+                    while x_ind <root_diff+1:
                         pval=evaluate(poly+[-n*k],tot+mod*x_ind)
                         optimal_coeff=[]
                         rem=pval
@@ -1190,7 +1192,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,primesli
                             optimal_coeff.append(poly[len(optimal_coeff)]+(-(mod)*div))
                             i-=1
                         
-                        interval=np.zeros(10_000,dtype=np.int16)
+                        interval=np.zeros(l_range,dtype=np.int16)
                         optimal_coeff[0]-=mod*(len(interval)//2)
                       #  print("primeslist2: "+str(primeslist2)+" qlist: "+str(qlist))
                         i=0
@@ -1295,8 +1297,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,primesli
                                     print("#smooths: "+str(len(ret_array[0]))+"/"+str(base+10)+" k: "+str(k)+" lside bitlen: "+str(bitlen(lside))+" pval/mod bitlen: "+str(bitlen(pval//mod))+" mod: "+str(mod)+" bits mod: "+str(bitlen(mod))+" bits root: "+str(bitlen(tot+mod*x_ind))+" poly: "+str(optimal_co)+" factors1: "+str(factors1)+" factors2: "+str(seen_primes2)+" indicated: "+str(interval[l])+" x_ind: "+str(x_ind)+" l: "+str(l))#+" l: "+str(l))#+" opt_roots: "+str(opt_roots))#+" ptest: "+str(ptest)+" root: "+str(key)+" factors2: "+str(factors2)+" value2: "+str(value2)+" indicated: "+str(interval[i])+" factors1: "+str(factors1)+" bitlen pval: "+str(bitlen(abs(pval)))+" bitlen lside: "+str(bitlen(abs(lside)))+" i: "+str(i))               
                                     if len(ret_array[0])>(base+10):
                                         return found   
-                            else:
-                                break
+
                             ind+=1      
                         x_ind+=1
                   #  sys.exit()
@@ -2075,7 +2076,7 @@ def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_
         i+=1
     primeslist2.append(2)
     i=0
-    while len(primeslist2) < 200:
+    while len(primeslist2) < 100:
         if n%primeslist[i] !=0:
             primeslist2.append(primeslist[i])
         i+=1
