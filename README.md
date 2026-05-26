@@ -32,6 +32,8 @@ Update: Quickly added some bug fixes. Will go ahead and slowly start implementin
 Update: Quickly added a sieve interval to make the PoC a little less crappy. If you run the above command, using a factor base of 10_000 primes (that is 10_000 primes, not primes up to 10_000.. important distinction), it will succeed at around 3000 B-smooths. Which is less then half.
 Now the thing is... we can precompute numbers that factor over a small factor base within a certain range.. and then only check roots of a certain bitlength that we know will end up inside or near that range. That's how you factorize! People would have known I was right. Yet my life has been reduced to literally living like a fcking cockroach. I'm not sure what slander and lies they will weaponize against me when this finally gets out... I guess they are hoping by that time I'm dead and unable to speak for the truth.
 
+Update: Shit day today. This heatwave is killing me. And I'm living in this tiny room that somehow seems to trap all the heat. Can hardly sleep. Let me try and implement some rudimentary pre-sieving tomorrow. And since this would be independent of N, these results can also be saved to disk and re-used. First I'll add the modulus to the root, so the root is always a specific bitsize.. whose optimal quadratic coefficient to generate the smallest possible polynomial value is always going to be inside or near the pre-sieved range. So I'll implement that logic first.. and then add some pre-sieving logic... easy enough.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
