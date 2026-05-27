@@ -34,6 +34,8 @@ Now the thing is... we can precompute numbers that factor over a small factor ba
 
 Update: Shit day today. This heatwave is killing me. And I'm living in this tiny room that somehow seems to trap all the heat. Can hardly sleep. Let me try and implement some rudimentary pre-sieving tomorrow. And since this would be independent of N, these results can also be saved to disk and re-used. First I'll add the modulus to the root, so the root is always a specific bitsize.. whose optimal quadratic coefficient to generate the smallest possible polynomial value is always going to be inside or near the pre-sieved range. So I'll implement that logic first.. and then add some pre-sieving logic... easy enough.
 
+Update: Made some progress toward pre-sieving.. will be ready to upload tomorrow. Need to change a few more small things and it will be done. Really wasnt too difficult.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
