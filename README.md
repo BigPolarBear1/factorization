@@ -36,6 +36,8 @@ Update: Shit day today. This heatwave is killing me. And I'm living in this tiny
 
 Update: Made some progress toward pre-sieving.. will be ready to upload tomorrow. Need to change a few more small things and it will be done. Really wasnt too difficult.
 
+Update: Tried a couple different methods in the last few days. Actually, the way it does it now in the uploaded version is closest to what it should be. It can speed up sieving of "lside" (left side) by using a modulus such that atleast a portion of factors are garantueed. And since this isnt exponential but linear... it may work even better. Plus any "ranges" that we sieve, we can save to disk and re-use in the future.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
