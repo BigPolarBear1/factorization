@@ -38,6 +38,8 @@ Update: Made some progress toward pre-sieving.. will be ready to upload tomorrow
 
 Update: Hmm, after some more thinking.. you definitely just need to presieve a range at the start of the algorithm. Because I dont want to sieve "lside" (poly without -nk) during the algorithm's hotloop. We can add the modulus to k and to the root to slightly change the "optimal" leading coefficient and try to get it within range of where we want it. That's going ot be the correct way to do it.
 
+UPDATE: EUREKA. CAN JUST ADD THE MODULUS TO k AND THE ROOT (in ax^2-Nk) ... this then adjusts the optimal leading coefficient to generate the smallest possible polynomial value.. and its quite easy to get it within a certain range this way. Will upload tomorrow.. this is what I needed to finish my work. The last piece of the puzzle....
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
