@@ -36,7 +36,7 @@ Update: Shit day today. This heatwave is killing me. And I'm living in this tiny
 
 Update: Made some progress toward pre-sieving.. will be ready to upload tomorrow. Need to change a few more small things and it will be done. Really wasnt too difficult.
 
-Update: Tried a couple different methods in the last few days. Actually, the way it does it now in the uploaded version is closest to what it should be. It can speed up sieving of "lside" (left side) by using a modulus such that atleast a portion of factors are garantueed. And since this isnt exponential but linear... it may work even better. Plus any "ranges" that we sieve, we can save to disk and re-use in the future.
+Update: Hmm, after some more thinking.. you definitely just need to presieve a range at the start of the algorithm. Because I dont want to sieve "lside" (poly without -nk) during the algorithm's hotloop. We can add the modulus to k and to the root to slightly change the "optimal" leading coefficient and try to get it within range of where we want it. That's going ot be the correct way to do it.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
