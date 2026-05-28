@@ -17,9 +17,9 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 80 -base 10_000 -debug 0 -lin_size 100 -quad_size 100
 
-Update: This find_same stuff isn't great. So square moduli.. they offer a small improvement over non-square moduli... since the square part gets completely ignored during the linear algebra step. So that slightly reduces the amount of B-smooths needed. Next.. you really need more factor overlap. I know it can be done with using these coefficients to linearly shift the parabola.. but getting it to work in practice is very hard. Let me think
+UPDATE: Ignore this version for a few days. Yes, using square moduli for sieving is better then using non-square moduli. Because this always garantuees that a large part of the B-smooth can be ignored as far as linear algebra over Z/2 is concerned. So that gives us a small improvement over SIQS, where SIQS can only achieve something similar if it finds a lot of B-smooth using the same modulus. This in itself could be worth publishing a paper over... I have however also linked all these findings back to NFS in the last few months and if you can introduce square moduli to NFS's approach, reduce the required amount of B-smooths there.. then that jump in performance could give us a real shot at threatening RSA-1024.
 
-Update: I guess I should probably implement square moduli in NFS's sieving. As the paper shows how to do it for polynomials of arbitrary degree. That would probably yield the largest speed boost.
+As CUDA_QS_variant already shows how to do a SIQS style variant using squaring moduli and all the math behind it, I will transform this one into an NFS variant instead. I should be ready to upload it soon.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
