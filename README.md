@@ -19,6 +19,8 @@ To run: python3 run_qs.py -keysize 80 -base 10_000 -debug 0 -lin_size 100 -quad_
 
 Update: This find_same stuff isn't great. So square moduli.. they offer a small improvement over non-square moduli... since the square part gets completely ignored during the linear algebra step. So that slightly reduces the amount of B-smooths needed. Next.. you really need more factor overlap. I know it can be done with using these coefficients to linearly shift the parabola.. but getting it to work in practice is very hard. Let me think
 
+Update: I guess I should probably implement square moduli in NFS's sieving. As the paper shows how to do it for polynomials of arbitrary degree. That would probably yield the largest speed boost.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
