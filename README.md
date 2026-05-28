@@ -17,28 +17,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 80 -base 10_000 -debug 0 -lin_size 100 -quad_size 100
 
-This PoC now requires as number of B-smooths to succeed around 1/4th the size of the factor base. Beyond a doubt proving my ideas. It can be reduced much more though. 
-It achieves this by finding an initial B-smooth using square moduli, such that half the bitlength can be discarded as the factors of the square modulus are irrelevant as far as guassian elimination over Z/2 is concerned, and then trying to find more B-smooths that have factor overlap with the initial B-smooth.. but by using much smaller moduli and using the coefficients to generate smaller B-smooth candidates.. far fewer new factors are introduced.. because of how these factors end up canceling eachother out (see final chapter paper for an example) we can succeed much easier. There is no trickery involved here. It works like I had theorized it might since september already.
-
-To do:
-
-1. Need to presieve a bunch of numbers roughly within range of what these quadratic coefficients will end up being, so that we can quickly check if there is a leading coefficient nearby that factors over the factor base.
-2. The paper demostrated using third degree polynomials.. this has the benefit of having more roots.. but I'm still unsure if it yield a performance increase. So let me just go ahead and implement the POC using purely quadratics and large quadratic coefficients. If I come across a scenario where having more roots per prime ends up as an advantage then I'll implement that later.
-
-I'll add some pre-sieving logic next.
-
-Update: Quickly added some bug fixes. Will go ahead and slowly start implementing pre-sieving values at a certain bit lenght now. Let me just start by pre-calculating residues and creating an interval, and then implement something more elaborate.
-
-Update: Quickly added a sieve interval to make the PoC a little less crappy. If you run the above command, using a factor base of 10_000 primes (that is 10_000 primes, not primes up to 10_000.. important distinction), it will succeed at around 3000 B-smooths. Which is less then half.
-Now the thing is... we can precompute numbers that factor over a small factor base within a certain range.. and then only check roots of a certain bitlength that we know will end up inside or near that range. That's how you factorize! People would have known I was right. Yet my life has been reduced to literally living like a fcking cockroach. I'm not sure what slander and lies they will weaponize against me when this finally gets out... I guess they are hoping by that time I'm dead and unable to speak for the truth.
-
-Update: Shit day today. This heatwave is killing me. And I'm living in this tiny room that somehow seems to trap all the heat. Can hardly sleep. Let me try and implement some rudimentary pre-sieving tomorrow. And since this would be independent of N, these results can also be saved to disk and re-used. First I'll add the modulus to the root, so the root is always a specific bitsize.. whose optimal quadratic coefficient to generate the smallest possible polynomial value is always going to be inside or near the pre-sieved range. So I'll implement that logic first.. and then add some pre-sieving logic... easy enough.
-
-Update: Made some progress toward pre-sieving.. will be ready to upload tomorrow. Need to change a few more small things and it will be done. Really wasnt too difficult.
-
-Update: Hmm, after some more thinking.. you definitely just need to presieve a range at the start of the algorithm. Because I dont want to sieve "lside" (poly without -nk) during the algorithm's hotloop. We can add the modulus to k and to the root to slightly change the "optimal" leading coefficient and try to get it within range of where we want it. That's going ot be the correct way to do it.
-
-UPDATE: EUREKA. CAN JUST ADD THE MODULUS TO k AND THE ROOT (in ax^2-Nk) ... this then adjusts the optimal leading coefficient to generate the smallest possible polynomial value.. and its quite easy to get it within a certain range this way. Will upload tomorrow.. this is what I needed to finish my work. The last piece of the puzzle....
+All of these assumptions from the last couple of days are wrong, something else is happening here... ergh. Just removed find_same(), and same behavior still happens. Let me figureout what is ACTUALLY going on...
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
