@@ -19,6 +19,8 @@ To run: python3 run_qs.py -keysize 80 -base 10_000 -debug 0 -lin_size 100 -quad_
 
 All of these assumptions from the last couple of days are wrong, something else is happening here... ergh. Just removed find_same(), and same behavior still happens. Let me figureout what is ACTUALLY going on...
 
+Update: Ok found it.... so wether we end up canceling out half of a B-smooth by using the setup from find_same... or we just delete find_same() and use square moduli.. its the same thing... just using square moduli and deleting half the bitlength of a b-smooth works too to get that same reduction. Ergh.. I'm going to get a few more hours of sleep, will finallize my work tonight. How could I have missed this since september man... this nightmare could have ended much sooner.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
