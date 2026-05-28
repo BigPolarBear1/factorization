@@ -17,11 +17,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 80 -base 10_000 -debug 0 -lin_size 100 -quad_size 100
 
-All of these assumptions from the last couple of days are wrong, something else is happening here... ergh. Just removed find_same(), and same behavior still happens. Let me figureout what is ACTUALLY going on...
-
-Update: Ok found it.... so wether we end up canceling out half of a B-smooth by using the setup from find_same... or we just delete find_same() and use square moduli.. its the same thing... just using square moduli and deleting half the bitlength of a b-smooth works too to get that same reduction. Ergh.. I'm going to get a few more hours of sleep, will finallize my work tonight. How could I have missed this since september man... this nightmare could have ended much sooner.
-
-Update: You know.. let me quickly polish up this QS implementation... just sieve with square moduli.. and let me then also modify a NFS implementation to sieve with square moduli to get that same reduction in required number of B-smooths... just keep it simple.. maybe the novelty is in how I'm achieving p-adic lifting and i just hadn't realized it until now and people probably would have known but i bet the trump administration is probably trying their best to avoid was is coming next. Ruining my life with their anti-trans bullshit while I was in the US wasn't enough, now they also do whatever the fuck they are doing right now. I'm not an idiot. Like I dont see what is happening.
+Update: This find_same stuff isn't great. So square moduli.. they offer a small improvement over non-square moduli... since the square part gets completely ignored during the linear algebra step. So that slightly reduces the amount of B-smooths needed. Next.. you really need more factor overlap. I know it can be done with using these coefficients to linearly shift the parabola.. but getting it to work in practice is very hard. Let me think
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
