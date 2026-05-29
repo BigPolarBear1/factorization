@@ -15,11 +15,13 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 
 #### To run from folder "polysieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 80 -base 10_000 -debug 0 -lin_size 100 -quad_size 100
+To run: python3 run_qs.py -keysize 50 -base 500 -debug 0 -lin_size 100_000 -quad_size 1
 
 UPDATE: Ignore this version for a few days. Yes, using square moduli for sieving is better then using non-square moduli. Because this always garantuees that a large part of the B-smooth can be ignored as far as linear algebra over Z/2 is concerned. So that gives us a small improvement over SIQS, where SIQS can only achieve something similar if it finds a lot of B-smooth using the same modulus. This in itself could be worth publishing a paper over... I have however also linked all these findings back to NFS in the last few months and if you can introduce square moduli to NFS's approach, reduce the required amount of B-smooths there.. then that jump in performance could give us a real shot at threatening RSA-1024.
 
 As CUDA_QS_variant already shows how to do a SIQS style variant using squaring moduli and all the math behind it, I will transform this one into an NFS variant instead. I should be ready to upload it soon.
+
+Update: Quickly replaced the PoC with a old NFS variant I had modified a few weeks ago. This needs a lot of fixing an more features. First thing first will be to add support for arbitrary degree.. but in a way that it links back to my own work and not just does what NFS does. Then after that I add lifting for the modulus... optimize everytime and that should be good as a demonstration...
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
