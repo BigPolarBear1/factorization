@@ -21,7 +21,7 @@ UPDATE: Ignore this version for a few days. Yes, using square moduli for sieving
 
 As CUDA_QS_variant already shows how to do a SIQS style variant using squaring moduli and all the math behind it, I will transform this one into an NFS variant instead. I should be ready to upload it soon.
 
-Update: Quickly replaced the PoC with a old NFS variant I had modified a few weeks ago. This needs a lot of fixing and more features. First thing first will be to add support for arbitrary degree.. but in a way that it links back to my own work and not just does what NFS does. Then after that I add lifting for the modulus... optimize everytime and that should be good as a demonstration...
+Update: Quickly replaced the PoC with a old NFS variant I had modified a few months ago. This needs a lot of fixing and more features. First thing first will be to add support for arbitrary degree.. but in a way that it links back to my own work and not just does what NFS does. Then after that I add lifting for the modulus... optimize everytime and that should be good as a demonstration...
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
