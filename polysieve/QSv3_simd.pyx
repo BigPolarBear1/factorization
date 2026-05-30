@@ -1505,7 +1505,7 @@ def find_relations2(n,V,f_x, g, primes, R_p, Q, B_prime, divide_leading, prod_pr
                 if z[2] == 1 and z[4] == 1 and tmp not in pairs_used:
                   #  print("adding: "+str(tmp))
                     pairs_used.append(tmp)
-                    print(len(pairs_used))
+                    print(str(len(pairs_used))+"/"+str(V))
                     if len(pairs_used)> V+10: 
                         return pairs_used
         b+=1
