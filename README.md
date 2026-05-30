@@ -23,6 +23,8 @@ As CUDA_QS_variant already shows how to do a SIQS style variant using squaring m
 
 Update: Quickly replaced the PoC with a old NFS variant I had modified a few months ago. This needs a lot of fixing and more features. First thing first will be to add support for arbitrary degree.. but in a way that it links back to my own work and not just does what NFS does. Then after that I add lifting for the modulus... optimize everytime and that should be good as a demonstration...
 
+Update: Also got it to work with 4th degree polynomials. I wonder if I just sieve using polynomials generated from the same binomial terms if I cant just combine all of them during linear algebra... its too warm today... going to take a break until later tonight. This heat is giving me brain damage.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
