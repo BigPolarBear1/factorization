@@ -551,14 +551,87 @@ def format_duration(delta):
     seconds = delta.seconds%60
     return str(delta.days)+" days, "+str(hours)+" hours, "+str(minutes)+" minutes, "+str(seconds)+" seconds"
 
-def sieve(length, f_x, rational_base, algebraic_base, b, logs,x,mod,n):
-    sieve_len=length
+def new_coeffs(f, x):
+    b = 1
+    tmp = [i for i in f]
+    for i in range(len(f)-1):
+        tmp[i] *= b
+        b *= x
+    tmp[-1] *= b
+    return tmp
+
+def sieve(length, f_x, rational_base, algebraic_base, m0, m1, b, logs, offset, leading,div):
+    offset += div.bit_length()-1
+    pairs = []
+    tmp_poly = new_coeffs(f_x, b)
+
+    sieve_array = [0]*(length<<1)
+    for q, p in enumerate(rational_base):
+        tmp_len = length%p
+        log = logs[q]
+
+        if m1%p:
+            root = (tmp_len+b*m0*invmod(m1, p))%p
+            for i in range(root, len(sieve_array), p): sieve_array[i] += log
+
+        for r in algebraic_base[q]:
+            root = (tmp_len+b*r)%p
+            for i in range(root, len(sieve_array), p): sieve_array[i] += log
+
+    if b&1:
+        eval2 = -length*m1-b*m0
+        a = -length
+        tmp = [0]*len(tmp_poly)
+        for j in range(len(tmp_poly)): tmp[j] = evaluate(tmp_poly, -length+j)
+        for q in range(1, len(tmp_poly)):
+            for k in range(len(tmp_poly)-1, q-1, -1): tmp[k] -= tmp[k-1]
+
+        eval1 = tmp[0]
+        for k in range(len(sieve_array)):
+            if a and math.gcd(a, b) == 1 and eval2:
+                eval = abs(eval1*eval2)
+                if eval != 0 and sieve_array[k] > eval.bit_length()-offset:
+                    pairs.append([[-b, a*leading], eval1, [[1 ,1]], eval2, [1], [-b,a], 1])
+            a += 1
+            eval2 += m1
+            eval1 += tmp[1]
+            for q in range(1, len(tmp_poly)-1): tmp[q] += tmp[q+1]
+    else:
+        init = 0
+        if not length&1:
+            length -= 1
+            init = 1
+        eval2 = -length*m1-b*m0
+        a = -length
+        tmp = [0]*len(tmp_poly)
+        for j in range(len(tmp_poly)): tmp[j] = evaluate(tmp_poly, -length+2*j)
+        for q in range(1, len(tmp_poly)):
+            for k in range(len(tmp_poly)-1, q-1, -1): tmp[k] -= tmp[k-1]
+
+        eval1 = tmp[0]
+     #   print(" eval1: "+str(eval1)+" eval2: "+str(eval2)+" b: "+str(b)+" m0: "+str(m0)+" m1: "+str(m1)+" length: "+str(length)+" evaluate(tmp_poly, -length+2*j): "+str(evaluate(tmp_poly, -length+2*j))+" -length+2*j: "+str(-length+2*j)+" temp_poly: "+str(tmp_poly))
+        for k in range(init, len(sieve_array), 2):
+            if math.gcd(a, b) == 1 and eval2:
+                eval = abs(eval1*eval2)
+                if eval != 0 and sieve_array[k] > eval.bit_length()-offset:
+                    pairs.append([[-b, a*leading], eval1, [[1, 1]], eval2, [1], [-b,a], 1])
+            a += 2
+            eval2 += m1<<1
+            eval1 += tmp[1]
+            for q in range(1, len(tmp_poly)-1): tmp[q] += tmp[q+1]
+
+    return pairs
+
+
+
+#(M, f_x, primes, R_p, m0,m1,b, logs,x,mod)
+def sieve3(length, f_x, rational_base, algebraic_base, m0,m1,b, logs,x,mod):
+    sieve_len=lin_sieve_size
     pairs=[]
     x=(x*b)%mod
     sieve_array = [0]*sieve_len
     sieve_array_neg = [0]*sieve_len
-    y=f_x[1]
-    z=f_x[0]
+    tmp_poly = new_coeffs(f_x, b)
     for q, p in enumerate(rational_base):
         if mod%p ==0:
             continue
@@ -569,33 +642,33 @@ def sieve(length, f_x, rational_base, algebraic_base, b, logs,x,mod,n):
             
             s=solve_lin_con(mod,r-x,p)
             root=x+s*mod
-            if (z*root**2+(y*b)*root-n*b**2)%(mod*p)!=0:
+            if evaluate(tmp_poly,root)%(mod*p)!=0:
                 print("fataaaaal")
                 sys.exit()
             i=s
-            while i < len(sieve_array):
-                sieve_array[s]+=log
+            while i < len(sieve_array):# and s < len(sieve_array):
+                sieve_array[i]+=log
 
                 i+=p
             i=-s%p
-            while i < len(sieve_array):
-                sieve_array_neg[s]+=log
+            while i < len(sieve_array_neg): #and s < len(sieve_array_neg):
+                sieve_array_neg[i]+=log
 
                 i+=p
     i=0
     while i < len(sieve_array):
         if sieve_array[i] > keysize*0.7: ##TO DO: FIX THRESHOLD
             a=x+i*mod
-            eval1=z*a**2+(y*b)*a-n*(b**2)
+            eval1=evaluate(tmp_poly,a)#z*a**2+(y*b)*a-n*(b**2)
             if eval1%mod !=0:
                 print("error1")
                 sys.exit()
-            eval2=z*a+(y*b)
+            eval2=a*m1-b*m0#m1*a+((m0)*b)
          #   print("eval1: "+str(eval1)+" eval2: "+str(eval2))
         #    sys.exit()
             if eval1!=0 and eval2!=0  and math.gcd(a, b) == 1:
-                pairs.append([[-b, a*z], eval1, [[1 ,1]], eval2, [1], [-b,a], 1])
-
+                pairs.append([[-b, a*f_x[0]], eval1, [[1 ,1]], eval2, [1], [-b,a], 1])
+                
 
         i+=1
     #sys.exit()
@@ -603,16 +676,16 @@ def sieve(length, f_x, rational_base, algebraic_base, b, logs,x,mod,n):
     while i < len(sieve_array_neg):
         if sieve_array_neg[i] > keysize*0.7: ##TO DO: FIX THRESHOLD
             a=x-i*mod
-            eval1=z*a**2+(y*b)*a-n*(b**2)
+            eval1=evaluate(tmp_poly,a)
             if eval1%mod !=0:
                 print("error2")
                 sys.exit()
-            eval2=z*a+(y*b)
+            eval2=m1*a-m0*b
 
 
 
             if eval1!=0 and eval2!=0  and math.gcd(a, b) == 1:
-                pairs.append([[-b, a*z], eval1, [[1 ,1]], eval2, [1], [-b,a], 1])
+                pairs.append([[-b, a*f_x[0]], eval1, [[1 ,1]], eval2, [1], [-b,a], 1])
 
 
         i+=1   
@@ -733,18 +806,7 @@ def convert_to_binary_lanczos(z, n):
         if (z >> n - i - 1)&1: res[i] = 1
     return res
     
-def create_solution(pairs, null_space, n, len_primes, primes, f_x, m0, m1, inert, f_prime_sq, leading, f_prime_eval, u,qua):
-    #print("n: "+str(n)+" len_primes: "+str(len_primes)+" f_x: "+str(f_x)+" m0: "+str(m0)+" m1:"+str(m1)+" inert: "+str(inert)+" f_prime_sq: "+str(f_prime_sq)+" leading: "+str(leading)+" f_prime_eval: "+str(f_prime_eval)+" u: "+str(u))
-
-    ###Pairs used: index 6, index 4, index 3,index 0
-   # print("len nspace: "+str(len(null_space))+" len pairs: "+str(len(pairs)))
-   # i=0
-   # while i < len(pairs):
-        #[i][1]=1
-
-       # i+=1
-    xtotal=1
-    int_square=1
+def create_solution(pairs, null_space, n, len_primes, primes, f_x, m0, m1, inert, f_prime_sq, leading, f_prime_eval, u):
     f_norm = 0
     tmp = 1
     for x in f_x:
@@ -755,39 +817,20 @@ def create_solution(pairs, null_space, n, len_primes, primes, f_x, m0, m1, inert
     S = 0
     
     x = f_prime_eval
-    rat=create_rational(null_space, n, len_primes, primes, pairs)
-    x = x*rat%n
-    hit=0
+    x = x*create_rational(null_space, n, len_primes, primes, pairs)%n
+    
     rational_square = [i for i in f_prime_sq]
-
-
     for k in range(len(null_space)):
         if null_space[k]:
-           
-
+            rational_square = div_poly(poly_prod(rational_square, pairs[k][0]), f_x)
+            S += pairs[k][6]
             
-            ###pair info: [[-b, a*leading], eval1, [[1, 1]], eval2, [1], [-b,a], 1]
-            ###If free relation: [[leading_coeff*p], leading_coeff*p, [[1,1]], p*m1, [1], [0,p], 1]
-         #   print("adding pair[k] [-b, a*leading]: "+str(pairs[k][0])+" eval1: "+str(pairs[k][1])+" eval2: "+str(pairs[k][3])+" [-b,a]: "+str(pairs[k][5]))
-
-
-
-            prod=poly_prod(rational_square, pairs[k][0])
-            rational_square = div_poly(prod, f_x)
-            S += pairs[k][6] ##exp?
-    
-
-
-
-
-    lead=pow(leading, S>>1, n)  
-    x = x*lead%n
-   # print("Rational info f_prime_eval: "+str(f_prime_eval)+" rat: "+str(rat)+" lead: "+str(lead)+" final: "+str(x)+" nullspace len: "+str(hit)+" S: "+str(S)+" inert: "+str(inert)+" u: "+str(u))          
+    x = x*pow(leading, S>>1, n)%n
+            
     coeff_bound = [fd*pow(f_norm, len(f_x)-1-i)*pow(2*(leading*u)*f_norm, S>>1) for i in range(len(f_x)-1)]
-    #print(" f_prime_sq: "+str(f_prime_sq)+" prod: "+str(prod))
+    
     y = square_root(f_x, rational_square, inert, m0, m1, leading, max(coeff_bound))
     y = y*pow(m1, S>>1, n)%n
-  
     
     return x, y
     
@@ -815,11 +858,11 @@ def create_rational(null_space, n, len_primes, primes, pairs):
 
 
 def compute_factors(pairs_used, vec, n, primes, g, g_prime, g_prime_sq, g_prime_eval, m0, m1, leading_coeff,
-                    inert_set, M, time_1,Q):
+                    inert_set, M, time_1):
 
     x, y = create_solution(pairs_used, vec, n, len(primes), primes, g, m0, m1, inert_set[-1], g_prime_sq,
-                              leading_coeff, g_prime_eval, M<<1,Q)
-    print("x**2%n: "+str(x**2%n)+" y**2%n: "+str(y**2%n))
+                              leading_coeff, g_prime_eval, M<<1)
+
     if x != y and math.gcd(x-y, n) != 1 and math.gcd(x+y, n) != 1:
         print_final_message(x, y, n, time_1)
         return True, 1
@@ -979,11 +1022,416 @@ def reduce_sparse_matrix(matrix, pairs):
         matrix = [{mapping[c] for c in row if c in mapping} for row in matrix]
 
     return matrix, pairs
+
+# Master function, keeps the partial_relations and possible_smooth lists sorted, find the matching large primes, create the full relations from large primes
+def handle_large_fp(pair, large_primes, pairs_used, fp, graph_fp, size_fp, parent_fp, g, divide_leading, cycle_len, full_found, partial_found_fp):
+    pair[4] = [large_primes[3]]
+
+    if large_primes[3] == large_primes[4]:
+        pairs_used.append(pair)
+        full_found += 1
+
+    elif not bool(fp):
+        pair[4].append(large_primes[4])
+
+        small_p, big_p = large_primes[3], large_primes[4]
+
+        fp[small_p] = {}
+        fp[small_p][big_p] = pair
+
+        graph_fp[small_p] = [big_p]
+        graph_fp[big_p] = [small_p]
+
+        parent_fp[small_p] = small_p
+        parent_fp[big_p] = small_p
+
+        size_fp += 1
+
+    else:
+        small_p, big_p = large_primes[3], large_primes[4]
+
+        flag_small_prime = small_p in graph_fp
+        
+        # If the smallest prime has not already been seen
+        if not flag_small_prime:
+            graph_fp[small_p] = [big_p]
+
+            # Find where in partial relations it is needed to insert the new partial relation
+            pair[4].append(big_p)
+
+            fp[small_p] = {}
+            fp[small_p][big_p] = pair
+
+            size_fp += 1
+            
+            # Find if largest prime has already been seen
+            flag_big_prime = big_p in graph_fp
+
+            if flag_big_prime: # if seen add the smallest prime to the list of links of the largest prime
+                graph_fp[big_p].append(small_p)
+
+                parent_fp[small_p] = parent_fp[big_p]
+
+            else: # If it has not been seen, append it
+                graph_fp[big_p] = [small_p]
+
+                parent_fp[small_p] = small_p
+                parent_fp[big_p] = small_p
+            
+        # If the smallest prime has already been seen
+        else:
+            flag_big_prime = big_p in graph_fp
+            
+            # If big prime has not been seen
+            if not flag_big_prime:
+                graph_fp[small_p].append(big_p) # Append the largest prime to the list of links of the smallest prime
+                graph_fp[big_p] = [small_p] # Create the large prime in the graph
+
+                parent_fp[big_p] = parent_fp[small_p]
+
+                pair[4].append(big_p)
+                # Find where to insert the partial relation
+                if small_p not in fp:
+                    fp[small_p] = {}
+
+                fp[small_p][big_p] = pair
+
+                size_fp += 1
+
+            # If the largest prime has been seen, ie if both primes have already been seen
+            else:
+
+                parent_small_p = parent_fp[small_p]
+                while parent_fp[parent_small_p] != parent_small_p:
+                    parent_fp[parent_small_p], parent_small_p = parent_fp[parent_fp[parent_small_p]], parent_fp[parent_small_p]
+
+                parent_big_p = parent_fp[big_p]
+                while parent_fp[parent_big_p] != parent_big_p:
+                    parent_fp[parent_big_p], parent_big_p = parent_fp[parent_fp[parent_big_p]], parent_fp[parent_big_p]
+
+                if parent_small_p != parent_big_p:
+                    graph_fp[small_p].append(big_p)
+                    graph_fp[big_p].append(small_p)
+
+                    parent_fp[parent_big_p] = parent_small_p
+
+                    pair[4].append(big_p)
+                    # Find where to insert the partial relation
+                    if small_p not in fp:
+                        fp[small_p] = {}
                         
+                    fp[small_p][big_p] = pair
+
+                    size_fp += 1
+                else:
+                    path_cycle = find_cycle_fp(graph_fp, [small_p, big_p])
+                    if len(path_cycle) < 11: cycle_len[len(path_cycle)-2] += 1
+                    else: cycle_len[-1] += 1
+                    combine_fp(pair, pairs_used, fp, path_cycle, divide_leading, g)
+                    partial_found_fp += 1
+
+    return pairs_used, fp, graph_fp, size_fp, parent_fp, cycle_len, full_found, partial_found_fp
+def handle_large_pf(pair, large_primes, pairs_used, pf, graph_pf, size_pf, parent_pf, g, divide_leading, cycle_len, full_found, partial_found_pf):
+    if large_primes[1] == 1:
+        tmp = (1, 1) # [smallest_prime, r_smallest]
+        pair[2] = [tmp]
+
+    else:
+        tmp = (large_primes[1], pair[5][1]*invmod(-pair[5][0], large_primes[1])%large_primes[1]) # [smallest_prime, r_smallest]
+        pair[2] = [tmp]
+
+    tmp2 = (large_primes[2], pair[5][1]*invmod(-pair[5][0], large_primes[2])%large_primes[2]) # [largest_prime, r_largest]
+
+    if large_primes[1] == large_primes[2]:
+        pairs_used.append(pair)
+        full_found += 1
+
+    elif not len(pf):
+        pair[2].append(tmp2)
+        pf[tmp] = {}
+        pf[tmp][tmp2] = pair
+
+        graph_pf[tmp] = {}
+        graph_pf[tmp][tmp2[0]] = [tmp2]
+        graph_pf[tmp2] = {}
+        graph_pf[tmp2][tmp[0]] = [tmp]
+
+        parent_pf[tmp] = tmp
+        parent_pf[tmp2] = tmp
+
+    else:
+        flag_small_prime = tmp in graph_pf
+        
+        # If [smallest_prime, r_smallest] has not already been seen
+        if not flag_small_prime:
+            graph_pf[tmp] = {}
+            graph_pf[tmp][tmp2[0]] = [tmp2] # Create smallest prime in graph
+
+            pair[2].append(tmp2)
+            pf[tmp] = {}
+            pf[tmp][tmp2] = pair
+            
+            # Find if largest prime has already been seen
+            flag_big_prime = tmp2 in graph_pf
+
+            if flag_big_prime:
+                if tmp[0] in graph_pf[tmp2]: # If seen, add the smallest prime to the list of links of the largest prime
+                    graph_pf[tmp2][tmp[0]].append(tmp)
+                else:
+                    graph_pf[tmp2][tmp[0]] = [tmp]
+
+                parent_pf[tmp] = tmp2
+
+            else: # If it has not been seen, create it in the graph
+                graph_pf[tmp2] = {}
+                graph_pf[tmp2][tmp[0]] = [tmp]
+
+                parent_pf[tmp] = tmp
+                parent_pf[tmp2] = tmp
+
+        # If [smallest_prime, r_smallest] has already be seen
+        # We look for [largest_prime, r_largest]
+        else:
+            flag_big_prime = tmp2 in graph_pf
+
+            if not flag_big_prime: # [largest_prime, r_biggest] not in graph
+                if tmp2[0] in graph_pf[tmp]:
+                    graph_pf[tmp][tmp2[0]].append(tmp2) # Create the link from small to big prime
+                else:
+                    graph_pf[tmp][tmp2[0]] = [tmp2] # Create the link from small to big prime
+
+                graph_pf[tmp2] = {}
+                graph_pf[tmp2][tmp[0]] = [tmp] # Create the large prime in the graph
+
+                parent_pf[tmp2] = tmp
+
+                pair[2].append(tmp2)
+                # Find where to insert the partial relation
+                if tmp not in pf:
+                    pf[tmp] = {}
+
+                pf[tmp][tmp2] = pair
+
+                size_pf += 1
+
+            else:
+                parent_tmp = parent_pf[tmp]
+                while parent_pf[parent_tmp] != parent_tmp:
+                    parent_pf[parent_tmp], parent_tmp = parent_pf[parent_pf[parent_tmp]], parent_pf[parent_tmp]
+
+                parent_tmp2 = parent_pf[tmp2]
+                while parent_pf[parent_tmp2] != parent_tmp2:
+                    parent_pf[parent_tmp2], parent_tmp2 = parent_pf[parent_pf[parent_tmp2]], parent_pf[parent_tmp2]
+
+                if parent_tmp != parent_tmp2:
+                    if tmp2[0] in graph_pf[tmp]:
+                        graph_pf[tmp][tmp2[0]].append(tmp2)
+                    else:
+                        graph_pf[tmp][tmp2[0]] = [tmp2]
+
+                    if tmp[0] in graph_pf[tmp2]:
+                        graph_pf[tmp2][tmp[0]].append(tmp)
+                    else:
+                        graph_pf[tmp2][tmp[0]] = [tmp]
+
+                    parent_pf[parent_tmp2] = parent_tmp
+
+                    pair[2].append(tmp2)
+
+                    if tmp not in pf:
+                        pf[tmp] = {}
+                        
+                    pf[tmp][tmp2] = pair
+
+                    size_pf += 1
+
+                else:
+                    path_cycle = find_cycle_pf(graph_pf, [tmp, tmp2])
+                    if len(path_cycle) < 11: cycle_len[len(path_cycle)-2] += 1
+                    else: cycle_len[-1] += 1
+                    combine_pf(pair, pairs_used, pf, path_cycle, divide_leading, g)
+                    partial_found_pf += 1
+
+    return pairs_used, pf, graph_pf, size_pf, parent_pf, cycle_len, full_found, partial_found_pf
+
+def combine_pf(pair, pairs_used, pf, path, divide_leading, g):
+    tmp = [i for i in pair]
+    for i in range(len(path)-1):
+        if path[i][0] <= path[i+1][0]: firstp, secondp = path[i], path[i+1]
+        else: firstp, secondp = path[i+1], path[i]
+
+        combine = pf[firstp][secondp]
+        tmp2 = [div_poly(poly_prod(tmp[0], combine[0]), g),
+                tmp[1]*combine[1],
+                tmp[2] + [path[i]],
+                tmp[3]*combine[3],
+                [1],
+                poly_prod(tmp[5], combine[5]),
+                tmp[6]+1]
+        for p in range(len(divide_leading)):
+            tmp2.append(tmp[7+p] or combine[7+p])
+
+        tmp = [i for i in tmp2]
+
+    pairs_used.append(tmp)
+def find_cycle_pf(graph, init):
+    if init[0] == (1, 1): return DFS_pf(graph, init)
+
+    path_p1_to_1 = DFS_pf(graph, [(1, 1), init[0]])
+
+    if path_p1_to_1 is not None:
+        path_p2_to_1 = DFS_pf(graph, [(1, 1), init[1]])
+
+        if path_p2_to_1 is not None:
+            index1, index2 = len(path_p1_to_1)-1, len(path_p2_to_1)-1
+            while path_p1_to_1[index1] == path_p2_to_1[index2]:
+                index1 -= 1
+                index2 -= 1
+            return path_p2_to_1[:index2+2] + path_p1_to_1[:index1+1][::-1]
+
+    return DFS_pf(graph, init)
+def DFS_pf(graph, init):
+    path = [init[1]]
+    stack = []
+    neighbors = [init[1]]
+    
+    tmp = graph[init[1]]
+
+    if init[0][0] in tmp and init[0] in tmp[init[0][0]]:
+        return path + [init[0]]
+
+    # Initialize the potential paths
+    for key in tmp.keys():
+        neighbors += tmp[key]
+    
+    stack.append(neighbors)
+    
+    # While there is a potential path that has not been explored
+    while len(stack):
+        while len(stack) and len(stack[-1]) == 1:
+            path.pop()
+            stack.pop()
+        if not len(stack): break
+        next_node = stack[-1][-1]
+        stack[-1].pop()
+        path.append(next_node)
+        neighbors = [next_node]
+
+        tmp = graph[next_node]
+
+        if init[0][0] in tmp and init[0] in tmp[init[0][0]]:
+            return path + [init[0]]
+        
+        parent = stack[-1][0]
+
+        for key in tmp.keys():
+            if key == parent[0]:
+                for i in range(len(tmp[key])):
+                    if tmp[key][i] != parent: neighbors.append(tmp[key][i])
+                    else:
+                        neighbors += tmp[key][i+1:]
+                        break
+
+            else:
+                neighbors += tmp[key]
+
+        stack.append(neighbors)
+def combine_fp(pair, pairs_used, fp, path, divide_leading, g):
+    tmp = [i for i in pair]
+    for i in range(len(path)-1):
+        firstp, secondp = min(path[i],path[i+1]), max(path[i],path[i+1])
+
+        combine = fp[firstp][secondp]
+        tmp2 = [div_poly(poly_prod(tmp[0], combine[0]), g),
+                tmp[1]*combine[1],
+                [[1, 1]],
+                tmp[3]*combine[3],
+                tmp[4] + [path[i]],
+                poly_prod(tmp[5],combine[5]),
+                tmp[6]+1]
+        for p in range(len(divide_leading)):
+            tmp2.append(tmp[7+p] or combine[7+p])
+
+        tmp = [i for i in tmp2]
+    pairs_used.append(tmp)
+def find_cycle_fp(graph, init):
+    if init[0] == 1: return DFS_fp(graph, init)
+
+    path_p1_to_1 = DFS_fp(graph, [1, init[0]])
+
+    if path_p1_to_1 is not None:
+        path_p2_to_1 = DFS_fp(graph, [1, init[1]])
+
+        if path_p2_to_1 is not None:
+            index1, index2 = len(path_p1_to_1)-1, len(path_p2_to_1)-1
+            while path_p1_to_1[index1] == path_p2_to_1[index2]:
+                index1 -= 1
+                index2 -= 1
+            return path_p2_to_1[:index2+2] + path_p1_to_1[:index1+1][::-1]
+
+    return DFS_fp(graph, init)
+def DFS_fp(graph, init):
+    path = [init[1]]
+    stack = []
+    neighbors = [init[1]]
+    
+    # Initialize the potential paths
+    tmp = graph[init[1]]
+
+    if init[0] in tmp:
+        return path + [init[0]]
+    
+    neighbors += tmp
+    
+    stack.append(neighbors)
+    
+    # While there is a potential path that has not been explored
+    while len(stack):
+        while len(stack) and len(stack[-1]) == 1:
+            path.pop()
+            stack.pop()
+        if not len(stack): break
+
+        next_node = stack[-1][-1]
+        stack[-1].pop()
+        path.append(next_node)
+        neighbors = [next_node]
+
+        if init[0] in graph[next_node]:
+            return path + [init[0]]
+        
+        parent = stack[-1][0]
+
+        for i in range(len(graph[next_node])):
+            if graph[next_node][i] != parent: neighbors.append(graph[next_node][i])
+            else:
+                neighbors += graph[next_node][i+1:]
+                break
+
+        stack.append(neighbors)
 ## Creation of polynomials
-def find_relations(f_x, g, primes, R_p, Q, B_prime, divide_leading, prod_primes, pow_div, pairs_used,const1, const2, logs, M,mult,x,mod,n):
-    b = mult  
-    while b < 20:
+def find_relations(f_x, leading_coeff, g, primes, R_p, Q, B_prime, divide_leading, prod_primes, pow_div, pairs_used,const1, const2, logs, m0, m1, M):
+    fp, pf = {}, {}
+    parent_fp, parent_pf = {}, {}
+    full_found = 0
+    partial_found_fp, partial_found_pf = 0, 0
+    size_fp, size_pf = 0, 0
+    graph_fp, graph_pf = {}, {}
+    offset = 15+math.log2(const1)
+    cycle_len = [0]*10
+    
+    V = 3 + len(primes) + B_prime + len(Q) + len(divide_leading)
+    
+    print("sieving...")
+    print("need to find at least "+str(V+10)+" relations\n")
+    
+    time_1 = datetime.now()
+    
+    b = 1
+        
+    print('\r'+"0/("+str(V)+"+10) relations found")
+    while len(pairs_used) < V+10:
+        
         div = 1
         for q in range(len(divide_leading)):
             p = divide_leading[q]
@@ -992,19 +1440,76 @@ def find_relations(f_x, g, primes, R_p, Q, B_prime, divide_leading, prod_primes,
                 while not b%tmp and tmp <= pow_div[q]:
                     div *= p
                     tmp *= p
-        pairs = sieve(M, f_x, primes, R_p, b, logs,x,mod,n) ##to do: returning tmp_poly for debug purposes.Remove later
+        
+        pairs = sieve(M, f_x, primes, R_p, m0, m1, b, logs, offset, leading_coeff, div)
+       # pairs = sieve2(M, f_x, primes, R_p, m0, m1, b, logs,x,mod)
+
+      #  smooth = batch_smooth_test(pairs, prod_primes, const1, const2, div)
+        for i, pair in enumerate(pairs):
+            z = trial(pair, primes, const1, const2, div)
+            if z[0]:
+                tmp = [u for u in pair]
+                for p in divide_leading: tmp.append(not pair[5][0]%p)
+                if z[2] == 1 and z[4] == 1:
+                    pairs_used.append(tmp)
+                    full_found += 1
+
+                elif z[4] > 1 and z[2] == 1:
+                    pairs_used, fp, graph_fp, size_fp, parent_fp, cycle_len, full_found, partial_found_fp = handle_large_fp(tmp, z, pairs_used, fp, graph_fp, size_fp, parent_fp, g, divide_leading,cycle_len, full_found, partial_found_fp)
+
+                elif z[4] == 1 and z[2] > 1:
+                    pairs_used, pf, graph_pf, size_pf, parent_pf, cycle_len, full_found, partial_found_pf = handle_large_pf(tmp, z, pairs_used, pf, graph_pf, size_pf, parent_pf, g, divide_leading,cycle_len, full_found, partial_found_pf)
+ 
+        print('\r'+"b = "+str(b)+" "+str(len(pairs_used))+"/("+str(V)+"+10) ; full relations = "+str(full_found)+" | partial found fp = "+str(partial_found_fp)+" ("+str(size_fp)+") | partial found pf = "+str(partial_found_pf)+" ("+str(size_pf)+")")
+        b += 1
+        
+    print("\n")
+    
+    time_2 = datetime.now()
+    
+    print("sieving done in "+format_duration(time_2-time_1)+".\n")
+    print("Distribution of cycle length:")
+    print("1-cycle: "+str(full_found))
+    for i in range(9):
+        print(str(i+2)+"-cycle: "+str(cycle_len[i]))
+    print("11+-cycle: "+str(cycle_len[-1])+"\n")
+    print(str(partial_found_fp)+" partial relations fp found")
+    print(str(partial_found_pf)+" partial relations pf found")
+                
+    return pairs_used, V                        
+## Creation of polynomials
+
+
+def find_relations2(n,V,f_x, g, primes, R_p, Q, B_prime, divide_leading, prod_primes, pow_div, pairs_used,const1, const2, logs, m0, m1,M,mod,x):#M,mult,x,mod,n):
+    b = 1  
+    offset = 15+math.log2(const1)
+    while b <2000:
+        div = 1
+        for q in range(len(divide_leading)):
+            p = divide_leading[q]
+            if not b%p:
+                tmp = p
+                while not b%tmp and tmp <= pow_div[q]:
+                    div *= p
+                    tmp *= p
+      #  pairs = sieve(M, f_x, primes, R_p, m0, m1, b, logs, offset, f_x[0],div)
+       #pairs = sieve2(M, f_x, primes, R_p,b, logs,x,mod,n) ##to do: returning tmp_poly for debug purposes.Remove later
+
+        pairs = sieve3(M, f_x, primes, R_p, m0,m1,b, logs,x,mod) ##to do: returning tmp_poly for debug purposes.Remove later
         for i, pair in enumerate(pairs):
             z = trial(pair, primes, const1, const2, div)
             if z[0]:
                 tmp = [u for u in pair]
                 for p in divide_leading: 
                     tmp.append(not pair[5][0]%p)
-                if z[2] == 1 and z[4] == 1:
+                if z[2] == 1 and z[4] == 1 and tmp not in pairs_used:
                   #  print("adding: "+str(tmp))
                     pairs_used.append(tmp)
-
+                    print(len(pairs_used))
+                    if len(pairs_used)> V+10: 
+                        return pairs_used
         b+=1
-                                                                                        #cycle_len, full_found, partial_found_pf)                  
+    print("pairs found: "+str(len(pairs_used))+"/"+str(V))                                                                                     #cycle_len, full_found, partial_found_pf)                  
     return pairs_used
 
 def coefficients(n, m, d):
@@ -1326,8 +1831,8 @@ def get_Lnorm(F, s, B):
 
     return math.log(abs(res))/2
         
-def initialize_2(f_x, d, primes, leading_coeff):
-    m1=f_x[0]
+def initialize_2(f_x, m1,d, primes, leading_coeff):
+
     pairs_used, R_p, logs, tmp = [], [], [], 10*d
     divide_leading, pow_div = [], []
     for p in primes:
@@ -1404,11 +1909,11 @@ def sylvester(P, Q):
 def resultant(P, Q):
     return sylvester(P,Q).det()
 
-def NFS_sieve(n,f_x,primeslist,mult,R_p,pairs_used,logs,pow_div,divide_leading,B_prime,x,mod):
-
+def NFS_sieve(n,f_x,primeslist,mult,R_p,pairs_used,logs,pow_div,divide_leading,B_prime,x,mod,bin_term):
+    print("f_x: "+str(f_x))
     LARGE_PRIME_CONST=10000
     n = int(n)
-    d=2
+
     B=primeslist[-1]
     primes =primeslist
     prod_primes = math.prod(primes)
@@ -1421,15 +1926,17 @@ def NFS_sieve(n,f_x,primeslist,mult,R_p,pairs_used,logs,pow_div,divide_leading,B
     for i in range(2, len(f_x)): 
        g.append(f_x[i]*pow(z, i-1))
     Q, k = initialize_3(n, f_x, f_prime, B, z)
-    pairs_used = find_relations(f_x, g, primes, R_p, Q, B_prime, divide_leading,prod_primes, pow_div, pairs_used, const1, const2, logs,M,mult,x,mod,n)
+    pairs_used, V = find_relations(f_x, f_x[0], g, primes, R_p, Q, B_prime, divide_leading,prod_primes, pow_div, pairs_used, const1, const2, logs, f_x[0], -(bin_term*2),M)
+
+  #  pairs_used = find_relations(f_x, g, primes, R_p, Q, B_prime, divide_leading,prod_primes, pow_div, pairs_used, const1, const2, logs,M,mult,x,mod,n,bin_term)
     return pairs_used,R_p,Q,divide_leading,g,M
 
-def NFS_solve(n,f_x,primeslist,pairs_used,R_p,Q,divide_leading,V,g,M,inert_set):
-    m0=-f_x[1]
+def NFS_solve(n,f_x,primeslist,pairs_used,R_p,Q,divide_leading,V,g,M,inert_set,d,bin_term):
+    m0=-(bin_term*2)
     m1=f_x[0]
-    d=2
-    leading_coeff = f_x[0]
 
+    leading_coeff = f_x[0]
+    print("trying: "+str(f_x)+" m0: "+str(m0)+" m1: "+str(m1)+" bin_term: "+str(bin_term))
     f_prime = get_derivative(f_x)
     BLOCK_SIZE=8
 
@@ -1438,7 +1945,7 @@ def NFS_solve(n,f_x,primeslist,pairs_used,R_p,Q,divide_leading,V,g,M,inert_set):
     g_prime_sq,g_prime_eval = div_poly(poly_prod(g_prime, g_prime), g), pow(leading_coeff, d-2, n)*eval_F(m0, m1, f_prime, d-1)%n
     print("sieving complete, building matrix...")
     matrix = build_sparse_matrix(pairs_used, primeslist, R_p, Q, divide_leading)
-    matrix = transpose_sparse(matrix, V)
+    matrix = transpose_sparse(matrix, len(pairs_used))
     print("matrix built "+str(len(matrix))+"x"+str(len(pairs_used))+" reducing...")
     print("pairs before: "+str(len(pairs_used)))
     matrix, pairs_used = reduce_sparse_matrix(matrix, pairs_used)
@@ -1451,9 +1958,11 @@ def NFS_solve(n,f_x,primeslist,pairs_used,R_p,Q,divide_leading,V,g,M,inert_set):
         print(str(len(null_space))+" kernel vectors found")
         for vec in null_space:
             vec = convert_to_binary_lanczos(vec, len(pairs_used))
+            print(" g: "+str(g)+" g_prime: "+str(g_prime)+" g_prime_sq: "+str(g_prime_sq)+" g_prime_eval: "+str(g_prime_eval)+" m0: "+str(m0)+" m1: "+str(m1)+" leading_coeff: "+str(leading_coeff)+" inert set: "+str(inert_set)+" M: "+str(M))
+         #   sys.exit()
             flag, res = compute_factors(pairs_used, vec, n, primeslist, g, g_prime, g_prime_sq, g_prime_eval,
                                                              m0, m1, leading_coeff, inert_set, M,
-                                                             time_1,Q)
+                                                             time_1)
             if flag: return res
 
 cdef modinv(n,p):
@@ -1491,13 +2000,11 @@ def launch(n,primeslist1,primeslist2,small_primeslist):
     print("[i]Creating iN datastructure... this can take a while...")
     primeslist1c=copy.deepcopy(primeslist1)
     plists=[]
-
-    hmap,hmap2=create_hashmap(n,primeslist1)
     duration = default_timer() - start
     print("[i]Creating iN datastructure in total took: "+str(duration))
 
     print("[*]Launching attack with "+str(workers)+" workers\n")
-    find_comb(n,hmap,hmap2,primeslist1,primeslist2,small_primeslist)
+    find_comb(n,primeslist1,primeslist2,small_primeslist)
 
     return 
 
@@ -1584,52 +2091,7 @@ def lift_root(z,y,n, root, p, exp):
     new_root = (root+t*p**exp)%p**(exp+1)
     return new_root
 
-def solve_roots(prime,n):
-    hmap_p=[]
-    k=0
-    while k < prime and k < quad_sieve_size:
-        hmap_p.append({})
-        k+=1
-   
 
-    k=1
-    while k < prime and k < quad_sieve_size+1:
-        y=0
-        while y < prime:
-            roots=solve_quadratic_congruence(k, y, -n, prime)
-            if roots == -1:
-                y+=1
-                continue
-            y2=y
-            while y2 < prime:
-                for x in roots:
-                    if (k*x**2+y2*x-n)%prime!=0: 
-                        print("error")   
-                    try:
-                        ret=hmap_p[k-1][y2]
-                        ret.append(x)
-
-                    except Exception as e:
-                        hmap_p[k-1][y2]=[x]
-             
-
-   
-                y2+=prime
-            y+=1
-        k+=1
-    return hmap_p
-
-def create_hashmap(n,primeslist):
-    i=0
-    hmap=[]
-    hmap2=[]
-    while i < len(primeslist):
-        hmap_p=solve_roots(primeslist[i],n)
-        hmap.append(hmap_p)
-        hmap2.append([])
-        i+=1
-
-    return hmap,hmap2
 
 
 @cython.profile(False)
@@ -1811,7 +2273,7 @@ def generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SI
                 continue                
             cmod = cmod * potential_a_factor
             cfact.append(potential_a_factor)
-            if  jacobi((-quad*n)%primeslist[randindex],primeslist[randindex])!=1:#hmap[randindex][1]!=quad%primeslist[randindex]:
+            if  jacobi((-quad*n)%primeslist[randindex],primeslist[randindex])!=1:
                 print("THE FUC")
                 time.sleep(1000000)
             indexes.append(randindex)
@@ -1891,43 +2353,6 @@ def find_xy(primeslist,n,x,collected,z,lin):
         i+=1
     return xy
 
-def retrieve(hmap,primeslist,x,lin,n):
-
-    collected=[1]*(quad_sieve_size+1)
-    mult_list=[]
-    interval=array.array("i",[0]*lin_sieve_size)
-    i=0
-    while i < quad_sieve_size:
-        mult_list.append(array.array("i",[0]*lin_sieve_size))
-        i+=1
-    i=0
-    while i < len(hmap):
-        
-        prime=primeslist[i]#**2
-        log=round(math.log2(prime))
-        c=1
-        while c <  len(hmap[i])+1:
-            z=c
-            xy=(z*x)+lin
-            if (z*x)%prime !=0 and xy%prime !=0:
-                mul=solve_lin_con(xy,hmap[i][c-1][(x)%prime],prime)
-                t=mul   
-                y=(xy*mul)-x*z
-                if (z*x**2+y*x-n)%prime !=0:
-                    print("fatal error: "+str(z)+" p: "+str(prime)+" x: "+str(x))
-                    sys.exit()
-                while t < lin_sieve_size:
-                    mult_list[c-1][t]+=log
-                    t+=prime
-       
-              #  mult_list[c].append([prime,mul])
-
-             #   collected.extend([prime,c])
-            c+=1
-        i+=1
-
-    return mult_list
-
 def get_partials(mod,list1):
     i=0
     new_list=[]
@@ -1996,12 +2421,19 @@ def get_gray_code(n):
             gray[i] = (v - 1, 1)
     return gray
 
-cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_prime_bound,primeslist2,small_primeslist):
-    i=0
-  #  while i < len(hmap):
-      #  print("prime: "+str(primeslist[i])+" "+str(hmap[i]))
-      #  i+=1
+@cython.boundscheck(False)
+@cython.wraparound(False)
+cdef binomial_coeffs_fast(y, n):
+    coeffs=[1]                
+    c=1
+    yk=1
+    for k in range(1, n):
+        c=c*(n-k+1)//k 
+        yk*=y                
+        coeffs.append(c*yk)
+    return coeffs
 
+cdef construct_interval(list ret_array,partials,n,primeslist,large_prime_bound,primeslist2,small_primeslist):
     grays = get_gray_code(20)
     primelist_f=copy.copy(primeslist)
     primelist_f.insert(0,len(primelist_f)+1)
@@ -2029,7 +2461,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
     disc1_squared_list=[]
     xy_list=[]
     xy_f_list=[]
-    x_list=[]
+
     x_f_list=[]
     x1=1
     y0=1
@@ -2040,8 +2472,17 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
     UPPER_BOUND_SIQS=4000
     e=0.5
     tnum=int(((n)**e) /1)
-    
-    threshold = int(math.log2((lin_sieve_size)*math.sqrt(abs(n))) - thresvar)
+    LARGE_PRIME_CONST=10000
+    BLOCK_SIZE=8
+    NB_POLY_COARSE_EVAL=100
+    NB_POLY_PRECISE_EVAL=10
+    PRIME_BOUND=300
+    NB_ROOTS=2
+    MULTIPLIER=1
+    B=primeslist[-1]
+    prod_primes = math.prod(primeslist)
+    const1, const2 = LARGE_PRIME_CONST*primeslist[-1], LARGE_PRIME_CONST*primeslist[-1]*primeslist[-1]
+    threshold = 1#int(math.log2((lin_sieve_size)*math.sqrt(abs(n))) - thresvar)
     if threshold < 0:
         threshold = 1
     all_pairs_used=[]
@@ -2049,101 +2490,187 @@ cdef construct_interval(list ret_array,partials,n,primeslist,hmap,hmap2,large_pr
     divide_leading=[]
 
 
-    z=1
+
     y_start=-int(((n)**e) /1)#round(n**0.2)
     y_ind=0
     while y_ind<100_000_000:  ##This is shit... fix this.. 
-        y=y_start-y_ind
-        f_x=[z,y,-n]
-        seen=[]
-
+        y=y_start+y_ind
         d=2
-        pairs_used, R_p, logs, divide_leading, pow_div, B_prime = initialize_2(f_x, d, primelist, z)
+        while d <3:
+            f_x=binomial_coeffs_fast(y,d)
+            f_x+=[-n]
 
-        while 1:
-            new_mod,cfact,indexes=generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,bitlen(tnum),z)
-            #new_mod=3
-            #cfact=3
-            #indexes=[0]
-            if new_mod ==0:
-                print("exiting, no new modulus found")
-                break
-       #     print("mod: "+str(new_mod))
-            collected=[]
-            e=0
-            while e < len(indexes):
-            
-                ind=indexes[e]
-                prime=primeslist[ind]
-                l=hmap[ind][z-1]
-                collected.append(l)
-                e+=1
+            m0=-(y*2)
+            m1=f_x[0]
+            M=10000
+            leading_coeff = f_x[0]
+            f_prime = get_derivative(f_x)
+            g = [1,f_x[1]]
 
-            t=0
-            hit=0
-            x_list=[]
- 
-            mod=1
-            while t < len(collected):
-                prime=primeslist[indexes[t]]
-                try:
-                    ret=collected[t][y%prime]
-                    x_list.extend([prime,ret])
+            for i in range(2, len(f_x)): 
+                print(str(f_x[i])+" pow(leading_coeff, i-1): "+str(pow(leading_coeff, i-1))+" leading_coeff: "+str(leading_coeff))
+                g.append(f_x[i]*pow(leading_coeff, i-1))
 
-                    mod*=prime
-                except Exception as e:
-                    hit=1
+         #   print("g: "+str(g))
+            g_prime = get_derivative(g)
+            g_prime_sq,g_prime_eval = div_poly(poly_prod(g_prime, g_prime), g), pow(leading_coeff, d-2, n)*eval_F(m0, m1, f_prime, d-1)%n
+            inert_set = []  
+            for p in primeslist:
+       # print("m1: "+str(m1%p)+" p: "+str(p)+" leading coeff: "+str(leading_coeff%p)+" irreducibility: "+str(irreducibility(g, p))+" g: "+str(g))
+                if m1%p and leading_coeff%p and irreducibility(g, p): 
+                    inert_set.append(p)  
+            if len(inert_set)==0:
+                print("fail")
+                sys.exit()
+            pairs_used, R_p, logs, divide_leading, pow_div, B_prime = initialize_2(f_x, m1, d, primeslist, leading_coeff)
+        
+            Q, k = initialize_3(n, f_x, f_prime, B, leading_coeff)
+
+
+            seen=[]
+            mod_it=0
+            while mod_it<1000:
+                new_mod,cfact,indexes=generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,bitlen(tnum),f_x[0])
+                if new_mod ==0:
+                    print("exiting, no new modulus found")
                     break
+                print("mod: "+str(new_mod))
+                collected=[]
+                fail=0
+                mod=1
+                e=0
+                while e < len(indexes):
+                    
+                    ind=indexes[e]
+                    prime=primeslist[ind]
+                    mod*=prime
+                    collected.append(prime)
+                    poly=copy.deepcopy(f_x)
+                    roots=find_roots_poly(poly,prime)
+                    if len(roots) > 0:
+                        for root in roots:
+                            if evaluate(f_x,root)%prime!=0:
+                                print("super fatal blah: ",root)
+                                sys.exit()
+                        collected.append(roots)
+                    else:   
+                        fail=1
+                        break
+                    e+=1
+                if fail == 1:
+                    mod_it+=1
+                    continue
 
-                t+=1
-            if hit == 1:
-                continue  
-            enum=[]
-            x_list=get_partials(mod,x_list)
-            t=0
-            while t < len(x_list):
-                enum.append(x_list[t+1])
-                t+=2
-            root_list=[]
-            mult=1
-            for comb in itertools.product(*enum):
-                root=0
-                for l in comb:
-                    root+=l 
-                root%=mod
-                if (z*root**2+y*root-n)%mod !=0:
-                    print("fatal error")
-                root_list.append(root)
-          #  print("y: "+str(y)+" root_list: "+str(root_list)+" modulus: "+str(new_mod))
-         #   sys.exit()
-            for x in root_list:
+                enum=[]
+                x_list=get_partials(mod,collected)
+                t=0
+                while t < len(x_list):
+                    enum.append(x_list[t+1])
+                    t+=2
+                root_list=[]
+                mult=1
+                for comb in itertools.product(*enum):
+                    root=0
+                    for l in comb:
+                        root+=l 
+                    root%=mod
+                    if  evaluate(f_x,root)%mod !=0:
+                        print("fatal error")
+                        sys.exit()
+                    root_list.append(root)
+                V = 3 + len(primeslist) + B_prime + len(Q) + len(divide_leading)
+                for x in root_list:
+
+                    pairs_used = find_relations2(n,V,f_x, g, primeslist, R_p, Q, B_prime, divide_leading,prod_primes, pow_div, pairs_used, const1, const2, logs, m0, m1,M,mod,x)
+                  #  break
+               # pairs_used,V=find_relations(f_x, f_x[0], g, primeslist, R_p, Q, B_prime, divide_leading, prod_primes, pow_div, pairs_used,const1, const2, logs, m0, m1, M)
                 
-                pairs_used,R_p,Q,divide_leading,g,M=NFS_sieve(n,f_x,primelist,mult,R_p,pairs_used,logs,pow_div,divide_leading,B_prime,x,mod)
-                find = 3 + len(primeslist) + B_prime + len(Q) + len(divide_leading)
-                print("found: "+str(len(pairs_used))+" / "+str(find))     
-                if len(pairs_used)>find+10:
-                    inert_set = []
-                    m1=f_x[0]
-                    leading_coeff=f_x[0]
-                    for p in primeslist:
-                        if m1%p and leading_coeff%p and irreducibility(g, p): 
+                if len(pairs_used)> V+10:  
+                    break
             
-                            inert_set.append(p)
-                    if len(inert_set)==0:
-                        continue
-                    NFS_solve(n,f_x,primelist,pairs_used,R_p,Q,divide_leading,find,g,M,inert_set)
+            matrix = build_sparse_matrix(pairs_used, primeslist, R_p, Q, divide_leading)
+            matrix = transpose_sparse(matrix, V)
+            matrix, pairs_used = reduce_sparse_matrix(matrix, pairs_used)
 
+            time_1 = datetime.now()
+            while True:
+                null_space = block_lanczos(matrix, len(pairs_used), BLOCK_SIZE)
+                for vec in null_space:
+                    vec = convert_to_binary_lanczos(vec, len(pairs_used))
+               #     print(" g: "+str(g)+" g_prime: "+str(g_prime)+" g_prime_sq: "+str(g_prime_sq)+" g_prime_eval: "+str(g_prime_eval)+" m0: "+str(m0)+" m1: "+str(m1)+" leading_coeff: "+str(leading_coeff)+" inert set: "+str(inert_set)+" M: "+str(M))
+                    flag, res = compute_factors(pairs_used, vec, n, primeslist, g, g_prime, g_prime_sq, g_prime_eval,m0, m1, leading_coeff, inert_set, M,time_1)
+                    if flag: return res
+          #  seen=[]
+          #  mod_it=0
+          #  while mod_it<1000:
+            #    new_mod,cfact,indexes=generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,bitlen(tnum),f_x[0])
+            #   if new_mod ==0:
+            #        print("exiting, no new modulus found")
+            #        break
+       #     print("mod: "+str(new_mod))
+           #     collected=[]
+           #     fail=0
+           #     mod=1
+           #     e=0
+           #     while e < len(indexes):
+                    
+            #        ind=indexes[e]
+            #        prime=primeslist[ind]
+            #        mod*=prime
+            #        collected.append(prime)
+            #        poly=copy.deepcopy(f_x)
+            #        roots=find_roots_poly(poly,prime)
+            #        if len(roots) > 0:
+            #            for root in roots:
+            #                if evaluate(f_x,root)%prime!=0:
+            #                    print("super fatal blah: ",root)
+            #                    sys.exit()
+            #            collected.append(roots)
+            #        else:   
+            #            fail=1
+            #            break
+            #        e+=1
+            #    if fail == 1:
+            #        mod_it+=1
+            #        continue
 
-
+            #    enum=[]
+            #    x_list=get_partials(mod,collected)
+            #    t=0
+            #    while t < len(x_list):
+            #        enum.append(x_list[t+1])
+            #        t+=2
+            #    root_list=[]
+            #    mult=1
+            #    for comb in itertools.product(*enum):
+            #        root=0
+            #        for l in comb:
+            #            root+=l 
+            #        root%=mod
+            #        if  evaluate(f_x,root)%mod !=0:
+            #            print("fatal error")
+            #            sys.exit()
+            #        root_list.append(root)
+            #    for x in root_list:
+            #        pairs_used,R_p,Q,divide_leading,g,M=NFS_sieve(n,f_x,primelist,mult,R_p,pairs_used,logs,pow_div,divide_leading,B_prime,x,mod,y)
+            #        find = 3 + len(primeslist) + B_prime + len(Q) + len(divide_leading)
+            #        print("found: "+str(len(pairs_used))+" / "+str(find))     
+            #        if len(pairs_used)>find+10:
+            #            inert_set = []
+            #            m1=f_x[0]
+            #            leading_coeff=f_x[0]
+            #            for p in primeslist:
+            #                if m1%p and leading_coeff%p and irreducibility(g, p): 
+            #                    inert_set.append(p)
+            #            if len(inert_set)==0:
+            #                continue
+            #            NFS_solve(n,f_x,primelist,pairs_used,R_p,Q,divide_leading,find,g,M,inert_set,d,y)
+            #    mod_it+=1
+            d+=2
         y_ind+=1
-
-
-
-
-   
     return      
 
-def find_comb(n,hmap,hmap2,primeslist1,primeslist2,small_primeslist):
+def find_comb(n,primeslist1,primeslist2,small_primeslist):
 
     ret_array=[[],[],[],[]]
 
@@ -2153,7 +2680,7 @@ def find_comb(n,hmap,hmap2,primeslist1,primeslist2,small_primeslist):
 
 
     large_prime_bound = primeslist1[-1] ** lp_multiplier
-    construct_interval(ret_array,partials,n,primeslist1,hmap,hmap2,large_prime_bound,primeslist2,small_primeslist)
+    construct_interval(ret_array,partials,n,primeslist1,large_prime_bound,primeslist2,small_primeslist)
 
     return 0
 
