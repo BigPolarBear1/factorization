@@ -609,7 +609,7 @@ def sieve(length, f_x, rational_base, algebraic_base, m0, m1, b, logs, offset, l
             for k in range(len(tmp_poly)-1, q-1, -1): tmp[k] -= tmp[k-1]
 
         eval1 = tmp[0]
-     #   print(" eval1: "+str(eval1)+" eval2: "+str(eval2)+" b: "+str(b)+" m0: "+str(m0)+" m1: "+str(m1)+" length: "+str(length)+" evaluate(tmp_poly, -length+2*j): "+str(evaluate(tmp_poly, -length+2*j))+" -length+2*j: "+str(-length+2*j)+" temp_poly: "+str(tmp_poly))
+        print(" eval1: "+str(eval1)+" eval2: "+str(eval2)+" b: "+str(b)+" m0: "+str(m0)+" m1: "+str(m1)+" length: "+str(length)+" evaluate(tmp_poly, -length+2*j): "+str(evaluate(tmp_poly, -length+2*j))+" -length+2*j: "+str(-length+2*j)+" temp_poly: "+str(tmp_poly)+" tmp: "+str(tmp))
         for k in range(init, len(sieve_array), 2):
             if math.gcd(a, b) == 1 and eval2:
                 eval = abs(eval1*eval2)
@@ -629,8 +629,8 @@ def sieve3(length, f_x, rational_base, algebraic_base, m0,m1,b, logs,x,mod):
     sieve_len=lin_sieve_size
     pairs=[]
     x=(x*b)%mod
-    sieve_array = [0]*sieve_len
-    sieve_array_neg = [0]*sieve_len
+    sieve_array = interval=np.zeros(sieve_len,dtype=np.int16)#[0]*sieve_len
+    sieve_array_neg = interval=np.zeros(sieve_len,dtype=np.int16)#[0]*sieve_len
     tmp_poly = new_coeffs(f_x, b)
     for q, p in enumerate(rational_base):
         if mod%p ==0:
@@ -655,41 +655,54 @@ def sieve3(length, f_x, rational_base, algebraic_base, m0,m1,b, logs,x,mod):
                 sieve_array_neg[i]+=log
 
                 i+=p
-    i=0
-    while i < len(sieve_array):
-        if sieve_array[i] > keysize*0.7: ##TO DO: FIX THRESHOLD
-            a=x+i*mod
-            eval1=evaluate(tmp_poly,a)#z*a**2+(y*b)*a-n*(b**2)
-            if eval1%mod !=0:
-                print("error1")
-                sys.exit()
-            eval2=a*m1-b*m0#m1*a+((m0)*b)
-         #   print("eval1: "+str(eval1)+" eval2: "+str(eval2))
+    np.putmask(sieve_array, sieve_array < keysize*0.80, 0)
+    indexlist=np.nonzero(sieve_array)
+
+    indexlist_x=indexlist[0]
+    ind=0
+    length=len(indexlist_x)
+            
+    while ind < length:# length: 
+        i=int(indexlist_x[ind])
+     #   if sieve_array[i] > keysize*0.7: ##TO DO: FIX THRESHOLD
+        a=x+i*mod
+        eval1=evaluate(tmp_poly,a)#z*a**2+(y*b)*a-n*(b**2)
+        if eval1%mod !=0:
+            print("error1")
+            sys.exit()
+        eval2=a*m1-b*m0#m1*a+((m0)*b)
+        #    print("eval1: "+str(eval1)+" eval2: "+str(eval2)+" root: "+str(a)+" mod: "+str(mod)+" tmp_poly: "+str(tmp_poly))
         #    sys.exit()
-            if eval1!=0 and eval2!=0  and math.gcd(a, b) == 1:
-                pairs.append([[-b, a*f_x[0]], eval1, [[1 ,1]], eval2, [1], [-b,a], 1])
+        if eval1!=0 and eval2!=0  and math.gcd(a, b) == 1:
+            pairs.append([[-b, a*f_x[0]], eval1, [[1 ,1]], eval2, [1], [-b,a], 1])
                 
 
-        i+=1
+        ind+=1
+
+    np.putmask(sieve_array_neg, sieve_array_neg < keysize*0.80, 0)
+    indexlist=np.nonzero(sieve_array_neg)
+
+    indexlist_x=indexlist[0]
+    ind=0
+    length=len(indexlist_x)
+
+    while ind < length:# length: 
+        i=int(indexlist_x[ind])
+        a=x-i*mod
+        eval1=evaluate(tmp_poly,a)
+        if eval1%mod !=0:
+            print("error2")
+            sys.exit()
+        eval2=m1*a-m0*b
+
+
+
+        if eval1!=0 and eval2!=0  and math.gcd(a, b) == 1:
+            pairs.append([[-b, a*f_x[0]], eval1, [[1 ,1]], eval2, [1], [-b,a], 1])
+
+
+        ind+=1   
     #sys.exit()
-    i=0
-    while i < len(sieve_array_neg):
-        if sieve_array_neg[i] > keysize*0.7: ##TO DO: FIX THRESHOLD
-            a=x-i*mod
-            eval1=evaluate(tmp_poly,a)
-            if eval1%mod !=0:
-                print("error2")
-                sys.exit()
-            eval2=m1*a-m0*b
-
-
-
-            if eval1!=0 and eval2!=0  and math.gcd(a, b) == 1:
-                pairs.append([[-b, a*f_x[0]], eval1, [[1 ,1]], eval2, [1], [-b,a], 1])
-
-
-        i+=1   
-    
     return pairs
 
 def square_root(f, N, p, m0, m1, leading, bound):
@@ -1483,7 +1496,7 @@ def find_relations(f_x, leading_coeff, g, primes, R_p, Q, B_prime, divide_leadin
 def find_relations2(n,V,f_x, g, primes, R_p, Q, B_prime, divide_leading, prod_primes, pow_div, pairs_used,const1, const2, logs, m0, m1,M,mod,x):#M,mult,x,mod,n):
     b = 1  
     offset = 15+math.log2(const1)
-    while b <2000:
+    while b <200:
         div = 1
         for q in range(len(divide_leading)):
             p = divide_leading[q]
@@ -1492,7 +1505,7 @@ def find_relations2(n,V,f_x, g, primes, R_p, Q, B_prime, divide_leading, prod_pr
                 while not b%tmp and tmp <= pow_div[q]:
                     div *= p
                     tmp *= p
-      #  pairs = sieve(M, f_x, primes, R_p, m0, m1, b, logs, offset, f_x[0],div)
+       # pairs = sieve(M, f_x, primes, R_p, m0, m1, b, logs, offset, f_x[0],div)
        #pairs = sieve2(M, f_x, primes, R_p,b, logs,x,mod,n) ##to do: returning tmp_poly for debug purposes.Remove later
 
         pairs = sieve3(M, f_x, primes, R_p, m0,m1,b, logs,x,mod) ##to do: returning tmp_poly for debug purposes.Remove later
@@ -1505,11 +1518,11 @@ def find_relations2(n,V,f_x, g, primes, R_p, Q, B_prime, divide_leading, prod_pr
                 if z[2] == 1 and z[4] == 1 and tmp not in pairs_used:
                   #  print("adding: "+str(tmp))
                     pairs_used.append(tmp)
-                    print(str(len(pairs_used))+"/"+str(V))
+                    print("B: "+str(b)+" pairs found: "+str(len(pairs_used))+"/"+str(V)+" mod: "+str(mod))   
                     if len(pairs_used)> V+10: 
                         return pairs_used
         b+=1
-    print("pairs found: "+str(len(pairs_used))+"/"+str(V))                                                                                     #cycle_len, full_found, partial_found_pf)                  
+  #  print("B: "+str(b)+"pairs found: "+str(len(pairs_used))+"/"+str(V))                                                                                     #cycle_len, full_found, partial_found_pf)                  
     return pairs_used
 
 def coefficients(n, m, d):
@@ -2446,12 +2459,12 @@ cdef construct_interval(list ret_array,partials,n,primeslist,large_prime_bound,p
     primelist=copy.copy(primeslist)
     primelist.insert(0,2) ##To do: remove when we fix lifting for powers of 2
     #primelist.insert(0,-1)
-    print("[i]Filtering Quadratic Coefficients (quad_size) (to do: can be saved to disk for re-use)")
-    valid_quads,valid_quads_factors,qival=filter(primelist_f,n,1,quad_sieve_size+1)
-    print("[i]Filtering interval indices (lin_size) (to do: can be saved to disk for re-use)")
+    #print("[i]Filtering Quadratic Coefficients (quad_size) (to do: can be saved to disk for re-use)")
+    #valid_quads,valid_quads_factors,qival=filter(primelist_f,n,1,quad_sieve_size+1)
+    #print("[i]Filtering interval indices (lin_size) (to do: can be saved to disk for re-use)")
     start=1#round(n**0.25)
 
-    valid_ind,valid_ind_factors,lival=filter(primelist_f,n,1,lin_sieve_size+1)
+    #valid_ind,valid_ind_factors,lival=filter(primelist_f,n,1,lin_sieve_size+1)
     print("[i]Entering attack loop")
     smooths=[]
     coefficients=[]
@@ -2470,7 +2483,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,large_prime_bound,p
     too_close=1
     LOWER_BOUND_SIQS=1
     UPPER_BOUND_SIQS=4000
-    e=0.5
+    e=0.05
     tnum=int(((n)**e) /1)
     LARGE_PRIME_CONST=10000
     BLOCK_SIZE=8
@@ -2491,12 +2504,12 @@ cdef construct_interval(list ret_array,partials,n,primeslist,large_prime_bound,p
 
 
 
-    y_start=-int(((n)**e) /1)#round(n**0.2)
+    y_start=1#-int(((n)**e) /1)#round(n**0.2)
     y_ind=0
     while y_ind<100_000_000:  ##This is shit... fix this.. 
         y=y_start+y_ind
-        d=2
-        while d <3:
+        d=4
+        while d < 5:
             f_x=binomial_coeffs_fast(y,d)
             f_x+=[-n]
 
@@ -2529,8 +2542,12 @@ cdef construct_interval(list ret_array,partials,n,primeslist,large_prime_bound,p
 
             seen=[]
             mod_it=0
-            while mod_it<1000:
-                new_mod,cfact,indexes=generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,bitlen(tnum),f_x[0])
+            while mod_it<len(primeslist):#00:
+              #  new_mod,cfact,indexes=generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,bitlen(tnum),f_x[0])
+                ##To do: fix generate_modulus for higher degree...
+                new_mod=primeslist[mod_it]
+                cfact=[primeslist[mod_it]]
+                indexes=[mod_it]
                 if new_mod ==0:
                     print("exiting, no new modulus found")
                     break
@@ -2587,6 +2604,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,large_prime_bound,p
                 
                 if len(pairs_used)> V+10:  
                     break
+                mod_it+=1     
             
             matrix = build_sparse_matrix(pairs_used, primeslist, R_p, Q, divide_leading)
             matrix = transpose_sparse(matrix, V)
