@@ -15,7 +15,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 
 #### To run from folder "polysieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 60 -base 1000 -debug 0 -lin_size 10_000 -quad_size 1
+To run: python3 run_qs.py -keysize 50 -base 5_000 -debug 0 -lin_size 10_000 -quad_size 1
 
 UPDATE: Ignore this version for a few days. Yes, using square moduli for sieving is better then using non-square moduli. Because this always garantuees that a large part of the B-smooth can be ignored as far as linear algebra over Z/2 is concerned. So that gives us a small improvement over SIQS, where SIQS can only achieve something similar if it finds a lot of B-smooth using the same modulus. This in itself could be worth publishing a paper over... I have however also linked all these findings back to NFS in the last few months and if you can introduce square moduli to NFS's approach, reduce the required amount of B-smooths there.. then that jump in performance could give us a real shot at threatening RSA-1024.
 
@@ -26,6 +26,8 @@ Update: Quickly replaced the PoC with a old NFS variant I had modified a few mon
 Update: Also got it to work with 4th degree polynomials. I wonder if I just sieve using polynomials generated from the same binomial terms if I cant just combine all of them during linear algebra... its too warm today... going to take a break until later tonight. This heat is giving me brain damage.
 
 Update: Been doing a little bit more work toward implementing higher degree polynomials.. will finish it in the coming days.
+
+Update: Uploaded PoC now uses 4th degree polynomials. I do still need to fix some shit, mainly doing it so that it sieves a proper parabola everytime it calls into sieve3().. then next I should see if I can combine sieve results from polynomials of different degrees, but generated with the same binomial value.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
