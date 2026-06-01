@@ -27,7 +27,7 @@ Update: Also got it to work with 4th degree polynomials. I wonder if I just siev
 
 Update: Been doing a little bit more work toward implementing higher degree polynomials.. will finish it in the coming days.
 
-Update: Uploaded PoC now uses 4th degree polynomials. I do still need to fix some shit, mainly doing it so that it sieves a proper parabola everytime it calls into sieve3().. then next I should see if I can combine sieve results from polynomials of different degrees, but generated with the same binomial term.
+Update: Uploaded PoC now uses 4th degree polynomials. I do still need to fix some shit, mainly doing it so that it sieves a proper parabola everytime it calls into sieve3()... especially important when using 4th degree polynomials and larger.. since we can end up generating very big values otherwise.. then next I should see if I can combine sieve results from polynomials of different degrees, but generated with the same binomial term.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
