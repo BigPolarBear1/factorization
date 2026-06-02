@@ -17,21 +17,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 50 -base 5_000 -debug 0 -lin_size 10_000 -quad_size 1
 
-UPDATE: Ignore this version for a few days. Yes, using square moduli for sieving is better then using non-square moduli. Because this always garantuees that a large part of the B-smooth can be ignored as far as linear algebra over Z/2 is concerned. So that gives us a small improvement over SIQS, where SIQS can only achieve something similar if it finds a lot of B-smooth using the same modulus. This in itself could be worth publishing a paper over... I have however also linked all these findings back to NFS in the last few months and if you can introduce square moduli to NFS's approach, reduce the required amount of B-smooths there.. then that jump in performance could give us a real shot at threatening RSA-1024.
-
-As CUDA_QS_variant already shows how to do a SIQS style variant using squaring moduli and all the math behind it, I will transform this one into an NFS variant instead. I should be ready to upload it soon.
-
-Update: Quickly replaced the PoC with a old NFS variant I had modified a few months ago. This needs a lot of fixing and more features. First thing first will be to add support for arbitrary degree.. but in a way that it links back to my own work and not just does what NFS does. Then after that I add lifting for the modulus... optimize everytime and that should be good as a demonstration...
-
-Update: Also got it to work with 4th degree polynomials. I wonder if I just sieve using polynomials generated from the same binomial terms if I cant just combine all of them during linear algebra... its too warm today... going to take a break until later tonight. This heat is giving me brain damage.
-
-Update: Been doing a little bit more work toward implementing higher degree polynomials.. will finish it in the coming days.
-
-Update: Uploaded PoC now uses 4th degree polynomials. I do still need to fix some shit, mainly doing it so that it sieves a proper parabola everytime it calls into sieve3()... especially important when using 4th degree polynomials and larger.. since we can end up generating very big values otherwise.. and ofcourse once that is fixed I should experiment with square moduli. When all of that is done I should see if I can combine sieve results from polynomials of different degrees, but generated with the same binomial term... and see what else can be done there to improve sieving.
-
-Update: So going up in degree.. it keeps that rational side small. The algebraic side is a big problem.. thats exactly why NFS does base-m expansion rather than what I'm doing. However, with the way everything is organized now.. I do have an idea... based on what I was doing prior in the last few days.  
-
-Update: Bah, some more thinking... you know, back in January I believe.. I said how you can sieve with discriminants where we have something like x^2-4*(N-offset) or whatever. So let me think.. I dont really need -N in my polynomial. Important thing is that I can still sieve with moduli the way I'm doing now... because then I can use all these optimizations I have discovered, like using square moduli...
+Update: Removed it for now. I was actually implementing an NFS variant... but as I was trying to optimize sieving and actually learning how NFS is able to generate small polynomial values (aka norms) ... I just got hit by something. So the whole gist of NFS is creating polynomials such that it generates small norms ... I'm just wondering right now why I cant do something similar with a QS style algorithm... with all the connections I've made so far. I'll do some thinking.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
