@@ -31,6 +31,8 @@ Update: Uploaded PoC now uses 4th degree polynomials. I do still need to fix som
 
 Update: So going up in degree.. it keeps that rational side small. The algebraic side is a big problem.. thats exactly why NFS does base-m expansion rather than what I'm doing. However, with the way everything is organized now.. I do have an idea... based on what I was doing prior in the last few days.  
 
+Update: Bah, some more thinking... you know, back in January I believe.. I said how you can sieve with discriminants where we have something like x^2-4*(N-offset) or whatever. So let me think.. I dont really need -N in my polynomial. Important thing is that I can still sieve with moduli the way I'm doing now... because then I can use all these optimizations I have discovered, like using square moduli...
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
