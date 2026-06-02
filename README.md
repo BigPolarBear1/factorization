@@ -21,6 +21,8 @@ Update: Removed it for now. I was actually implementing an NFS variant... but as
 
 Update: Very quickly reuploaded a PoC from january. Now I need to modify it to use polynomials without -N at the end by using a monic whose resultant is N. I should have the math now to merge the NFS approach with QS..................................... this is probably the final clue that I missed for a while...............
 
+Update: Okidoki...I think I figured it out. I'll modify that PoC tonight. 
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
