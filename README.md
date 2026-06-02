@@ -23,6 +23,8 @@ Update: Very quickly reuploaded a PoC from january. Now I need to modify it to u
 
 Update: Okidoki...I think I figured it out. I'll modify that PoC tonight. 
 
+Update: I think I'll go for a run first. What I'll do is just copy over the polynomial selection logic from NFS I guess. I just really need a polynomial and a monic whose resultant is N. I've already figured out the math how to then use that in a QS style algorithm.... so I should know very soon if this yields a performance boost or not. 
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
