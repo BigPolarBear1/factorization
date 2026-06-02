@@ -29,6 +29,8 @@ Update: Been doing a little bit more work toward implementing higher degree poly
 
 Update: Uploaded PoC now uses 4th degree polynomials. I do still need to fix some shit, mainly doing it so that it sieves a proper parabola everytime it calls into sieve3()... especially important when using 4th degree polynomials and larger.. since we can end up generating very big values otherwise.. and ofcourse once that is fixed I should experiment with square moduli. When all of that is done I should see if I can combine sieve results from polynomials of different degrees, but generated with the same binomial term... and see what else can be done there to improve sieving.
 
+Update: So going up in degree.. it keeps that rational side small. The algebraic side is a big problem.. thats exactly why NFS does base-m expansion rather than what I'm doing. However, with the way everything is organized now.. I do have an idea... based on what I was doing prior in the last few days.  
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
