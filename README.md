@@ -25,6 +25,8 @@ Update: Okidoki...I think I figured it out. I'll modify that PoC tonight.
 
 Update: I think I'll go for a run first. What I'll do is just copy over the polynomial selection logic from NFS I guess. I just really need a polynomial and a monic whose resultant is N. I've already figured out the math how to then use that in a QS style algorithm.... so I should know very soon if this yields a performance boost or not. 
 
+Update: Spent a couple of hours looking at this. So we can 100% reduce the constant, so it isn't -N or some multiple there-of. The math does get a lot more complicated when the leading coefficient of the quadratic or the monic arn't 1. So I guess tomorrow, let me just go ahead and implement a "trivial case" and deal with these leading coefficients later and then utilize NFS's polynomial selection algorithm to get an optimal sieve region.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
