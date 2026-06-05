@@ -27,6 +27,8 @@ To do:
 
 I'll try and do all of this before I leave for Iceland.. just in case this will lead to a faster algorithm.. I don't want to get murdered by some nation state in the middle of the icelandic highlands. I'll start with implementing support for degree > 2 first.. because that will tell me for sure whether or not we can even create a sieve region with this setup where we gain an advantage.
 
+Note: There is also a bunch of functions in the code that I borrowed from https://github.com/basilegithub/General-number-field-sieve-Python, related to klein-jung's polynomial selection method... but these arn't used right now, and I'll probably remove them.. I might borrow some things from it when I optimize proper sieve region selection though.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
