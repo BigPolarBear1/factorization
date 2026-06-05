@@ -15,7 +15,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 
 #### To run from folder "polysieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 60 -base 500 -debug 0 -lin_size 10_000 -quad_size 1
+To run:  python3 run_qs.py -keysize 50 -base 500 -debug 0 -lin_size 10_000 -quad_size 1
 
 Update: Removed it for now. I was actually implementing an NFS variant... but as I was trying to optimize sieving and actually learning how NFS is able to generate small polynomial values (aka norms) ... I just got hit by something. So the whole gist of NFS is creating polynomials such that it generates small norms ... I'm just wondering right now why I cant do something similar with a QS style algorithm... with all the connections I've made so far. I'll do some thinking.
 
