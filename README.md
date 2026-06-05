@@ -21,7 +21,7 @@ Update: Pushed a first version where we use two polynomials, a linear and quadra
 
 To do:
 
-1. Proper sieve region selection
+1. Proper sieve region selection (and probably want to use the trick NFS does by multiplying its coefficients.. what's most often refered to as 'b' in the sieving loop... bc thats a pretty cheap way to keep generating small values a litte longer)
 2. Higher degree polynomials (because with quadratics you need a fairly large coefficients to really reduce that -N to a small number).
 3. Fix small things, implement support for non-monic f_x and g_x ... sieve the 3 parts that need to factorize over the factor base properly... etc etc.
 
