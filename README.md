@@ -17,15 +17,13 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 50 -base 500 -debug 0 -lin_size 10_000 -quad_size 1
 
-Update: Removed it for now. I was actually implementing an NFS variant... but as I was trying to optimize sieving and actually learning how NFS is able to generate small polynomial values (aka norms) ... I just got hit by something. So the whole gist of NFS is creating polynomials such that it generates small norms ... I'm just wondering right now why I cant do something similar with a QS style algorithm... with all the connections I've made so far. I'll do some thinking.
+Update: Pushed a first version where we use two polynomials, a linear and quadratic (g_x and f_x) whose resultant = N and performs quadratic sieve style sieving with it.
 
-Update: Very quickly reuploaded a PoC from january. Now I need to modify it to use polynomials without -N at the end by using a monic whose resultant is N. I should have the math now to merge the NFS approach with QS..................................... this is probably the final clue that I missed for a while...............
+To do:
 
-Update: Okidoki...I think I figured it out. I'll modify that PoC tonight. 
-
-Update: I think I'll go for a run first. What I'll do is just copy over the polynomial selection logic from NFS I guess. I just really need a polynomial and a monic whose resultant is N. I've already figured out the math how to then use that in a QS style algorithm.... so I should know very soon if this yields a performance boost or not. 
-
-Update: Spent a couple of hours looking at this. So we can 100% reduce the constant, so it isn't -N or some multiple there-of. The math does get a lot more complicated when the leading coefficient of the quadratic or the monic arn't 1. So I guess tomorrow, let me just go ahead and implement a "trivial case" and deal with these leading coefficients later and then utilize NFS's polynomial selection algorithm to get an optimal sieve region.
+1. Proper sieve region selection
+2. Higher degree polynomials (because with quadratics you need a fairly large coefficients to really reduce that -N to a small number).
+3. Fix small things, implement support for non-monic f_x and g_x ... sieve the 3 parts that need to factorize over the factor base properly... etc etc.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
