@@ -25,6 +25,8 @@ To do:
 2. Higher degree polynomials (because with quadratics you need a fairly large coefficients to really reduce that -N to a small number).
 3. Fix small things, implement support for non-monic f_x and g_x ... sieve the 3 parts that need to factorize over the factor base properly... etc etc.
 
+I'll try and do all of this before I leave for Iceland.. just in case this will lead to a faster algorithm.. I don't want to get murdered by some nation state in the middle of the icelandic highlands.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
