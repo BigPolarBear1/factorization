@@ -29,6 +29,8 @@ I'll try and do all of this before I leave for Iceland.. just in case this will 
 
 Note: There is also a bunch of functions in the code that I borrowed from https://github.com/basilegithub/General-number-field-sieve-Python, related to klein-jung's polynomial selection method... but these arn't used right now, and I'll probably remove them.. I might borrow some things from it when I optimize proper sieve region selection though.
 
+Update: I figured out how the math works for non-monics when working with a quadratic and linear poly. However, I tried to transfer these findings to 4th degree polynomials.. and everything behaves differently.. I'm guessing it is because the discriminant is wildly more complicated, hence these transformations that I am doing don't hold true anymore. So let me start implementing support for non-monics into my PoC and just work with a quadratic and linear poly for now... just increasing these leading coefficients might be enough to generate favorable sieve regions anyway.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
