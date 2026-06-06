@@ -1382,103 +1382,109 @@ cdef construct_interval(list ret_array,partials,n,primeslist,large_prime_bound,p
                 break
 
             offset=1
-            while offset < 100_000:
-                partials=[]
-                fail=0
-                f_x=[1,y,-(n-((y*offset)-offset**2))]
-                m1=f_x[0]
-                m0=-(f_x[1]-offset)
-                g_x=[m1,-m0]
-                i=0
-                while i < len(cfact):
+            while offset < 5_000:
+                b=1
+                while b < 20:
+                    partials=[]
+                    fail=0
+                    f_x=[1,y*b,-(n-((y*offset)-offset**2))*b**2]
+                    m1=f_x[0]
+                    m0=-(y-offset)*b
+                    g_x=[m1,-m0]
+                    i=0
+                    while i < len(cfact):
             #    print("cfact: "+str(cfact[i]))
-                    p=cfact[i]
-                    f_x_c=copy.deepcopy(f_x)##To do: Fix this later...
-                    root = find_roots_poly(f_x_c, p)
-                    if len(root)>0:
-                        partials.append(p)
-                        partials.append(root)
-                    else:
-                        fail=1
-                        break
-                    i+=1
-         #   print("offset: "+str(offset)+" fail: "+str(fail))
-                if fail==1:
-                    offset+=1
-                    continue
-          #  print("partials: "+str(partials))
-                partials=get_partials(new_mod,partials)
-          #  print("partials: "+str(partials))
-                enum=[]
-                i=0
-                while i < len(partials):
-                    enum.append(partials[i+1])
-
-                    i+=2
-                for combo2 in itertools.product(*enum):
-                    tot=0
-                    for r in combo2:
-                        tot+=r
-                    tot%=new_mod
-                
-                    interval=np.zeros(lin_sieve_size,dtype=np.int16)
-                    t=0
-                    while t < len(primeslist):  ###To do: Can move up the root calculations..
-                        p=primeslist[t]
-                        if new_mod%p ==0:
-                            t+=1
-                            continue
+                        p=cfact[i]
+                        f_x_c=copy.deepcopy(f_x)##To do: Fix this later...
                         root = find_roots_poly(f_x_c, p)
-                        for r in root:
-                            s=solve_lin_con(new_mod,r-tot,p)
-                            fval=evaluate(f_x,tot+s*new_mod)
-                            if fval%(new_mod*p) != 0:
-                                print("what the fuck")
+                        if len(root)>0:
+                            partials.append(p)
+                            partials.append(root)
+                        else:
+                            fail=1
+                            break
+                        i+=1
+         #   print("offset: "+str(offset)+" fail: "+str(fail))
+                    if fail==1:
+                        b+=1
+                        continue
+          #  print("partials: "+str(partials))
+                    partials=get_partials(new_mod,partials)
+          #  print("partials: "+str(partials))
+                    enum=[]
+                    i=0
+                    while i < len(partials):
+                        enum.append(partials[i+1])
 
-                            interval[s::p]+=round(math.log2(p))    
-                        t+=1
+                        i+=2
+                    for combo2 in itertools.product(*enum):
+                        tot=0
+                        for r in combo2:
+                            tot+=r
+                        tot%=new_mod
+                
+                        interval=np.zeros(lin_sieve_size,dtype=np.int16)
+                        t=0
+                        while t < len(primeslist):  ###To do: Can move up the root calculations..
+                            p=primeslist[t]
+                            if new_mod%p ==0:
+                                t+=1
+                                continue
+                            root = find_roots_poly(f_x_c, p)
+                            for r in root:
+                                s=solve_lin_con(new_mod,r-tot,p)
+                                fval=evaluate(f_x,tot+s*new_mod)
+                                if fval%(new_mod*p) != 0:
+                                    print("what the fuck")
 
-                    np.putmask(interval, interval < keysize*0.45, 0)
-                    indexlist=np.nonzero(interval)
+                                interval[s::p]+=round(math.log2(p))    
+                            t+=1
 
-                    indexlist_x=indexlist[0]
-                    ind=0
-                    length=len(indexlist_x)
+                        np.putmask(interval, interval < keysize*0.45, 0)
+                        indexlist=np.nonzero(interval)
+
+                        indexlist_x=indexlist[0]
+                        ind=0
+                        length=len(indexlist_x)
             
-                    while ind < length:# length: 
-                        x_ind=int(indexlist_x[ind])
+                        while ind < length:# length: 
+                            x_ind=int(indexlist_x[ind])
 
-                        x=tot+x_ind*new_mod
-                        fval=evaluate(f_x,x)
-                        if fval%new_mod !=0:
-                            print("ergh fatal")
-                            sys.exit()
-                        gval=evaluate(g_x,x)
+                            x=tot+x_ind*new_mod
+                            if math.gcd(x, b) != 1:
+                                ind+=1
+                                continue
+                            fval=evaluate(f_x,x)
+                            if fval%new_mod !=0:
+                                print("ergh fatal")
+                                sys.exit()
+                            gval=evaluate(g_x,x)
 
-                        f_x2=[1,0,n*fval*f_x[0]]
-                        fval2=evaluate(f_x2,fval*f_x[0])
+                            f_x2=[1,0,n*fval*b**2*f_x[0]]
+                            fval2=evaluate(f_x2,fval*f_x[0])
                  #   print("fval2: "+str(fval2))
-                        local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(x+offset,primelist_f)
-                        local_factors2, value2,seen_primes2,seen_primes_indexes2 = factorise_fast(fval,primelist_f)
-                        local_factors3, value3,seen_primes3,seen_primes_indexes3 = factorise_fast(gval,primelist_f)
+                            local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(x+offset*b,primelist_f)
+                            local_factors2, value2,seen_primes2,seen_primes_indexes2 = factorise_fast(fval,primelist_f)
+                            local_factors3, value3,seen_primes3,seen_primes_indexes3 = factorise_fast(gval,primelist_f)
                  #   print("n: "+str(n)+" f_x: "+str(f_x)+" x+offset: "+str(bitlen(x+offset))+" fval//new_mod: "+str(bitlen(fval//new_mod))+" gval: "+str(bitlen(gval))+" modulus: "+str(new_mod))
-                        if (x+offset)*fval*gval != fval2:
-                            print("missing something...",offset)
-                        if value == 1 and value2 == 1 and value3 == 1:
-                            if fval*f_x[0] not in coefficients and fval2 not in smooths:
-                                local_factors4, value4,seen_primes4,seen_primes_indexes4 = factorise_fast(fval2,primelist_f)
-                                if value4 !=1:
-                                    print("catastrophic fcking failure, quit math")
-                                smooths.append(fval2)
-                                factors.append(local_factors4)
-                                coefficients.append(fval*f_x[0])
-                                print("Smooths #: "+str(len(smooths))+"/"+str(base+2)+" offset: "+str(offset)+" f_x: "+str(f_x)+" g_x: "+str(g_x))
-                                if len(smooths)>(base+2):
-                                    f1,f2=QS(n,primelist,smooths,coefficients,factors)
-                                    if f1 !=0:
-                                        sys.exit()            
-                        ind+=1
-             #   sys.exit()
+                            if (x+offset*b)*fval*gval != fval2:
+                                print("missing something..."+str(offset)+" f_x: "+str(f_x)+" g_x: "+str(g_x)+" fval: "+str(fval)+" gval: "+str(gval)+" b: "+str(b))
+                                sys.exit()
+                            if value == 1 and value2 == 1 and value3 == 1:
+                                if fval*f_x[0] not in coefficients and fval2 not in smooths:
+                                    local_factors4, value4,seen_primes4,seen_primes_indexes4 = factorise_fast(fval2,primelist_f)
+                                    if value4 !=1:
+                                        print("catastrophic fcking failure, quit math")
+                                    smooths.append(fval2)
+                                    factors.append(local_factors4)
+                                    coefficients.append(fval*f_x[0])
+                                    print("Smooths #: "+str(len(smooths))+"/"+str(base+2)+" b: "+str(b)+" offset: "+str(offset)+" f_x: "+str(f_x)+" g_x: "+str(g_x))
+                                    if len(smooths)>(base+2):
+                                        f1,f2=QS(n,primelist,smooths,coefficients,factors)
+                                        if f1 !=0:
+                                            sys.exit()            
+                            ind+=1
+                    b+=1
                 offset+=1_000
             y_ind+=1
     sys.exit()
