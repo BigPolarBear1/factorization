@@ -1285,14 +1285,10 @@ def get_derivative(f):
     return res
 
 def evaluate(f, x):
+    x = int(x)
     res = 0
-
-    for i in range(len(f)-1):
-        res += f[i]
-        res *= x
-
-    res += f[-1]
-
+    for coeff in f:
+        res = res * x + int(coeff)
     return res
 
 def get_partials(mod,list1):
@@ -1317,6 +1313,122 @@ def get_partials(mod,list1):
 
     return new_list
 
+def f_minimum_x(f_x):
+    return -f_x[1] / (2 * f_x[0])
+
+def make_polys(n, y, offset, b):
+    n, y, offset, b = int(n), int(y), int(offset), int(b)
+    c = -(n - y * offset + offset ** 2) * b ** 2
+    f_x = [1, int(y * b), int(c)]
+    g_x = [1, int((y - offset) * b)]
+    h_x = [1, int(offset * b)]
+    return f_x, g_x, h_x
+
+def sieve_interval(f_x, g_x, h_x, M):
+    num = -f_x[1]
+    den = 2 * f_x[0]
+    return num, den, M 
+
+def int_log(n):
+    if n <= 0:
+        raise ValueError
+    return abs(n).bit_length() * 0.6931471805599453  
+
+def e_score(n, y, offset, b, B, M, n_gauss=32, table=None):
+    if table is None:
+        table = get_dickman_table(20)
+
+    f_x, g_x, h_x = make_polys(n, y, offset, b)
+    center_num, center_den, half_width = sieve_interval(f_x, g_x, h_x, M)
+    log_B = math.log(B)
+
+    nodes, weights = leggauss(n_gauss)
+    scale = half_width 
+
+    score = 0.0
+    for xi, wi in zip(nodes, weights):
+        x = int(round(center_num / center_den + half_width * xi))
+        fval = evaluate(f_x, x)
+        ghval = evaluate(g_x, x) * evaluate(h_x, x)
+
+        abs_fval = abs(fval)
+        abs_ghval = abs(ghval)
+
+        if abs_fval == 0 or abs_ghval == 0:
+            continue
+
+        try:
+            log_f  = int_log(abs_fval)
+            log_gh = int_log(abs_ghval)
+        except ValueError:
+            continue
+
+        if log_f <= 0:
+            rho_f = 1.0
+        else:
+            u_f = log_f / log_B
+            rho_f, table = dickman(u_f, table)
+
+        if log_gh <= 0:
+            rho_gh = 1.0
+        else:
+            u_gh = log_gh / log_B
+            rho_gh, table = dickman(u_gh, table)
+       # if first:
+          #  print(f"DEBUG: u_f={u_f:.2f} u_gh={u_gh:.2f} "
+          #      f"fval_bits={abs_fval.bit_length()} "
+          #      f"ghval_bits={abs_ghval.bit_length()} "
+         #       f"B={B} log_B={log_B:.2f}")
+          #  first = False
+        if rho_f > 0 and rho_gh > 0:
+            contribution = scale * wi * math.exp(math.log(rho_f) + math.log(rho_gh))
+          #  print(f"contribution={contribution:.6e} scale={scale:.6e} wi={wi:.6e}")
+            score += contribution
+
+    return score, table
+
+def search_params(n,B,M,y_range,offset_range,b_range,n_gauss=32,verbose=True):
+    table=get_dickman_table(20)
+    best=None
+    best_params=None
+    total=len(y_range)*len(offset_range)*len(b_range)
+    done=0
+    for y in y_range:
+        for offset in offset_range:
+            for b in b_range:
+                if y == offset:
+                    done+=1
+                    continue
+                try:
+                    score, table = e_score(n, y, offset, b, B, M, n_gauss=n_gauss, table=table)
+                except Exception as e:
+                    print(f"Error at y={y} offset={offset} b={b}: {e}")
+                    done += 1
+                    continue
+                done += 1
+                if best is None or score > best:
+                    best = score
+                    best_params = (y, offset, b)
+                    if verbose:
+                        print(f"  [{done}/{total}] New best: y={y} offset={offset} "
+                              f"b={b}  E={score:.6e}")
+    return best_params, best
+
+def optimal_B(n):
+    ln_n = int(n).bit_length() * 0.6931
+    ln_ln_n = math.log(ln_n)
+    return int(math.exp(math.sqrt(0.5 * ln_n * ln_ln_n)))
+
+def get_sieve_region2(n, B):
+    B=optimal_B(n) ##to do: ??? maybe remove it eventually
+    y0 = math.isqrt(n)
+    y_range = list(range(y0, y0 + 10))
+    b_range = list(range(1, 8))
+    offset_range = [int(x) for x in np.logspace(0, math.log10(float(y0)), 50)]
+    best_params, best_score = search_params(n, B, lin_sieve_size, y_range, offset_range, b_range, n_gauss=16)
+    baseline_score, _ = e_score(n, y0, 1, 1, B, lin_sieve_size, n_gauss=16)
+    print(f"Improvement factor: {best_score/baseline_score:.3f}x")
+    return best_params, best_score
 cdef construct_interval(list ret_array,partials,n,primeslist,large_prime_bound,primeslist2,small_primeslist):
 
 
@@ -1350,7 +1462,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,large_prime_bound,p
     too_close=5
     LOWER_BOUND_SIQS=1
     UPPER_BOUND_SIQS=40000
-    tnum=int(((n)**0.30) /1)#(lin_sieve_size))
+    tnum=int(((n)**0.25) /1)#(lin_sieve_size))
     
     threshold = keysize-thresvar#to do: fix this# int(math.log2((lin_sieve_size)*math.sqrt(abs(n))) - thresvar)
     
@@ -1364,12 +1476,16 @@ cdef construct_interval(list ret_array,partials,n,primeslist,large_prime_bound,p
     MULTIPLIER=1
     d=2
    # f_x,m0,m1,tmp,_ = poly_search(n, primeslist, NB_ROOTS, PRIME_BOUND, MULTIPLIER,int(pow(n, 1/(d+1))), d, NB_POLY_COARSE_EVAL,NB_POLY_PRECISE_EVAL)
+    best_params,best_score=get_sieve_region2(n,primeslist[-1])
+    print("best_params: "+str(best_params)+" best_score: "+str(best_score))
     
     
-    y_start=round(n**0.70)#132
+    y_start=best_params[0]#round(n**0.70)#132
+    offset_start=best_params[1]
     y_ind=0
     while y_ind < 1000:
         y=y_start+y_ind
+
    # print("f_x: "+str(f_x)+" m0: "+str(m0)+" m1: "+str(m1)+" g_x: "+str(g_x))
         seen=[]
 
@@ -1381,8 +1497,9 @@ cdef construct_interval(list ret_array,partials,n,primeslist,large_prime_bound,p
             if new_mod ==0:
                 break
 
-            offset=1
-            while offset < 5_000:
+            offset_ind=0
+            while offset_ind < 5_000:
+                offset=offset_start+offset_ind
                 b=1
                 while b < 20:
                     partials=[]
@@ -1466,7 +1583,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,large_prime_bound,p
                             local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(x+offset*b,primelist_f)
                             local_factors2, value2,seen_primes2,seen_primes_indexes2 = factorise_fast(fval,primelist_f)
                             local_factors3, value3,seen_primes3,seen_primes_indexes3 = factorise_fast(gval,primelist_f)
-                 #   print("n: "+str(n)+" f_x: "+str(f_x)+" x+offset: "+str(bitlen(x+offset))+" fval//new_mod: "+str(bitlen(fval//new_mod))+" gval: "+str(bitlen(gval))+" modulus: "+str(new_mod))
+                           # print("n: "+str(n)+" f_x: "+str(f_x)+" x+offset: "+str(bitlen(x+offset))+" fval//new_mod: "+str(bitlen(fval//new_mod))+" gval: "+str(bitlen(gval))+" modulus: "+str(new_mod))
                             if (x+offset*b)*fval*gval != fval2:
                                 print("missing something..."+str(offset)+" f_x: "+str(f_x)+" g_x: "+str(g_x)+" fval: "+str(fval)+" gval: "+str(gval)+" b: "+str(b))
                                 sys.exit()
@@ -1485,7 +1602,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,large_prime_bound,p
                                             sys.exit()            
                             ind+=1
                     b+=1
-                offset+=1_000
+                offset_ind+=1
             y_ind+=1
     sys.exit()
 
