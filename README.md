@@ -21,19 +21,13 @@ Update: Pushed a first version where we use two polynomials, a linear and quadra
 
 To do:
 
-1. Proper sieve region selection (and probably want to use the trick NFS does by multiplying its coefficients.. what's most often refered to as 'b' in the sieving loop... bc thats a pretty cheap way to keep generating small values a litte longer)
-2. Higher degree polynomials (because with quadratics you need a fairly large coefficients to really reduce that -N to a small number).
-3. Fix small things, implement support for non-monic f_x and g_x ... sieve the 3 parts that need to factorize over the factor base properly... etc etc.
+1. Higher degree polynomials (because with quadratics you need a fairly large coefficients to really reduce that -N to a small number).
+2. Fix small things, implement support for non-monic f_x and g_x ... sieve the 3 parts that need to factorize over the factor base properly... etc etc.
 
-I'll try and do all of this before I leave for Iceland.. just in case this will lead to a faster algorithm.. I don't want to get murdered by some nation state in the middle of the icelandic highlands. I'll start with implementing support for degree > 2 first.. because that will tell me for sure whether or not we can even create a sieve region with this setup where we gain an advantage.
+Update: I have quickly implemented Murphy-E optimization. Full disclosure, I did use claude to write a couple of murph-E optimization related functions. But this is not number theoretical research related and for none of the actual research I used AI. This is just implementing a well documented algorithm for polynomial selection into my own algebraic setup, which is novel and a result from my research.
 
-Note: There is also a bunch of functions in the code that I borrowed from https://github.com/basilegithub/General-number-field-sieve-Python, related to klein-jung's polynomial selection method... but these arn't used right now, and I'll probably remove them.. I might borrow some things from it when I optimize proper sieve region selection though.
+The next logical step is to see if I can get this setup working with higher degree polynomials and gain further performance gains through Murphy-E optimization.
 
-Update: I figured out how the math works for non-monics when working with a quadratic and linear poly. However, I tried to transfer these findings to 4th degree polynomials.. and everything behaves differently.. I'm guessing it is because the discriminant is wildly more complicated, hence these transformations that I am doing don't hold true anymore. So let me start implementing support for non-monics into my PoC and just work with a quadratic and linear poly for now... just increasing these leading coefficients might be enough to generate favorable sieve regions anyway.
-
-Update: I added support for that "b" parameter. Which multiplies the coefficients. Which is the same "b" as in NFS's sieve loop. All this really does is add another sieving dimension. In addition.. I also shouldn't recalculate roots within this loop. But I'll fix that later when all the big features are implemented. Next I will quickly implement support for a non-monic f_x (or f(x).. just using the variablename from the code here)... I worked out the math for it already so shouldn't take long. Also worked out the math for non-monic g_x.. but before I do that one I'll just implement a proper sieve region selection function. This is the big bottleneck.. without selecting a proper sieve region this algorithm wont work fast.. the same way NFS wont work fast if you dont properly select a proper sieve region (which is done during the polynomial selection phase).
-
-Update: Actually let me begin tomorrow by implementing Murphy-E optimization for this algebraic construction. That will be a good start. And after that, I think the best direction is to use this construction to hunt for similar factorization.. since we'll have better control. Which is this idea I've been playing around with since september.. but using this construction might actually allow for it. It's the only real way an appraoch like this can ever overtake an algorithm like NFS. But i'm fairly confident I got it now. 
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
