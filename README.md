@@ -28,6 +28,9 @@ Update: I have quickly implemented a barebones polynomial selection algorithm us
 
 The next logical step is to see if I can get this setup working with higher degree polynomials. I am however absolutely not happy with this claude generated code. I'll implement support for higher degrees first, then properly analyze Kleinjung's method of polynomial selection and fit it to my own algebraic setup. This is ok for now.. as demonstration.
 
+Just ignore this Murphy's E score related code for now. Its just a placeholder. A new math tool I'm only just learning about. I'll implement something proper there later. First I'll move up on degree now.. and then demonstrate if we can actually improve that E score by moving up in degree.. thats really what would prove my work, so I just got to focus on this now, bc proving my work is all that matters.
+
+
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
