@@ -24,7 +24,7 @@ To do:
 1. Higher degree polynomials (because with quadratics you need a fairly large coefficients to really reduce that -N to a small number).
 2. Fix small things, implement support for non-monic f_x and g_x ... sieve the 3 parts that need to factorize over the factor base properly... etc etc.
 
-Update: I have quickly implemented Murphy-E optimization. Full disclosure, I did use claude to write a couple of murph-E optimization related functions. But this is not number theoretical research related and for none of the actual research I used AI. This is just implementing a well documented algorithm for polynomial selection into my own algebraic setup, which is novel and a result from my research.
+Update: I have quickly implemented Murphy-E optimization. Full disclosure, I did use claude to write a couple of murph-E optimization related functions. But this is not number theoretical research related and for none of the actual research I used AI. This is just implementing a well documented algorithm for polynomial selection into my own algebraic setup, which is novel and a result from my research (and I want to get everything published before I go to iceland just incase something happens.. and this saves me a few days... but nothing I couldn't have figured out through public resources otherwise).
 
 The next logical step is to see if I can get this setup working with higher degree polynomials and gain further performance gains through Murphy-E optimization.
 
