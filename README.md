@@ -33,6 +33,8 @@ Update: I figured out how the math works for non-monics when working with a quad
 
 Update: I added support for that "b" parameter. Which multiplies the coefficients. Which is the same "b" as in NFS's sieve loop. All this really does is add another sieving dimension. In addition.. I also shouldn't recalculate roots within this loop. But I'll fix that later when all the big features are implemented. Next I will quickly implement support for a non-monic f_x (or f(x).. just using the variablename from the code here)... I worked out the math for it already so shouldn't take long. Also worked out the math for non-monic g_x.. but before I do that one I'll just implement a proper sieve region selection function. This is the big bottleneck.. without selecting a proper sieve region this algorithm wont work fast.. the same way NFS wont work fast if you dont properly select a proper sieve region (which is done during the polynomial selection phase).
 
+Update: Actually let me begin tomorrow by implementing Murphy-E optimization for this algebraic construction. That will be a good start. And after that, I think the best direction is to use this construction to hunt for similar factorization.. since we'll have better control. Which is this idea I've been playing around with since september.. but using this construction might actually allow for it. It's the only real way an appraoch like this can ever overtake an algorithm like NFS. But i'm fairly confident I got it now. 
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
