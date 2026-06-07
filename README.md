@@ -30,7 +30,7 @@ The next logical step is to see if I can get this setup working with higher degr
 
 Just ignore this Murphy's E score related code for now. Its just a placeholder. A new math tool I'm only just learning about. I'll implement something proper there later. First I'll move up on degree now.. and then demonstrate if we can actually improve that E score by moving up in degree.. thats really what would prove my work, so I just got to focus on this now, bc proving my work is all that matters.
 
-
+Update: Did some thinking about how to implement 4th degree... I can just use the results from the paper and use binomial expansions... the fact that the coefficients end up sharing the binomial term as factor might actually be a strength... and I can reduce that -N through the same mechanism.. I just verified that it is possible. And if the constant ends up being divisible by the binomial term.. thats even better. That might give me the tool to actually hunt for similar factorizations... given that I can set it up so it gets a good sieve region.... Lets see tomorrow. My goal for tomorrow will be implementing 4th degree polynomials.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
