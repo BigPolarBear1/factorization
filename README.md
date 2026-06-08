@@ -32,6 +32,8 @@ Just ignore this Murphy's E score related code for now. Its just a placeholder. 
 
 Update: Did some thinking about how to implement 4th degree... I can just use the results from the paper and use binomial expansions... the fact that the coefficients end up sharing the binomial term as factor might actually be a strength... and I can reduce that -N through the same mechanism.. I just verified that it is possible. And if the constant ends up being divisible by the binomial term.. thats even better. That might give me the tool to actually hunt for similar factorizations... given that I can set it up so it gets a good sieve region.... Lets see tomorrow. My goal for tomorrow will be implementing 4th degree polynomials.
 
+Update: Did some more thinking. So without diving into number fields, we're unlikely to achieve small values on both sides of the congruence. What this does do is split one side into multiple linear polynomials (depending on the degree of f(x)) .. now we can balance out the coefficients of f(x) such that its values are always small ... and by going up in degree we can split the value on the other side into more and more linear polynomials.... and actually breaking up a very large value into small linear polynomials whose residues can we can precompute.. that's it. 
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
