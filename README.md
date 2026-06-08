@@ -22,6 +22,8 @@ But, what is true, if the polynomials on both sides grow in degree, this also bo
 
 And to effectively sieve this construction.. you would probably have to perform NFS-style polynomial selection. Which this PoC already roughly demonstrates. Meaning I'm almost there now..
 
+Update: In the past representing sieving as ax^2–b<sub>0</sub>x + Nk = ax^2+b<sub>1</sub>x – Nk. I was able to build a residue map for that.. where it calculate coefficient residues for both sides. Because actually... the only thing that matters is that for a given polynomial of degree d, we have another polynomial of degree d on the other side.. because then we know that that polynomial splits into a product of linear polynomials and hence reduces the maximum size factors can possible be. Which is an insight I guess I hadnt properly considered before. And after that.. I probably want to create sieve intervals for the coefficients rather then roots if we're working at higher degrees. My head hurts lol. I think this is the final angle I'm going with. If we have two 4th degree polynomials on both sides of the congruences.. it doesn't matter...it still lowers the size the largest factors can possible be. 
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
