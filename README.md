@@ -15,7 +15,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 
 #### To run from folder "polysieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 50 -base 500 -debug 0 -lin_size 10_000 -quad_size 1
+To run: python3 run_qs.py -keysize 50 -base 500 -debug 0 -lin_size 10_000 -quad_size 1 -d 2
 
 Update: Pushed a first version where we use two polynomials, a linear and quadratic (g_x and f_x) whose resultant = N and performs quadratic sieve style sieving with it.
 
