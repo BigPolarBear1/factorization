@@ -19,6 +19,8 @@ To run: python3 run_qs.py -keysize 50 -base 500 -debug 0 -lin_size 10_000 -quad_
 
 Update: Doing some thinking on how to best sieve this. I could use that offset to reduce that -N to something so that it shares factors with the coefficients.. that could create a nice algebraic structure that allows me to create B-smooths on both sides with many garantueed factors. Let me run some tests... 
 
+Update: Yea.. been thinking really hard about it to the point of massive headache. Just using those coefficients and that offset to garantuee common factors between x, x+offset and the coefficients is what you have to do... I just dont see another way.. but this approach is interesting and may actually work now. The key being that we can change that dangling -N at the end of our polynomial now with that offset..  so we can force it to share factors with the coefficients..
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
