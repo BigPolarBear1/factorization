@@ -51,7 +51,7 @@ mod_mul=0.25
 g_max_exp=10
 lin_sieve_size=1000
 max_diff=1_000_000
-
+degree=2
 ##Key gen function ##
 def power(x, y, p):
     res = 1;
@@ -62,6 +62,18 @@ def power(x, y, p):
         y = y>>1; # y = y/2
         x = (x * x) % p;
     return res;
+
+def power2(poly, f, p, exp):
+    if exp == 1: return poly
+
+    tmp = power2(poly, f, p, exp>>1)
+    tmp = poly_prod(tmp, tmp)
+
+    if exp&1:
+        tmp = poly_prod(tmp, poly)
+        return div_poly_mod(tmp, f, p)
+    
+    else: return div_poly_mod(tmp, f, p)
 
 def miillerTest(d, n):
     a = 2 + random.randint(1, n - 4);
@@ -989,7 +1001,7 @@ def roots(g, p):
     h = [1]
     while len(h) == 1 or h == g:
         a = random.randint(0, p-1)
-        h = power([1, a], g, p, (p-1)>>1)
+        h = power2([1, a], g, p, (p-1)>>1)
         for k in range(len(h)):
             if h[k]:
                 h = h[k:]
@@ -1429,6 +1441,26 @@ def get_sieve_region2(n, B):
     baseline_score, _ = e_score(n, y0, 1, 1, B, lin_sieve_size, n_gauss=16)
     print(f"Improvement factor: {best_score/baseline_score:.3f}x")
     return best_params, best_score
+
+def binomial_coeffs_fast(y, n):
+    coeffs=[1]                
+    c=1
+    yk=1
+    for k in range(1, n):
+        c=c*(n-k+1)//k 
+        yk*=y                
+        coeffs.append(c*yk)
+    return coeffs
+
+def new_coeffs(f, x):
+    b = 1
+    tmp = [i for i in f]
+    for i in range(len(f)-1):
+        tmp[i] *= b
+        b *= x
+    tmp[-1] *= b
+    return tmp
+
 cdef construct_interval(list ret_array,partials,n,primeslist,large_prime_bound,primeslist2,small_primeslist):
 
 
@@ -1474,18 +1506,19 @@ cdef construct_interval(list ret_array,partials,n,primeslist,large_prime_bound,p
     PRIME_BOUND=300
     NB_ROOTS=2
     MULTIPLIER=1
-    d=2
+    d=degree
    # f_x,m0,m1,tmp,_ = poly_search(n, primeslist, NB_ROOTS, PRIME_BOUND, MULTIPLIER,int(pow(n, 1/(d+1))), d, NB_POLY_COARSE_EVAL,NB_POLY_PRECISE_EVAL)
     best_params,best_score=get_sieve_region2(n,primeslist[-1])
     print("best_params: "+str(best_params)+" best_score: "+str(best_score))
     
     
     y_start=best_params[0]#round(n**0.70)#132
+    y_start=y_start//2
     offset_start=best_params[1]
     y_ind=0
     while y_ind < 1000:
         y=y_start+y_ind
-
+        co=binomial_coeffs_fast(y, d)
    # print("f_x: "+str(f_x)+" m0: "+str(m0)+" m1: "+str(m1)+" g_x: "+str(g_x))
         seen=[]
 
@@ -1493,26 +1526,32 @@ cdef construct_interval(list ret_array,partials,n,primeslist,large_prime_bound,p
 
             
             new_mod,cfact,indexes=generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,bitlen(tnum),1)
+         #   new_mod=3
+         #   cfact=[3]
+         #   indexes=[0]
             print("new_mod: "+str(new_mod))
             if new_mod ==0:
                 break
 
             offset_ind=0
-            while offset_ind < 5_000:
+            while offset_ind < 500:
                 offset=offset_start+offset_ind
                 b=1
-                while b < 20:
+                while b < 5:
                     partials=[]
                     fail=0
-                    f_x=[1,y*b,-(n-((y*offset)-offset**2))*b**2]
+                    
+                    f_x_temp=co+[-(n-(y**d-(y-offset)**d))]
+                    f_x=new_coeffs(f_x_temp,b)
                     m1=f_x[0]
-                    m0=-(y-offset)*b
+                    m0=-((y*2)-offset)*b
                     g_x=[m1,-m0]
                     i=0
                     while i < len(cfact):
             #    print("cfact: "+str(cfact[i]))
                         p=cfact[i]
                         f_x_c=copy.deepcopy(f_x)##To do: Fix this later...
+                     #   print("f_x_c: "+str(f_x_c))
                         root = find_roots_poly(f_x_c, p)
                         if len(root)>0:
                             partials.append(p)
@@ -1557,7 +1596,7 @@ cdef construct_interval(list ret_array,partials,n,primeslist,large_prime_bound,p
                                 interval[s::p]+=round(math.log2(p))    
                             t+=1
 
-                        np.putmask(interval, interval < keysize*0.45, 0)
+                        np.putmask(interval, interval < 1, 0)
                         indexlist=np.nonzero(interval)
 
                         indexlist_x=indexlist[0]
@@ -1577,29 +1616,31 @@ cdef construct_interval(list ret_array,partials,n,primeslist,large_prime_bound,p
                                 sys.exit()
                             gval=evaluate(g_x,x)
 
-                            f_x2=[1,0,n*fval*b**2*f_x[0]]
+                            f_x2=[1,0,n*fval*b**d*f_x[0]]
                             fval2=evaluate(f_x2,fval*f_x[0])
                  #   print("fval2: "+str(fval2))
                             local_factors, value,seen_primes,seen_primes_indexes = factorise_fast(x+offset*b,primelist_f)
                             local_factors2, value2,seen_primes2,seen_primes_indexes2 = factorise_fast(fval,primelist_f)
                             local_factors3, value3,seen_primes3,seen_primes_indexes3 = factorise_fast(gval,primelist_f)
                            # print("n: "+str(n)+" f_x: "+str(f_x)+" x+offset: "+str(bitlen(x+offset))+" fval//new_mod: "+str(bitlen(fval//new_mod))+" gval: "+str(bitlen(gval))+" modulus: "+str(new_mod))
-                            if (x+offset*b)*fval*gval != fval2:
-                                print("missing something..."+str(offset)+" f_x: "+str(f_x)+" g_x: "+str(g_x)+" fval: "+str(fval)+" gval: "+str(gval)+" b: "+str(b))
+                           
+                            ##NOTE: For degree 2 when we divide fval by (x+offset*b)*fval*gval we get 1, but for degree 4, another part is added.. got to figure out the math for it
+                            if fval2%(x+offset*b)*fval*gval != 0:
+                                print("missing something..."+str(offset)+" f_x: "+str(f_x)+" g_x: "+str(g_x)+" fval: "+str(fval)+" gval: "+str(gval)+" b: "+str(b)+" fval2: "+str(fval2/fval)+" x: "+str(x))
                                 sys.exit()
                             if value == 1 and value2 == 1 and value3 == 1:
                                 if fval*f_x[0] not in coefficients and fval2 not in smooths:
                                     local_factors4, value4,seen_primes4,seen_primes_indexes4 = factorise_fast(fval2,primelist_f)
-                                    if value4 !=1:
-                                        print("catastrophic fcking failure, quit math")
-                                    smooths.append(fval2)
-                                    factors.append(local_factors4)
-                                    coefficients.append(fval*f_x[0])
-                                    print("Smooths #: "+str(len(smooths))+"/"+str(base+2)+" b: "+str(b)+" offset: "+str(offset)+" f_x: "+str(f_x)+" g_x: "+str(g_x))
-                                    if len(smooths)>(base+2):
-                                        f1,f2=QS(n,primelist,smooths,coefficients,factors)
-                                        if f1 !=0:
-                                            sys.exit()            
+                                    if value4 ==1:
+                                       # print("catastrophic fcking failure, quit math")
+                                        smooths.append(fval2)
+                                        factors.append(local_factors4)
+                                        coefficients.append(fval*f_x[0])
+                                        print("Smooths #: "+str(len(smooths))+"/"+str(base+2)+" b: "+str(b)+" offset: "+str(offset)+" f_x: "+str(f_x)+" g_x: "+str(g_x))
+                                        if len(smooths)>(base+2):
+                                            f1,f2=QS(n,primelist,smooths,coefficients,factors)
+                                            if f1 !=0:
+                                                sys.exit()            
                             ind+=1
                     b+=1
                 offset_ind+=1
@@ -1629,11 +1670,13 @@ def get_primes(start,stop):
     return list(sympy.sieve.primerange(start,stop))
 
 @cython.profile(False)
-def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_size,sbase):
-    global key,keysize,workers,g_debug,base,key,quad_sieve_size,small_base,lin_sieve_size
-    key,keysize,workers,g_debug,base,quad_sieve_size,small_base,lin_sieve_size=l_key,l_keysize,l_workers,l_debug,l_base,l_quad_sieve_size,sbase,l_lin_sieve_size
+def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_size,sbase,l_degree):
+    global key,keysize,workers,g_debug,base,key,quad_sieve_size,small_base,lin_sieve_size,degree
+    key,keysize,workers,g_debug,base,quad_sieve_size,small_base,lin_sieve_size,degree=l_key,l_keysize,l_workers,l_debug,l_base,l_quad_sieve_size,sbase,l_lin_sieve_size,l_degree
     start = default_timer() 
-
+    if degree%2 !=0:
+        print("Fatal, degree must be even")
+        sys.exit()
     if g_p !=0 and g_q !=0 and g_enable_custom_factors == 1:
         p=g_p
         q=g_q
