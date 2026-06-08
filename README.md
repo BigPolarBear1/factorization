@@ -17,7 +17,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 50 -base 500 -debug 0 -lin_size 10_000 -quad_size 1 -d 2
 
-UPDATE: After careful considerations of my findings. I am able to achieve a near identical set-up to NFS. However, since I'm not working in number fields, having both sides of the congruence generate small norms is impossible.
+UPDATE: After careful considerations of my findings. I am able to achieve a near identical set-up to NFS. However, since I'm not working in number fields, having both sides of the congruence generate small polynomial values is impossible.
 But, what is true, if the polynomials on both sides grow in degree, this also bounds what the larges factor can be. For example, any 4th degree polynomial can be represented as the product of 4 linear polynomials. But this also means that the product of these 4 linear polynomials, together constructing the B-smooth has a bound for what the largest factor can be. And that's really the key here. So the only thing left is just effectively sieving this construction.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
