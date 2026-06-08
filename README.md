@@ -17,12 +17,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 50 -base 500 -debug 0 -lin_size 10_000 -quad_size 1 -d 2
 
-UPDATE: After careful considerations of my findings. I am able to achieve a near identical set-up to NFS. However, since I'm not working in number fields, having both sides of the congruence generate small polynomial values is impossible.
-But, what is true, if the polynomials on both sides grow in degree, this also bounds what the larges factor can be. For example, any 4th degree polynomial can be represented as the product of 4 linear polynomials. But this also means that the product of these 4 linear polynomials, together constructing the B-smooth has a bound for what the largest factor can be. And that's really the key here. So the only thing left is just effectively sieving this construction.
-
-And to effectively sieve this construction.. you would probably have to perform NFS-style polynomial selection. Which this PoC already roughly demonstrates. Meaning I'm almost there now..
-
-Update: In the past representing sieving as ax^2–b<sub>0</sub>x + Nk = ax^2+b<sub>1</sub>x – Nk. I was able to build a residue map for that.. where it calculate coefficient residues for both sides. Because actually... the only thing that matters is that for a given polynomial of degree d, we have another polynomial of degree d on the other side.. because then we know that that polynomial splits into a product of linear polynomials and hence reduces the maximum size factors can possible be. Which is an insight I guess I hadnt properly considered before. And after that.. I probably want to create sieve intervals for the coefficients rather then roots if we're working at higher degrees. My head hurts lol. I think this is the final angle I'm going with. If we have two 4th degree polynomials on both sides of the congruences.. it doesn't matter...it still lowers the size the largest factors can possible be. 
+Update: Doing some thinking on how to best sieve this. I could use that offset to reduce that -N to something so that it shares factors with the coefficients.. that could create a nice algebraic structure that allows me to create B-smooths on both sides with many garantueed factors. Let me run some tests... 
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
