@@ -17,22 +17,8 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 50 -base 500 -debug 0 -lin_size 10_000 -quad_size 1 -d 2
 
-Update: Pushed a first version where we use two polynomials, a linear and quadratic (g_x and f_x) whose resultant = N and performs quadratic sieve style sieving with it.
-
-To do:
-
-1. Higher degree polynomials (because with quadratics you need a fairly large coefficients to really reduce that -N to a small number).
-2. Fix small things, implement support for non-monic f_x and g_x ... sieve the 3 parts that need to factorize over the factor base properly... etc etc.
-
-Update: I have quickly implemented a barebones polynomial selection algorithm using Murphy's E score. Full disclosure, I did use claude to write a couple of Murphy's E score related functions to find a polynomial pair with a good E score. But this is not number theoretical research related and for none of the actual research I used AI. This is just implementing a well documented algorithm for polynomial selection into my own algebraic setup, which is novel and a result from my research (and I want to get everything published before I go to iceland just incase something happens.. and this saves me a few days... but nothing I couldn't have figured out through public resources otherwise).
-
-The next logical step is to see if I can get this setup working with higher degree polynomials. I am however absolutely not happy with this claude generated code. I'll implement support for higher degrees first, then properly analyze Kleinjung's method of polynomial selection and fit it to my own algebraic setup. This is ok for now.. as demonstration.
-
-Just ignore this Murphy's E score related code for now. Its just a placeholder. A new math tool I'm only just learning about. I'll implement something proper there later. First I'll move up on degree now.. and then demonstrate if we can actually improve that E score by moving up in degree.. thats really what would prove my work, so I just got to focus on this now, bc proving my work is all that matters.
-
-Update: Did some thinking about how to implement 4th degree... I can just use the results from the paper and use binomial expansions... the fact that the coefficients end up sharing the binomial term as factor might actually be a strength... and I can reduce that -N through the same mechanism.. I just verified that it is possible. And if the constant ends up being divisible by the binomial term.. thats even better. That might give me the tool to actually hunt for similar factorizations... given that I can set it up so it gets a good sieve region.... Lets see tomorrow. My goal for tomorrow will be implementing 4th degree polynomials.
-
-Update: Did some more thinking. So without diving into number fields, we're unlikely to achieve small values on both sides of the congruence. What this does do is split one side into multiple linear polynomials (depending on the degree of f(x)) .. now we can balance out the coefficients of f(x) such that its values are always small ... and by going up in degree we can split the value on the other side into more and more linear polynomials.... and actually breaking up a very large value into small linear polynomials whose residues can we can precompute.. that's it. 
+UPDATE: After careful considerations of my findings. I am able to achieve a near identical set-up to NFS. However, since I'm not working in number fields, having both sides of the congruence generate small norms is impossible.
+But, what is true, if the polynomials on both sides grow in degree, this also bounds what the larges factor can be. For example, any 4th degree polynomial can be represented as the product of 4 linear polynomials. But this also means that the product of these 4 linear polynomials, together constructing the B-smooth has a bound for what the largest factor can be. And that's really the key here. So the only thing left is just effectively sieving this construction.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
