@@ -23,7 +23,6 @@ Update: Yea.. been thinking really hard about it to the point of massive headach
 
 key here is actually force it to share factors between coefficients and roots on both sides of the congruence resulting in more known factors then what SIQS for example is able to achieve* I see how it can be done now... let me start working towards something tomorrow... atleast get a first implementation ready that forces known factors on both sides simultainously. I also tried to get claude to understand my work, but it keep building a wrong model of what I'm trying to do.. which is good.. meaning it still completely sucks at math at a research level aside from writing code for known and documented things. Humans still have the edge... for now.
 
-Update: You know.. when I was doing the find_same() stuff, I think a week ago.. I just realized.. because this PoC shows how to have a two sided sieve and bring all factors over to one side... maybe I just had to add that mechanism to that PoC and done.. ergh... bc then when we sieve for example ax^2-Nk = pv .. we can also have leading coeff a be a factor from the B-smooth we are trying to find near duplicates of and simply transfer everything over to one side... damnit... I think I may have missed something incredibly obvious.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
