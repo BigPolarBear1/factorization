@@ -17,14 +17,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 50 -base 500 -debug 0 -lin_size 10_000 -quad_size 1 -d 2
 
-Update: Doing some thinking on how to best sieve this. I could use that offset to reduce that -N to something so that it shares factors with the coefficients.. that could create a nice algebraic structure that allows me to create B-smooths on both sides with many garantueed factors. Let me run some tests... 
-
-Update: Yea.. been thinking really hard about it to the point of massive headache. Just using those coefficients and that offset to garantuee common factors between x, x+offset and the coefficients is what you have to do... I just dont see another way.. but this approach is interesting and may actually work now. The key being that we can change that dangling -N at the end of our polynomial now with that offset..  so we can force it to share factors with the coefficients..
-
-key here is actually force it to share factors between coefficients and roots on both sides of the congruence resulting in more known factors then what SIQS for example is able to achieve* I see how it can be done now... let me start working towards something tomorrow... atleast get a first implementation ready that forces known factors on both sides simultainously. I also tried to get claude to understand my work, but it keep building a wrong model of what I'm trying to do.. which is good.. meaning it still completely sucks at math at a research level aside from writing code for known and documented things. Humans still have the edge... for now.
-
-Update: Doing some more thinking.. yea... this you need to integrate into the find_same() shit I was doing earlier... and represent fval as some small multiple of the B-smooth you are trying to find near duplicates of. That then basically splits the other side into multiple parts which are easier to sieve predictably. Also AI is fcking retarded. Useless for research. Its literally only good for writing code. It just cannot reason abstractly about complex constructions like this.
-
+Update: Grinding grinding grinding... I got some more work done... I was hoping to find some algebraic structure in this setup that I could exploit... and there actually is one. Was just able to figure it out. I'll try and push some updates tomorrow. 
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
