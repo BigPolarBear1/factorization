@@ -19,6 +19,8 @@ To run: python3 run_qs.py -keysize 50 -base 500 -debug 0 -lin_size 10000 -quad_s
 
 Update: Uploaded some work in progress. Moved all the recent findings into find_same() ... now I need to polish that up and in fact, we can presieve the values of x+offset and gval and abuse some mechanism that changes how to get paired up. Then I should try to get that same thing working for higher degree.. but instead of two linear polynomials.. we have more smallers ones that we can presieve and whose individual parts we can re-arrange. 
 
+I will optimize (uploaded code is crap need to fix a lot of things) what is here and document everything in my paper. My intuition of wanting to move up to higher degree is correct.. but I need to learn about number fields.. I just cant punch past these limitations without number fields. So I will documented what I got so far in my paper.. learn number fields and in a year from now upload the next iteration of my paper and hopefully by then I am able to do what I'm actually trying to do. Ofcourse I would be going into the direction of NFS, but hopefully all the intuition and understanding build with this is going to help to push the envelope there.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
