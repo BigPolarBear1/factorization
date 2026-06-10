@@ -15,11 +15,9 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 
 #### To run from folder "polysieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 50 -base 500 -debug 0 -lin_size 10_000 -quad_size 1 -d 2
+To run: python3 run_qs.py -keysize 50 -base 500 -debug 0 -lin_size 10000 -quad_size 1
 
-Update: Grinding grinding grinding... I got some more work done... I was hoping to find some algebraic structure in this setup that I could exploit... and there actually is one. Was just able to figure it out. I'll try and push some updates tomorrow. 
-
-Update: While in iceland I'm going to study Galois theory. In my first year I actually spent a considerable amount of time learning basic number theory and working with quadratic congruences... and now Galois theory is my next road block that I'm definitely going to need to study properly. I have done every possible manipulation that can be achieved now in Z/Z... it's time to dig deeper. Anyway.. there is still a lot that can be done purely in Z/Z and its not something I am abandoning. I have figured out the math for 2nd degree.. will try to release a PoC tomorrow.. but to make this approach work.. eventually this will need to be generalized to higher degrees. It should be do-able though.
+Update: Uploaded some work in progress. Moved all the recent findings into find_same() ... now I need to polish that up and in fact, we can presieve the values of x+offset and gval and abuse some mechanism that changes how to get paired up. Then I should try to get that same thing working for higher degree.. but instead of two linear polynomials.. we have more smallers ones that we can presieve and whose individual parts we can re-arrange. 
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
