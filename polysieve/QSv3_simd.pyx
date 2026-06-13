@@ -1078,7 +1078,7 @@ def new_coeffs(f, x):
     return tmp
 
 
-def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,valid_quads,valid_quads_factors,qlist):
+def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,valid_quads,valid_quads_factors,qlist,new_root):
    ##NOTE TO ASSHOLES FEEDING THIS INTO AI TO RIDICULE MY WORK: THIS IS A VERY FIRST VERSION. THERE IS SOMETHING VEY SPECIFIC I WANT TO DO WITH THIS SETUP, BUT ITS NOT YET IMPLEMENTED. WORKING TOWARDS IT NOW THOUGH.
    
    
@@ -1095,11 +1095,13 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
     grays = get_gray_code(20)
     seen=[]
     max_iterations=1000
+
+    
     t=0
     while t < max_iterations:
         mod=1
         mod_fac=[]
-
+        mod_r=[]
 
     
         leng=primelist_f[0]
@@ -1109,38 +1111,70 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
             i = random.randrange(len(local_factors))
             fac=local_factors[i]
             if fac not in mod_fac and fac != -1:
-                if bitlen(mod*fac)>keysize*0.30:
+                if bitlen(mod*fac)>keysize*0.25:
                     break 
                 mod_ind.append(len(mod_fac))
                 mod_fac.append(fac)
-
+                mod_r.append(fac)
+             #   mod_r.append([])
+                roots=find_roots_poly([1,0,n],fac)
+                if len(roots) == 0:
+                    print("oops")
+                    sys.exit()
+                mod_r.append(roots)
                 mod*=fac
                 if mod_fac[mod_ind[-1]] != fac:
                     print("fatal")
                     sys.exit()   
-        diff=bitlen(mod)-(keysize*0.30)
+        diff=bitlen(mod)-(keysize*0.25)
         if abs(diff) > 2 or mod in seen:
             t+=1
             continue
+        print("mod_r: "+str(mod_r))
+        partials=get_partials(mod,mod_r)
+      #  tot=0
+        i=0
+        enum=[]
+        while i < len(partials):
+           # tot+=partials[i+1][0]
+            enum.append(partials[i+1])
+            i+=2
 
-        seen.append(mod)
-
-        print("[i]Looking for: "+str(local_factors)+" mod bits: "+str(bitlen(mod)))
-        y_start=mod#round(n**(1/degree))#y_start//2#round(n**0.25)#y_start//2
-        offset_start=round(n**(0.25))#(1/degree))#1#best_params[1]#0#round(n**0.25)#best_params[1]
+        for combo in itertools.product(*enum):
+            tot=0
+            for t in combo:
+                tot+=t
+            tot%=mod
         
-        co_ind=0
-        while co_ind < 10000:
-            y=y_start+co_ind*mod
-            co=binomial_coeffs_fast(y, degree)
+            if (tot**2+n)%mod !=0:
+                print("fatal")
+                sys.exit()
+            seen.append(mod)
 
-            offset_ind=0
-            while offset_ind < 5_000_000:
-                offset=offset_start+offset_ind
+            print("[i]Looking for: "+str(local_factors)+" mod bits: "+str(bitlen(mod))+" original pval: "+str(poly_val)+" root: "+str(new_root)+" partials: "+str(partials))
+            y_start=mod#round(n**(1/degree))#y_start//2#round(n**0.25)#y_start//2
+        
+            co_ind=0
+            while co_ind < 10000:
+                y=y_start+co_ind*mod
+                if y/(mod*(co_ind+1)) != 1:
+                    print('fatal error')
+                    sys.exit()
+                co=binomial_coeffs_fast(y, degree)
+          #  print("coefficients: "+str(co))
+                c=n-(y**degree-(y-tot)**degree)
+         #   print("c: "+str(c)+" mod: "+str(mod))
+                if c%mod !=0:
+                    print("error")
+                    exit()
+
+                offset=tot
+                
                 constant=-(n-(y**degree-(y-offset)**degree))
                 if constant%mod !=0:
-                    offset_ind+=1
+                    co_ind+=1
                     continue
+            #    print("constant: "+str(constant)+" n: "+str(n)+" y: "+str(y)+"  offset: "+str(offset)+" n-sub: "+str((y**degree-(y-offset)**degree)))
         #    print(constant2%mod_fac[0])
         #    if constant2%mod_fac[0]!=0:
         #        offset_ind+=1
@@ -1190,9 +1224,8 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
                                     print("Bsmooths: "+str(len(ret_array[0]))+"/"+str(base+10)+" f_x: "+str(f_x)+" g_x: "+str(g_x)+" fval//mod: "+str(fval//mod)+" gval: "+str(gval)+" mod: "+str(mod)+" x+offset: "+str(mod*x_ind+offset*b)+" b: "+str(b)+" co_ind: "+str(co_ind)+" x_ind: "+str(x_ind)+" bitlen(fval/mod): "+str(bitlen(fval//mod))+" bitlen(gval): "+str(bitlen(gval))+" bitlen(x+offset): "+str(bitlen(mod*x_ind+offset))+" offset: "+str(offset)+" rem: "+str(rem)+" local1: "+str(seen_primes)+" local2: "+str(seen_primes2)+" local3: "+str(seen_primes3))
                         x_ind+=1
                     b+=1
-             #   break
-                offset_ind+=1
-            co_ind+=1
+
+                co_ind+=1
 
     return found
 
@@ -1289,7 +1322,7 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                 ret_array[2].append(local_factors)
                 ret_array[3].append([])
             #    print("***seen_primes: "+str(local_factors)+" cmod: "+str(cmod)+" root: "+str(new_root)+" polyval: "+str(poly_val))
-                found+=find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,valid_quads,valid_quads_factors,qlist)
+                found+=find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,valid_quads,valid_quads_factors,qlist,new_root)
                 if len(ret_array[0])>(base+10):
                     return found
         k+=1
