@@ -1078,7 +1078,7 @@ def new_coeffs(f, x):
     return tmp
 
 def presieve_x(mod,offset,sievelen,primeslist,b,primelist_f):
-    indices=[0]*sievelen
+    indices=array.array('i',[0]*sievelen)
     #form: mod*x_ind+offset*b
     interval=array.array('i',[0]*sievelen)
     i=0
@@ -1098,8 +1098,37 @@ def presieve_x(mod,offset,sievelen,primeslist,b,primelist_f):
         i+=1
     i=0
     while i < len(interval):
-        if interval[i]>5: #to do: optimize threshold value
+        if interval[i]>(keysize*0.40): #to do: optimize threshold value
             local_factors, value,seen_primes = factorise_fast2(mod*i+offset*b,primelist_f)
+            if value == 1:
+                indices[i]=1
+        i+=1
+ #   print("indices: "+str(indices))
+    return indices
+
+def presieve_g(mod,lin,sievelen,primeslist,b,primelist_f):
+    indices=array.array('i',[0]*(sievelen))
+    #form: lin+mod*i     ... sievelen = lin_sieve_len+26  (26 = (15-2)*2)
+    interval=array.array('i',[0]*(sievelen))
+    i=0
+    while i < len(primeslist):
+        prime=primeslist[i]
+        if mod%prime == 0:
+            i+=1
+            continue
+        s=solve_lin_con(mod,-lin*b,prime)
+        if (mod*s+lin*b)%prime !=0:
+            print("ergh fatal")
+            sys.exit()
+
+        while s < len(interval):
+            interval[s]+=round(math.log2(prime))
+            s+=prime
+        i+=1
+    i=0
+    while i < len(interval):
+        if interval[i]>(keysize*0.40): #to do: optimize threshold value
+            local_factors, value,seen_primes = factorise_fast2(lin+mod*i,primelist_f)
             if value == 1:
                 indices[i]=1
         i+=1
@@ -1109,7 +1138,8 @@ def presieve_x(mod,offset,sievelen,primeslist,b,primelist_f):
 def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,valid_quads,valid_quads_factors,qlist,new_root):
    ##NOTE TO ASSHOLES FEEDING THIS INTO AI TO RIDICULE MY WORK: THIS IS A VERY FIRST VERSION. THERE IS SOMETHING VEY SPECIFIC I WANT TO DO WITH THIS SETUP, BUT ITS NOT YET IMPLEMENTED. WORKING TOWARDS IT NOW THOUGH.
    
-   
+    if len(local_factors)==0 or local_factors == -1:
+        return 0
    # print("valid_quads: "+str(valid_quads))
     unique_factors=[]
     count=0
@@ -1134,8 +1164,9 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
     
         leng=primelist_f[0]
         mod_ind=[]
-
-        while 1:
+        t2=0
+       # print("local factors: "+str(local_factors))
+        while t2 < max_iterations:
             i = random.randrange(len(local_factors))
             fac=local_factors[i]
             if fac not in mod_fac and fac != -1:
@@ -1153,7 +1184,8 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
                 mod*=fac
                 if mod_fac[mod_ind[-1]] != fac:
                     print("fatal")
-                    sys.exit()   
+                    sys.exit() 
+            t2+=1  
         diff=bitlen(mod)-(keysize*0.33)
         if abs(diff) > 2 or mod in seen:
             t+=1
@@ -1182,19 +1214,21 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
             print("[i]Looking for: "+str(local_factors)+" mod bits: "+str(bitlen(mod))+" original pval: "+str(poly_val)+" root: "+str(new_root)+" partials: "+str(partials))
             y_start=mod#round(n**(1/degree))#y_start//2#round(n**0.25)#y_start//2
         
-            
+            co_sieve_len=15
             b=1
             while b < 10:
-            #    print("NEXT B")
+              #  print("NEXT B")
                 pre_x=presieve_x(mod,tot,lin_sieve_size,primeslist,b,primelist_f)
+              #  print("((mod*2)-tot)*b: "+str(((mod*2)-tot)*b))
+                pre_g=presieve_g(mod,((mod*2)-tot)*b,lin_sieve_size+((co_sieve_len)*2*b),primeslist,b,primelist_f)
                 co_ind=0
-                while co_ind < 10:
+                while co_ind < co_sieve_len:
                     y=y_start+co_ind*mod
                     if y/(mod*(co_ind+1)) != 1:
                         print('fatal error')
                         sys.exit()
                     co=binomial_coeffs_fast(y, degree)
-             #       print("Coefficients: "+str(co))
+            #        print("Coefficients: "+str(co))
                     c=n-(y**degree-(y-tot)**degree)
          #   print("c: "+str(c)+" mod: "+str(mod))
                     if c%mod !=0:
@@ -1225,7 +1259,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
                     g_x=[m1,-m0]
                     x_ind=1
                     while x_ind < lin_sieve_size:
-                        if math.gcd(mod*x_ind, b) != 1 or pre_x[x_ind]!=1:# or x == 0:
+                        if math.gcd(mod*x_ind, b) != 1 or pre_x[x_ind]!=1 or pre_g[x_ind+(co_ind*2*b)]!=1:
                             x_ind+=1
                             continue
                         fval=evaluate(f_x,mod*x_ind)
@@ -1237,18 +1271,33 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
                             print("gval fail: "+str(fval)+" gval: "+str(gval)+" f_x: "+str(f_x)+" g_x: "+str(g_x)+" co_ind: "+str(co_ind)+" offset: "+str(offset)+" b: "+str(b)+" fval2: "+str(fval2)+" x+offset: "+str(mod*x_ind+offset*b))
                             sys.exit()
 
-                      #  local_factors, value,seen_primes = factorise_fast2((mod*x_ind)+offset*b,primelist_f)
+                        
                       #  if pre_x[x_ind]==1 and value !=1:
                           #  print("super fatal")
                           #  sys.exit()
                         local_factors2, value2,seen_primes2 = factorise_fast2(fval//mod,primelist_f)
+
+
+                        ##CONDITION: These two must always factorize.. since they get presieved..
+                        local_factors1, value,seen_primes = factorise_fast2((mod*x_ind)+offset*b,primelist_f)
                         local_factors3, value3,seen_primes3 = factorise_fast2(gval,primelist_f)
-                    #    if count < 1000:
-                     #       print("Bsmooths: "+str(len(ret_array[0]))+"/"+str(base+10)+" f_x: "+str(f_x)+" g_x: "+str(g_x)+" fval//mod: "+str(fval//mod)+" gval: "+str(gval)+" mod: "+str(mod)+" x+offset: "+str(mod*x_ind+offset*b)+" b: "+str(b)+" co_ind: "+str(co_ind)+" x_ind: "+str(x_ind)+" bitlen(fval/mod): "+str(bitlen(fval//mod))+" bitlen(gval): "+str(bitlen(gval))+" bitlen(x+offset): "+str(bitlen(mod*x_ind+offset))+" offset: "+str(offset)+" rem: "+str(rem)+" local2: "+str(seen_primes2)+" local3: "+str(seen_primes3))
-                       #     count+=1
-                     #   else:
+                        if value != 1 or value3 != 1:
+                            print("fatal error, math fucked up")
+                            sys.exit()
+                   #     print("ind: "+str(x_ind+(co_ind*2*b))+" x_ind: "+str(x_ind)+" co_ind: "+str(co_ind))
+                    #    if pre_g[x_ind+(co_ind*2*b)]==1 and value3 != 1:
+                     ##       print("fatal bail: "+str(x_ind+(co_ind*2))+" x_ind: "+str(x_ind)+" co_ind: "+str(co_ind)+" g_x: "+str(g_x)+" gval: "+str(gval))
                        #     sys.exit()
-                        if value2 == 1 and value3 == 1:
+                       # if count < 1000:
+                       #     print("Bsmooths: "+str(len(ret_array[0]))+"/"+str(base+10)+" f_x: "+str(f_x)+" g_x: "+str(g_x)+" fval//mod: "+str(fval//mod)+" gval: "+str(gval)+" mod: "+str(mod)+" x+offset: "+str(mod*x_ind+offset*b)+" b: "+str(b)+" co_ind: "+str(co_ind)+" x_ind: "+str(x_ind)+" bitlen(fval/mod): "+str(bitlen(fval//mod))+" bitlen(gval): "+str(bitlen(gval))+" bitlen(x+offset): "+str(bitlen(mod*x_ind+offset))+" offset: "+str(offset)+" rem: "+str(rem)+" local2: "+str(seen_primes2)+" local3: "+str(seen_primes3))
+                       #     count+=1
+                       # else:
+                       #     sys.exit()
+
+
+                        ##TO DO: MOVE BACK UP, JUST MOVED DOWN FOR DEBUGGING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+                        if value2 == 1:
                             if (fval*f_x[0])**2 not in ret_array[1] and fval2 not in ret_array[0]:
                                 local_factors4, value4,seen_primes4 = factorise_fast2(fval2,primelist_f)
                                 if value4 ==1:
@@ -1447,7 +1496,7 @@ def generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SI
         cfact = []#[0]*base
         indexes=[]
         counter2=0
-        while counter2 < const_2:
+        while counter2 < const_1:
             counter2+=1
             found_a_factor = False
             counter=0
@@ -1499,9 +1548,10 @@ def generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SI
 
         found_a_factor = False
         counter3=0
-        while not found_a_factor and counter3< const_2 and randindex <base:
+        while not found_a_factor and counter3< const_1 and randindex <base:
             if  jacobi((-quad*n)%primeslist[randindex],primeslist[randindex])!=1:
                 randindex += 1
+                counter3+=1
                 continue
             potential_a_factor = primeslist[randindex]**2
 
