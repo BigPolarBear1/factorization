@@ -15,7 +15,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 
 #### To run from folder "polysieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 50 -base 500 -debug 0 -lin_size 10000 -quad_size 1
+To run:  python3 run_qs.py -keysize 60 -base 500 -debug 0 -lin_size 10_000 -quad_size 1
 
 EDIT: Important note to self so I dont forget. Going to degree higher then 2 we get two linear polynomials and some leftover part... basically splitting it in 3 parts rather then 2. I should at a minimum make note of that even if I dont end up using it in an algorithm without number fields (its likely a lot more interesting to leverage with number fields in the picture).
 
@@ -26,6 +26,8 @@ Update: Uploaded some work in progress. Moved all the recent findings into find_
 I will optimize (uploaded code is crap need to fix a lot of things) what is here and document everything in my paper. My intuition of wanting to move up to higher degree is correct.. but I need to learn about number fields.. I just cant punch past these limitations without number fields. So I will documented what I got so far in my paper.. learn number fields and in a year from now upload the next iteration of my paper and hopefully by then I am able to do what I'm actually trying to do. Ofcourse I would be going into the direction of NFS, but hopefully all the intuition and understanding build with this is going to help to push the envelope there.
 
 Update: mainly been focused on making the paper more presentable this week. Also just now quickly fixed that offset calculation so we end up with a constant that divides by the modulus. Tomorrow I'll start with the pre-sieving of the two linear polynomials... then write all that logic... because that's by large the biggest refactor and the sooner I get it over with the better... 
+
+Update: It is now presieving one of the linear polynomials already, need to implement support for the other one aswell. Then we can gut all these loops in find_same and just pair up the indexes of when both the linear polynomials factorize. So tonight, I'll add presieving for the other linear poly and then before I gut all these loops I'll also optimize that fval.. because that one needs to be kept as small as possible after dividing out all the known factors. Idea is to shift all the burden to the linear polynomials bc those we can presieve and pair up... this pairing up does have an offset cost depending on how far the indices for the two linear polynnomials are that gets added to fval, so the smaller fval starts with after dividing out the known factors, the better.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
