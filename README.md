@@ -29,6 +29,8 @@ Update: mainly been focused on making the paper more presentable this week. Also
 
 Update: It is now presieving one of the linear polynomials already, need to implement support for the other one aswell. Then we can gut all these loops in find_same and just pair up the indexes of when both the linear polynomials factorize (the idea being that we can pair up arbitrary indexes, not just when both just happen to be smooth.. important distinction). So tonight, I'll add presieving for the other linear poly and then before I gut all these loops I'll also optimize that fval.. because that one needs to be kept as small as possible after dividing out all the known factors. Idea is to shift all the burden to the linear polynomials bc those we can presieve and pair up... this pairing up does have an offset cost depending on how far the indices for the two linear polynnomials are that gets added to fval, so the smaller fval starts with after dividing out the known factors, the better.
 
+Update: Alright, both linear polynomials now get pre-sieved. nothing too complicated about that. Next step now is getting fval as small as possible after dividing out the known factors because we want to shift all of the factorization burden to the two linear polynomials. And after that I am hoping I can use that to generate near identical b-smooths... because sieving this way gives us quite a bit more freedom.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
