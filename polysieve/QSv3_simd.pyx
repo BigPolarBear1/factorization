@@ -1214,9 +1214,9 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
             print("[i]Looking for: "+str(local_factors)+" mod bits: "+str(bitlen(mod))+" original pval: "+str(poly_val)+" root: "+str(new_root)+" partials: "+str(partials))
             y_start=mod#round(n**(1/degree))#y_start//2#round(n**0.25)#y_start//2
         
-            co_sieve_len=15
+            co_sieve_len=1000
             b=1
-            while b < 10:
+            while b < 3: ##I dont know about sieving b.. need something smart here.. perhaps use the b getting certains linear poly values inside a specific range..
               #  print("NEXT B")
                 pre_x=presieve_x(mod,tot,lin_sieve_size,primeslist,b,primelist_f)
               #  print("((mod*2)-tot)*b: "+str(((mod*2)-tot)*b))
