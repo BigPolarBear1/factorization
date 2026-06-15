@@ -31,6 +31,8 @@ Update: It is now presieving one of the linear polynomials already, need to impl
 
 Update: Alright, both linear polynomials now get pre-sieved. nothing too complicated about that. Next step now is getting fval as small as possible after dividing out the known factors because we want to shift all of the factorization burden to the two linear polynomials. And after that I am hoping I can use that to generate near identical b-smooths... because sieving this way gives us quite a bit more freedom.
 
+Update: thinking a bit more about this... so fval doesnt need to be super small... just reasonably small after dividing out the modulus factors. And then the factors of the linear polynomials either need to be small or square. And that's how you do the whole "find_same" strategy.. because I have proven in the past that this reduces the required number of B-smooths. Now finding these cases.. that's like a parameter search. Something I am sure can be optimized. Let me write down the core ideas in the paper today so atleast that is out of the way...
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
