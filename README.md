@@ -15,7 +15,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 
 #### To run from folder "polysieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 60 -base 500 -debug 0 -lin_size 10_000 -quad_size 1
+To run:  python3 run_qs.py -keysize 70 -base 500 -debug 0 -lin_size 10_000 -quad_size 1
 
 EDIT: Important note to self so I dont forget. Going to degree higher then 2 we get two linear polynomials and some leftover part... basically splitting it in 3 parts rather then 2. I should at a minimum make note of that even if I dont end up using it in an algorithm without number fields (its likely a lot more interesting to leverage with number fields in the picture).
 
