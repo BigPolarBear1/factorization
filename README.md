@@ -19,6 +19,8 @@ To run:  python3 run_qs.py -keysize 70 -base 500 -debug 0 -lin_size 10_000 -quad
 
 A lot of the math is explained in the paper. This starts with an SIQS variant, using residue sieving and moduli while still keeping self-initialization. If a b-smooth is found, it calls into find_same() where it flips things around and the other side gets split into two linear polynomials. By sieving in the direction of the coefficients and the "offset" (see paper) we can change how values for these 2 linear polynomials get paired up. That mechanism works. Building an efficient algorithm around this will likely need to include p-adic lifting. I believe what you want to do is find some coefficient where the singular root lifts very high (see paper on how we can use hensel by treating singular as non-singular roots by transfering it to the other quadratic in our two sided setup).. then use the setup in find_same() to get everything aligned with that p-adic tower, or whatever you call it. I'm abstractly seeing a way it can be done, but going from idea to optimized implementation is going to take time.. all the math has been estasblished though and I know what I got even if nobody else believes me.
 
+Update: Stressed. My father came back very ill from a work trip in Eastern Europe. He's at the ER now. I may need to cancel my trip to Iceland if this ends up being serious. It's hard to think about math right now. 
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
