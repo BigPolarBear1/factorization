@@ -33,6 +33,8 @@ Update: Alright, both linear polynomials now get pre-sieved. nothing too complic
 
 Update: thinking a bit more about this... so fval doesnt need to be super small... just reasonably small after dividing out the modulus factors. And then the factors of the linear polynomials either need to be small or square. And that's how you do the whole "find_same" strategy.. because I have proven in the past that this reduces the required number of B-smooths. Now finding these cases.. that's like a parameter search. Something I am sure can be optimized. Let me write down the core ideas in the paper today so atleast that is out of the way...
 
+Update:  Today was mostly paper day.. figured out some more of the math... so we can change linear poly pairing either by adding the modulus to our offset value or by adding the modulus to the coefficient... and in addition we can also add a skew with that b parameter... similar to what NFS does.. So I should be good to start implementing some proper code now...
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
