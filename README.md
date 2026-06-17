@@ -23,6 +23,8 @@ Update: Stressed. My father came back very ill from a work trip in Eastern Europ
 
 Update: Yea.. I cant do shit atm. Either tomorrow my father's test results all come back clean and he can leave the ER.. or something bad happened and I'll have to cancel my trip to Iceland. Should it not get canceled.. then I'll take some pen and paper with me to iceland and try to figure out how to fit p-adic lifting into that find_same() function. Positioning both linear polynomials at a place where we can get a large lift, easy, I got the math worked out already. But positioning it so that f(x)'s value is small, that's non-trivial. Might be able to find some mechanism though... I do know how to dramatically reduce the size of f(x)'s value.. but then it would end up excluding the factors we are hunting.. but I can embed the factors we are looking for into one of the linear polynomials. I might fix my PoC to at a minimum do that before I leave.. if I get to leave for Iceland with everything that's happening...
 
+Update: Yea, p-adic lifting, residues maps.. singular vs non-singular roots... and that linear poly split.. damnit, I can intuitively see an algorithm, but I'm not sure I can work out the implementation details before I go to Iceland (if I dont have to cancel the trip.. will know soon). May have to grind out this final step with pen and paper on the icelandic interior. 
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
