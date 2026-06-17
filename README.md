@@ -25,6 +25,8 @@ Update: Yea.. I cant do shit atm. Either tomorrow my father's test results all c
 
 Update: Yea, p-adic lifting, residues maps.. singular vs non-singular roots... and that linear poly split.. damnit, I can intuitively see an algorithm, but I'm not sure I can work out the implementation details before I go to Iceland (if I dont have to cancel the trip.. will know soon). May have to grind out this final step with pen and paper on the icelandic interior. 
 
+Update: Yeap.. I'm certain now, you do need to use p-adic lifting.. 
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
