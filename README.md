@@ -19,6 +19,10 @@ To run:  python3 run_qs.py -keysize 70 -base 500 -debug 0 -lin_size 10_000 -quad
 
 This runs a standard SIQS variant using residue sieving, while still retaining self-initialization and once a B-smooth is found it calls into find_same, flips things around and tries to sieve for similar b-smooths, although that logic is left unimplemented. It does created a linear polynomial split, so we end up sieving with 3 parts, f(x) and linear polys g(x), h(x) and the values of g(x) and h(x) can be presieved independetly and paired up at an offset cost that's paid by f(x). I'm still trying to figure out the math on how to go from there. I'll take some pen and paper with me to Iceland and in addition learn about numberfields. 
 
+Two approaches I want to have a deeper look at is: 1. p-adic lifting and using residue maps together with the manipulations we are doing in find_same(). What we really need is for g(x) and h(x)'s polynomial values to be a bunch of factors over a small factor base... this is done with p-adic lifting. And finally f(x) needs to be as small as possible... ofcourse if the roots are small, the coefficients are small and the constant is small, then it is trivial to see that the polynomial value will be small too.. so I wonder if I can use all of this somehow with residue maps.
+
+Then the final approach will be finding some way to use number fields so I can replace some part of this setup with legendre symbols. But its hard to speculate on how this might work without doing the hard work first and properly learning about number fields. I'll work my way through a course on rings and modules while in Iceland. 
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
