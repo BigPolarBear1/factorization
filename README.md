@@ -21,7 +21,7 @@ This runs a standard SIQS variant using residue sieving, while still retaining s
 
 Two approaches I want to have a deeper look at is: 1. p-adic lifting and using residue maps together with the manipulations we are doing in find_same(). What we really need is for g(x) and h(x)'s polynomial values to be a bunch of factors over a small factor base... this is done with p-adic lifting. And finally f(x) needs to be as small as possible... ofcourse if the roots are small, the coefficients are small and the constant is small, then it is trivial to see that the polynomial value will be small too.. so I wonder if I can use all of this somehow with residue maps.
 
-Then the final approach I want to take a look at if I cant find enough leverage with this will be finding some way to use number fields so I can replace some part of this setup with legendre symbols. But its hard to speculate on how this might work without doing the hard work first and properly learning about number fields. I'll work my way through a course on rings and modules while in Iceland. 
+Then the final approach I want to take a look at if I cant find enough leverage with this will be finding some way to use number fields so I can replace some part of this setup with legendre symbols. But its hard to speculate on how this might work without doing the hard work first and properly learning about number fields. I'll work my way through a course on rings and modules while in Iceland (at first I thought I had to get into galois theory, but rings and modulus is actually much closer to what I need to learn). 
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
