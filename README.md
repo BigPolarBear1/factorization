@@ -27,6 +27,8 @@ Update: Let me add the residue map and lifting before I leave.. easy enough.
 
 UPDATE: EUHM HOLY FUCK I JUST DISCOVERED SOMETHING.. IF WE TAKE THE POLY PROD OF G(X) AND H(X) .. THEN THE DISCRIMINANT IS ALSO SQUARE.. NOW IF THE DISCRIMINANT OF F(X) IS ALSO SQUARE>>> THEN WE GOT IT... kind of sounds obvious but I also know what this implies..... OOOOOH SHIT.
 
+It turned out to be so simple...  GOD DAMN. I still have a full week until Iceland.. this shouldnt take more then a weekend max to finish. Time to push the final domino. I guess people knew this was coming, could have just asked me to hold back disclosure. Guess it's the times we live in. 
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
