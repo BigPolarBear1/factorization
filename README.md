@@ -23,6 +23,8 @@ Two approaches I want to have a deeper look at is: 1. p-adic lifting and using r
 
 Then the final approach I want to take a look at if I cant find enough leverage with this will be finding some way to use number fields so I can replace some part of this setup with legendre symbols. But its hard to speculate on how this might work without doing the hard work first and properly learning about number fields. I'll work my way through a course on rings and modules while in Iceland (at first I thought I had to get into galois theory, but rings and modules is actually much closer to what I need to learn). In the long run I will need to learn number fields anyway if I want to work on the cutting edge of math research... because without getting deep into abstract algebra.. I'm going to be missing too many tools in my toolbox.
 
+Update: Let me add the residue map and lifting before I leave.. easy enough.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
