@@ -22,6 +22,8 @@ UPDATE: EUHM HOLY FUCK I JUST DISCOVERED SOMETHING.. IF WE TAKE THE POLY PROD OF
 
 It turned out to be so simple...  GOD DAMN. I still have a full week until Iceland.. this shouldnt take more then a weekend max to finish. Time to push the final domino. I guess people knew this was coming, could have just asked me to hold back disclosure. Guess it's the times we live in. 
 
+Update: Yeap that was just, just take the poly prod of g(x) and h(x) and look at its discriminant, which will always be square and then factorize the discriminant of f(x)... easy. I did it. Finally. Its too warm atm, will continue in a few hours and upload tonight. Unless someone has objections.. then you have a few hours to make them... I guess.... whatever.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
