@@ -1228,7 +1228,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
         
             co_sieve_len=lin_sieve_size
             b=1
-            while b < 5: ##I dont know about sieving b.. need something smart here.. perhaps use the b getting certains linear poly values inside a specific range..
+            while b < 3: ##I dont know about sieving b.. 
                 co_ind=0
                 while co_ind < co_sieve_len:
                     y=y_start+co_ind*(mod)
@@ -1246,8 +1246,6 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
                         print("blah1")
                         sys.exit()
 
-                 #   m1=f_x[0]
-                 #   m0=-(((y)*2)-offset)*b ##This is not correct for different b...
                     g_x=[f_x[0],(((y)*2)-offset)*b]
                     h_x=[1,offset*b]
                     i_x=poly_prod(g_x,h_x)
@@ -1262,11 +1260,11 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
 
                     local_factors4, value4,seen_primes4 = factorise_fast2(disc1,primelist_f)
                     if value4 ==1 and math.gcd(disc2,b)==1:
-                        print("found one: "+str(len(ret_array[0])))
+                        print("found one in find_same: "+str(len(ret_array[0]))+"/"+str((base+10)))
                         if disc2%n!=disc1%n:
                             print("wtf")
+                            sys.exit()
                         found+=1
-                                       # print("catastrophic fcking failure, quit math")
                         ret_array[1].append(disc2)
                         ret_array[0].append(disc1)
                         ret_array[2].append(local_factors4)
