@@ -1214,8 +1214,8 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
 
         for combo in itertools.product(*enum):
             tot=0
-            for t in combo:
-                tot+=t
+            for to in combo:
+                tot+=to
             tot%=(mod)
         
             if (tot**2+n)%mod !=0:
