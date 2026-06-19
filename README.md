@@ -27,6 +27,8 @@ Update: Fixed the code (and paper) so it uses discriminants in find_same() ... n
 
 Update: Whats left really is that in find_same(), approaching b-smooth sieving from the other way around, is that you need to combine it with p-adic lifting. And ive shown how we can lift even if a quadratic's discriminant is divisible mod p.. that's really all that's left now. But this is trivial and if someone doesn't beat me to it, I'll do it myself the moment I'm back from Iceland.
 
+Update: Adding some more stuff to find_same so you can see how the quadratics and discriminant relate... setting it up like this, the root must be some small multiple of the modulus... so yea.. that should be easy to see how we can figure out the rest now with p-adic lifting... let me atleast try and get that implemented tomorrow.. I wont work past the weekend as I need to prepare for Iceland.. but I atleast want that p-adic lifting in my code.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
