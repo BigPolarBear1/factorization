@@ -1176,7 +1176,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
             i = random.randrange(len(local_factors))
             fac=local_factors[i]
             if fac not in mod_fac and fac != -1 and fac !=2:
-                if bitlen(mod*fac)>(keysize*0.3):
+                if bitlen(mod*fac)>(keysize*0.45):
                     break 
                 mod_ind.append(len(mod_fac))
                 mod_fac.append(fac)
@@ -1198,8 +1198,8 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
                     print("fatal")
                     sys.exit() 
             t2+=1  
-        diff=bitlen(mod)-(keysize*0.3)
-        if abs(diff) > 5 or mod in seen:
+        diff=bitlen(mod)-(keysize*0.45)
+        if abs(diff) > 3 or mod in seen:
             t+=1
             continue
         print("mod_r: "+str(mod_r))
@@ -1211,7 +1211,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
            # tot+=partials[i+1][0]
             enum.append(partials[i+1])
             i+=2
-
+        seen.append(mod)
         for combo in itertools.product(*enum):
             tot=0
             for to in combo:
@@ -1221,14 +1221,14 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
             if (tot**2+n)%mod !=0:
                 print("fatal")
                 sys.exit()
-            seen.append(mod)
+            
 
             print("[i]Looking for: "+str(local_factors)+" mod bits: "+str(bitlen(mod))+" original pval: "+str(poly_val)+" root: "+str(new_root)+" partials: "+str(partials))
             y_start=mod#round(n**(1/degree))#y_start//2#round(n**0.25)#y_start//2
         
-            co_sieve_len=lin_sieve_size
-            b=1
-            while b < 3: ##I dont know about sieving b.. 
+            co_sieve_len=1000
+            b=1 ##TO DO: Need to calculate the optimal range for this
+            while b < 10_000: 
                 co_ind=0
                 while co_ind < co_sieve_len:
                     y=y_start+co_ind*(mod)
@@ -1236,18 +1236,17 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
                         print('fatal error')
                         sys.exit()
                     co=binomial_coeffs_fast(y, degree)
-                    offset=tot
-                    ##TO DO!!!!!!!!!!!!!!!!!!!!!!!!!: Can also add the modulus to the offset to produce small poly val for DISC(f(x))....... 
+                    offset=tot+b*mod
                     constant=-(n-((y)**degree-((y)-offset)**degree))
                     fail=0
-                    f_x_temp=co+[constant]
-                    f_x=new_coeffs(f_x_temp,b)
+                    f_x=co+[constant]
+                  #  f_x=new_coeffs(f_x_temp,b)
                     if f_x[-1]%mod !=0:
                         print("blah1")
                         sys.exit()
 
-                    g_x=[f_x[0],(((y)*2)-offset)*b]
-                    h_x=[1,offset*b]
+                    g_x=[f_x[0],(((y)*2)-offset)]
+                    h_x=[1,offset]
                     i_x=poly_prod(g_x,h_x)
                     disc1=f_x[1]**2-4*(f_x[2]*f_x[0])
                     disc2=i_x[1]**2-4*(i_x[2]*i_x[0])
@@ -1255,12 +1254,14 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
                     if disc_sqr2**2 != disc2:
                         print("something wentwrong")
                         sys.exit()
-
-
+                    if disc1%(mod*4)!=0:
+                        print("something went wrong")
+                        sys.exit()
+                   # print("disc1: "+str(disc1//(mod*4))+" disc_sqr2: "+str(disc_sqr2)+" f_x: "+str(f_x)+" co_ind: "+str(co_ind)+" bits: "+str(bitlen(disc1//(mod*4)))+" b: "+str(b))
 
                     local_factors4, value4,seen_primes4 = factorise_fast2(disc1,primelist_f)
-                    if value4 ==1 and math.gcd(disc2,b)==1:
-                        print("found one in find_same: "+str(len(ret_array[0]))+"/"+str((base+10)))
+                    if value4 ==1 and local_factors4 not in ret_array[2]:# and math.gcd(disc2,b)==1:
+                        print("found one in find_same: "+str(len(ret_array[0]))+"/"+str((base+10))+" b: "+str(b))
                         if disc2%n!=disc1%n:
                             print("wtf")
                             sys.exit()
@@ -1274,7 +1275,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
 
 
                     co_ind+=1
-                b+=1
+                b+=1000
 
     return found
 
