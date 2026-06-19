@@ -15,7 +15,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 
 #### To run from folder "polysieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 100 -base 2000 -debug 0 -lin_size 10_000 -quad_size 1
+To run:   python3 run_qs.py -keysize 80 -base 500 -debug 0 -lin_size 10_000 -quad_size 1
 
 UPDATE: EUHM HOLY FUCK I JUST DISCOVERED SOMETHING.. IF WE TAKE THE POLY PROD OF G(X) AND H(X) .. THEN THE DISCRIMINANT IS ALSO SQUARE.. NOW IF THE DISCRIMINANT OF F(X) IS ALSO SQUARE>>> THEN WE GOT IT... kind of sounds obvious but I also know what this implies..... OOOOOH SHIT.
 
