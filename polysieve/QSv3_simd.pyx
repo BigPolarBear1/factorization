@@ -1156,7 +1156,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
     i=0
     while i < len(primeslist[0:10]):
         prime=primeslist[i]
-        if jacobi(-n,prime) == 1:
+        if jacobi((-n)%prime,prime) == 1:
             local_factors.append(prime)
 
         i+=1
@@ -1226,10 +1226,10 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
             print("[i]Looking for: "+str(local_factors)+" mod bits: "+str(bitlen(mod))+" original pval: "+str(poly_val)+" root: "+str(new_root)+" partials: "+str(partials))
             y_start=mod#round(n**(1/degree))#y_start//2#round(n**0.25)#y_start//2
         
-            co_sieve_len=20_000
+            co_sieve_len=10_000
             b=1 
             while b < 1_000:    ###To do: This isn't right, this actually needs to be k, as in -nk .. multiples of N.. otherwise we just hit the same sieve region over and over again
-                co_start=-10_000+b
+                co_start=-5_000+b
                 co_ind=co_start
                 while co_ind < co_start+co_sieve_len:
                  #   if co_ind+1 ==0:
@@ -1264,6 +1264,9 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
                         sys.exit()
                     if disc1%(mod*4)!=0:
                         print("something went wrong")
+                        sys.exit()
+                    if math.isqrt(-ix_eval)!= disc_sqr2//2:
+                        print("oops")
                         sys.exit()
                  #   print("disc1: "+str(disc1//(mod*4))+" disc_sqr2: "+str(disc_sqr2)+" f_x: "+str(f_x)+" co_ind: "+str(co_ind)+" bits: "+str(bitlen(disc1//(mod*4)))+" b: "+str(b)+" mod: "+str(mod))
 
