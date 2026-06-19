@@ -25,6 +25,8 @@ Update: Yeap that was it, just take the poly prod of g(x) and h(x) and look at i
 
 Update: Fixed the code (and paper) so it uses discriminants in find_same() ... now to optimize that code.. important to note that we can add the modulus to that "offset" we use to generate the constant of f(x) ... so we get smaller disc(f(x)) values... I still need to add that.. and add actual sieving... once both are implemented we'll be good to rock and roll lol.
 
+Update: Whats left really is that in find_same(), approaching b-smooth sieving from the other way around, is that you need to combine it with p-adic lifting. And ive shown how we can lift even if a quadratic's discriminant is divisible mod p.. that's really all that's left now. But this is trivial and if someone doesn't beat me to it, I'll do it myself the moment I'm back from Iceland.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
