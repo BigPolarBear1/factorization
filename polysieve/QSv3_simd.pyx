@@ -1226,15 +1226,19 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
             print("[i]Looking for: "+str(local_factors)+" mod bits: "+str(bitlen(mod))+" original pval: "+str(poly_val)+" root: "+str(new_root)+" partials: "+str(partials))
             y_start=mod#round(n**(1/degree))#y_start//2#round(n**0.25)#y_start//2
         
-            co_sieve_len=1000
-            b=1 ##TO DO: Need to calculate the optimal range for this
-            while b < 10_000: 
-                co_ind=0
-                while co_ind < co_sieve_len:
+            co_sieve_len=20_000
+            b=1 
+            while b < 1_000:    ###To do: This isn't right, this actually needs to be k, as in -nk .. multiples of N.. otherwise we just hit the same sieve region over and over again
+                co_start=-10_000+b
+                co_ind=co_start
+                while co_ind < co_start+co_sieve_len:
+                 #   if co_ind+1 ==0:
+                #        co_ind+=1
+                #        continue
                     y=y_start+co_ind*(mod)
-                    if y/((mod)*(co_ind+1)) != 1:
-                        print('fatal error')
-                        sys.exit()
+                #    if y/((mod)*(co_ind+1)) != 1:
+                 #       print('fatal error')
+                #        sys.exit()
                     co=binomial_coeffs_fast(y, degree)
                     offset=tot+b*mod
                     constant=-(n-((y)**degree-((y)-offset)**degree))
@@ -1257,7 +1261,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
                     if disc1%(mod*4)!=0:
                         print("something went wrong")
                         sys.exit()
-                   # print("disc1: "+str(disc1//(mod*4))+" disc_sqr2: "+str(disc_sqr2)+" f_x: "+str(f_x)+" co_ind: "+str(co_ind)+" bits: "+str(bitlen(disc1//(mod*4)))+" b: "+str(b))
+                 #   print("disc1: "+str(disc1//(mod*4))+" disc_sqr2: "+str(disc_sqr2)+" f_x: "+str(f_x)+" co_ind: "+str(co_ind)+" bits: "+str(bitlen(disc1//(mod*4)))+" b: "+str(b)+" mod: "+str(mod))
 
                     local_factors4, value4,seen_primes4 = factorise_fast2(disc1,primelist_f)
                     if value4 ==1 and local_factors4 not in ret_array[2]:# and math.gcd(disc2,b)==1:
