@@ -1255,7 +1255,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
                     disc1=f_x[1]**2-4*(f_x[2]*f_x[0])
                     disc2=i_x[1]**2-4*(i_x[2]*i_x[0])
                     disc_sqr2=math.isqrt(disc2)
-                    fx_eval=evaluate(f_x,y)
+                    fx_eval=evaluate(f_x,-y)
                     gx_eval=evaluate(g_x,-y)
                     hx_eval=evaluate(h_x,-y)
                     ix_eval=evaluate(i_x,-y)
@@ -1268,17 +1268,20 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
                     if math.isqrt(-ix_eval)!= disc_sqr2//2:
                         print("oops")
                         sys.exit()
+                    if (-fx_eval)*4!=disc1:
+                        print("something went wrong: ")
+                        sys.exit
                  #   print("disc1: "+str(disc1//(mod*4))+" disc_sqr2: "+str(disc_sqr2)+" f_x: "+str(f_x)+" co_ind: "+str(co_ind)+" bits: "+str(bitlen(disc1//(mod*4)))+" b: "+str(b)+" mod: "+str(mod))
 
-                    local_factors4, value4,seen_primes4 = factorise_fast2(disc1,primelist_f)
+                    local_factors4, value4,seen_primes4 = factorise_fast2(-fx_eval,primelist_f)
                     if value4 ==1 and local_factors4 not in ret_array[2]:# and math.gcd(disc2,b)==1:
                         print("found one in find_same: "+str(len(ret_array[0]))+"/"+str((base+10))+" DISC(fx): "+str(disc1)+" DISC(gx)**0.5: "+str(disc_sqr2)+" fx_eval: "+str(fx_eval)+" gx_eval: "+str(gx_eval)+" hx_eval: "+str(hx_eval)+" ix_eval: "+str(ix_eval)+" f_x: "+str(f_x)+" g_x: "+str(g_x)+" h_x: "+str(h_x)+" i_x: "+str(i_x)+" y: "+str(y))
                         if disc2%n!=disc1%n:
                             print("wtf")
                             sys.exit()
                         found+=1
-                        ret_array[1].append(disc2)
-                        ret_array[0].append(disc1)
+                        ret_array[1].append(-ix_eval)
+                        ret_array[0].append(-fx_eval)
                         ret_array[2].append(local_factors4)
                         ret_array[3].append([])
                         if len(ret_array[0])>(base+10):
