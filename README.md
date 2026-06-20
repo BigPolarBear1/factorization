@@ -23,6 +23,10 @@ Update: Alright.. .this PoC is OKAY-ish for now. What I actually want to do in f
 
 Probably should do something with those leading coefficients of f(x) and i(x) ... I'll work it out in Iceland.
 
+Update: You know what also hits me... the more factors of a B-smooth are square, the less ground an algo like coefficient_sieve (working with quadratics and quadratic residues) has to cover to make it completely square. It's like an SIQS type reduction.. but for coefficient sieve... and in theory if we can use linear algebra to produce a nearly square B-smooth... then that should become even easier to make square. I'm not going to be able to finish this math before Iceland.. I will do it while there.
+
+I am still looking for employment: big_polar_bear1@proton.me , belgian citizenship, cant travel to the US anymore. Maybe after the next administration with a lot of convincing (which has to include payment to my former manager bc of what microsoft did. He was the only person in this shit industry to have ever believed in me and he lost everything bc of it).
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
