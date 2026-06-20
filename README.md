@@ -21,6 +21,8 @@ You need to use the set-up from find_same and just calculate residues and use p-
 
 Update: Alright.. .this PoC is OKAY-ish for now. What I actually want to do in find_same() is closer to Coefficient_Sieve.. if a bounded set of coefficients produces a discriminant that is a square residue in enough fields (Z/p) ... at some point the discriminant is garantueed to be square. Within the condition that the coefficients are bounded. So we basically want to do exactly this.. but we need to properly define the bounds for our coefficients. Let me work out that math while in Iceland.... 
 
+Probably should do something with those leading coefficients of f(x) and i(x) ... I'll work it out in Iceland.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
