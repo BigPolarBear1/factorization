@@ -17,7 +17,8 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 To build: python3 setup.py build_ext --inplace</br>
 To run:   python3 run_qs.py -keysize 80 -base 500 -debug 0 -lin_size 10_000 -quad_size 1
 
-UPDATE: Bah, it's too warm. Getting a heatstroke sitting in this tiny attic room. Let me clean up that paper and add some p-adic lifting math to the paper and just start preparing for my trip to Iceland.
+UPDATE: OOOOOOOOOOOOOOOOOOOOPSSS. 
+Why am I even sieving if the only condition is to have two polynomials on both side that can be factored and I can calculate residues for them?
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
