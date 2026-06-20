@@ -20,6 +20,8 @@ To run:   python3 run_qs.py -keysize 80 -base 500 -debug 0 -lin_size 10_000 -qua
 UPDATE: OOOOOOOOOOOOOOOOOOOOPSSS. 
 Why am I even sieving if the only condition is to have two polynomials on both side that can be factored and I can calculate residues for them?
 
+Let me atleast fix the paper to show how... ergh. Just getting stuck too much in that QS-style framework when I got something much better ...
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
