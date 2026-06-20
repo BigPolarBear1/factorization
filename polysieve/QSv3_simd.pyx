@@ -1173,9 +1173,9 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
     found=0
 
     max_iterations=10
-   # local_factors.extend(primeslist[0:10])
+  #  local_factors.extend(primeslist[0:10])
     k=1
-    while k < 1_000:
+    while k < 100:
        # print(k)
         seen=[]
         t=0
@@ -1194,7 +1194,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
                 fac=local_factors[i]
                 if fac not in mod_fac and fac != -1 and fac !=2 and jacobi((-n*k)%fac,fac)==1 and k%fac!=0:
                  #   calculate_poly_residues(fac,2,n*k)
-                    if bitlen(mod*fac)>(keysize*0.47):
+                    if bitlen(mod*fac)>(bitlen(n*k)*0.50):
                         break 
                     mod_ind.append(len(mod_fac))
                     mod_fac.append(fac)
@@ -1217,7 +1217,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
                         print("fatal")
                         sys.exit() 
                 t2+=1  
-            diff=bitlen(mod)-(keysize*0.47)
+            diff=bitlen(mod)-(bitlen(n*k)*0.50)
             if abs(diff) > 3 or mod in seen:
                 t+=1
                 continue
@@ -1245,9 +1245,9 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
               #  print("[i]Looking for: "+str(local_factors)+" mod bits: "+str(bitlen(mod))+" original pval: "+str(poly_val)+" root: "+str(new_root)+" partials: "+str(partials))
                 y_start=mod#round(n**(1/degree))#y_start//2#round(n**0.25)#y_start//2
         
-                co_sieve_len=1_00
+                co_sieve_len=4
                 
-                co_start=-5_0
+                co_start=-2
                 co_ind=co_start
                 while co_ind < co_start+co_sieve_len:
 
@@ -1295,17 +1295,18 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
                     if (-fx_eval)*4!=disc1:
                         print("something went wrong: ")
                         sys.exit
-                 #   print("disc1: "+str(disc1//(mod*4))+" disc_sqr2: "+str(disc_sqr2)+" f_x: "+str(f_x)+" co_ind: "+str(co_ind)+" bits: "+str(bitlen(disc1//(mod*4)))+" k: "+str(k)+" mod: "+str(mod))
+                  #  print("disc1: "+str(disc1//(mod*4))+" disc_sqr2: "+str(disc_sqr2)+" f_x: "+str(f_x)+" co_ind: "+str(co_ind)+" bits: "+str(bitlen(disc1//(mod*4)))+" k: "+str(k)+" mod: "+str(mod))
 
-                    local_factors4, value4,seen_primes4 = factorise_fast2(-fx_eval,primelist_f)
+                    local_factors4, value4,seen_primes4 = factorise_fast2(disc1,primelist_f)
                     if value4 ==1 and local_factors4 not in ret_array[2]:# and math.gcd(disc2,b)==1:
                         print("found one in find_same: "+str(len(ret_array[0]))+"/"+str((base+10))+" k: "+str(k)+" DISC(fx): "+str(disc1)+" DISC(gx)**0.5: "+str(disc_sqr2)+" fx_eval: "+str(fx_eval)+" gx_eval: "+str(gx_eval)+" hx_eval: "+str(hx_eval)+" ix_eval: "+str(ix_eval)+" f_x: "+str(f_x)+" g_x: "+str(g_x)+" h_x: "+str(h_x)+" i_x: "+str(i_x)+" y: "+str(y))
-                        if disc2%n!=disc1%n:
+                        if (disc2)%n!=(disc1)%n:
                             print("wtf")
                             sys.exit()
                         found+=1
-                        ret_array[1].append(-ix_eval)
-                        ret_array[0].append(-fx_eval)
+                    #    print("disc1: "+str(disc1)+" disc2: "+str(disc2))
+                        ret_array[1].append(disc2)
+                        ret_array[0].append(disc1)
                         ret_array[2].append(local_factors4)
                         ret_array[3].append([])
                         if len(ret_array[0])>(base+10):
