@@ -17,19 +17,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 To build: python3 setup.py build_ext --inplace</br>
 To run:   python3 run_qs.py -keysize 80 -base 500 -debug 0 -lin_size 10_000 -quad_size 1
 
-UPDATE: EUHM HOLY FUCK I JUST DISCOVERED SOMETHING.. IF WE TAKE THE POLY PROD OF G(X) AND H(X) .. THEN THE DISCRIMINANT IS ALSO SQUARE.. NOW IF THE DISCRIMINANT OF F(X) IS ALSO SQUARE>>> THEN WE GOT IT... kind of sounds obvious but I also know what this implies..... OOOOOH SHIT.
-
-It turned out to be so simple...  GOD DAMN. I still have a full week until Iceland.. this shouldnt take more then a weekend max to finish. Time to push the final domino. I guess people knew this was coming, could have just asked me to hold back disclosure. Guess it's the times we live in. 
-
-Update: Yeap that was it, just take the poly prod of g(x) and h(x) and look at its discriminant, which will always be square and then factorize the discriminant of f(x)... easy. I did it. Finally. Its too warm atm, will continue in a few hours and upload tonight. Unless someone has objections.. then you have a few hours to make them... I guess.... whatever.
-
-Update: Fixed the code (and paper) so it uses discriminants in find_same() ... now to optimize that code.. important to note that we can add the modulus to that "offset" we use to generate the constant of f(x) ... so we get smaller disc(f(x)) values... I still need to add that.. and add actual sieving... once both are implemented we'll be good to rock and roll lol.
-
-Update: Whats left really is that in find_same(), approaching b-smooth sieving from the other way around, is that you need to combine it with p-adic lifting. And ive shown how we can lift even if a quadratic's discriminant is divisible mod p.. that's really all that's left now. But this is trivial and if someone doesn't beat me to it, I'll do it myself the moment I'm back from Iceland.
-
-Update: Adding some more stuff to find_same so you can see how the quadratics and discriminant relate... setting it up like this, the root must be some small multiple of the modulus... so yea.. that should be easy to see how we can figure out the rest now with p-adic lifting... let me atleast try and get that implemented tomorrow.. I wont work past the weekend as I need to prepare for Iceland.. but I atleast want that p-adic lifting in my code.
-
-Update: Let me check something.. bc I noticed that effectively i'm still sieving the same side as the original B-smooth.. I may need to actually flip it.. that also would make more sense with what I got so far.
+UPDATE: Bah, it's too warm. Getting a heatstroke sitting in this tiny attic room. Let me clean up that paper and add some p-adic lifting math to the paper and just start preparing for my trip to Iceland.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
