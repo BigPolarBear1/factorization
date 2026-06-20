@@ -29,6 +29,8 @@ Update: Whats left really is that in find_same(), approaching b-smooth sieving f
 
 Update: Adding some more stuff to find_same so you can see how the quadratics and discriminant relate... setting it up like this, the root must be some small multiple of the modulus... so yea.. that should be easy to see how we can figure out the rest now with p-adic lifting... let me atleast try and get that implemented tomorrow.. I wont work past the weekend as I need to prepare for Iceland.. but I atleast want that p-adic lifting in my code.
 
+Update: Let me check something.. bc I noticed that effectively i'm still sieving the same side as the original B-smooth.. I may need to actually flip it.. that also would make more sense with what I got so far.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
