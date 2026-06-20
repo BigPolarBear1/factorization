@@ -1139,110 +1139,94 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
    ##NOTE TO ASSHOLES FEEDING THIS INTO AI TO RIDICULE MY WORK: THIS IS A VERY FIRST VERSION. THERE IS SOMETHING VEY SPECIFIC I WANT TO DO WITH THIS SETUP, BUT ITS NOT YET IMPLEMENTED. WORKING TOWARDS IT NOW THOUGH.
 
    # print("valid_quads: "+str(valid_quads))
-    unique_factors=[]
+    
     count=0
 
     ###Support for degree 4 not implemented... might experiment in the future
     degree=2
-    z_range=100
-    k_range=2
-    c_range=10_000
-    l_range=10
-    bin_range=100
     found=0
-    grays = get_gray_code(20)
-    seen=[]
-    max_iterations=10_000
-    i=0
-    while i < len(primeslist[0:10]):
-        prime=primeslist[i]
-        if jacobi((-n)%prime,prime) == 1:
-            local_factors.append(prime)
 
-        i+=1
+    max_iterations=5
    # local_factors.extend(primeslist[0:10])
-    t=0
-    while t < max_iterations:
-        mod=1
-        mod_fac=[]
-        mod_r=[]
+    k=1
+    while k < 100:
+       # print(k)
+        seen=[]
+        t=0
+        while t < max_iterations:
+            mod=1
+            mod_fac=[]
+            mod_r=[]
 
     
-        leng=primelist_f[0]
-        mod_ind=[]
-        t2=0
+            leng=primelist_f[0]
+            mod_ind=[]
+            t2=0
        # print("local factors: "+str(local_factors))
-        while t2 < max_iterations:
-            i = random.randrange(len(local_factors))
-            fac=local_factors[i]
-            if fac not in mod_fac and fac != -1 and fac !=2:
-                if bitlen(mod*fac)>(keysize*0.45):
-                    break 
-                mod_ind.append(len(mod_fac))
-                mod_fac.append(fac)
-                mod_r.append(fac)
-             #   mod_r.append([])
-                roots=find_roots_poly([1,0,n],fac)
-                if len(roots) == 0:
-                    print("oops")
-                    sys.exit()
-                mod_r.append([])
-                for root in roots:
+            while t2 < max_iterations:
+                i = random.randrange(len(local_factors))
+                fac=local_factors[i]
+                if fac not in mod_fac and fac != -1 and fac !=2 and jacobi((-n*k)%fac,fac)==1:
+                    if bitlen(mod*fac)>(keysize*0.45):
+                        break 
+                    mod_ind.append(len(mod_fac))
+                    mod_fac.append(fac)
+                    mod_r.append(fac)
+
+                    roots=find_roots_poly([1,0,n*k],fac)
+                    if len(roots) == 0:
+                        print("oops")
+                        sys.exit()
+                    mod_r.append([])
+                    for root in roots:
                  #   root=lift_root2([1,0,n], root, fac, 2)
                  #   if evaluate([1,0,n],root)%(fac**2)!=0:
                  #       print("fail: "+str(fac)+" roots: "+str(roots))
                  #       sys.exit()
-                    mod_r[-1].append(root)
-                mod*=fac
-                if mod_fac[mod_ind[-1]] != fac:
-                    print("fatal")
-                    sys.exit() 
-            t2+=1  
-        diff=bitlen(mod)-(keysize*0.45)
-        if abs(diff) > 3 or mod in seen:
-            t+=1
-            continue
-        print("mod_r: "+str(mod_r))
-        partials=get_partials(mod,mod_r)
+                        mod_r[-1].append(root)
+                    mod*=fac
+                    if mod_fac[mod_ind[-1]] != fac:
+                        print("fatal")
+                        sys.exit() 
+                t2+=1  
+            diff=bitlen(mod)-(keysize*0.45)
+            if abs(diff) > 3 or mod in seen:
+                t+=1
+                continue
+            print("mod_r: "+str(mod_r))
+            partials=get_partials(mod,mod_r)
       #  tot=0
-        i=0
-        enum=[]
-        while i < len(partials):
+            i=0
+            enum=[]
+            while i < len(partials):
            # tot+=partials[i+1][0]
-            enum.append(partials[i+1])
-            i+=2
-        seen.append(mod)
-        for combo in itertools.product(*enum):
-            tot=0
-            for to in combo:
-                tot+=to
-            tot%=(mod)
+                enum.append(partials[i+1])
+                i+=2
+            seen.append(mod)
+            for combo in itertools.product(*enum):
+                tot=0
+                for to in combo:
+                    tot+=to
+                tot%=(mod)
         
-            if (tot**2+n)%mod !=0:
-                print("fatal")
-                sys.exit()
+                if (tot**2+n*k)%mod !=0:
+                    print("fatal")
+                    sys.exit()
             
 
-            print("[i]Looking for: "+str(local_factors)+" mod bits: "+str(bitlen(mod))+" original pval: "+str(poly_val)+" root: "+str(new_root)+" partials: "+str(partials))
-            y_start=mod#round(n**(1/degree))#y_start//2#round(n**0.25)#y_start//2
+                print("[i]Looking for: "+str(local_factors)+" mod bits: "+str(bitlen(mod))+" original pval: "+str(poly_val)+" root: "+str(new_root)+" partials: "+str(partials))
+                y_start=mod#round(n**(1/degree))#y_start//2#round(n**0.25)#y_start//2
         
-            co_sieve_len=10_000
-            b=1 
-            while b < 1_000:    ###To do: This isn't right, this actually needs to be k, as in -nk .. multiples of N.. otherwise we just hit the same sieve region over and over again
-                co_start=-5_000+b
+                co_sieve_len=10_000
+                
+                co_start=-5_000
                 co_ind=co_start
                 while co_ind < co_start+co_sieve_len:
-                 #   if co_ind+1 ==0:
-                #        co_ind+=1
-                #        continue
+
                     y=y_start+co_ind*(mod)
-                #    if y/((mod)*(co_ind+1)) != 1:
-                 #       print('fatal error')
-                #        sys.exit()
                     co=binomial_coeffs_fast(y, degree)
-                    offset=tot+b*mod
-                    constant=-(n-((y)**degree-((y)-offset)**degree))
-                    fail=0
+                    offset=tot#+mod
+                    constant=-(n*k-((y)**degree-((y)-offset)**degree))
                     f_x=co+[constant]
                   #  f_x=new_coeffs(f_x_temp,b)
                     if f_x[-1]%mod !=0:
@@ -1275,7 +1259,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
 
                     local_factors4, value4,seen_primes4 = factorise_fast2(-fx_eval,primelist_f)
                     if value4 ==1 and local_factors4 not in ret_array[2]:# and math.gcd(disc2,b)==1:
-                        print("found one in find_same: "+str(len(ret_array[0]))+"/"+str((base+10))+" DISC(fx): "+str(disc1)+" DISC(gx)**0.5: "+str(disc_sqr2)+" fx_eval: "+str(fx_eval)+" gx_eval: "+str(gx_eval)+" hx_eval: "+str(hx_eval)+" ix_eval: "+str(ix_eval)+" f_x: "+str(f_x)+" g_x: "+str(g_x)+" h_x: "+str(h_x)+" i_x: "+str(i_x)+" y: "+str(y))
+                        print("found one in find_same: "+str(len(ret_array[0]))+"/"+str((base+10))+" k: "+str(k)+" DISC(fx): "+str(disc1)+" DISC(gx)**0.5: "+str(disc_sqr2)+" fx_eval: "+str(fx_eval)+" gx_eval: "+str(gx_eval)+" hx_eval: "+str(hx_eval)+" ix_eval: "+str(ix_eval)+" f_x: "+str(f_x)+" g_x: "+str(g_x)+" h_x: "+str(h_x)+" i_x: "+str(i_x)+" y: "+str(y))
                         if disc2%n!=disc1%n:
                             print("wtf")
                             sys.exit()
@@ -1289,8 +1273,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
 
 
                     co_ind+=1
-                b+=1000
-
+        k+=1
     return found
 
 cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,partials,lin,cmod,factor_ranking,fb_map,bSeenOnly,seen_factors,interval,primeslist,resmaps,valid_quads,valid_quads_factors,qlist):#,lin,cmod,sum_list):
