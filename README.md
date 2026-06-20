@@ -17,7 +17,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 To build: python3 setup.py build_ext --inplace</br>
 To run:   python3 run_qs.py -keysize 80 -base 500 -debug 0 -lin_size 10_000 -quad_size 1
 
-You need to use the set-up from find_same and just calculate residues and use p-adic lifting. There has to exist some multiple of N (part of which can also be encoded by the leading coefficient) where f(x) will be reducible in Z... meaning the discriminant will be square. In find_same those coefficients and roots are bounded by co_ind .. so you would only consider residues within that bound.. as not to have to deal with residue explosion because of CRT or lifting.
+You need to use the set-up from find_same and just calculate residues and use p-adic lifting. There has to exist some multiple of N (part of which can also be encoded by the leading coefficient) where f(x) will be reducible in Z... meaning the discriminant will be square. In find_same those coefficients and roots are bounded by co_ind .. so you would only consider residues within that bound.. as not to have to deal with residue explosion because of CRT or lifting. So we can just take a few primes, keep lifting them.. and if a solution exists in Z.. within these bounds, then it will show up.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
