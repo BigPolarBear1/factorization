@@ -1135,21 +1135,47 @@ def presieve_g(mod,lin,sievelen,primeslist,b,primelist_f):
  #   print("indices: "+str(indices))
     return indices
 
-def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,valid_quads,valid_quads_factors,qlist,new_root):
-   ##NOTE TO ASSHOLES FEEDING THIS INTO AI TO RIDICULE MY WORK: THIS IS A VERY FIRST VERSION. THERE IS SOMETHING VEY SPECIFIC I WANT TO DO WITH THIS SETUP, BUT ITS NOT YET IMPLEMENTED. WORKING TOWARDS IT NOW THOUGH.
 
-   # print("valid_quads: "+str(valid_quads))
-    
+def calculate_poly_residues(mdfac,degree,c):
+    if mdfac == -1 or mdfac == 2:
+        return {}
+    resmap={}
+    predef=[(1,2),(0,mdfac)]##to do: change when we change degree
+    ranges = [range(start, limit) for (start,limit) in predef]
+    for combo in itertools.product(*ranges):
+        cur=list(combo)+[c]
+        if combo[0]%mdfac ==0:  ###to do: Solve linear congruence...
+            continue
+
+     #   print("cur: "+str(cur)+" mdfac: "+str(mdfac))
+        cur_c=copy.deepcopy(cur)
+        roots=find_roots_poly(cur_c, mdfac)
+        if len(roots)>0:
+            for root in roots:
+                try:
+                    res=resmap[root]
+                    res.append(cur)
+                except Exception as e: 
+                    resmap[root]=[cur]
+    print("resmap: "+str(resmap))
+    sys.exit()
+
+def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,valid_quads,valid_quads_factors,qlist,new_root):
+    ###TO DO: We dont just want to sieve here.. we actually need to build a residue map for the REGION that's being sieved here.. and try to find a valid solution where f(x) is reducible. 
+    ###This setup actually solved my problem with CRT causing an explosion in possibilities... since we can set a bound for residues now. 
+ 
+ 
     count=0
 
     ###Support for degree 4 not implemented... might experiment in the future
+    ###Edit: Yea, we will need to go up in degree
     degree=2
     found=0
 
-    max_iterations=5
+    max_iterations=10
    # local_factors.extend(primeslist[0:10])
     k=1
-    while k < 100:
+    while k < 1_000:
        # print(k)
         seen=[]
         t=0
@@ -1166,8 +1192,9 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
             while t2 < max_iterations:
                 i = random.randrange(len(local_factors))
                 fac=local_factors[i]
-                if fac not in mod_fac and fac != -1 and fac !=2 and jacobi((-n*k)%fac,fac)==1:
-                    if bitlen(mod*fac)>(keysize*0.45):
+                if fac not in mod_fac and fac != -1 and fac !=2 and jacobi((-n*k)%fac,fac)==1 and k%fac!=0:
+                 #   calculate_poly_residues(fac,2,n*k)
+                    if bitlen(mod*fac)>(keysize*0.47):
                         break 
                     mod_ind.append(len(mod_fac))
                     mod_fac.append(fac)
@@ -1179,21 +1206,22 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
                         sys.exit()
                     mod_r.append([])
                     for root in roots:
-                 #   root=lift_root2([1,0,n], root, fac, 2)
-                 #   if evaluate([1,0,n],root)%(fac**2)!=0:
-                 #       print("fail: "+str(fac)+" roots: "+str(roots))
-                 #       sys.exit()
+                      #  root2=lift_root2([1,0,n*k], root, fac, 2)
+                      #  if evaluate([1,0,n*k],root2)%(fac**2)!=0:
+                      #      print("fail: "+str(fac)+" roots: "+str(roots)+" root2: "+str(root2)+" k: "+str(k))
+                      #      sys.exit()
+
                         mod_r[-1].append(root)
                     mod*=fac
                     if mod_fac[mod_ind[-1]] != fac:
                         print("fatal")
                         sys.exit() 
                 t2+=1  
-            diff=bitlen(mod)-(keysize*0.45)
+            diff=bitlen(mod)-(keysize*0.47)
             if abs(diff) > 3 or mod in seen:
                 t+=1
                 continue
-            print("mod_r: "+str(mod_r))
+           # print("mod_r: "+str(mod_r))
             partials=get_partials(mod,mod_r)
       #  tot=0
             i=0
@@ -1214,12 +1242,12 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
                     sys.exit()
             
 
-                print("[i]Looking for: "+str(local_factors)+" mod bits: "+str(bitlen(mod))+" original pval: "+str(poly_val)+" root: "+str(new_root)+" partials: "+str(partials))
+              #  print("[i]Looking for: "+str(local_factors)+" mod bits: "+str(bitlen(mod))+" original pval: "+str(poly_val)+" root: "+str(new_root)+" partials: "+str(partials))
                 y_start=mod#round(n**(1/degree))#y_start//2#round(n**0.25)#y_start//2
         
-                co_sieve_len=10_000
+                co_sieve_len=1_00
                 
-                co_start=-5_000
+                co_start=-5_0
                 co_ind=co_start
                 while co_ind < co_start+co_sieve_len:
 
@@ -1243,6 +1271,18 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
                     gx_eval=evaluate(g_x,-y)
                     hx_eval=evaluate(h_x,-y)
                     ix_eval=evaluate(i_x,-y)
+                 #   for fac in mod_fac:
+                     #   roots=find_roots_poly(f_x,fac)
+                     #   roots2=find_roots_poly(i_x,fac)
+                    #    df_x=get_derivative(f_x)
+                    #    dfx_eval=evaluate(df_x,-y)
+                    #    f_x2=[f_x[0],dfx_eval,f_x[2]]
+                    #    fx2_eval=evaluate(f_x2,-y)
+                    #    roots2=find_roots_poly(f_x2,fac)
+                      #  print("fac: "+str(fac)+" roots: "+str(roots)+" roots2: "+str(roots2)+" f_x: "+str(f_x)+" i_x: "+str(i_x)+" df_x: "+str(df_x)+" f_x2: "+str(f_x2))
+                    ####NOTE: We can lift with either f(x) or i(x) ... 
+
+
                     if disc_sqr2**2 != disc2:
                         print("something wentwrong")
                         sys.exit()
@@ -1255,7 +1295,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
                     if (-fx_eval)*4!=disc1:
                         print("something went wrong: ")
                         sys.exit
-                 #   print("disc1: "+str(disc1//(mod*4))+" disc_sqr2: "+str(disc_sqr2)+" f_x: "+str(f_x)+" co_ind: "+str(co_ind)+" bits: "+str(bitlen(disc1//(mod*4)))+" b: "+str(b)+" mod: "+str(mod))
+                 #   print("disc1: "+str(disc1//(mod*4))+" disc_sqr2: "+str(disc_sqr2)+" f_x: "+str(f_x)+" co_ind: "+str(co_ind)+" bits: "+str(bitlen(disc1//(mod*4)))+" k: "+str(k)+" mod: "+str(mod))
 
                     local_factors4, value4,seen_primes4 = factorise_fast2(-fx_eval,primelist_f)
                     if value4 ==1 and local_factors4 not in ret_array[2]:# and math.gcd(disc2,b)==1:
