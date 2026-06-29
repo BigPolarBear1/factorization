@@ -28,6 +28,8 @@ Update: You know what also hits me... the more factors of a B-smooth are square,
 
 I am still looking for employment: big_polar_bear1@proton.me , belgian citizenship, cant travel to the US anymore. Maybe after the next administration with a lot of convincing (which has to include payment to my former manager bc of what microsoft did. He was the only person in this shit industry to have ever believed in me and he lost everything bc of it). I'm also preparing a course on rings and modules to work through while in Iceland so I can master the number field approach of NFS. Once I master that material.. I'll be right there at the cutting edge.. and if I dont have all the chess pieces already.. I will have them soon. Either I die or I succeed, because I'm sure as hell not going to abandon this project for as long as I am alive and every year I get better and better and better. Couldn't do basic algebra 3 years ago. Plus I have over 50 CVE+ and done plenty of creative work in that area. How high is the bar for employment if I cant even get a job??? Guess its only sihthead techbros hiring.
 
+Actually, with my two-sided setup using binomial expansions, perhaps both sides can have numberfields rather then pinning one side in the rationals. I'll learn what I have to in Iceland and start coding when I'm back. Nature helps to think about this.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
