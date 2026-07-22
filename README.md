@@ -18,17 +18,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 To build: python3 setup.py build_ext --inplace</br>
 To run:    python3 run_qs.py -keysize 100 -base 500 -debug 0 -lin_size 10_000 -quad_size 1
 
-You need to use the set-up from find_same and just calculate residues and use p-adic lifting. There has to exist some multiple of N (part of which can also be encoded by the leading coefficient) where f(x) will be reducible in Z... meaning the discriminant will be square. In find_same those coefficients and roots are bounded by co_ind .. so you would only consider residues within that bound.. as not to have to deal with residue explosion because of CRT or lifting. So we can just take a few primes, keep lifting them.. and if a solution exists in Z.. within these bounds, then it will show up.
-
-Update: Alright.. .this PoC is OKAY-ish for now. What I actually want to do in find_same() is closer to Coefficient_Sieve.. if a bounded set of coefficients produces a discriminant that is a square residue in enough fields (Z/p) ... at some point the discriminant is garantueed to be square. Within the condition that the coefficients are bounded. So we basically want to do exactly this.. but we need to properly define the bounds for our coefficients. Let me work out that math while in Iceland.... 
-
-Probably should do something with those leading coefficients of f(x) and i(x) ... I'll work it out in Iceland.
-
-Update: You know what also hits me... the more factors of a B-smooth are square, the less ground an algo like coefficient_sieve (working with quadratics and quadratic residues) has to cover to make it completely square. It's like an SIQS type reduction.. but for coefficient sieve... and in theory if we can use linear algebra to produce a nearly square B-smooth... then that should become even easier to make square. I'm not going to be able to finish this math before Iceland.. I will do it while there.
-
-I am still looking for employment: big_polar_bear1@proton.me , belgian citizenship, cant travel to the US anymore. Maybe after the next administration with a lot of convincing (which has to include payment to my former manager bc of what microsoft did. He was the only person in this shit industry to have ever believed in me and he lost everything bc of it). I'm also preparing a course on rings and modules to work through while in Iceland so I can master the number field approach of NFS. Once I master that material.. I'll be right there at the cutting edge.. and if I dont have all the chess pieces already.. I will have them soon. Either I die or I succeed, because I'm sure as hell not going to abandon this project for as long as I am alive and every year I get better and better and better. Couldn't do basic algebra 3 years ago. Plus I have over 50 CVE+ and done plenty of creative work in that area. How high is the bar for employment if I cant even get a job??? Guess its only sihthead techbros hiring.
-
-Actually, with my two-sided setup using binomial expansions, perhaps both sides can have numberfields rather then pinning one side in the rationals. I'll learn what I have to in Iceland and start coding when I'm back. Nature helps to think about this.
+Actually, with my two-sided setup using binomial expansions, perhaps both sides can have numberfields rather then pinning one side in the rationals. I'll learn what I have to in Iceland and start coding when I'm back. Nature helps to think about this. I'll update this with a numberfield implementation shortly.. ignore this uploaded version for now.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
