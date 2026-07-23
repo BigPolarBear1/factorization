@@ -20,6 +20,8 @@ To run:    python3 run_qs.py -keysize 100 -base 500 -debug 0 -lin_size 10_000 -q
 
 Actually, with my two-sided setup using binomial expansions, perhaps both sides can have numberfields rather then pinning one side in the rationals. I'll learn what I have to in Iceland and start coding when I'm back. Nature helps to think about this. I'll update this with a numberfield implementation shortly.. ignore this uploaded version for now.
 
+Update: I guess a second route to explore is if my representation and residue calculations can be used for a better polynomial selection algorithm. Because I have already managed to tie my work back to NFS in the past, specifically kleinjung's implementation. Either way, I'll be deviating from QS-style variants now into NFS territory... because honestly, staying in Z and second degree polynomials just isn't going to cut it for a real improvement. I've bashed my head against this for years and I just can't see it.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
