@@ -18,7 +18,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 To build: python3 setup.py build_ext --inplace</br>
 To run:    python3 run_qs.py -keysize 100 -base 500 -debug 0 -lin_size 10_000 -quad_size 1
 
-Actually, with my two-sided setup using binomial expansions, perhaps both sides can have numberfields rather then pinning one side in the rationals. I'll learn what I have to in Iceland and start coding when I'm back. Nature helps to think about this. I'll update this with a numberfield implementation shortly.. ignore this uploaded version for now.
+Actually, with my two-sided setup using binomial expansions, perhaps both sides can have numberfields rather then pinning one side in the rationals (edit: intuition was right, but that's not really how numberfields work, see update below). I'll learn what I have to in Iceland and start coding when I'm back. Nature helps to think about this. I'll update this with a numberfield implementation shortly.. ignore this uploaded version for now.
 
 Update: Started digging into abstract algebra and number fields. So from what I understand so far, the fact that kleinjung uses a polynomial f(x) of degree d and linear polynomial g(x), where the resultant = N, is less then optimal theoretically. As having f(x) and g(x) be the same degree would be better. I want to start bashing this possible improvement using my binomial expansion work. Things are quickly starting to click inside my head. But I'm still early in my abstract algebra journey so this will take some time..
 
