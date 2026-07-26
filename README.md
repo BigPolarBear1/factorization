@@ -24,6 +24,8 @@ Update: Started digging into abstract algebra and number fields. So from what I 
 
 Note: My next update to this repo will likely be some implementation of this, if I can get it to work. On a side note, I am still looking for work: big_polar_bear1@proton.me. I have no problems taking my research private or pivot back into VR if it implies salaried work, or some type of hybrid. I will climb this math hill, and I will eventually succeed at some type of breakthrough, minor or major. I don't think people fully understand how determined I am and currently, everything happening in life is just pushing me deeper into this math obsession. Although I am sure some elements are hoping I go into the woods to **** myself out of hopelessness.
 
+Update: Actually, I may have an initial version up and running next week already in sage. Because I really just need to start with binomial expansion to create f(x) and g(x) of say, both degree 3, optimize the coefficients, use the residue math and stuff to make sure it has a high murphy-E score and run NFS over it. That I can do fairly quickly with the help of sage. Then what remains is research and getting deeper into the literature.. easy enough. Alright.. lets go.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
