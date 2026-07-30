@@ -26,6 +26,8 @@ Note: My next update to this repo will likely be some implementation of this, if
 
 Update: Actually, I may have an initial version up and running next week already in sage. Because I really just need to start with binomial expansion to create f(x) and g(x) of say, both degree 3, optimize the coefficients, use the residue math and stuff to make sure it has a high murphy-E score and run NFS over it. That I can do fairly quickly with the help of sage. Then what remains is research and getting deeper into the literature.. easy enough. Alright.. lets go.
 
+Update: Wont upload anything for a while. Going to stop uploading experimentations until I have something that is a prove-able breakthrough with code. My offer to take my work private also still stands.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
