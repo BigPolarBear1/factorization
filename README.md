@@ -28,6 +28,8 @@ Update: Actually, I may have an initial version up and running next week already
 
 Update: Wont upload anything for a while. Going to stop uploading experimentations until I have something that is a prove-able breakthrough with code. My offer to take my work private also still stands.
 
+Update: Before I go hard on number fields, next week I am going to do a final attempt at implementing an algorithm abusing the p-adic lifting trick on singular roots. Make a poc that also works on degrees higher then 2. Because p-adic lifting was my initial approach in the first year of research.. so my intuition had flagged something there.. I must be sure I am not overlooking something. Just keep having this feeling I'm missing something with p-adic lifting.. and maybe by moving to, say, degree 4, it will reveal itself. 
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
