@@ -20,6 +20,8 @@ To run:    python3 run_qs.py -keysize 100 -base 500 -debug 0 -lin_size 10_000 -q
 
 Eureka. Found it. Check what I added to the paper in v80 at chapter II.a ... its how that multiple of N that we substitute with after binomial expansion, how that multiple changes between quadratics and quartics.. that's the leverage.. and we can figure that out with just p-adic lifting. There's no sieving needed. Lol.. it was literally right infront of me for such a fcking long time... game over. PoC will be uploaded soon. Good luck. Had it coming I guess.
 
+ps: Fck both belgium and the US. Would have seen this day coming a long time ago. I am certain both countries had hoped I would end my life out of misery and hopelessness. You failed to break me, now I broke you. Go to hell. I will find my way to a country like China after this, and nothing will change that outcome anymore. NOTHING. Too late. What could have been, now can't be anymore.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
