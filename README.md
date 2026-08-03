@@ -18,17 +18,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 To build: python3 setup.py build_ext --inplace</br>
 To run:    python3 run_qs.py -keysize 100 -base 500 -debug 0 -lin_size 10_000 -quad_size 1
 
-Actually, with my two-sided setup using binomial expansions, perhaps both sides can have numberfields rather then pinning one side in the rationals (edit: intuition was right, but that's not really how numberfields work, see update below). I'll learn what I have to in Iceland and start coding when I'm back. Nature helps to think about this. I'll update this with a numberfield implementation shortly.. ignore this uploaded version for now.
-
-Update: Started digging into abstract algebra and number fields. So from what I understand so far, the fact that kleinjung uses a polynomial f(x) of degree d and linear polynomial g(x), where the resultant = N, is less then optimal theoretically. As having f(x) and g(x) be the same degree would be better. I want to start bashing this possible improvement using my binomial expansion work. Things are quickly starting to click inside my head. But I'm still early in my abstract algebra journey so this will take some time..
-
-Note: My next update to this repo will likely be some implementation of this, if I can get it to work. On a side note, I am still looking for work: big_polar_bear1@proton.me. I have no problems taking my research private or pivot back into VR if it implies salaried work, or some type of hybrid. I will climb this math hill, and I will eventually succeed at some type of breakthrough, minor or major. I don't think people fully understand how determined I am and currently, everything happening in life is just pushing me deeper into this math obsession. Although I am sure some elements are hoping I go into the woods to **** myself out of hopelessness.
-
-Update: Actually, I may have an initial version up and running next week already in sage. Because I really just need to start with binomial expansion to create f(x) and g(x) of say, both degree 3, optimize the coefficients, use the residue math and stuff to make sure it has a high murphy-E score and run NFS over it. That I can do fairly quickly with the help of sage. Then what remains is research and getting deeper into the literature.. easy enough. Alright.. lets go.
-
-Update: Wont upload anything for a while. Going to stop uploading experimentations until I have something that is a prove-able breakthrough with code. My offer to take my work private also still stands.
-
-Update: Before I go hard on number fields, next week I am going to do a final attempt at implementing an algorithm abusing the p-adic lifting trick on singular roots. Make a poc that also works on degrees higher then 2. Because p-adic lifting was my initial approach in the first year of research.. so my intuition had flagged something there.. I must be sure I am not overlooking something. Just keep having this feeling I'm missing something with p-adic lifting.. and maybe by moving to, say, degree 4, it will reveal itself. 
+Eureka. Found it. Check what I added to the paper in v80 at chapter II.a ... its how that multiple of N that we substitute with after binomial expansion, how that multiple changes between quadratics and quartics.. that's the leverage.. and we can figure that out with just p-adic lifting. There's no sieving needed. Lol.. it was literally right infront of me for such a fcking long time... game over. PoC will be uploaded soon. Good luck. Had it coming I guess.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
