@@ -14,13 +14,18 @@ https://github.com/basilegithub/General-number-field-sieve-Python
 #### About the paper
 Math paper is a work in progress. The final chapters are a bit rushed and building an algorithm around p-adic lifting isnt as straight forward as I had assumed. I do think there is an angle there I can exploit, but I'll do some further experimentation first and get a working PoC before I make edits to the paper again.
 
+#### To run from folder "psieve" WORK IN PROGRES...extremely early version:</br></br>
+To run:  python3 psieve.py -base 5 -keysize 20
+
+Very early version. Factorization algorithm build around p-adic lifting (p-adic lifting is still missing in the code though).
+Lots more work needs to be done. Probably can also use 6th degree polynomials.. to get a better calculation for what the other binomial term should be.
+I'll fix everything in the coming days.
+
 #### To run from folder "polysieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:    python3 run_qs.py -keysize 100 -base 500 -debug 0 -lin_size 10_000 -quad_size 1
 
-Eureka. Found it. Check what I added to the paper in v80 at chapter II.a ... its how that multiple of N that we substitute with after binomial expansion, how that multiple changes between quadratics and quartics.. that's the leverage.. and we can figure that out with just p-adic lifting. There's no sieving needed. Lol.. it was literally right infront of me for such a fcking long time... game over. PoC will be uploaded soon. Good luck. Had it coming I guess.
-
-ps: Fck both belgium and the US. Would have seen this day coming a long time ago. I am certain both countries had hoped I would end my life out of misery and hopelessness. You failed to break me, now I broke you. Go to hell. I will find my way to a country like China after this, and nothing will change that outcome anymore. NOTHING. Too late. What could have been, now can't be anymore.
+Note: Will delete soon
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
