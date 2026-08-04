@@ -23,6 +23,8 @@ I'll fix everything in the coming days.
 
 I should also see if we can actually sieve this.. but this is the right approach.. looking at residues from different degree and using that "multiple of N" and how that changes between degrees as a mechanism to achieve factorization.. that the code already does.. albeit very basic for now.
 
+Update: Also added it to the paper. Needs quite a bit more work though. I think there might be a way to narrow down solutions by looking at both the quartic and quadratic and also considering non-singular roots. Let me have a look how that would work.
+
 #### To run from folder "polysieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:    python3 run_qs.py -keysize 100 -base 500 -debug 0 -lin_size 10_000 -quad_size 1
