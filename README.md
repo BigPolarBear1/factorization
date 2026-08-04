@@ -21,6 +21,8 @@ Very early version. Factorization algorithm build around p-adic lifting (p-adic 
 Lots more work needs to be done. Probably can also use 6th degree polynomials.. to get a better calculation for what the other binomial term should be.
 I'll fix everything in the coming days.
 
+I should also see if we can actually sieve this.. but this is the right approach.. looking at residues from different degree and using that "multiple of N" and how that changes between degrees as a mechanism to achieve factorization.. that the code already does.. albeit very basic for now.
+
 #### To run from folder "polysieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:    python3 run_qs.py -keysize 100 -base 500 -debug 0 -lin_size 10_000 -quad_size 1
