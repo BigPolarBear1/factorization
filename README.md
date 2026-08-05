@@ -27,6 +27,8 @@ Update: Also added it to the paper. Needs quite a bit more work though. I think 
 
 Update2: Actually.. after some more thinking.. let me go back to my idea of generating near identical B-smooths by using polynomials of different degrees... I think I understand this better now and could actually pull it off...
 
+Update: Yea... worked out the math to hunt for similar B-smooths. PoC by tonight. Time to move on this. It's not very difficult.
+
 #### To run from folder "polysieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:    python3 run_qs.py -keysize 100 -base 500 -debug 0 -lin_size 10_000 -quad_size 1
