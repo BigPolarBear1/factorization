@@ -18,7 +18,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 To run: python3 psieve.py -base 30 -keysize 30 -lin_size 10_000
 
 Note: WIP. Doesn't create a sieve interval yet and code in check_higher_degrees now needs to be improved massively.
-What check_higher_degrees does, it simply ensures the original b-smooth is a divisor and right now it only checks degree 4. However, I believe there is a way we can shrink what remains after division by the original b-smooth by going up in degree. Let me verify and begin improving... that would be the whole crux of the algorithm I guess. Since the original b-smooth would get canceled out, hence its factorization wont matter and we just need to find cases where we can shrink down that size by going up in degree.. I'll figure that out shortly.
+What check_higher_degrees does, it simply ensures the original b-smooth is a divisor and right now it only checks degree 4. However, I believe there is a way we can shrink what remains after division by the original b-smooth by going up in degree. Let me verify and begin improving... that would be the whole crux of the algorithm I guess. Since the original b-smooth would get canceled out, hence its factorization wont matter (it wouldn't even need to be b-smooth) and we just need to find cases where we can shrink down that size by going up in degree.. I'll figure that out shortly.
 
 #### To run from folder "polysieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
