@@ -700,18 +700,22 @@ def factorise_fast(value,factor_base):
 def check_higher_degrees(smoothcan_org,n,fbase,ret_array,bin,odd_mod,local_factors_org):
     ##Very rudimentary.. needs to be improved now
 
-    count=0
+    ccount=0
     init_k=bin**4-smoothcan_org**2
     if init_k%n!=0:
         print("fatal")
         sys.exit()
     init_k=init_k//n
-
-    while count < 1000:
-        count+=1
-
+    newcan=bin**4-n*(init_k+odd_mod)
+    count_start=newcan//(n*odd_mod)
+ #   newcan2=bin**4-n*(init_k+odd_mod*count_start)
+ #   print(str(newcan)+" "+str(newcan2))
+    while ccount < 10:
+        count=count_start+ccount
+        ccount+=1
         root=bin**2
         newcan=root**2-n*(init_k+odd_mod*count)
+        #print(str(newcan)+" odd_Mod: "+str(odd_mod))
         if newcan%odd_mod !=0:
             print("fatal")
             sys.exit()
@@ -731,6 +735,7 @@ def check_higher_degrees(smoothcan_org,n,fbase,ret_array,bin,odd_mod,local_facto
             ret_array[0].append(newcan)
             ret_array[2].append(local_factors2)
             ret_array[3].append([])
+        
     return
 
 def process_sieve_interval(k,n,bin,mod,fbase,ret_array):
