@@ -14,6 +14,14 @@ https://github.com/basilegithub/General-number-field-sieve-Python
 #### About the paper
 Math paper is a work in progress. The final chapters are a bit rushed and building an algorithm around p-adic lifting isnt as straight forward as I had assumed. I do think there is an angle there I can exploit, but I'll do some further experimentation first and get a working PoC before I make edits to the paper again.
 
+#### To run from folder "psieve" WORK IN PROGRES...extremely early version:</br></br>
+To build: python3 setup.py build_ext --inplace</br>
+To run: python3 psieve.py -base 30 -keysize 20 -lin_size 10_000
+
+Trying to do what I was doing in polysieve but approaching it slightly different now with check_higher_degrees()..
+work in progress though.. lots still needs to be added.
+
+
 #### To run from folder "polysieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:    python3 run_qs.py -keysize 100 -base 500 -debug 0 -lin_size 10_000 -quad_size 1
