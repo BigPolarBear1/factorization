@@ -18,8 +18,9 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 psieve.py -base 30 -keysize 20 -lin_size 10_000
 
+
 Trying to do what I was doing in polysieve but approaching it slightly different now with check_higher_degrees()..
-work in progress though.. lots still needs to be added.
+work in progress though.. lots still needs to be added (including p-adic lifting, just bruteforcing that solution now instead of using lift_root2().. i'll add all the small optimizations later.. want to get the actual main algorithm implemented first)
 
 So check_higher_degrees shows how we can move up to degree 4, and basically do a large prime variation where we generate B-smooth candidates that are divisible by all odd exponent factors and the part that doesn't factor of an earlier B-smooth candidate found by sieving quadratics (odd_mod). We can keep moving up in degree and also slightly change odd_mod.. and I'm fairly sure there is a way with this to ensure as few as possible new factors are introduced... hence reducing the amount of total B-smooths required. Let me work out the exact math for this though.. 
 
