@@ -15,19 +15,10 @@ https://github.com/basilegithub/General-number-field-sieve-Python
 Math paper is a work in progress. The final chapters are a bit rushed and building an algorithm around p-adic lifting isnt as straight forward as I had assumed. I do think there is an angle there I can exploit, but I'll do some further experimentation first and get a working PoC before I make edits to the paper again.
 
 #### To run from folder "psieve" WORK IN PROGRES...extremely early version:</br></br>
-To run:  python3 psieve.py -base 5 -keysize 20
+To run: python3 psieve.py -base 30 -keysize 30 -lin_size 10_000
 
-Very early version. Factorization algorithm build around p-adic lifting (p-adic lifting is still missing in the code though).
-Lots more work needs to be done. Probably can also use 6th degree polynomials.. to get a better calculation for what the other binomial term should be.
-I'll fix everything in the coming days.
-
-I should also see if we can actually sieve this.. but this is the right approach.. looking at residues from different degree and using that "multiple of N" and how that changes between degrees as a mechanism to achieve factorization.. that the code already does.. albeit very basic for now.
-
-Update: Also added it to the paper. Needs quite a bit more work though. I think there might be a way to narrow down solutions by looking at both the quartic and quadratic and also considering non-singular roots. Let me have a look how that would work.
-
-Update2: Actually.. after some more thinking.. let me go back to my idea of generating near identical B-smooths by using polynomials of different degrees... I think I understand this better now and could actually pull it off...
-
-Update: Yea... worked out the math to hunt for similar B-smooths. PoC by tonight. Time to move on this. It's not very difficult.
+Note: WIP. Doesn't create a sieve interval yet and code in check_higher_degrees now needs to be improved massively.
+What check_higher_degrees does, it simply ensures the original b-smooth is a divisor and right now it only checks degree 4. However, I believe there is a way we can shrink what remains after division by the original b-smooth by going up in degree. Let me verify and begin improving.
 
 #### To run from folder "polysieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
