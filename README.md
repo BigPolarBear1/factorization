@@ -30,6 +30,8 @@ Update: Doing some more thinking and how to implement it... I guess some of thos
 
 Update: Just missing some residue math now to minimize new factors getting added... I'll work it out.
 
+Update: Probably something similar to coefficient_sieve now.. because the b-smooth does not have to factor completely over the factor base.. it just needs to be square after factoring out the factor base. Important distinction. And we can actually calculate when this happens... the same way coefficient sieve does.
+
 #### To run from folder "polysieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:    python3 run_qs.py -keysize 100 -base 500 -debug 0 -lin_size 10_000 -quad_size 1
