@@ -697,7 +697,7 @@ def factorise_fast(value,factor_base):
         i+=1
     return factors, value
 
-def check_higher_degrees(smoothcan_org,n,fbase,ret_array,bin,odd_mod):
+def check_higher_degrees(smoothcan_org,n,fbase,ret_array,bin,odd_mod,local_factors_org):
     ##Very rudimentary.. needs to be improved now
 
     count=0
@@ -707,7 +707,7 @@ def check_higher_degrees(smoothcan_org,n,fbase,ret_array,bin,odd_mod):
         sys.exit()
     init_k=init_k//n
 
-    while count < 10_000:
+    while count < 1000:
         count+=1
 
         root=bin**2
@@ -716,12 +716,20 @@ def check_higher_degrees(smoothcan_org,n,fbase,ret_array,bin,odd_mod):
             print("fatal")
             sys.exit()
        
-        local_factors, value = factorise_fast(newcan,fbase)
-        if value == 1 and local_factors not in ret_array[2]:
-            print("**Smooths: "+str(len(ret_array[0]))+" local_factors: "+str(local_factors))
+     #   local_factors, value = factorise_fast(newcan,fbase)
+        root=root*bin
+        newcan=newcan*smoothcan_org
+        if root**2%n!=newcan%n:
+            print("super fatal")
+            sys.exit()
+        local_factors2, value2 = factorise_fast(newcan,fbase)
+        test=math.isqrt(value2)
+      #  print("newcan: "+str(newcan))
+        if test**2 == value2 and local_factors2 not in ret_array[2]:
+            print("**Smooths: "+str(len(ret_array[0]))+" local_factors: "+str(local_factors2))#+" local2: "+str(local_factors2)+" value2: "+str(value2)+" value1: "+str(value)+" local_org: "+str(local_factors_org))
             ret_array[1].append((root)**2)
             ret_array[0].append(newcan)
-            ret_array[2].append(local_factors)
+            ret_array[2].append(local_factors2)
             ret_array[3].append([])
     return
 
@@ -739,11 +747,14 @@ def process_sieve_interval(k,n,bin,mod,fbase,ret_array):
         odd_mod=1
         for odd in local_factors:
             odd_mod*=odd
+        odd_mod*=value
        # print(smoothcan)
+        if value != 1:
+            check_higher_degrees(smoothcan,n,fbase,ret_array,bin+mod*i,odd_mod,local_factors)
         if value == 1 and local_factors not in ret_array[2]:
             
             print("Smooths: "+str(len(ret_array[0]))+" local_factors: "+str(local_factors))
-            check_higher_degrees(smoothcan,n,fbase,ret_array,bin+mod*i,odd_mod)
+           
             ret_array[1].append((bin+mod*i)**2)
             ret_array[0].append(smoothcan)
             ret_array[2].append(local_factors)
@@ -921,7 +932,7 @@ def psieve(n,fbase):
             print("failed to generate modulus")
             sys.exit()
         q=0
-        while q < 1000:
+        while q < 100:
             bin=74+q
             quad_res=get_quadratic_residues(bin,n,cfact)
             quad_res=get_partials(mod,quad_res)
