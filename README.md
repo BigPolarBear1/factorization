@@ -16,7 +16,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 
 #### To run from folder "psieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 psieve.py -base 30 -keysize 20 -lin_size 10_000
+To run: python3 psieve.py -base 50 -keysize 50 -lin_size 10_000
 
 
 Trying to do what I was doing in polysieve but approaching it slightly different now with check_higher_degrees()..
