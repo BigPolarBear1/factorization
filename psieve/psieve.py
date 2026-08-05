@@ -710,12 +710,13 @@ def check_higher_degrees(smoothcan_org,n,fbase,ret_array,bin,odd_mod,local_facto
     count_start=newcan//(n*odd_mod)
  #   newcan2=bin**4-n*(init_k+odd_mod*count_start)
  #   print(str(newcan)+" "+str(newcan2))
-    while ccount < 10:
+    while ccount < 5:
         count=count_start+ccount
         ccount+=1
         root=bin**2
         newcan=root**2-n*(init_k+odd_mod*count)
-        #print(str(newcan)+" odd_Mod: "+str(odd_mod))
+    #    if bitlen(newcan//odd_mod) < 32:
+    #        print(str(bitlen(newcan//odd_mod))+" odd_Mod: "+str(bitlen(odd_mod)))
         if newcan%odd_mod !=0:
             print("fatal")
             sys.exit()
@@ -938,7 +939,7 @@ def psieve(n,fbase):
             sys.exit()
         q=0
         while q < 100:
-            bin=74+q
+            bin=math.ceil(n**0.5)+q
             quad_res=get_quadratic_residues(bin,n,cfact)
             quad_res=get_partials(mod,quad_res)
 
