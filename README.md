@@ -18,19 +18,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 psieve.py -base 50 -keysize 50 -lin_size 10_000
 
-
-Trying to do what I was doing in polysieve but approaching it slightly different now with check_higher_degrees()..
-work in progress though.. lots still needs to be added (including p-adic lifting, just bruteforcing that solution now instead of using lift_root2().. i'll add all the small optimizations later.. want to get the actual main algorithm implemented first)
-
-So check_higher_degrees shows how we can move up to degree 4, and basically do a large prime variation where we generate B-smooth candidates that are divisible by all odd exponent factors and the part that doesn't factor of an earlier B-smooth candidate found by sieving quadratics (odd_mod). We can keep moving up in degree and also slightly change odd_mod.. and I'm fairly sure there is a way with this to ensure as few as possible new factors are introduced... hence reducing the amount of total B-smooths required. Let me work out the exact math for this though.. 
-
-First things first, generalize these calculations to any even degree and then work out how that shifts b-smooth candidate values... once that's done I can finish my work and add all the optimizations (including an actual sieve interval)..
-
-Update: Doing some more thinking and how to implement it... I guess some of those calculations I added to the paper might be useful to help figure out what degree to expand it. I'll try and work it all out soon.
-
-Update: Just missing some residue math now to minimize new factors getting added... I'll work it out.
-
-Update: Probably something similar to coefficient_sieve now.. because the b-smooth does not have to factor completely over the factor base.. it just needs to be square after factoring out the factor base. Important distinction. And we can actually calculate when this happens... the same way coefficient sieve does.
+In check_higher_degrees.. I shouldn't do trail factorization there. actually the logic that is implemented in my coefficient_sieve PoC is perfect for finding small multiples of a LARGE square. And that's exactly the type of b-smooths we must find in check_higher_degrees. So let me go ahead and implement that.. 
 
 #### To run from folder "polysieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
