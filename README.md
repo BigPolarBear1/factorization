@@ -26,6 +26,8 @@ So check_higher_degrees shows how we can move up to degree 4, and basically do a
 
 First things first, generalize these calculations to any even degree and then work out how that shifts b-smooth candidate values... once that's done I can finish my work and add all the optimizations (including an actual sieve interval)..
 
+Update: Doing some more thinking and how to implement it... I guess some of those calculations I added to the paper might be useful to help figure out what degree to expand it. I'll try and work it all out soon.
+
 #### To run from folder "polysieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:    python3 run_qs.py -keysize 100 -base 500 -debug 0 -lin_size 10_000 -quad_size 1
