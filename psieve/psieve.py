@@ -699,50 +699,53 @@ def factorise_fast(value,factor_base):
 
 def check_higher_degrees(smoothcan_org,n,fbase,ret_array,bin,odd_mod,local_factors_org):
     ##Very rudimentary.. needs to be improved now
-
-    ccount=0
-    init_k=bin**4-smoothcan_org**2
-    if init_k%n!=0:
-        print("fatal")
-        sys.exit()
-    init_k=init_k//n
-    newcan=bin**4-n*(init_k+odd_mod)
-    count_start=newcan//(n*odd_mod)
- #   newcan2=bin**4-n*(init_k+odd_mod*count_start)
- #   print(str(newcan)+" "+str(newcan2))
-    while ccount < 5:
-        count=count_start+ccount
-        ccount+=1
-        root=bin**2
-        newcan=root**2-n*(init_k+odd_mod*count)
-    #    if bitlen(newcan//odd_mod) < 32:
-    #        print(str(bitlen(newcan//odd_mod))+" odd_Mod: "+str(bitlen(odd_mod)))
-        if newcan%odd_mod !=0:
+    degree=4
+    while degree < 12:
+        ccount=0
+        init_k=bin**degree-smoothcan_org**(degree//2)
+        if init_k%n!=0:
             print("fatal")
             sys.exit()
+        init_k=init_k//n
+        newcan=bin**degree-n*(init_k+odd_mod)
+        count_start=newcan//(n*odd_mod)
+    #   newcan2=bin**4-n*(init_k+odd_mod*count_start)
+    #   print(str(newcan)+" "+str(newcan2))
+        while ccount < 5:
+            count=count_start+ccount
+            ccount+=1
+           # root=bin**(degree//2)
+            newcan=bin**degree-n*(init_k+odd_mod*count)
+    #    if bitlen(newcan//odd_mod) < 32:
+    #        print(str(bitlen(newcan//odd_mod))+" odd_Mod: "+str(bitlen(odd_mod)))
+            if newcan%odd_mod !=0:
+                print("fatal")
+                sys.exit()
        
      #   local_factors, value = factorise_fast(newcan,fbase)
-        root=root*bin
-        newcan=newcan*smoothcan_org
-        if root**2%n!=newcan%n:
-            print("super fatal")
-            sys.exit()
-        local_factors2, value2 = factorise_fast(newcan,fbase)
-        test=math.isqrt(value2)
+            root=bin**(degree//2)*bin
+            newcan=newcan*smoothcan_org
+            if root**2%n!=newcan%n:
+                print("super fatal")
+                sys.exit()
+            local_factors2, value2 = factorise_fast(newcan,fbase)
+            test=math.isqrt(value2)
       #  print("newcan: "+str(newcan))
-        if test**2 == value2 and local_factors2 not in ret_array[2]:
-            print("**Smooths: "+str(len(ret_array[0]))+" local_factors: "+str(local_factors2))#+" local2: "+str(local_factors2)+" value2: "+str(value2)+" value1: "+str(value)+" local_org: "+str(local_factors_org))
-            ret_array[1].append((root)**2)
-            ret_array[0].append(newcan)
-            ret_array[2].append(local_factors2)
-            ret_array[3].append([])
+            if test**2 == value2 and local_factors2 not in ret_array[2]:
+                print("**Smooths: "+str(len(ret_array[0]))+" local_factors: "+str(local_factors2)+" degree: "+str(degree))#+" local2: "+str(local_factors2)+" value2: "+str(value2)+" value1: "+str(value)+" local_org: "+str(local_factors_org))
+                ret_array[1].append(root**2)
+                ret_array[0].append(newcan)
+                ret_array[2].append(local_factors2)
+                ret_array[3].append([])
+        degree+=2
         
     return
 
 def process_sieve_interval(k,n,bin,mod,fbase,ret_array):
     ##Barebones, improve later
     if (bin**2-k*n)%mod !=0:
-        print("fatal error123")
+        print("fatal error123: "+str(mod)+" "+str(bin)+" "+str(math.gcd(bin,mod))+" k: "+str(k))
+        return
         sys.exit()
 
     i=0
@@ -931,7 +934,7 @@ def psieve(n,fbase):
     UPPER_BOUND_SIQS=4000
     tnum=int(((n)**0.5) /(1))
     while 1:
-        bin=74
+
 
         mod,cfact,indexes=generate_modulus(n,fbase,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,bitlen(tnum))
         if mod == 0:
@@ -940,6 +943,9 @@ def psieve(n,fbase):
         q=0
         while q < 100:
             bin=math.ceil(n**0.5)+q
+           # if math.gcd(bin,mod)!=1:
+           #     q+=1
+           #     continue
             quad_res=get_quadratic_residues(bin,n,cfact)
             quad_res=get_partials(mod,quad_res)
 
