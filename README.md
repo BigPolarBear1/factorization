@@ -28,6 +28,8 @@ First things first, generalize these calculations to any even degree and then wo
 
 Update: Doing some more thinking and how to implement it... I guess some of those calculations I added to the paper might be useful to help figure out what degree to expand it. I'll try and work it all out soon.
 
+Update: Just missing some residue math now to minimize new factors getting added... I'll work it out.
+
 #### To run from folder "polysieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:    python3 run_qs.py -keysize 100 -base 500 -debug 0 -lin_size 10_000 -quad_size 1
