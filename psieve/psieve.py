@@ -22,7 +22,7 @@ workers=1 #max amount of parallel processes to use
 quad_co_per_worker=1 #Amount of quadratic coefficients to check. Keep as small as possible.
 base=1_000
 qbase=10
-lin_sieve_size=1
+lin_size=1
 lin_sieve_size2=10_000_000
 quad_sieve_size=10
 g_debug=0 #0 = No debug, 1 = Debug, 2 = A lot of debug
@@ -443,11 +443,13 @@ def lift_root2(coeffs, root, p, k):
     return r
 
 def get_quadratic_residues(bin,n,fbase):
+  #  print("fbase: "+str(fbase))
     d=2
     f_x_res=[]
     i=0
     while i < len(fbase):
         prime=fbase[i]
+        f_x_res.append(prime**2)
         f_x_res.append([])
         co=binomial_coeffs_fast(-(bin), d)
         co+=[0]
@@ -470,7 +472,7 @@ def get_quadratic_residues(bin,n,fbase):
                     r=bin%prime**2
                     f_x[-1]=n*k2
                     if evaluate(f_x,r)%prime**2 ==0:
-                        f_x_res[-1].append([k2,roots,2])
+                        f_x_res[-1].append(k2)
                     k2+=prime
 
             
@@ -508,7 +510,7 @@ def get_quartic_residues(bin,n,fbase):
                     r=bin%prime**4
                     f_x[-1]=n*k2
                     if evaluate(f_x,r)%prime**4 ==0:
-                        f_x_res[-1].append([k2,roots,4])
+                        f_x_res[-1].append([k2,r,4])
                     k2+=prime
             k+=1
 
@@ -533,13 +535,15 @@ def compute_result(quad_res,quar_res,bin,fbase,n):
             k2=lquar[j][0]
             k2=(k2-(bin**2*k1))%prime**4
             mod_inv_k1=modinv(k1,prime**4)
+            print(k2)
             k2=(k2*mod_inv_k1)%prime**4
-            
-       #     print("prime: "+str(prime)+" quad_res: "+str(lquad[j])+" k: "+str(lquad[j][0]))
-       #     print("prime: "+str(prime)+" quar_res: "+str(lquar[j])+" k: "+str(lquar[j][0]))
-        #    print("solution: "+str(k2))
+            print("mod_inv_k1: "+str(mod_inv_k1))
+            print("prime: "+str(prime)+" quad_res: "+str(lquad[j])+" k: "+str(lquad[j][0]))
+            print("prime: "+str(prime)+" quar_res: "+str(lquar[j])+" k: "+str(lquar[j][0]))
+            print("solution: "+str(k2)+" k1: "+str(k1)+" k2: "+str(lquar[j][0])+" bin: "+str(bin))
             k2_sqr=math.isqrt(k2)
-            if k2_sqr**2==k2:
+            if k2_sqr**2==k2 and k2%n == bin**2%n:
+                print("k2_sqr: "+str(k2_sqr)+" bin: "+str(bin))
                 gcdtest=math.gcd(k2_sqr+bin,n)
                 if gcdtest != 1 and gcdtest != n:
                     print("factors of N are: "+str(gcdtest)+" and "+str(n//gcdtest))
@@ -548,24 +552,419 @@ def compute_result(quad_res,quar_res,bin,fbase,n):
         i+=1
     return
 
+
+def generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,tnum_bit):
+    const_1=1_000
+    const_2=1_000_000
+
+    small_B = base#len(primeslist)
+    lower_polypool_index = 2
+    upper_polypool_index = small_B - 1
+    poly_low_found = False
+    
+    for i in range(small_B):  ##To do: Can be moved outside mainloop
+        if primeslist[i]**2 > LOWER_BOUND_SIQS and not poly_low_found:
+            lower_polypool_index = i
+            poly_low_found = True
+            break
+        if primeslist[i]**2 > UPPER_BOUND_SIQS:
+            upper_polypool_index = i - 1
+            break
+    small_B=upper_polypool_index
+    counter4=0
+    while counter4 < const_1:
+        counter4+=1
+        cmod = 1
+        cfact = []#[0]*base
+        indexes=[]
+        counter2=0
+        while counter2 < const_1:
+            counter2+=1
+            found_a_factor = False
+            counter=0
+            while(found_a_factor == False) and counter < const_2:
+                randindex = random.randint(lower_polypool_index, upper_polypool_index)
+               # if  jacobi((-quad*n)%primeslist[randindex],primeslist[randindex])!=1:
+                  #  counter+=1
+                  #  continue
+                potential_a_factor = primeslist[randindex]**2
+                found_a_factor = True
+                it=0
+                length=len(cfact)
+                while it < length:
+                    if potential_a_factor ==cfact[it]:
+                        found_a_factor = False
+                        break
+                    it+=1
+                counter+=1
+            if counter == const_2:
+                cmod = 1
+                s = 0
+                cfact = []#[0]*base
+                indexes=[]
+                continue                
+            cmod = cmod * potential_a_factor
+            cfact.append(math.isqrt(potential_a_factor))
+        #    if  jacobi((-quad*n)%primeslist[randindex],primeslist[randindex])!=1:#hmap[randindex][1]!=quad%primeslist[randindex]:
+       #         print("THE FUC")
+      #          time.sleep(1000000)
+            indexes.append(randindex)
+            j = tnum_bit - cmod.bit_length()
+            if j < too_close:
+                cmod = 1
+                s = 0
+                cfact = []#[0]*base
+                indexes=[]
+                continue
+            elif j < (too_close + close_range):
+                break
+        a1 = tnum // cmod
+        mindiff = 100000000000000000
+        randindex = 0
+        for i in range(small_B):
+            if abs(a1 - primeslist[i]**2) < mindiff:
+                randindex = i
+                mindiff = abs(a1 - primeslist[i]**2)
+                
+        
+
+        found_a_factor = False
+        counter3=0
+        while not found_a_factor and counter3< const_1 and randindex <base:
+     #       if  jacobi((-quad*n)%primeslist[randindex],primeslist[randindex])!=1:
+     #           randindex += 1
+    #            counter3+=1
+   #             continue
+            potential_a_factor = primeslist[randindex]**2
+
+            found_a_factor = True
+            it=0
+            length=len(cfact)
+            while it < length:
+                if potential_a_factor ==cfact[it]:
+                    found_a_factor = False
+                    break
+                it+=1
+            if not found_a_factor:
+                randindex += 1
+            counter3+=1
+        if randindex > small_B:
+            continue
+        if counter3==const_2:
+            continue
+
+        cmod = cmod * potential_a_factor
+      #  if  jacobi((-quad*n)%primeslist[randindex],primeslist[randindex])!=1:
+      #      print("THE FUC: ",randindex)
+       #     time.sleep(1000000)
+        cfact.append(math.isqrt(potential_a_factor))
+        indexes.append(randindex)
+
+        diff_bits = (tnum - cmod).bit_length()
+        if diff_bits < tnum_bit:
+            if cmod in seen:
+                continue
+            else:
+                seen.append(cmod)
+                return cmod,cfact,indexes
+    return 0,0,0
+
+def generate_sieve_interval():
+
+
+
+    return
+
+def factorise_fast(value,factor_base):
+    if value == 0:
+        print("blah")
+        return [],-1
+    factors = set()
+    if value < 0:
+        factors ^= {-1}
+        value = -value
+    while value % 2 == 0:
+        factors ^= {2}
+        value //= 2
+
+    length=factor_base[0]#len(factor_base)#factor_base[0]
+    i=1
+    while i < length:
+        factor=factor_base[i]
+        while value % factor == 0:
+            factors ^= {factor}
+            value //= factor
+        i+=1
+    return factors, value
+
+def check_higher_degrees(smoothcan_org,n,fbase,ret_array,bin):
+    ##Very rudimentary.. needs to be improved now
+
+    count=0
+    init_k=bin**4-smoothcan_org**2
+    if init_k%n!=0:
+        print("fatal")
+        sys.exit()
+    init_k=init_k//n
+    smoothcan=smoothcan_org
+    while count < 10_000:
+        count+=1
+        smoothcan-=n
+       # local_factors, value = factorise_fast(smoothcan,fbase)
+        root=bin**2
+        newcan=root**2-n*(init_k+smoothcan_org*count)
+        if newcan%smoothcan_org !=0:
+            print("fatal")
+            sys.exit()
+        if newcan//smoothcan_org != smoothcan:
+            print("fatal")
+            sys.exit()            
+        local_factors, value = factorise_fast(newcan,fbase)
+        if value == 1 and local_factors not in ret_array[2]:
+            print("**Smooths: "+str(len(ret_array[0]))+" local_factors: "+str(local_factors))
+            ret_array[1].append((root)**2)
+            ret_array[0].append(newcan)
+            ret_array[2].append(local_factors)
+            ret_array[3].append([])
+    return
+
+def process_sieve_interval(k,n,bin,mod,fbase,ret_array):
+    ##Barebones, improve later
+    if (bin**2-k*n)%mod !=0:
+        print("fatal error123")
+        sys.exit()
+
+    i=0
+    while i < lin_size:
+        smoothcan=(bin+mod*i)**2-k*n
+        
+        local_factors, value = factorise_fast(smoothcan,fbase)
+       # print(smoothcan)
+        if value == 1 and local_factors not in ret_array[2]:
+            
+            print("Smooths: "+str(len(ret_array[0]))+" local_factors: "+str(local_factors))
+            check_higher_degrees(smoothcan,n,fbase,ret_array,bin+mod*i)
+            ret_array[1].append((bin+mod*i)**2)
+            ret_array[0].append(smoothcan)
+            ret_array[2].append(local_factors)
+            ret_array[3].append([])
+        i+=1
+
+    return
+
+def get_partials(mod,list1):
+    i=0
+    new_list=[]
+    while i < len(list1):
+        prime=list1[i]
+        new_list.append(prime)
+        new_list.append([])
+        k=0
+        while k < len(list1[i+1]):
+            r1=list1[i+1][k]
+            aq = mod // prime
+            invaq = modinv(aq%prime, prime)
+            gamma = r1 * invaq % prime
+            new_list[-1].append(aq*gamma)
+           # lin+=aq*gamma
+           # all_lin_parts.append(aq*gamma)
+            k+=1
+        i+=2
+    
+
+    return new_list
+
+
+def QS(n,factor_list,sm,flist,x_list,factor_list2):#,jsymbols,testl,primeslist2,disc1_squared_list):#,disc_sr_list,pval_list,pflist):
+    g_max_smooths=base+2#+qbase
+    if len(sm) > g_max_smooths*10000000: 
+        del sm[g_max_smooths:]
+       # del xlist[g_max_smooths:]
+        del flist[g_max_smooths:]  
+    M2 = build_matrix(factor_list, sm, flist,factor_list2)#,pflist)
+    null_space=solve_bits(M2,factor_list,len(sm))
+    f1,f2=extract_factors(n, sm, null_space,x_list,flist)#,disc_sr_list,pval_list,pflist)
+    if f1 != 0:
+        print("[SUCCESS]Factors are: "+str(f1)+" and "+str(f2))
+        sys.exit()
+        return f1,f2   
+   # print("[FAILURE]No factors found")
+    return 0,0
+
+def extract_factors(N, relations, null_space,x_list,factor_list):#,disc_sr_list,pval_list,pflist):
+    n = len(relations)
+    for vector in null_space:
+        prod_left = 1
+        prod_right = 1
+        pval=1
+        disc_sr=1
+        xy=1
+        x=1
+        count=0
+        for idx in range(len(relations)):
+            bit = vector & 1
+            vector = vector >> 1
+            if bit == 1:
+                count+=1
+                prod_left *= relations[idx]
+                prod_right *=x_list[idx]
+                x*=x_list[idx]
+               # print("polyval:  "+str(relations[idx])+" disc constant "+str(x_list[idx])+" factors: "+str(factor_list[idx]))
+            idx += 1
+
+        sqrt_right = math.isqrt(prod_right)
+        sqrt_left = math.isqrt(prod_left)#prod_left
+        if sqrt_left**2 != prod_left:
+            print("horrible error")
+            sys.exit()
+       # print(" polyval sqrt: "+str(sqrt_left%N)+" disc constant sqrt: "+str(sqrt_right%N))#+" zx*zxy: "+str(x))
+        ###Debug shit, remove for final version
+        sqr1=prod_left%N 
+        sqr2=prod_right%N
+        if sqrt_right**2 != prod_right:
+            print("not a square in the integers")
+            sys.exit()
+         #   time.sleep(10000)
+
+        if sqr1 != sqr2:
+            print("ERROR ERROR")
+            #time.sleep(10000)
+        ###End debug shit#########
+        sqrt_left = sqrt_left % N
+        sqrt_right = sqrt_right % N
+        factor_candidate = gcd(N, abs(sqrt_right+sqrt_left))
+
+
+        if factor_candidate not in (1, N):
+          #  print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!: "+str(factor_candidate))#+" sm: "+str(sqrt_right)+" root: "+str(sqrt_left))
+            other_factor = N // factor_candidate
+            return factor_candidate, other_factor
+    return 0, 0
+
+def solve_bits(matrix,factor_base,length):
+    n=length#len(factor_base)*1#base+2
+    lsmap = {lsb: 1 << lsb for lsb in range(n+10000)}
+    m = len(matrix)
+    marks = []
+    cur = -1
+    mark_mask = 0
+    for row in matrix:
+        if cur % 100 == 0:
+            print("", end=f"{cur, m}\r")
+        cur += 1
+        lsb = (row & -row).bit_length() - 1
+        if lsb == -1:
+            continue
+        marks.append(n - lsb - 1)
+        mark_mask |= 1 << lsb
+        for i in range(m):
+            if matrix[i] & lsmap[lsb] and i != cur:
+                matrix[i] ^= row
+    marks.sort()
+    # NULL SPACE EXTRACTION
+    nulls = []
+    free_cols = [col for col in range(n) if col not in marks]
+    k = 0
+    for col in free_cols:
+        shift2 = n - col - 1
+        val = 1 << shift2
+        fin = val
+        for v in matrix:
+            if v & val:
+                fin |= v & mark_mask
+        nulls.append(fin)
+        k += 1
+        if k == 10000000000: 
+            break
+    return nulls
+
+def build_matrix(factor_base, smooth_nums, factors,factor_list2):#,pflist):
+    fb_map = {val: i for i, val in enumerate(factor_base)}
+
+    ind=1
+
+    M2=[0]*((len(factor_base)+2)*2)#+qbase)#+2+qbase)
+    for i in range(len(smooth_nums)):
+        for fac in factors[i]:
+            idx = fb_map[fac]
+            M2[idx] |= ind
+        ind = ind + ind       
+
+    offset=(len(factor_base)+2)-1
+    ind=1
+    for i in range(len(factor_list2)):
+        for fac in factor_list2[i]:
+            idx = fb_map[fac]
+            M2[idx+offset] |= ind
+        ind = ind + ind
+    return M2
+
 def psieve(n,fbase):
+    ret_array=[[],[],[],[]]
+    fbase_opt=copy.copy(fbase)
+    fbase_opt.insert(0,len(fbase_opt)+1)
+    fbase_opt=array.array('q',fbase_opt)
+    fbase_fin=copy.copy(fbase)
+    fbase_fin.insert(0,2) ##To do: remove when we fix lifting for powers of 2
+    fbase_fin.insert(0,-1)
+    seen=[]
+    close_range=10
+    too_close=5
+    LOWER_BOUND_SIQS=400
+    UPPER_BOUND_SIQS=4000
+    tnum=int(((n)**0.5) /(1))
+    while 1:
+        bin=74
+
+        mod,cfact,indexes=generate_modulus(n,fbase,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,bitlen(tnum))
+        if mod == 0:
+            print("failed to generate modulus")
+            sys.exit()
+        q=0
+        while q < 1000:
+            bin=74+q
+            quad_res=get_quadratic_residues(bin,n,cfact)
+            quad_res=get_partials(mod,quad_res)
+
+            total_k=0
+            i=0
+            while i < len(quad_res):
+                if len(quad_res[i+1])>1:
+                    print("something unaccounted for happened")
+                    sys.exit()
+                total_k+=quad_res[i+1][0]
+                i+=2
+            total_k%=mod
+          #  print("new_mod: "+str(mod)+" cfact: "+str(cfact)+" quad_res: "+str(quad_res)+" total_k: "+str(total_k))
+            process_sieve_interval(total_k,n,bin,mod,fbase_opt,ret_array)
+            if len(ret_array[0])>len(fbase):
+                test,test2=QS(n,fbase_fin,ret_array[0],ret_array[2],ret_array[1],ret_array[3]) 
+                if test !=0:
+                    print("\n\n\n\nFound at: ",len(ret_array[0]))
+                    return 
+
+            q+=1
+        #sys.exit()
     ##To do: Actually implement p-adic lifting
     ##k1 in compute_result much be from a large enough modulus.. now it will likely end up truncated
-   # n=4387
-    binc=0
-    bin_start=math.ceil(n**0.5)
-    while binc < 10000:
-        bin=bin_start+binc
-        quad_res=get_quadratic_residues(bin,n,fbase)
-        quar_res=get_quartic_residues(bin,n,fbase)
-        compute_result(quad_res,quar_res,bin,fbase,n)
-        binc+=1
+ #   n=4387
+ #   binc=0
+ #   bin_start=math.ceil(n**0.5)
+ #   while binc < 10000:
+    #    bin=bin_start+binc
+    #    if bin%74==0:
+     #       binc+=1
+     #       continue
+     #   quad_res=get_quadratic_residues(bin,n,fbase)
+
+      #  quar_res=get_quartic_residues(bin,n,fbase)
+     #   compute_result(quad_res,quar_res,bin,fbase,n)
+    #    binc+=1
 
     return
 
 def main():
     global key
-    lin_sieve_size2=lin_sieve_size
     start = default_timer() 
     if g_p !=0 and g_q !=0 and g_enable_custom_factors == 1:
         p=g_p
