@@ -17,12 +17,6 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 #### To run from folder "psieve" WORK IN PROGRES...extremely early version:</br></br>
 EDIT: FUCK. LET ME CONTINUE TRYING TO DO DIRECT COMPUTATION OF A SOLUTION USING A TWO-SIDED SETUP AND P-ADIC LIFTING. IT HAS TO BE POSSIBLE, I'M PRETTY SURE I CAN ELIMINATE ENDLESS BRANCHING OF SOLUTIONS NOW. FUCK. ITS JUST TEDIOUS, BUT I KNOW I CAN DO IT. LETS GOOO, GIVE ME A FEW DAYS.
 
-#### To run from folder "polysieve" WORK IN PROGRES...extremely early version:</br></br>
-To build: python3 setup.py build_ext --inplace</br>
-To run:    python3 run_qs.py -keysize 100 -base 500 -debug 0 -lin_size 10_000 -quad_size 1
-
-Note: Will delete soon
-
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
