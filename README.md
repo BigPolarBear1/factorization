@@ -22,7 +22,7 @@ In check_higher_degrees.. I shouldn't do trail factorization there. actually the
 
 Update: Uploaded a first rough version. This one just sweeps for a full square... now we need a 2d interval thats going to sweep for a small multiple of a large square instead using polynomials like coefficient_sieve does. 
 
-Let me optimize some things first though.. after dividing out all square garantueed by construction.. what remains should be as small as possible... since the smaller the number, the more likely it will contain large squares or be completely square. We really just want some binomial terms if we expand them only a small value gets added after dividing out all the squares.. let me see if that's do-able.
+Let me optimize some things first though.. after dividing out all squares garantueed by construction.. what remains should be as small as possible... since the smaller the number, the more likely it will contain large squares or be completely square. We really just want some binomial terms if we expand them only a small value gets added after dividing out all the squares.. let me see if that's do-able.
 
 #### To run from folder "polysieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
