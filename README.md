@@ -15,7 +15,7 @@ https://github.com/basilegithub/General-number-field-sieve-Python
 Math paper is a work in progress. The final chapters are a bit rushed and building an algorithm around p-adic lifting isnt as straight forward as I had assumed. I do think there is an angle there I can exploit, but I'll do some further experimentation first and get a working PoC before I make edits to the paper again.
 
 #### To run from folder "psieve" WORK IN PROGRES...extremely early version:</br></br>
-Update: Will re-upload soon.. just going to modify coefficient_sieve to also sieve for near squares... after that I'll spent some time figuring out if I cant simply calculate stuff p-adically by considering both sides of my setup..
+EDIT: FUCK. LET ME CONTINUE TRYING TO DO DIRECT COMPUTATION OF A SOLUTION USING A TWO-SIDED SETUP AND P-ADIC LIFTING. IT HAS TO BE POSSIBLE, I'M PRETTY SURE I CAN ELIMINATE ENDLESS BRANCHING OF SOLUTIONS NOW. FUCK. ITS JUST TEDIOUS, BUT I KNOW I CAN DO IT. LETS GOOO, GIVE ME A FEW DAYS.
 
 #### To run from folder "polysieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
