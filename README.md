@@ -15,14 +15,7 @@ https://github.com/basilegithub/General-number-field-sieve-Python
 Math paper is a work in progress. The final chapters are a bit rushed and building an algorithm around p-adic lifting isnt as straight forward as I had assumed. I do think there is an angle there I can exploit, but I'll do some further experimentation first and get a working PoC before I make edits to the paper again.
 
 #### To run from folder "psieve" WORK IN PROGRES...extremely early version:</br></br>
-To build: python3 setup.py build_ext --inplace</br>
-To run: python3 psieve.py -base 50 -keysize 20 -lin_size 100
-
-In check_higher_degrees.. I shouldn't do trail factorization there. actually the logic that is implemented in my coefficient_sieve PoC is perfect for finding small multiples of a LARGE square. And that's exactly the type of b-smooths we must find in check_higher_degrees. So let me go ahead and implement that.. 
-
-Update: Uploaded a first rough version. This one just sweeps for a full square... now we need a 2d interval thats going to sweep for a small multiple of a large square instead using polynomials like coefficient_sieve does. 
-
-Let me optimize some things first though.. after dividing out all squares garantueed by construction.. what remains should be as small as possible... since the smaller the number, the more likely it will contain large squares or be completely square. We really just want some binomial terms if we expand them only a small value gets added after dividing out all the squares.. let me see if that's do-able.
+EDIT: Ignore this for now. I was thinking a little deeper about this, and with everything I've figured out. I really shoudl just be able to calculate the correct multiple to N (refered to as k in the paper)... first by considering one side of the two sided setup.. and then by considering the other side.. because if we have the correct k then certain conditions must hold true that are described in the paper. Let me double check that a correct solution can simply be calculated p-adically.. 
 
 #### To run from folder "polysieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
