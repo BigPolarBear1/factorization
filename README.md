@@ -15,7 +15,11 @@ https://github.com/basilegithub/General-number-field-sieve-Python
 Math paper is a work in progress. The final chapters are a bit rushed and building an algorithm around p-adic lifting isnt as straight forward as I had assumed. I do think there is an angle there I can exploit, but I'll do some further experimentation first and get a working PoC before I make edits to the paper again.
 
 #### To run from folder "psieve" WORK IN PROGRES...extremely early version:</br></br>
+python3 psieve.py -base 20 -keysize 16
+
 EDIT: FUCK. LET ME CONTINUE TRYING TO DO DIRECT COMPUTATION OF A SOLUTION USING A TWO-SIDED SETUP AND P-ADIC LIFTING. IT HAS TO BE POSSIBLE, I'M PRETTY SURE I CAN ELIMINATE ENDLESS BRANCHING OF SOLUTIONS NOW. FUCK. ITS JUST TEDIOUS, BUT I KNOW I CAN DO IT. LETS GOOO, GIVE ME A FEW DAYS.
+
+Update: Just uploading some work in progress. Not working yet. I need to add a residue map now.. figure out if I can p-adically lift while managing branching of solutions by having this two-sided condition between f_x and g_x that must hold true as we lift.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
