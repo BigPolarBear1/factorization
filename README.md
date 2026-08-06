@@ -20,6 +20,7 @@ To run: python3 psieve.py -base 20 -keysize 16</br>
 EDIT: FUCK. LET ME CONTINUE TRYING TO DO DIRECT COMPUTATION OF A SOLUTION USING A TWO-SIDED SETUP AND P-ADIC LIFTING. IT HAS TO BE POSSIBLE, I'M PRETTY SURE I CAN ELIMINATE ENDLESS BRANCHING OF SOLUTIONS NOW. FUCK. ITS JUST TEDIOUS, BUT I KNOW I CAN DO IT. LETS GOOO, GIVE ME A FEW DAYS.
 
 Update: Just uploading some work in progress. Not working yet. I need to add a residue map now.. figure out if I can p-adically lift while managing branching of solutions by having this two-sided condition between f_x and g_x that must hold true as we lift.
+In theory.. if I calculate a residue map... it will encode correct solutions... since a correct solution, if we use coefficient_sieve's approach.. will show up for every prime. I guess the thing that I'm struggling with now is, how to find an effective algorithm at finding these? .. I'm sure I can answer it soon..
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
