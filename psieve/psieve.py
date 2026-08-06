@@ -749,7 +749,7 @@ def build_interval(fbase,init_k,odd_mod,bin,n,smoothcan_org):
 
     return interval
 
-def check_higher_degrees(smoothcan_org,n,fbase,ret_array,bin,odd_mod,local_factors_org):
+def check_higher_degrees(smoothcan_org,n,fbase,ret_array,bin,odd_mod,local_factors_org,mod):
     ##Very rudimentary.. needs to be improved now
     degree=4
     while degree < 20:
@@ -850,7 +850,8 @@ def process_sieve_interval(k,n,bin,mod,fbase,ret_array):
         
         test=math.isqrt(value)
         if value**2 == test and local_factors not in ret_array[2]:
-            check_higher_degrees(smoothcan,n,fbase,ret_array,bin+mod*i,odd_mod,local_factors)    
+            print("local_factors: "+str(local_factors)+" bin: "+str(bin)+" smoothcan: "+str(smoothcan)+" mod: "+str(mod))
+            check_higher_degrees(smoothcan,n,fbase,ret_array,bin+mod*i,odd_mod,local_factors,mod)    
             print("Smooths: "+str(len(ret_array[0]))+" local_factors: "+str(local_factors)+" value: "+str(value))
            
             ret_array[1].append((bin+mod*i)**2)
@@ -1026,12 +1027,22 @@ def psieve(n,fbase):
 
 
         mod,cfact,indexes=generate_modulus(n,fbase,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,bitlen(tnum))
+        print("Mod: "+str(mod)+" cfact: "+str(cfact))
+        mod=17**2
+        cfact=[17]
         if mod == 0:
             print("failed to generate modulus")
             sys.exit()
         q=0
-        while q < 100:
+        while q < 5000_000_000_000_000:
             bin=math.ceil(n**0.5)+q
+            if bin > n:
+                print("fucking fail")
+                sys.exit()
+         #   print("bin "+str(bin))#+" n%bin: "+str(n%bin))
+            if math.gcd(n,bin)!=1:
+                q+=1
+                continue
            # if math.gcd(bin,mod)!=1:
            #     q+=1
            #     continue
@@ -1047,32 +1058,55 @@ def psieve(n,fbase):
                 total_k+=quad_res[i+1][0]
                 i+=2
             total_k%=mod
-          #  print("new_mod: "+str(mod)+" cfact: "+str(cfact)+" quad_res: "+str(quad_res)+" total_k: "+str(total_k))
-            process_sieve_interval(total_k,n,bin,mod,fbase_opt,ret_array)
-            if len(ret_array[0])>len(fbase):
-                test,test2=QS(n,fbase_fin,ret_array[0],ret_array[2],ret_array[1],ret_array[3]) 
-                if test !=0:
-                    print("\n\n\n\nFound at: ",len(ret_array[0]))
-                    return 
 
+
+            co=binomial_coeffs_fast(-(bin),2)
+            co+=[0]
+       # der=get_derivative(co)
+            f_x=co
+            f_x[-1]=n*total_k
+            for prime in cfact:
+                f_xt=copy.deepcopy(f_x)
+                roots=find_roots_poly(f_xt,prime)
+                for r in roots:
+                    r=bin
+                    pval=evaluate(f_x,r)
+                    der=get_derivative(f_x)
+                    derval=evaluate(der,r)
+                    g_x=[1,derval,-n*total_k]
+                    gval=evaluate(g_x,r)
+           
+                    while abs(g_x[1]//2)<n:
+                      #  print(g_x[1]//2)
+                        gval=evaluate(g_x,-g_x[1]//2)
+                        if gval%bin**2 ==0: 
+                            l1=abs(f_x[1]//2)
+                            l2=abs(g_x[1]//2)
+                            gc=math.gcd(l1+l2,n)
+                            #if l1**2%n == l2**2%n:
+                               # print("found: "+str(bin)+" f_x: "+str(f_x)+" "+str(g_x)+" "+str(gc))
+                           # sys.exit()
+                            if gc != 1 and gc != n:
+                                if l1**2%n != l2**2%n:
+                                    print("Too small")
+                                else:
+                                    print("Factors are: "+str(gc)+" and "+str(n//gc))
+                                    sys.exit()
+                        g_x[1]-=prime
+                  #  print("f_x: "+str(f_x)+" g_x: "+str(g_x)+" prime: "+str(prime)+" roots: "+str(roots)+" pval: "+str(pval)+" der: "+str(der)+" derval: "+str(derval)+" gval: "+str(gval)+" g_x[1]//2 "+str(g_x[1]//2))
+                    
+
+        #    print("new_mod: "+str(mod)+" cfact: "+str(cfact)+" quad_res: "+str(quad_res)+" total_k: "+str(total_k))
+
+            
+          #  process_sieve_interval(total_k,n,bin,mod,fbase_opt,ret_array)
+          #  if len(ret_array[0])>len(fbase):    
+          #      test,test2=QS(n,fbase_fin,ret_array[0],ret_array[2],ret_array[1],ret_array[3]) 
+          #      if test !=0:
+          #          print("\n\n\n\nFound at: ",len(ret_array[0]))
+          #          return 
+         #   sys.exit()
             q+=1
-        #sys.exit()
-    ##To do: Actually implement p-adic lifting
-    ##k1 in compute_result much be from a large enough modulus.. now it will likely end up truncated
- #   n=4387
- #   binc=0
- #   bin_start=math.ceil(n**0.5)
- #   while binc < 10000:
-    #    bin=bin_start+binc
-    #    if bin%74==0:
-     #       binc+=1
-     #       continue
-     #   quad_res=get_quadratic_residues(bin,n,fbase)
-
-      #  quar_res=get_quartic_residues(bin,n,fbase)
-     #   compute_result(quad_res,quar_res,bin,fbase,n)
-    #    binc+=1
-
     return
 
 def main():
