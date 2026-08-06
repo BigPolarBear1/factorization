@@ -16,9 +16,11 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 
 #### To run from folder "psieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 psieve.py -base 50 -keysize 50 -lin_size 10_000
+To run: python3 psieve.py -base 50 -keysize 20 -lin_size 100
 
 In check_higher_degrees.. I shouldn't do trail factorization there. actually the logic that is implemented in my coefficient_sieve PoC is perfect for finding small multiples of a LARGE square. And that's exactly the type of b-smooths we must find in check_higher_degrees. So let me go ahead and implement that.. 
+
+Update: Uploaded a first rough version. This one just sweeps for a full square... now we need a 2d interval thats going to sweep for a small multiple of a large square instead using polynomials like coefficient_sieve does. 
 
 #### To run from folder "polysieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
