@@ -15,11 +15,7 @@ https://github.com/basilegithub/General-number-field-sieve-Python
 Math paper is a work in progress. The final chapters are a bit rushed and building an algorithm around p-adic lifting isnt as straight forward as I had assumed. I do think there is an angle there I can exploit, but I'll do some further experimentation first and get a working PoC before I make edits to the paper again.
 
 #### To run from folder "psieve" WORK IN PROGRES...extremely early version:</br></br>
-To run: python3 psieve.py -base 50 -keysize 16 -lin_size 102
-
-EDIT: Ignore this for now. I was thinking a little deeper about this, and with everything I've figured out. I really shoudl just be able to calculate the correct multiple to N (refered to as k in the paper)... first by considering one side of the two sided setup.. and then by considering the other side.. because if we have the correct k then certain conditions must hold true that are described in the paper. Let me double check that a correct solution can simply be calculated p-adically.. 
-
-Update: Just uploaded some WIP. Not working properly yet. Needs some p-adic lifting and residue math to properly calculate the correct "k" value.
+Update: Will re-upload soon.. just going to modify coefficient_sieve to also sieve for near squares... after that I'll spent some time figuring out if I cant simply calculate stuff p-adically by considering both sides of my setup..
 
 #### To run from folder "polysieve" WORK IN PROGRES...extremely early version:</br></br>
 To build: python3 setup.py build_ext --inplace</br>
