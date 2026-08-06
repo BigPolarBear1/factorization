@@ -697,10 +697,62 @@ def factorise_fast(value,factor_base):
         i+=1
     return factors, value
 
+
+def solve_lin_con(a,b,m):
+    ##ax=b mod m
+    #g=gcd(a,m)
+    #a,b,m = a//g,b//g,m//g
+    return pow(a,-1,m)*b%m  
+
+def build_interval(fbase,init_k,odd_mod,bin,n,smoothcan_org):
+    f_x=binomial_coeffs_fast(bin, 2)
+    f_x+=[0]
+ #   print("f_x: "+str(f_x))
+    interval=np.zeros(100_000,dtype=np.uint16)   
+    i=1
+    length=fbase[0]
+    while i < length:
+        k=0
+        prime=fbase[i]
+     #   print(prime)
+        if odd_mod%prime==0:
+            i+=1
+            continue
+        odd_mod_inv=modinv(odd_mod,prime)
+        while k < prime:
+            #f_x[-1]=k*n
+            #f_x[-1]=(f_x[-1]*odd_mod_inv)%prime
+            #f_x[0]=odd_mod
+            #f_xc=copy.deepcopy(f_x)
+            test=bin**2-n*k
+            test*=odd_mod_inv
+            test%=prime
+            if compute_legendre_character((test)%prime,prime)==-1:
+         #   roots=find_roots_poly(f_xc,prime)
+          #  if len(roots)==0:
+                count=solve_lin_con(odd_mod,k-init_k,prime)
+                if (init_k+odd_mod*count)%prime != k:
+                    print("euhm??")
+                    sys.exit()
+                test=bin**2-n*(init_k+odd_mod*count)
+                test*=odd_mod_inv
+                test%=prime
+                if compute_legendre_character((test)%prime,prime)!=-1:
+                    print("failed: "+str(f_x)+" prime: "+str(prime)+" k: "+str(k)+" bin: "+str(bin))
+                    sys.exit()
+             #   else:
+             #       print("ok")
+                interval[count::prime]=1
+            k+=1
+        i+=1
+
+
+    return interval
+
 def check_higher_degrees(smoothcan_org,n,fbase,ret_array,bin,odd_mod,local_factors_org):
     ##Very rudimentary.. needs to be improved now
     degree=4
-    while degree < 12:
+    while degree < 20:
         ccount=0
         init_k=bin**degree-smoothcan_org**(degree//2)
         if init_k%n!=0:
@@ -711,32 +763,67 @@ def check_higher_degrees(smoothcan_org,n,fbase,ret_array,bin,odd_mod,local_facto
         count_start=newcan//(n*odd_mod)
     #   newcan2=bin**4-n*(init_k+odd_mod*count_start)
     #   print(str(newcan)+" "+str(newcan2))
-        while ccount < 5:
-            count=count_start+ccount
-            ccount+=1
-           # root=bin**(degree//2)
-            newcan=bin**degree-n*(init_k+odd_mod*count)
+        interval=build_interval(fbase,init_k,odd_mod,bin**(degree//2),n,smoothcan_org)
+        w=0
+        while w < len(interval):
+            if interval[w]==0:
+                test=bin**degree-n*(init_k+odd_mod*w)
+                if test%odd_mod !=0:
+                    print("fatal")
+                    sys.exit()
+             #   print("test: "+str(test)+" odd_mod: "+str(odd_mod))
+                test=test//odd_mod
+                length=fbase[0]
+                e=1
+                while e < length:
+                    l=compute_legendre_character(test,fbase[e])
+                    if l == -1:
+                        print("l: "+str(l)+" prime: "+str(fbase[e]))
+                        sys.exit()
+                    e+=1
+                test2=math.isqrt(test)
+                if test2**2 == test:
+
+                #    print("found "+str(math.gcd(test2+bin**(degree//2),n))+" test2: "+str(test2**2%n)+" "+str((bin**(degree))%n))
+                    newcan=bin**degree-n*(init_k+odd_mod*w)
+                    newcan=newcan*smoothcan_org
+                    root=bin**(degree//2)*bin
+                    testf=math.isqrt(abs(newcan))
+                    if testf**2 == newcan and root%n != testf%n and (root+testf)%n !=0:
+                        f1=math.gcd(testf+root,n)
+                        f2=n//f1
+                        print("succeeded early: "+str(f1)+" and "+str(f2))
+                        sys.exit()
+                else:
+                    print("not found")
+            w+=1
+       # while ccount < 5:
+        #    count=count_start+ccount
+       #     ccount+=1
+       #    # root=bin**(degree//2)
+      #      newcan=bin**degree-n*(init_k+odd_mod*count)
     #    if bitlen(newcan//odd_mod) < 32:
     #        print(str(bitlen(newcan//odd_mod))+" odd_Mod: "+str(bitlen(odd_mod)))
-            if newcan%odd_mod !=0:
-                print("fatal")
-                sys.exit()
+      #      if newcan%odd_mod !=0:
+      #          print("fatal")
+      #          sys.exit()
        
      #   local_factors, value = factorise_fast(newcan,fbase)
-            root=bin**(degree//2)*bin
-            newcan=newcan*smoothcan_org
-            if root**2%n!=newcan%n:
-                print("super fatal")
-                sys.exit()
-            local_factors2, value2 = factorise_fast(newcan,fbase)
-            test=math.isqrt(value2)
+      #      root=bin**(degree//2)*bin
+      #      newcan=newcan*smoothcan_org
+      #      if root**2%n!=newcan%n:
+      #          print("super fatal")
+      #          sys.exit()
+      #      local_factors2, value2 = factorise_fast(newcan,fbase)
+      #      local_factors3, value3 = factorise_fast(newcan//(smoothcan_org*odd_mod),fbase)
+      #      test=math.isqrt(value2)
       #  print("newcan: "+str(newcan))
-            if test**2 == value2 and local_factors2 not in ret_array[2]:
-                print("**Smooths: "+str(len(ret_array[0]))+" local_factors: "+str(local_factors2)+" degree: "+str(degree))#+" local2: "+str(local_factors2)+" value2: "+str(value2)+" value1: "+str(value)+" local_org: "+str(local_factors_org))
-                ret_array[1].append(root**2)
-                ret_array[0].append(newcan)
-                ret_array[2].append(local_factors2)
-                ret_array[3].append([])
+        #    if test**2 == value2 and local_factors2 not in ret_array[2]:
+        #        print("**Smooths: "+str(len(ret_array[0]))+" local_factors: "+str(local_factors2)+" degree: "+str(degree)+" "+str(newcan/(smoothcan_org*odd_mod))+" odd_mod: "+str(odd_mod)+" "+str(value3))#+" local2: "+str(local_factors2)+" value2: "+str(value2)+" value1: "+str(value)+" local_org: "+str(local_factors_org))
+        #        ret_array[1].append(root**2)
+        #        ret_array[0].append(newcan)
+        #        ret_array[2].append(local_factors2)
+        #        ret_array[3].append([])
         degree+=2
         
     return
@@ -755,14 +842,16 @@ def process_sieve_interval(k,n,bin,mod,fbase,ret_array):
         local_factors, value = factorise_fast(smoothcan,fbase)
         odd_mod=1
         for odd in local_factors:
-            odd_mod*=odd
+            if odd != -1 and odd != 2:
+                odd_mod*=odd
         odd_mod*=value
-       # print(smoothcan)
-        if value != 1:
-            check_higher_degrees(smoothcan,n,fbase,ret_array,bin+mod*i,odd_mod,local_factors)
-        if value == 1 and local_factors not in ret_array[2]:
-            
-            print("Smooths: "+str(len(ret_array[0]))+" local_factors: "+str(local_factors))
+       # print("smoothcan "+str(smoothcan)+" "+str(local_factors))
+
+        
+        test=math.isqrt(value)
+        if value**2 == test and local_factors not in ret_array[2]:
+            check_higher_degrees(smoothcan,n,fbase,ret_array,bin+mod*i,odd_mod,local_factors)    
+            print("Smooths: "+str(len(ret_array[0]))+" local_factors: "+str(local_factors)+" value: "+str(value))
            
             ret_array[1].append((bin+mod*i)**2)
             ret_array[0].append(smoothcan)
