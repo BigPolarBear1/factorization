@@ -1010,126 +1010,138 @@ def build_matrix(factor_base, smooth_nums, factors,factor_list2):#,pflist):
         ind = ind + ind
     return M2
 
+def solve_roots(prime,n):
+    hmap_p=[]
+    hmap_p2=[]
+    k=0
+    while k < prime:# and k < quad_sieve_size+1:
+        hmap_p2.append({})
+        hmap_p.append({})
+        coeff=[(+n*k)%prime]
+        coeff2=[(-n*k)%prime]
+
+
+        d=2
+        d_ind=0
+        while d_ind < d:
+            coeff.insert(0,0)
+
+            d_ind+=1
+
+      #  ranges = [range(start, prime) for start in coeff[:-1]]
+        predef=[]
+        i=0
+        while i < prime:
+            combo=binomial_coeffs_fast(-i,2)
+            combo2=binomial_coeffs_fast(i,2)
+        #ranges = [(1,1),(0,prime)]
+        #for combo in itertools.product(*ranges):
+            current = list(combo) +  [coeff[-1]]
+            current2= list(combo2) +  [coeff2[-1]]
+          #  if current[0]==0:
+           #     if current[1]==0:
+          #          continue
+           #     x=solve_lin_con(current[1],n*k,prime)
+          #      if (x*current[1]-n*k)%prime != 0:
+         ##           print("fatal")
+         #       root=[x]
+       #     else:
+              #  ##to do: Use tonelli instead if we arn't going to use higher degrees...
+            root = find_roots_poly(current, prime)
+            root2 = find_roots_poly(current2, prime)
+            if len(root)>0:
+                    f=[-i]
+                    f.append(root)
+                    try:
+                        res=hmap_p2[-1][i]
+                        print("shouldn't happen")
+                        sys.exit()
+                    except Exception as e:
+                        hmap_p2[-1][i]=[root]
+               #     hmap_p2[-1].append(f)
+            if len(root2)>0:
+                    f=[i]
+                    f.append(root2)
+                  #  hmap_p[-1].append(f)
+                    try:
+                        res=hmap_p[-1][i]
+                        print("shouldn't happen")
+                        sys.exit()
+                    except Exception as e:
+                        hmap_p[-1][i]=[root2]
+            i+=1
+       # if len(hmap_p2[-1]) > 0:
+       #     print("- prime: "+str(prime)+" k: "+str(k)+" "+str(hmap_p2[-1]))
+       # if len(hmap_p[-1]) > 0:
+       #     print("+ prime: "+str(prime)+" k: "+str(k)+" "+str(hmap_p[-1]))
+        k+=1
+  #  print("\n")
+    return hmap_p,hmap_p2
+
+def create_hashmap(n,primeslist):
+    i=0
+    hmap=[]
+    hmap2=[]
+
+    while i < len(primeslist):
+        hmap_p,hmap_p2=solve_roots(primeslist[i],n)
+        hmap.append(hmap_p)
+        hmap2.append(hmap_p2)
+       # print("prime: "+str(primeslist[i])+" hmap_p: "+str(hmap_p))
+
+        i+=1
+
+    return hmap,hmap2
+
 def psieve(n,fbase):
-    ret_array=[[],[],[],[]]
-    fbase_opt=copy.copy(fbase)
-    fbase_opt.insert(0,len(fbase_opt)+1)
-    fbase_opt=array.array('q',fbase_opt)
-    fbase_fin=copy.copy(fbase)
-    fbase_fin.insert(0,2) ##To do: remove when we fix lifting for powers of 2
-    fbase_fin.insert(0,-1)
-    seen=[]
-    close_range=10
-    too_close=5
-    LOWER_BOUND_SIQS=400
-    UPPER_BOUND_SIQS=4000
-    tnum=int(((n)**0.5) /(1))
-    while 1:
+    print("[i]Building residue map")
+    hmap,hmap2=create_hashmap(n,fbase)
+    print("[i]Building interval")
+    interval=np.ones([lin_size,lin_size],dtype=np.int16)
+    t=0
+    while t < len(fbase):
+        prime=fbase[t]
 
+        k=0
+        while k < prime:
+            i=0 
+            while i < prime:
+                try:
+                    res=hmap[t][k][i]
+                except Exception as e:
+                    if k < lin_size and i < lin_size:
+                        interval[k::prime,i::prime]=0
+                i+=1
+            k+=1
+        t+=1
 
-        mod,cfact,indexes=generate_modulus(n,fbase,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,bitlen(tnum))
-       # print("Mod: "+str(mod)+" cfact: "+str(cfact))
-        mod=13**2
-        cfact=[13]
-        if mod == 0:
-            print("failed to generate modulus")
+    print("[i]Checking interval: "+str(k))
+
+    indexlist=np.nonzero(interval)
+    indexlist_x=indexlist[1]
+    indexlist_y=indexlist[0]
+    ind=0
+    length=len(indexlist_x)
+
+    while ind < length:# length:  
+        y=int(indexlist_x[ind])
+        k=int(indexlist_y[ind])
+
+  
+        if k == 0:
+            ind+=1
+            continue
+        f_x=binomial_coeffs_fast(y, 2)
+      #  f_x+=[n*k]
+        disc=y**2+n*k*f_x[0]
+        print("disc: "+str(disc**0.5))
+        u=math.isqrt(disc)
+        gcdtest=math.gcd(y+u,n)
+        if gcdtest != 1 and gcdtest != n:
+            print("factors are: "+str(gcdtest)+" and "+str(n//gcdtest))
             sys.exit()
-        q=0
-        while q < 5000_000_000_000_000:
-            bin=math.ceil(n**0.5)+q#math.ceil(n**0.5)+q
-            print("Trying binomial: "+str(bin))
-            if bin > n:
-                print("fucking fail")
-                sys.exit()
-         #   print("bin "+str(bin))#+" n%bin: "+str(n%bin))
-            if math.gcd(n,bin)!=1:
-                q+=1
-                continue
-           # if math.gcd(bin,mod)!=1:
-           #     q+=1
-           #     continue
-            quad_res=get_quadratic_residues(bin,n,cfact)
-            quar_res=get_quartic_residues(bin,n,cfact)
-            quad_res=get_partials(mod,quad_res)
-
-            total_k=0
-            total_k1=0
-            i=0
-            while i < len(quad_res):
-                if len(quad_res[i+1])>1:
-                    print("something unaccounted for happened")
-                    sys.exit()
-                total_k+=quad_res[i+1][0]
-                total_k1+=quar_res[i+1][0]
-                i+=2
-            total_k%=mod
-            total_k1%=mod**2
-
-            co=binomial_coeffs_fast(-(bin),2)
-            co+=[0]
-       # der=get_derivative(co)
-            f_x=co
-            f_x[-1]=n*total_k
-            for prime in cfact:
-                f_xt=copy.deepcopy(f_x)
-                roots=find_roots_poly(f_xt,prime)
-                for r in roots:
-                    r=bin
-                    pval=evaluate(f_x,r)
-                    der=get_derivative(f_x)
-                    derval=evaluate(der,r)
-                    g_x=[1,derval,-n*total_k]
-                    gval=evaluate(g_x,r)
-                    ###TO DO: 
-                    #1. So for the quadratic case, right now we are adding the modulus to the binomial term until we get the result we want
-                    #But we could also increase total_k instead. 
-
-                    #2. A correct solution as a quadratic should also map to a correct solution as a quartic (although total_k1 might be obscured by the modulus)
-
-                    #Since f_x and g_x need to basically evaluate to the binomial terms.. we have a two-sided setup.. which lets use discard solution..
-                    #The quesiton that now remains is the following... lets say we build a residue map, is this enough to "delete" solutions to elimate that explosion in solutions we would otherwise get if we p-adically lift?
-
-
-                    while abs(g_x[1]//2)<n:
-                        
-                      #  print(g_x[1]//2)
-                        gval=evaluate(g_x,-g_x[1]//2)
-                      #  print("f_x: "+str(f_x)+" g_x: "+str(g_x)+" total_k: "+str(total_k)+" total_k1: "+str(total_k1)+" gval: "+str(gval))
-                        if gval%bin**2 ==0: 
-                            g_x_quar=binomial_coeffs_fast((g_x[1]//2),4)
-                            g_x_quar+=[-n*total_k1]#[-n*2924400]
-                            f_x_quar=binomial_coeffs_fast((f_x[1]//2),4)
-                            f_x_quar+=[+n*total_k1]#[-n*2924400]
-                            gval_quar=evaluate(g_x_quar,-g_x[1]//2)
-                            fval_quar=evaluate(f_x_quar,-f_x[1]//2)
-                            print("g_x_quar: "+str(g_x_quar)+" gval_quar: "+str(gval_quar)+" f_x_quar: "+str(f_x_quar)+" fval_quar: "+str(fval_quar))
-                            l1=abs(f_x[1]//2)
-                            l2=abs(g_x[1]//2)
-                            gc=math.gcd(l1+l2,n)
-                            #if l1**2%n == l2**2%n:
-                               # print("found: "+str(bin)+" f_x: "+str(f_x)+" "+str(g_x)+" "+str(gc))
-                           # sys.exit()
-                            if gc != 1 and gc != n:
-                                if l1**2%n != l2**2%n:
-                                    print("Too small")
-                                else:
-                                    print("Factors are: "+str(gc)+" and "+str(n//gc))
-                                    sys.exit()
-                        g_x[1]-=prime
-                  #  print("f_x: "+str(f_x)+" g_x: "+str(g_x)+" prime: "+str(prime)+" roots: "+str(roots)+" pval: "+str(pval)+" der: "+str(der)+" derval: "+str(derval)+" gval: "+str(gval)+" g_x[1]//2 "+str(g_x[1]//2))
-                    
-
-        #    print("new_mod: "+str(mod)+" cfact: "+str(cfact)+" quad_res: "+str(quad_res)+" total_k: "+str(total_k))
-
-            
-          #  process_sieve_interval(total_k,n,bin,mod,fbase_opt,ret_array)
-          #  if len(ret_array[0])>len(fbase):    
-          #      test,test2=QS(n,fbase_fin,ret_array[0],ret_array[2],ret_array[1],ret_array[3]) 
-          #      if test !=0:
-          #          print("\n\n\n\nFound at: ",len(ret_array[0]))
-          #          return 
-         #   sys.exit()
-            q+=1
+        ind+=1
+    
     return
 
 def main():
