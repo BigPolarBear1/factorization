@@ -17,7 +17,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 #### To run from folder "psieve" WORK IN PROGRES...extremely early version:</br>
 To run:  python3 psieve.py -base 30 -keysize 40 -lin_size 10_000</br>
 
-Update: Decided to just take the path of least resistance and build on something that I already know will work, and that is the coefficient Sieve PoC. However, this time around, I will use the leading coefficient to divide the discriminant.. this we can sieve for small multiples of a large square.. so basically a different way to sieve for B-smooths... I'll add support to divide the discriminant with the leading coefficient soon... 
+Update: Decided to just take the path of least resistance and build on something that I already know will work, and that is the coefficient Sieve PoC. However, this time around, I will use the leading coefficient to divide the discriminant.. this way we can sieve for small multiples of a large square.. so basically a different way to sieve for B-smooths... I'll add support to divide the discriminant with the leading coefficient soon... 
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
