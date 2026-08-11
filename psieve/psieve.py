@@ -564,11 +564,11 @@ def generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SI
     poly_low_found = False
     
     for i in range(small_B):  ##To do: Can be moved outside mainloop
-        if primeslist[i]**2 > LOWER_BOUND_SIQS and not poly_low_found:
+        if primeslist[i] > LOWER_BOUND_SIQS and not poly_low_found:
             lower_polypool_index = i
             poly_low_found = True
             break
-        if primeslist[i]**2 > UPPER_BOUND_SIQS:
+        if primeslist[i] > UPPER_BOUND_SIQS:
             upper_polypool_index = i - 1
             break
     small_B=upper_polypool_index
@@ -588,7 +588,7 @@ def generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SI
                # if  jacobi((-quad*n)%primeslist[randindex],primeslist[randindex])!=1:
                   #  counter+=1
                   #  continue
-                potential_a_factor = primeslist[randindex]**2
+                potential_a_factor = primeslist[randindex]
                 found_a_factor = True
                 it=0
                 length=len(cfact)
@@ -623,9 +623,9 @@ def generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SI
         mindiff = 100000000000000000
         randindex = 0
         for i in range(small_B):
-            if abs(a1 - primeslist[i]**2) < mindiff:
+            if abs(a1 - primeslist[i]) < mindiff:
                 randindex = i
-                mindiff = abs(a1 - primeslist[i]**2)
+                mindiff = abs(a1 - primeslist[i])
                 
         
 
@@ -636,7 +636,7 @@ def generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SI
      #           randindex += 1
     #            counter3+=1
    #             continue
-            potential_a_factor = primeslist[randindex]**2
+            potential_a_factor = primeslist[randindex]
 
             found_a_factor = True
             it=0
@@ -1013,12 +1013,19 @@ def build_matrix(factor_base, smooth_nums, factors,factor_list2):#,pflist):
 def solve_roots(prime,n):
     hmap_p=[]
     hmap_p2=[]
+    sq=[1,0,-37]
+    sqr=find_roots_poly(sq, prime)
+    
+    if len(sqr)==0:
+        return [],[]
+    print("SQR: "+str(sqr))
+    div_37=modinv(37,prime)
     k=0
     while k < prime:# and k < quad_sieve_size+1:
         hmap_p2.append({})
         hmap_p.append({})
-        coeff=[(+n*k)%prime]
-        coeff2=[(-n*k)%prime]
+        coeff=[(-n)%prime]
+     #   coeff2=[(-n)%prime]
 
 
         d=2
@@ -1032,12 +1039,15 @@ def solve_roots(prime,n):
         predef=[]
         i=0
         while i < prime:
-            combo=binomial_coeffs_fast(-i,2)
-            combo2=binomial_coeffs_fast(i,2)
+
+            combo=[k,(sqr[0]*i)%prime]
+         #   combo2=[k,-i]
         #ranges = [(1,1),(0,prime)]
         #for combo in itertools.product(*ranges):
             current = list(combo) +  [coeff[-1]]
-            current2= list(combo2) +  [coeff2[-1]]
+         #   current2= list(combo2) +  [coeff2[-1]]
+        #    current[0]=k
+          #  current2[0]=k
           #  if current[0]==0:
            #     if current[1]==0:
           #          continue
@@ -1047,8 +1057,11 @@ def solve_roots(prime,n):
          #       root=[x]
        #     else:
               #  ##to do: Use tonelli instead if we arn't going to use higher degrees...
+
+            if (27)%prime == i and k == 37%prime:
+                print("eval: "+str(current))
             root = find_roots_poly(current, prime)
-            root2 = find_roots_poly(current2, prime)
+         #   root2 = find_roots_poly(current2, prime)
             if len(root)>0:
                     f=[-i]
                     f.append(root)
@@ -1059,21 +1072,33 @@ def solve_roots(prime,n):
                     except Exception as e:
                         hmap_p2[-1][i]=[root]
                #     hmap_p2[-1].append(f)
-            if len(root2)>0:
-                    f=[i]
-                    f.append(root2)
-                  #  hmap_p[-1].append(f)
-                    try:
-                        res=hmap_p[-1][i]
-                        print("shouldn't happen")
-                        sys.exit()
-                    except Exception as e:
-                        hmap_p[-1][i]=[root2]
+          #  if len(root2)>0:
+            #        f=[i]
+           #         f.append(root2)
+            #      #  hmap_p[-1].append(f)
+            #        try:
+            #            res=hmap_p[-1][i]
+                #        print("shouldn't happen")
+               #         sys.exit()
+               #     except Exception as e:
+               #         hmap_p[-1][i]=[root2]
             i+=1
-       # if len(hmap_p2[-1]) > 0:
-       #     print("- prime: "+str(prime)+" k: "+str(k)+" "+str(hmap_p2[-1]))
-       # if len(hmap_p[-1]) > 0:
-       #     print("+ prime: "+str(prime)+" k: "+str(k)+" "+str(hmap_p[-1]))
+        if len(hmap_p2[-1]) > 0 and k == 1%prime:
+            print("- prime: "+str(prime)+" k: "+str(k)+" "+str(hmap_p2[-1]))
+            try:
+                res=hmap_p2[-1][27%prime]
+                print("- prime: "+str(prime)+" k: "+str(k)+" "+str(res))
+            except Exception as e:
+                print("FAILED")
+                sys.exit()
+                disc=37*(27)**2+4*n
+                leg=compute_legendre_character(disc%prime,prime)
+                if leg != -1:
+                    print("asdjasd")
+                    sys.exit()
+                print("failed: ",leg)
+       # if len(hmap_p[-1]) > 0 and k == 23%prime:
+        #    print("+ prime: "+str(prime)+" k: "+str(k)+" "+str(hmap_p[-1]))
         k+=1
   #  print("\n")
     return hmap_p,hmap_p2
@@ -1094,54 +1119,140 @@ def create_hashmap(n,primeslist):
     return hmap,hmap2
 
 def psieve(n,fbase):
-    print("[i]Building residue map")
-    hmap,hmap2=create_hashmap(n,fbase)
-    print("[i]Building interval")
-    interval=np.ones([lin_size,lin_size],dtype=np.int16)
-    t=0
-    while t < len(fbase):
-        prime=fbase[t]
+    ret_array=[[],[],[],[]]
+    fbase_opt=copy.copy(fbase)
+    fbase_opt.insert(0,len(fbase_opt)+1)
+    fbase_opt=array.array('q',fbase_opt)
+    fbase_fin=copy.copy(fbase)
+    fbase_fin.insert(0,2) ##To do: remove when we fix lifting for powers of 2
+    fbase_fin.insert(0,-1)
+ #   print("[i]Building residue map")
+ #   hmap,hmap2=create_hashmap(n,fbase) ##Fix this later
+   # sys.exit()
+  #  print("[i]Building interval")
+    seen=[]
+    close_range=20
+    too_close=1
+    LOWER_BOUND_SIQS=1
+    UPPER_BOUND_SIQS=4000
+    tnum=int(((n)**0.2) /(1))
+    found=0
+    while 1:
 
-        k=0
-        while k < prime:
-            i=0 
-            while i < prime:
-                try:
-                    res=hmap[t][k][i]
-                except Exception as e:
-                    if k < lin_size and i < lin_size:
-                        interval[k::prime,i::prime]=0
-                i+=1
-            k+=1
-        t+=1
 
-    print("[i]Checking interval: "+str(k))
+        mod,cfact,indexes=generate_modulus(n,fbase,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,bitlen(tnum))
+        #mod=13
+        if mod == 0:
+            print("failed to generate modulus")
+            sys.exit()
+        div=mod
+    #found=0
+   # div=1
+    #while div <100000:
+       # local_factors, value = factorise_fast(div,fbase_opt)
+     #   if value !=1:
+          #  div+=1
+         #   continue
+        print("[i]Building interval with divisor: "+str(div))
+        interval=np.ones([lin_size,lin_size],dtype=np.int16)
 
-    indexlist=np.nonzero(interval)
-    indexlist_x=indexlist[1]
-    indexlist_y=indexlist[0]
-    ind=0
-    length=len(indexlist_x)
+      #  modi=modinv(div,n)
+        t=0
+        while t < len(fbase):
+            prime=fbase[t]
+            sq=[1,0,-div]
+            sqr=find_roots_poly(sq, prime)
+    
+            if len(sqr)==0:
+                t+=1
+                continue
 
-    while ind < length:# length:  
-        y=int(indexlist_x[ind])
-        k=int(indexlist_y[ind])
+            k=0
+            while k < prime:
+                i=0 
+                while i < prime:
+                    if math.gcd(div,prime)!=1:
+                        i+=1
+                        continue
+                    combo=binomial_coeffs_fast(i,2)
+                  #  combo[0]*=div
+                    combo[1]*=sqr[0]
+                    combo[1]%=prime
+                    current = list(combo)+[-n*k]
+
+                 ##   print("current: "+str(current)+" prime: "+str(prime))
+                    curc=copy.deepcopy(current)
+                    root = find_roots_poly(curc, prime)
+
+                    if len(root)==0:
+
+                        if (k*current[0])%prime < lin_size and i < lin_size:
+                            interval[(k*current[0])%prime::prime,i::prime]=0
+                   # else:
+                    #    if len(sqr_div)>0:
+                    #        divinv=modinv(div,prime)
+                    #        disc=(sqr_div[0]*current[1])**2+n*k*current[0]
+                   #         leg=compute_legendre_character((disc*modular_div)%prime,prime)
+                    #        print(" disc: "+str(disc)+" divinv: "+str(divinv)+" Prime: "+str(prime)+" current: "+str(current)+" root: "+str(root)+" sqdiv: "+str(sqr_div)+" legendre: "+str(leg))
+
+                   
+                    i+=1
+                k+=1
+            t+=1
+       # sys.exit()
+        print("[i]Checking interval")
+
+        indexlist=np.nonzero(interval)
+        indexlist_x=indexlist[1]
+        indexlist_y=indexlist[0]
+        ind=0
+        length=len(indexlist_x)
+
+        while ind < length:# length:  
+            y=int(indexlist_x[ind])
+            k=int(indexlist_y[ind])
 
   
-        if k == 0:
-            ind+=1
-            continue
-        f_x=binomial_coeffs_fast(y, 2)
+            if k == 0:
+                ind+=1
+                continue
+        #    f_x=binomial_coeffs_fast(y, 2)
       #  f_x+=[n*k]
-        disc=y**2+n*k*f_x[0]
-        print("disc: "+str(disc**0.5))
-        u=math.isqrt(disc)
-        gcdtest=math.gcd(y+u,n)
-        if gcdtest != 1 and gcdtest != n:
-            print("factors are: "+str(gcdtest)+" and "+str(n//gcdtest))
-            sys.exit()
-        ind+=1
-    
+            disc=div*(2*y)**2+4*n*k
+            disc_test=math.isqrt(disc)
+
+            bsmooth=(div*2*y)**2+4*n*k*div
+          #  print("disc: "+str(disc)+" (bsmooth//div)**0.5: "+str((bsmooth//div)**0.5)+" bsmooth: "+str(bsmooth))
+            if disc_test**2 !=disc:
+                ind+=1
+                continue
+
+            local_factors, value = factorise_fast(div,fbase_opt)
+            print("value: "+str(value))
+
+            test=math.isqrt(value)
+
+            if test**2 == value:# and y**2 not in ret_array[1]:
+                print("**Smooths: "+str(len(ret_array[0])))
+        #        print("**Smooths: "+str(len(ret_array[0]))+" local_factors: "+str(local_factors2)+" degree: "+str(degree)+" "+str(newcan/(smoothcan_org*odd_mod))+" odd_mod: "+str(odd_mod)+" "+str(value3))#+" local2: "+str(local_factors2)+" value2: "+str(value2)+" value1: "+str(value)+" local_org: "+str(local_factors_org))
+                ret_array[1].append((div*2*y)**2)
+                ret_array[0].append(bsmooth)
+                ret_array[2].append(local_factors)
+                ret_array[3].append([])
+                found+=1
+            if found > 0:
+                test,test2=QS(n,fbase_fin,ret_array[0],ret_array[2],ret_array[1],ret_array[3]) 
+                if test !=0:
+                    print("\n\n\n\nFound at: ",len(ret_array[0]))
+                    return 
+                found=0
+          #  sys.exit()
+           # u=math.isqrt(disc)
+          #  gcdtest=math.gcd(y+u,n)
+          #  if gcdtest != 1 and gcdtest != n:
+           #     print("factors are: "+str(gcdtest)+" and "+str(n//gcdtest))
+           #     sys.exit()
+            ind+=1
     return
 
 def main():
