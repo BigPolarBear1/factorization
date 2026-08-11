@@ -19,7 +19,7 @@ To run:  python3 psieve.py -base 30 -keysize 40 -lin_size 10_000</br>
 
 Update: Decided to just take the path of least resistance and build on something that I already know will work, and that is the coefficient Sieve PoC. However, this time around, I will use the leading coefficient to divide the discriminant.. this way we can sieve for small multiples of a large square.. so basically a different way to sieve for B-smooths... I'll add support to divide the discriminant with the leading coefficient soon... 
 
-Update: Ok, that wasn't too hard.. I'll upload how to do it after I come back from running. Kinda struggled for a few days figuring out how to divide the discriminant while using a setup like coefficient_sieve does..  but you just divide your linear coefficient by the square root of the divisor mod p. So I'll upload that soon.. then I need to figure out how I can use everything else to even quicker find B-smooths with a large square in it by using residues and perhaps p-adic lifting. I'm sure a superior QS variant can be constructed this way.
+Update: Ok, that wasn't too hard.. I'll upload how to do it after I come back from running. Kinda struggled for a few days figuring out how to divide the discriminant while using a setup like coefficient_sieve does..  but you just multiply your linear coefficient by the square root of the divisor mod p. So I'll upload that soon.. then I need to figure out how I can use everything else to even quicker find B-smooths with a large square in it by using residues and perhaps p-adic lifting. I'm sure a superior QS variant can be constructed this way.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
