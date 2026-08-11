@@ -27,6 +27,8 @@ Just demonstrates the math from the paper using quadratics. For educational purp
 
 edit: You can modify this to use the leading coefficient to divide the discriminant and find B-smooths with a large square in it... I will experiment with it soon.. but first I want to spent a few more days just trying direct computation of a solution without sieving, because that could potentially straight up break factorization and I must know for sure if it is possible or not first.
 
+Update: Ok, that wasn't too hard.. I'll upload how to do it after I come back from running. Kinda struggled for a few days figuring out how to divide the discriminant while using a setup like coefficient_sieve does..  but you just divide your linear coefficient by the square root of the divisor mod p. So I'll upload that soon.. then I need to figure out how I can use everything else to even quicker find B-smooths with a large square in it by using residues and perhaps p-adic lifting. I'm sure a superior QS variant can be constructed this way.
+
 #### To run from folder "CUDA_QS_variant" (Failed Experiment):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
