@@ -17,15 +17,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 #### To run from folder "psieve" WORK IN PROGRES...extremely early version:</br>
 To run:  python3 psieve.py -base 30 -keysize 40 -lin_size 10_000</br>
 
-Update: Decided to just take the path of least resistance and build on something that I already know will work, and that is the coefficient Sieve PoC. However, this time around, I will use the leading coefficient to divide the discriminant.. this way we can sieve for small multiples of a large square.. so basically a different way to sieve for B-smooths... I'll add support to divide the discriminant with the leading coefficient soon... 
-
-Update: Ok, that wasn't too hard.. I'll upload how to do it after I come back from running. Kinda struggled for a few days figuring out how to divide the discriminant while using a setup like coefficient_sieve does..  but you just multiply your linear coefficient by the square root of the divisor mod p. So I'll upload that soon.. then I need to figure out how I can use everything else to even quicker find B-smooths with a large square in it by using residues and perhaps p-adic lifting. I'm sure a superior QS variant can be constructed this way.
-
-Update: Just really quickly uploaded a version using that math... it's not very clean, but I'll improve it now. The real thing I need to figure out is if there exists an algorithm to more quickly find these cases.. so an algorithm centered around quadratics and the legendre symbol of their discriminant mod p.. rather than factorization over a factor base as traditional QS does..
-
-Update: Let me add support for p-adic lifting next.. thats going to allow me go do a better study of the whole construction... anyway.. finally some movement again in my research... hopeful.
-
-ps: I know that rather then calculating quadratics I can just calculate legendre symbols on the discriminat.. that also eliminates having to do a square root mod p of the divisor. But I want to use these quadratics to find these b-smooths with a large square faster by using their root residues... I can abstractly see a way to do it.. but I need to study it a bitore first.
+Update: Pushed some updates. It's a bit shitty. At line 1168 ( if len(sqr)==0 or math.gcd(div,prime)!=1:) .. these cases are the "lazy" calculation. We could just calculate legendre symbols for all the primes. But what I really want to do is look at the cases where we can actually construct a quadratic.. where if it has a root solution then the discriminant will also be a quadratic residue mod p or divide by p (depending if its singular or non-singular).. so I want to lift these quadratics to p^e next.. create a residue map of these... then use some fast math to figure out the existence of B-smooths with large squares in it.. I think I know how.. it should be possible.. but I should really implement p-adic lifting...
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
