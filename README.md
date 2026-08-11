@@ -19,6 +19,8 @@ To run:  python3 psieve.py -base 30 -keysize 40 -lin_size 10_000</br>
 
 Update: Pushed some updates. It's a bit shitty. At line 1168 ( if len(sqr)==0 or math.gcd(div,prime)!=1:) .. these cases are the "lazy" calculation. We could just calculate legendre symbols for all the primes. But what I really want to do is look at the cases where we can actually construct a quadratic.. where if it has a root solution then the discriminant will also be a quadratic residue mod p or divide by p (depending if its singular or non-singular).. so I want to lift these quadratics to p^e next.. create a residue map of these... then use some fast math to figure out the existence of B-smooths with large squares in it.. I think I know how.. it should be possible.. but I should really implement p-adic lifting...
 
+But anyway.. the code shows how to get quadratics now.. even when we divide the discriminant in advance by "div". Because only looking at full squares doesn't give us a large enough set.. but this way we can also consider small-ish multiples of a square. Which still gives us a rank reduction during the linear algebra step (I believe rank reduction is the correct term.. with that I just mean, require less B-smooths to succeed).
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
