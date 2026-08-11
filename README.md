@@ -21,7 +21,7 @@ Update: Decided to just take the path of least resistance and build on something
 
 Update: Ok, that wasn't too hard.. I'll upload how to do it after I come back from running. Kinda struggled for a few days figuring out how to divide the discriminant while using a setup like coefficient_sieve does..  but you just multiply your linear coefficient by the square root of the divisor mod p. So I'll upload that soon.. then I need to figure out how I can use everything else to even quicker find B-smooths with a large square in it by using residues and perhaps p-adic lifting. I'm sure a superior QS variant can be constructed this way.
 
-Update: Just really quickly uploaded a version using that math... it's not very clean, but I'll improve it now. The real thing I need to figure out is if there exists an algorithm to more quickly find these cases.. so an algorithm centered around quadratics and the legendre symbol of their discriminant mod p.. rather factorization over a factor base as traditional QS does..
+Update: Just really quickly uploaded a version using that math... it's not very clean, but I'll improve it now. The real thing I need to figure out is if there exists an algorithm to more quickly find these cases.. so an algorithm centered around quadratics and the legendre symbol of their discriminant mod p.. rather than factorization over a factor base as traditional QS does..
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
