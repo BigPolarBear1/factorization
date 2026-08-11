@@ -23,6 +23,8 @@ Update: Ok, that wasn't too hard.. I'll upload how to do it after I come back fr
 
 Update: Just really quickly uploaded a version using that math... it's not very clean, but I'll improve it now. The real thing I need to figure out is if there exists an algorithm to more quickly find these cases.. so an algorithm centered around quadratics and the legendre symbol of their discriminant mod p.. rather than factorization over a factor base as traditional QS does..
 
+Update: Let me add support for p-adic lifting next.. thats going to allow me go do a better study of the whole construction... anyway.. finally some movement again in my research... hopeful.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
