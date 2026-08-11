@@ -1141,11 +1141,13 @@ def psieve(n,fbase):
 
 
         mod,cfact,indexes=generate_modulus(n,fbase,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,bitlen(tnum))
-        #mod=13
+       # mod=37
         if mod == 0:
             print("failed to generate modulus")
             sys.exit()
         div=mod
+        hit=0
+        hitlist=[]
     #found=0
    # div=1
     #while div <100000:
@@ -1163,20 +1165,33 @@ def psieve(n,fbase):
             sq=[1,0,-div]
             sqr=find_roots_poly(sq, prime)
     
-            if len(sqr)==0:
+            if len(sqr)==0 or math.gcd(div,prime)!=1:
+                ##Note: Not ideal, we want to be using quadratics below to quickly find large squares instead.. first I'll add p-adic lifting then do a study what happens with the root residues..
+                ##I believe there exists a way to quickly find these cases via residue map...
+                k=0
+                while k < prime:
+                    i=0
+                    while i < prime:
+                        disc=div*(i)**2+4*n*k
+                        leg=compute_legendre_character((disc)%prime,prime)
+                        if leg == -1:
+                            interval[(k)%prime::prime,i::prime]=0
+                        i+=1
+                    k+=1
                 t+=1
                 continue
-
+            hit+=1
+            hitlist.append(prime)
             k=0
             while k < prime:
-                i=0 
+                i=0
                 while i < prime:
                     if math.gcd(div,prime)!=1:
                         i+=1
                         continue
-                    combo=binomial_coeffs_fast(i,2)
-                  #  combo[0]*=div
-                    combo[1]*=sqr[0]
+                   # combo=binomial_coeffs_fast(i,2)
+                    combo=[1,0]
+                    combo[1]=i*sqr[0]
                     combo[1]%=prime
                     current = list(combo)+[-n*k]
 
@@ -1188,13 +1203,16 @@ def psieve(n,fbase):
 
                         if (k*current[0])%prime < lin_size and i < lin_size:
                             interval[(k*current[0])%prime::prime,i::prime]=0
-                   # else:
+                    elif len(root)>1:
                     #    if len(sqr_div)>0:
                     #        divinv=modinv(div,prime)
-                    #        disc=(sqr_div[0]*current[1])**2+n*k*current[0]
-                   #         leg=compute_legendre_character((disc*modular_div)%prime,prime)
+                        disc=div*(i)**2+4*n*k
+                        leg=compute_legendre_character((disc)%prime,prime)
+                      #  print("leg: "+str(leg))
                     #        print(" disc: "+str(disc)+" divinv: "+str(divinv)+" Prime: "+str(prime)+" current: "+str(current)+" root: "+str(root)+" sqdiv: "+str(sqr_div)+" legendre: "+str(leg))
-
+                        if leg !=1:
+                            print("superrrr fail: "+str(prime)+" i: "+str(i))
+                            sys.exit()
                    
                     i+=1
                 k+=1
@@ -1218,11 +1236,16 @@ def psieve(n,fbase):
                 continue
         #    f_x=binomial_coeffs_fast(y, 2)
       #  f_x+=[n*k]
-            disc=div*(2*y)**2+4*n*k
+            disc=div*(y)**2+4*n*k
             disc_test=math.isqrt(disc)
-
-            bsmooth=(div*2*y)**2+4*n*k*div
-          #  print("disc: "+str(disc)+" (bsmooth//div)**0.5: "+str((bsmooth//div)**0.5)+" bsmooth: "+str(bsmooth))
+            for pr in hitlist:
+                leg=compute_legendre_character(disc,pr)
+                if leg == -1:
+                    print("Some bug happened here... this should never happen: "+str(pr))
+                    sys.exit()
+            bsmooth=(div*y)**2+4*n*k*div
+        #    print("disc: "+str(disc)+" (bsmooth//div)**0.5: "+str((bsmooth//div)**0.5)+" bsmooth: "+str(bsmooth)+" hit: "+str(hit))
+         #   sys.exit()
             if disc_test**2 !=disc:
                 ind+=1
                 continue
@@ -1235,7 +1258,7 @@ def psieve(n,fbase):
             if test**2 == value:# and y**2 not in ret_array[1]:
                 print("**Smooths: "+str(len(ret_array[0])))
         #        print("**Smooths: "+str(len(ret_array[0]))+" local_factors: "+str(local_factors2)+" degree: "+str(degree)+" "+str(newcan/(smoothcan_org*odd_mod))+" odd_mod: "+str(odd_mod)+" "+str(value3))#+" local2: "+str(local_factors2)+" value2: "+str(value2)+" value1: "+str(value)+" local_org: "+str(local_factors_org))
-                ret_array[1].append((div*2*y)**2)
+                ret_array[1].append((div*y)**2)
                 ret_array[0].append(bsmooth)
                 ret_array[2].append(local_factors)
                 ret_array[3].append([])
