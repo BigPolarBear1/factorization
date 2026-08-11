@@ -25,6 +25,8 @@ Update: Just really quickly uploaded a version using that math... it's not very 
 
 Update: Let me add support for p-adic lifting next.. thats going to allow me go do a better study of the whole construction... anyway.. finally some movement again in my research... hopeful.
 
+ps: I know that rather then calculating quadratics I can just calculate legendre symbols on the discriminat.. that also eliminates having to do a square root mod p of the divisor. But I want to use these quadratics to find these b-smooths with a large square faster by using their root residues... I can abstractly see a way to do it.. but I need to study it a bitore first.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
