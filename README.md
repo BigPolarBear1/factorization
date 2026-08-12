@@ -21,6 +21,8 @@ Update: Pushed some updates. It's a bit shitty. At line 1168 ( if len(sqr)==0 or
 
 But anyway.. the code shows how to get quadratics now.. even when we divide the discriminant in advance by "div". Because only looking at full squares doesn't give us a large enough set.. but this way we can also consider small-ish multiples of a square. Which still gives us a rank reduction during the linear algebra step (I believe rank reduction is the correct term.. with that I just mean, require less B-smooths to succeed).
 
+The main thing that needs to be figured out is if there exists a way to find these "almost" large squares without using a sieve interval and using residues instead. I'll delegate this research to my weekends for a little while.. I've also been working on some other shit... not going to waste my life slowly perishing in a tiny attic room.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
