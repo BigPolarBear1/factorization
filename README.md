@@ -23,6 +23,8 @@ But anyway.. the code shows how to get quadratics now.. even when we divide the 
 
 The main thing that needs to be figured out is if there exists a way to find these "almost" large squares without using a sieve interval and using residues instead. I'll delegate this research to my weekends for a little while.. I've also been working on some other shit... not going to waste my life slowly perishing in a tiny attic room.
 
+Update: Alright, after spending a few days on another project (preparing the destruction of Russia, haha, suka blyat), its weekend.. time to do some math.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
