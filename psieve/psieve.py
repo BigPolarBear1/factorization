@@ -1011,97 +1011,29 @@ def build_matrix(factor_base, smooth_nums, factors,factor_list2):#,pflist):
     return M2
 
 def solve_roots(prime,n):
-    hmap_p=[]
     hmap_p2=[]
-    sq=[1,0,-37]
-    sqr=find_roots_poly(sq, prime)
-    
-    if len(sqr)==0:
-        return [],[]
-    print("SQR: "+str(sqr))
-    div_37=modinv(37,prime)
     k=0
-    while k < prime:# and k < quad_sieve_size+1:
+    while k < prime:
         hmap_p2.append({})
-        hmap_p.append({})
-        coeff=[(-n)%prime]
-     #   coeff2=[(-n)%prime]
-
-
-        d=2
-        d_ind=0
-        while d_ind < d:
-            coeff.insert(0,0)
-
-            d_ind+=1
-
-      #  ranges = [range(start, prime) for start in coeff[:-1]]
-        predef=[]
         i=0
         while i < prime:
-
-            combo=[k,(sqr[0]*i)%prime]
-         #   combo2=[k,-i]
-        #ranges = [(1,1),(0,prime)]
-        #for combo in itertools.product(*ranges):
-            current = list(combo) +  [coeff[-1]]
-         #   current2= list(combo2) +  [coeff2[-1]]
-        #    current[0]=k
-          #  current2[0]=k
-          #  if current[0]==0:
-           #     if current[1]==0:
-          #          continue
-           #     x=solve_lin_con(current[1],n*k,prime)
-          #      if (x*current[1]-n*k)%prime != 0:
-         ##           print("fatal")
-         #       root=[x]
-       #     else:
-              #  ##to do: Use tonelli instead if we arn't going to use higher degrees...
-
-            if (27)%prime == i and k == 37%prime:
-                print("eval: "+str(current))
+            combo=[k,i]
+            current = list(combo) +  [(-n)%prime]
             root = find_roots_poly(current, prime)
-         #   root2 = find_roots_poly(current2, prime)
             if len(root)>0:
-                    f=[-i]
-                    f.append(root)
                     try:
                         res=hmap_p2[-1][i]
                         print("shouldn't happen")
                         sys.exit()
                     except Exception as e:
-                        hmap_p2[-1][i]=[root]
-               #     hmap_p2[-1].append(f)
-          #  if len(root2)>0:
-            #        f=[i]
-           #         f.append(root2)
-            #      #  hmap_p[-1].append(f)
-            #        try:
-            #            res=hmap_p[-1][i]
-                #        print("shouldn't happen")
-               #         sys.exit()
-               #     except Exception as e:
-               #         hmap_p[-1][i]=[root2]
+                        hmap_p2[-1][i]=root
+
             i+=1
-        if len(hmap_p2[-1]) > 0 and k == 1%prime:
-            print("- prime: "+str(prime)+" k: "+str(k)+" "+str(hmap_p2[-1]))
-            try:
-                res=hmap_p2[-1][27%prime]
-                print("- prime: "+str(prime)+" k: "+str(k)+" "+str(res))
-            except Exception as e:
-                print("FAILED")
-                sys.exit()
-                disc=37*(27)**2+4*n
-                leg=compute_legendre_character(disc%prime,prime)
-                if leg != -1:
-                    print("asdjasd")
-                    sys.exit()
-                print("failed: ",leg)
-       # if len(hmap_p[-1]) > 0 and k == 23%prime:
-        #    print("+ prime: "+str(prime)+" k: "+str(k)+" "+str(hmap_p[-1]))
+     #   if len(hmap_p2[-1]) > 0:# and k == 1%prime:
+     #       print("- prime: "+str(prime)+" k: "+str(k)+" "+str(hmap_p2[-1]))
         k+=1
-  #  print("\n")
-    return hmap_p,hmap_p2
+
+    return [],hmap_p2
 
 def create_hashmap(n,primeslist):
     i=0
@@ -1126,9 +1058,9 @@ def psieve(n,fbase):
     fbase_fin=copy.copy(fbase)
     fbase_fin.insert(0,2) ##To do: remove when we fix lifting for powers of 2
     fbase_fin.insert(0,-1)
- #   print("[i]Building residue map")
- #   hmap,hmap2=create_hashmap(n,fbase) ##Fix this later
-   # sys.exit()
+    print("[i]Building residue map")
+    hmap,hmap2=create_hashmap(n,fbase) ##Fix this later
+  #  sys.exit()
   #  print("[i]Building interval")
     seen=[]
     close_range=20
@@ -1138,23 +1070,15 @@ def psieve(n,fbase):
     tnum=int(((n)**0.2) /(1))
     found=0
     while 1:
-
-
         mod,cfact,indexes=generate_modulus(n,fbase,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,bitlen(tnum))
-       # mod=37
+
         if mod == 0:
             print("failed to generate modulus")
             sys.exit()
         div=mod
         hit=0
         hitlist=[]
-    #found=0
-   # div=1
-    #while div <100000:
-       # local_factors, value = factorise_fast(div,fbase_opt)
-     #   if value !=1:
-          #  div+=1
-         #   continue
+
         print("[i]Building interval with divisor: "+str(div))
         interval=np.ones([lin_size,lin_size],dtype=np.int16)
 
@@ -1189,31 +1113,12 @@ def psieve(n,fbase):
                     if math.gcd(div,prime)!=1:
                         i+=1
                         continue
-                   # combo=binomial_coeffs_fast(i,2)
-                    combo=[1,0]
-                    combo[1]=i*sqr[0]
-                    combo[1]%=prime
-                    current = list(combo)+[-n*k]
 
-                 ##   print("current: "+str(current)+" prime: "+str(prime))
-                    curc=copy.deepcopy(current)
-                    root = find_roots_poly(curc, prime)
-
-                    if len(root)==0:
-
-                        if (k*current[0])%prime < lin_size and i < lin_size:
-                            interval[(k*current[0])%prime::prime,i::prime]=0
-                    elif len(root)>1:
-                    #    if len(sqr_div)>0:
-                    #        divinv=modinv(div,prime)
-                        disc=div*(i)**2+4*n*k
-                        leg=compute_legendre_character((disc)%prime,prime)
-                      #  print("leg: "+str(leg))
-                    #        print(" disc: "+str(disc)+" divinv: "+str(divinv)+" Prime: "+str(prime)+" current: "+str(current)+" root: "+str(root)+" sqdiv: "+str(sqr_div)+" legendre: "+str(leg))
-                        if leg !=1:
-                            print("superrrr fail: "+str(prime)+" i: "+str(i))
-                            sys.exit()
-                   
+                    try:
+                        test=hmap2[t][k][(i*sqr[0])%prime]
+                    except Exception as e:
+                        if (k)%prime < lin_size and i < lin_size:
+                            interval[(k)%prime::prime,i::prime]=0                   
                     i+=1
                 k+=1
             t+=1
@@ -1244,7 +1149,7 @@ def psieve(n,fbase):
                     print("Some bug happened here... this should never happen: "+str(pr))
                     sys.exit()
             bsmooth=(div*y)**2+4*n*k*div
-        #    print("disc: "+str(disc)+" (bsmooth//div)**0.5: "+str((bsmooth//div)**0.5)+" bsmooth: "+str(bsmooth)+" hit: "+str(hit))
+         #   print("disc: "+str(disc)+" (bsmooth//div)**0.5: "+str((bsmooth//div)**0.5)+" bsmooth: "+str(bsmooth)+" hit: "+str(hit))
          #   sys.exit()
             if disc_test**2 !=disc:
                 ind+=1
