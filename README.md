@@ -25,6 +25,8 @@ The main thing that needs to be figured out is if there exists a way to find the
 
 Update: Alright, after spending a few days on another project (preparing the destruction of Russia, haha, suka blyat), its weekend.. time to do some math.
 
+Update: Quickly changed a few things so it just uses a residue map. Going to implement p-adic lifting. Will probably just implement some placeholder bruteforce logic for a while.. doesn't really matter for testing purposes plus I can use it later when implementing proper p-adic lifting to make sure it's working and not skipping solutions. I hope with p-adic lifting I can skip having to calculate legendre symbols for the primes that I cant convert into a quadratic because div isn't a quadratic residue... and then all that's left really is finding a "good div" that maps to a valid solution in my residue map for each prime. Easy enough. I can do this actually.. lol. Fuck them all. Fuck Russias, Fuck MAGA. You went after the gays and queers. Get destroyed by one now. Fucking losers. I piss on all of you. I fucking despise you. Fucking traitors. Fucking russian lapdogs. R*tards.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
