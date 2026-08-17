@@ -27,6 +27,8 @@ Update: Alright, after spending a few days on another project (preparing the des
 
 Update: Quickly changed a few things so it just uses a residue map. Going to implement p-adic lifting. Will probably just implement some placeholder bruteforce logic for a while.. doesn't really matter for testing purposes plus I can use it later when implementing proper p-adic lifting to make sure it's working and not skipping solutions. I hope with p-adic lifting I can skip having to calculate legendre symbols for the primes that I cant convert into a quadratic because div isn't a quadratic residue... and then all that's left really is finding a "good div" that maps to a valid solution in my residue map for each prime. Easy enough. I can do this actually.. lol. Fuck them all. Fuck Russia, Fuck MAGA. You went after the gays and queers. Get destroyed by one now. Fucking losers. I piss on all of you. I fucking despise you. Fucking traitors. Fucking russian lapdogs. R*tards.
 
+Update: Oh shit.. I was doing analysis.. there are "divisors" that will yield an enormous amount of b-smooths... oh shit... and I think I can calculate when this happens. oh shit.... I swear if this works like I think it will.. go to hell for forcing me to burn my work when it could have been used to fucking pown russia instead. 
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
