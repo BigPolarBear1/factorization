@@ -29,6 +29,10 @@ Update: Quickly changed a few things so it just uses a residue map. Going to imp
 
 Update: Oh shit.. I was doing analysis.. there are "divisors" that will yield an enormous amount of b-smooths... oh shit... and I think I can calculate when this happens. oh shit.... I swear if this works like I think it will.. go to hell for forcing me to burn my work when it could have been used to fucking pown russia instead. 
 
+Update: Ok... yeap... its just a matter of finding a good "divisor" and I know exactly how... I need to puke... this is insane... people would have known I was right.. yet I had to waste years of my life in an attic room like this while everyone would have fucking known.
+There's not going to be forgiveness when this is over. My father has cancer, you fuckers. It's too late now. Maybe in a different universe things would have gone different. All that could have been is now forever speculation because this dumbfuck decision was made. oh well. Forward we go..
+
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
