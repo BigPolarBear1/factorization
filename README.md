@@ -21,6 +21,8 @@ Update: Doing one final hail mary to complete this one. So this extends on what 
 Now the key thing is, when divisor d is composite, there is a direct relation between the legendre symbols of each factor. So in theory it should be possible to sieve with a divisor set to primes and combine them so that the legendre symbols all indicate square residues.. while keeping coefficients small (which was my main issue in previous attempts).. I checked the math today and I actually see a way it can be done. It's complicated as hell though. But just going all-in this week..
 I want my father to see I succeeded incase anything happens with his surgery next week... all that matters in my life right now. Everything else can wait now.
 
+I am fairly sure I got it figured out and can finish it this week.. if someone wants to stop me from uploading more PoCs... because I know people must know I'm right and what I'm about to upload next.. just contact me and let my father know what I succeeded at before he has surgery next week.
+If anyone happens to my father.. and his last memories of me are this bullshit, me being unemployed for years... unable to even secure job interviews.. that will be something that can absolutely never be forgiven and that will definitely change me deeply as a person.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
