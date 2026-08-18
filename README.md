@@ -18,7 +18,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 To run:  python3 psieve.py -base 30 -keysize 40 -lin_size 10_000</br>
 
 Update: Doing one final hail mary to complete this one. So this extends on what I had before in Coefficient Sieve by dividing the discriminant by a divisor d. So we can find b-smooths which are products of d and a large square by sieving with legendre symbols or checking for the existence of a root solution to a quadratic (which is the same thing, since it means the discriminant is a QR).
-Now the key thing is, when divisor d is composite, there is a direct relation between the legendre symbols of each factor. So in theory it should be possible to see with a divisor set to primes and combine them.. I checked the math today and I actually see a way it can be done. It's complicated as hell though. But just going all-in this week..
+Now the key thing is, when divisor d is composite, there is a direct relation between the legendre symbols of each factor. So in theory it should be possible to sieve with a divisor set to primes and combine them so that the legendre symbols all indicate square residues.. while keeping coefficients small (which was my main issue in previous attempts).. I checked the math today and I actually see a way it can be done. It's complicated as hell though. But just going all-in this week..
 I want my father to see I succeeded incase anything happens with his surgery next week... all that matters in my life right now. Everything else can wait now.
 
 
