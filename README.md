@@ -16,7 +16,7 @@ Math paper is a work in progress. The final chapters are a bit rushed and buildi
 
 #### To run from folder "psieve" WORK IN PROGRES...extremely early version:</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 40 -base 50 -debug 0 -lin_size 100_000 -quad_size 1</br></br>
+To run: python3 run_qs.py -keysize 45 -base 10_000 -debug 0 -lin_size 10_000 -quad_size 1</br></br>
 
 Uploaded a very first commit. This basically merges cuda_qs_variant and coefficient_sieve. Calling into coefficient sieve (see psieve()) whenever a b-smooth is found. 
 Whats left to do is setting the proper sieve region to check.. because now its just doing 0 to 5000 in a 2d plane.. which is not going to work if we increase key size. Let me do some analysis how to find the best region. In addition we could also tune "div" that's being passed into psieve as another parameter. So this seems like a very promising research direction so far. Lets see.
