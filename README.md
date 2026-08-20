@@ -12,7 +12,7 @@ https://stackoverflow.com/questions/79330304/optimizing-sieving-code-in-the-self
 https://github.com/basilegithub/General-number-field-sieve-Python 
 
 #### About the paper
-Math paper is a work in progress. The final chapters are a bit rushed and building an algorithm around p-adic lifting isnt as straight forward as I had assumed. I do think there is an angle there I can exploit, but I'll do some further experimentation first and get a working PoC before I make edits to the paper again.
+Math paper is a work in progress. Ignore the final chapter for now.. that one I'll rewrite if and when I can get "psieve" below working correctly.
 
 #### To run from folder "psieve" WORK IN PROGRES...extremely early version:</br>
 To build: python3 setup.py build_ext --inplace</br>
