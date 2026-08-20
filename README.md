@@ -21,6 +21,8 @@ To run: python3 run_qs.py -keysize 45 -base 10_000 -debug 0 -lin_size 10_000 -qu
 Uploaded a very first commit. This basically merges cuda_qs_variant and coefficient_sieve. Calling into coefficient sieve (see psieve()) whenever a b-smooth is found. 
 Whats left to do is setting the proper sieve region to check.. because now its just doing 0 to 5000 in a 2d plane.. which is not going to work if we increase key size. Let me do some analysis how to find the best region. In addition we could also tune "div" that's being passed into psieve as another parameter. So this seems like a very promising research direction so far. Lets see.
 
+Update: Let me focus next on either optimizing the sieve region or divisor value in psieve(). If I can find a divisor value that's going to have more "valid" solutions on average per prime.. then thats going to create a better sieve interval. So it can definitely be optimized.. question is if it can be optimized in a way that actually matters I guess. May also need to include p-adic lifting for this.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
