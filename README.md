@@ -23,6 +23,8 @@ Whats left to do is setting the proper sieve region to check.. because now its j
 
 Update: Let me focus next on either optimizing the sieve region or divisor value in psieve(). If I can find a divisor value that's going to have more "valid" solutions on average per prime.. then thats going to create a better sieve interval. So it can definitely be optimized.. question is if it can be optimized in a way that actually matters I guess. May also need to include p-adic lifting for this.
 
+Update: So the whole thing about lifting solutions to quadratics.. and how these quadratics link to the squaredness of the discriminant.. we can lift solutions for small primes.. and the density of those solutions sets will actually let us optimize this divisor I believe. Its really those very small primes that matter most.. should be able to get it done this weekend hopefully. Just add a function to generate some type of scoring for each divisor.. then either run the psieve logic when we find a divisor with a good score or just multiply the divisor with squares until it sits in a good score.. 
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
