@@ -1410,16 +1410,17 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                     div*=odd_exp_factor
                 ret_array[3].append([])
                 #To do: Sieve around the coefficient the b-smooth was found at
-                print("[*]Smooths: "+str(len(ret_array[0]))+" / "+str(base))
-                psievefound=psieve(fbase,n,div,hmap2,ret_array,primelist_f)
-                if psievefound !=0:
-                    print("[*](Psieve)Trying linear algebra after succesful psieve run")
-                    test,test2=QS(n,primelist,ret_array[0],ret_array[2],ret_array[1],ret_array[3])
+                print("[*]Smooths: "+str(len(ret_array[0]))+" / "+str(base)+" b: "+str(new_root)+" k: "+str(quad_can)+" square: "+str((poly_val//div)**0.5))
+                if bitlen(div)<keysize*0.5: ##Dont know if this matters.. another parameter to test with..
+                    psievefound=psieve(fbase,n,div,hmap2,ret_array,primelist_f)
+                    if psievefound !=0:
+                        print("[*](Psieve)Trying linear algebra after succesful psieve run")
+                        test,test2=QS(n,primelist,ret_array[0],ret_array[2],ret_array[1],ret_array[3])
 
 
-                    if test !=0:
-                        print("\n\n\n\nFound at: ",len(ret_array[0]))
-                        sys.exit()
+                        if test !=0:
+                            print("\n\n\n\nFound at: ",len(ret_array[0]))
+                            sys.exit()
             #    print("***seen_primes: "+str(local_factors)+" cmod: "+str(cmod)+" root: "+str(new_root)+" polyval: "+str(poly_val))
                 #found+=find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,valid_quads,valid_quads_factors,qlist,new_root)
                 if len(ret_array[0])>(base+10):
@@ -1887,105 +1888,123 @@ def build_2drootmap(primeslist,hmap,n):
 
 def psieve(fbase,n,div,hmap2,ret_array,primelist_f):#(n,fbase,div,hmap2,ret_array):
    # print("[i]running psieve: "+str(div))#+" fbase: "+str(fbase))
-    lin_size=5_000
+    lin_size=10_000
 
     found=0
 
-    hit=0
-    hitlist=[]
+
 
     print("[i](Psieve)Building interval with divisor: "+str(div)+" (to do: sieve around the coefficient the b-smooth was found at)")
-    interval=np.ones([lin_size,lin_size],dtype=np.int8)
+    
   #  div=1
-
-    t=0
-    while t < len(fbase):
-        prime=fbase[t]
-        sq=[1,0,-div]
-        sqr=find_roots_poly(sq, prime)
-
-        if len(sqr)==0 or math.gcd(div,prime)!=1:
-            k=0
-            while k < prime:
-                i=0
-                while i < prime:
-                    disc=div*(i)**2+4*n*k
-                    leg=compute_legendre_character((disc)%prime,prime)
-                    if leg == -1:
-                        interval[(k)%prime::prime,i::prime]=0
+    kstart=0
+    while kstart < 50_000:
+        ystart=0
+        while ystart < 50_000:
+            hit=0
+            hitlist=[]
 
 
-                    i+=1
-                k+=1
+            interval=np.ones([lin_size,lin_size],dtype=np.int8)
+            t=0
+            while t < len(fbase):
+                prime=fbase[t]
+                sq=[1,0,-div]
+                sqr=find_roots_poly(sq, prime)
 
-            t+=1
-            continue
-        hit+=1
-        hitlist.append(prime)
-        for rt in sqr:
-            k=0
-            while k < prime:
-                i=0
-                while i < prime:
-                    if math.gcd(div,prime)!=1:
-                        i+=1
-                        continue
-
-                    try:
-                        test=hmap2[t][k][(i*rt)%prime]
-                    except Exception as e:
-                        if (k)%prime < lin_size and i < lin_size:
-                            interval[(k)%prime::prime,i::prime]=0                
-                    i+=1
-                k+=1
-        t+=1
+                if len(sqr)==0 or math.gcd(div,prime)!=1:
+                    k=0
+                    while k < prime:
+                        i=0
+                        while i < prime:
+                            disc=div*(i)**2+4*n*k
+                            leg=compute_legendre_character((disc)%prime,prime)
+                            diff=(i-ystart)%prime
+                            kdiff=(k-kstart)%prime
+                            if (ystart+diff)%prime != i:
+                                print("fatal error")
+                                sys.exit()
+                            if leg == -1:
+                                interval[(kdiff)%prime::prime,diff::prime]=0
+                            i+=1
+                        k+=1
+                    t+=1
+                    continue
+                hit+=1
+                hitlist.append(prime)
+                for rt in sqr:
+                    k=0
+                    while k < prime:
+                        i=0
+                        while i < prime:
+                            if math.gcd(div,prime)!=1:
+                                i+=1
+                                continue
+                            try:
+                                test=hmap2[t][k][(i*rt)%prime]
+                            except Exception as e:
+                                if (k)%prime < lin_size and i < lin_size:
+                                    diff=(i-ystart)%prime
+                                    kdiff=(k-kstart)%prime
+                                    if (ystart+diff)%prime != i:
+                                        print("fatal error")
+                                        sys.exit()
+                                    interval[(kdiff)%prime::prime,diff::prime]=0                
+                            i+=1
+                        k+=1
+                t+=1
    # print(interval)
-    indexlist=np.nonzero(interval)
-    indexlist_x=indexlist[1]
-    indexlist_y=indexlist[0]
-    ind=0
-    length=len(indexlist_x)
-    print("[i](Psieve)Checking interval, # elements found: "+str(length))
+            indexlist=np.nonzero(interval)
+            indexlist_x=indexlist[1]
+            indexlist_y=indexlist[0]
+            ind=0
+            length=len(indexlist_x)
+            print("[i](Psieve)Checking interval, # elements found: "+str(length)+" kstart: "+str(kstart)+" ystart: "+str(ystart))
 
-    while ind < length:# length:  
-        y=int(indexlist_x[ind])
-        k=int(indexlist_y[ind])
+            while ind < length:# length:  
+                y=int(indexlist_x[ind])
+                y+=ystart
+                k=int(indexlist_y[ind])
+                k+=kstart
+                if k == 0:
+                    ind+=1
+                    continue
 
-  
-        if k == 0:
-            ind+=1
-            continue
-
-        disc=div*(y)**2+4*n*k
-        disc_test=math.isqrt(disc)
-        for pr in hitlist:
-            leg=compute_legendre_character(disc,pr)
-            if leg == -1:
-                print("Some bug happened here... this should never happen: "+str(pr))
-                sys.exit()
-        bsmooth=(div*y)**2+4*n*k*div
-        legendre_sym=[]
-        test_div1_res=[]
-        test_div2_res=[]
+                disc=div*(y)**2+4*n*k
+                disc_test=math.isqrt(disc)
+                for pr in hitlist:
+                    leg=compute_legendre_character(disc,pr)
+                    if leg == -1:
+                        print("Some bug happened here... this should never happen: "+str(pr))
+                        sys.exit()
+                bsmooth=(div*y)**2+4*n*k*div
+                legendre_sym=[]
+                test_div1_res=[]
+                test_div2_res=[]
       #  print("disc: "+str(disc)+" (bsmooth//div)**0.5: "+str((bsmooth//div)**0.5)+" bsmooth: "+str(bsmooth)+" hit: "+str(hit)+" k: "+str(k)+" y: "+str(y))
-        if disc_test**2 !=disc:
-            ind+=1
-            continue
+                if disc_test**2 !=disc:
+                    ind+=1
+                    continue
 
-        local_factors, value = factorise_fast(div,primelist_f)
+                local_factors, value = factorise_fast(div,primelist_f)
       #  print("value: "+str(value))
 
-        test=math.isqrt(value)
+                test=math.isqrt(value)
 
-        if test**2 == value and (div*y)**2 not in ret_array[1]:
-            print("[*](Psieve)Smooths: "+str(len(ret_array[0]))+" / "+str(base)+" b: "+str(y)+" k: "+str(k))
+                if test**2 == value and (div*y)**2 not in ret_array[1]:
+                    print("[*](Psieve)Smooths: "+str(len(ret_array[0]))+" / "+str(base)+" b: "+str(y)+" k: "+str(k)+" square: "+str((bsmooth//div)**0.5))
         #        print("**Smooths: "+str(len(ret_array[0]))+" local_factors: "+str(local_factors2)+" degree: "+str(degree)+" "+str(newcan/(smoothcan_org*odd_mod))+" odd_mod: "+str(odd_mod)+" "+str(value3))#+" local2: "+str(local_factors2)+" value2: "+str(value2)+" value1: "+str(value)+" local_org: "+str(local_factors_org))
-            ret_array[1].append((div*y)**2)
-            ret_array[0].append(bsmooth)
-            ret_array[2].append(local_factors)
-            ret_array[3].append([])
-            found+=1
-        ind+=1
+                    ret_array[1].append((div*y)**2)
+                    ret_array[0].append(bsmooth)
+                    ret_array[2].append(local_factors)
+                    ret_array[3].append([])
+                    
+                    found+=1
+                    ###Try to do linear algebra...
+                    return found
+                ind+=1
+            ystart+=lin_size
+        kstart+=lin_size
     return found
 
 def psieve_solve_roots(prime,n):
@@ -2073,7 +2092,7 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
     too_close=1
     LOWER_BOUND_SIQS=1
     UPPER_BOUND_SIQS=4000
-    #tnum=int(((n)**0.5) /(lin_sieve_size)) to do: remove below
+   # tnum=int(((n)**0.5) /(lin_sieve_size))
     tnum=int(((n)**0.5) / 1)
     seen=[]
 
