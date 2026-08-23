@@ -1890,7 +1890,7 @@ def psieve(fbase,n,div,hmap2,ret_array,primelist_f,b):#(n,fbase,div,hmap2,ret_ar
 # To do: make sure first there is no duplicate marking. Then count and see if solutions differ per divisor...
    # print("[i]running psieve: "+str(div))#+" fbase: "+str(fbase))
     lin_size=10_000
-
+    b=0 #I dont know.. figure out if an optimal value for this exists at a later time..
     found=0
     b-=lin_size
     if b < 0:
