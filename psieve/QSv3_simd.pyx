@@ -1412,7 +1412,7 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                 #To do: Sieve around the coefficient the b-smooth was found at
                 print("[*]Smooths: "+str(len(ret_array[0]))+" / "+str(base)+" b: "+str(new_root)+" k: "+str(quad_can)+" square: "+str((poly_val//div)**0.5))
                 if bitlen(div)<keysize*0.5: ##Dont know if this matters.. another parameter to test with..
-                    psievefound=psieve(fbase,n,div,hmap2,ret_array,primelist_f)
+                    psievefound=psieve(fbase,n,div,hmap2,ret_array,primelist_f,new_root)
                     if psievefound !=0:
                         print("[*](Psieve)Trying linear algebra after succesful psieve run")
                         test,test2=QS(n,primelist,ret_array[0],ret_array[2],ret_array[1],ret_array[3])
@@ -1886,13 +1886,15 @@ def build_2drootmap(primeslist,hmap,n):
     return roots2d
 
 
-def psieve(fbase,n,div,hmap2,ret_array,primelist_f):#(n,fbase,div,hmap2,ret_array):
+def psieve(fbase,n,div,hmap2,ret_array,primelist_f,b):#(n,fbase,div,hmap2,ret_array):
+# To do: make sure first there is no duplicate marking. Then count and see if solutions differ per divisor...
    # print("[i]running psieve: "+str(div))#+" fbase: "+str(fbase))
     lin_size=10_000
 
     found=0
-
-
+    b-=lin_size
+    if b < 0:
+        b=0
 
     print("[i](Psieve)Building interval with divisor: "+str(div)+" (to do: sieve around the coefficient the b-smooth was found at)")
     
@@ -1900,7 +1902,7 @@ def psieve(fbase,n,div,hmap2,ret_array,primelist_f):#(n,fbase,div,hmap2,ret_arra
     kstart=0
     while kstart < 50_000:
         ystart=0
-        while ystart < 50_000:
+        while ystart < b+50_000:
             hit=0
             hitlist=[]
 
@@ -1909,6 +1911,7 @@ def psieve(fbase,n,div,hmap2,ret_array,primelist_f):#(n,fbase,div,hmap2,ret_arra
             t=0
             while t < len(fbase):
                 prime=fbase[t]
+                sol_count=0
                 sq=[1,0,-div]
                 sqr=find_roots_poly(sq, prime)
 
@@ -1926,32 +1929,41 @@ def psieve(fbase,n,div,hmap2,ret_array,primelist_f):#(n,fbase,div,hmap2,ret_arra
                                 sys.exit()
                             if leg == -1:
                                 interval[(kdiff)%prime::prime,diff::prime]=0
+                            else:
+                                sol_count+=1
                             i+=1
                         k+=1
+
+           #         print("prime: "+str(prime)+" solutions: "+str(sol_count)+" median: "+str(round((prime**2)/2)))
                     t+=1
                     continue
                 hit+=1
                 hitlist.append(prime)
-                for rt in sqr:
-                    k=0
-                    while k < prime:
-                        i=0
-                        while i < prime:
-                            if math.gcd(div,prime)!=1:
-                                i+=1
-                                continue
-                            try:
-                                test=hmap2[t][k][(i*rt)%prime]
-                            except Exception as e:
-                                if (k)%prime < lin_size and i < lin_size:
-                                    diff=(i-ystart)%prime
-                                    kdiff=(k-kstart)%prime
-                                    if (ystart+diff)%prime != i:
-                                        print("fatal error")
-                                        sys.exit()
-                                    interval[(kdiff)%prime::prime,diff::prime]=0                
+                rt=sqr[0] #note: both roots have the same solution set.. no point in doing both.. afaik
+
+                k=0
+                while k < prime:
+                    i=0
+                    while i < prime:
+                        if math.gcd(div,prime)!=1:
                             i+=1
-                        k+=1
+                            continue
+                        try:
+                            test=hmap2[t][k][(i*rt)%prime]
+                            sol_count+=1
+                        except Exception as e:
+                            if (k)%prime < lin_size and i < lin_size:
+                                diff=(i-ystart)%prime
+                                kdiff=(k-kstart)%prime
+                                if (ystart+diff)%prime != i:
+                                    print("fatal error")
+                                    sys.exit()
+                               # if prime < 38:
+                                  # print("Marking prime: "+str(prime)+" k: "+str((kdiff)%prime)+" b: "+str(diff)+" root: "+str(rt))
+                                interval[(kdiff)%prime::prime,diff::prime]=0                
+                        i+=1
+                    k+=1
+             #   print("prime: "+str(prime)+" solutions: "+str(sol_count)+" median: "+str(round((prime**2)/2)))
                 t+=1
    # print(interval)
             indexlist=np.nonzero(interval)
@@ -1960,7 +1972,7 @@ def psieve(fbase,n,div,hmap2,ret_array,primelist_f):#(n,fbase,div,hmap2,ret_arra
             ind=0
             length=len(indexlist_x)
             print("[i](Psieve)Checking interval, # elements found: "+str(length)+" kstart: "+str(kstart)+" ystart: "+str(ystart))
-
+          #  sys.exit()
             while ind < length:# length:  
                 y=int(indexlist_x[ind])
                 y+=ystart
@@ -1978,9 +1990,7 @@ def psieve(fbase,n,div,hmap2,ret_array,primelist_f):#(n,fbase,div,hmap2,ret_arra
                         print("Some bug happened here... this should never happen: "+str(pr))
                         sys.exit()
                 bsmooth=(div*y)**2+4*n*k*div
-                legendre_sym=[]
-                test_div1_res=[]
-                test_div2_res=[]
+
       #  print("disc: "+str(disc)+" (bsmooth//div)**0.5: "+str((bsmooth//div)**0.5)+" bsmooth: "+str(bsmooth)+" hit: "+str(hit)+" k: "+str(k)+" y: "+str(y))
                 if disc_test**2 !=disc:
                     ind+=1
@@ -2109,6 +2119,9 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
         factor_ranking=[]
         quad=1
         new_mod,cfact,indexes=generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,bitlen(tnum),hmap,quad)
+     #   new_mod=37**2
+      #  cfact=[37**2]
+     #   indexes=[10]
         if new_mod ==0:
             retry+=1
             if retry > 10000:
