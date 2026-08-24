@@ -26,6 +26,8 @@ I have verified the score actually matters, as trying to run it on a very small 
 
 I do seem to have introduced a minor bug in my code too in marking the interval.. it does work, but let me figure out what's up. Shouldn't be hard to track down by adding some additional verification.
 
+Update: I'll try and push improvements shortly. Trying to study it a bit more.. also using divisors that are just a prime.. small prime.. large prime.. and their composite products and see how that links back to that score I'm calculating to see how to best optimize this approach.
+
 https://www.youtube.com/watch?v=LAjiTn5t78U
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
