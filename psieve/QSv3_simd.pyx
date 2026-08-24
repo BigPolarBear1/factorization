@@ -54,7 +54,8 @@ g_q=41
 mod_mul=0.5
 g_max_exp=20
 quad_per_interval=1
-
+lift_lim=1
+k_max = 10_000
 ##Key gen function##
 def power(x, y, p):
     res = 1;
@@ -1410,8 +1411,8 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                     div*=odd_exp_factor
                 ret_array[3].append([])
                 #To do: Sieve around the coefficient the b-smooth was found at
-                print("[*]Smooths: "+str(len(ret_array[0]))+" / "+str(base)+" b: "+str(new_root)+" k: "+str(quad_can)+" square: "+str((poly_val//div)**0.5))
-                if bitlen(div)<keysize*0.5: ##Dont know if this matters.. another parameter to test with..
+            #    print("[*]Smooths: "+str(len(ret_array[0]))+" / "+str(base)+" b: "+str(new_root)+" k: "+str(quad_can)+" square: "+str((poly_val//div)**0.5))
+                if bitlen(div)<keysize*1: ##Dont know if this matters.. another parameter to test with..
                     psievefound=psieve(fbase,n,div,hmap2,ret_array,primelist_f,new_root)
                     if psievefound !=0:
                         print("[*](Psieve)Trying linear algebra after succesful psieve run")
@@ -1885,29 +1886,41 @@ def build_2drootmap(primeslist,hmap,n):
     i=0
     return roots2d
 
+def check_score(div,fbase):
+    score = 0.0
+    primes_found=[]
+    for p in fbase:
+        if compute_legendre_character(div,p)==-1:
+            score+=1.0/math.log(p)
+            primes_found.append(p)
 
+    print("Score: "+str(score)+" primes hit: "+str(primes_found))
+    return score
 def psieve(fbase,n,div,hmap2,ret_array,primelist_f,b):#(n,fbase,div,hmap2,ret_array):
-# To do: make sure first there is no duplicate marking. Then count and see if solutions differ per divisor...
-   # print("[i]running psieve: "+str(div))#+" fbase: "+str(fbase))
-    lin_size=10_000
+    score=check_score(div,fbase)#To do: Rather then just checking the score now optimize is.. also need to look at the case prime=2^e.. which is skipped at the moment.
+    if score <7:
+        return 0
+
+    lin_size=100_000
+    k_size=1000
     b=0 #I dont know.. figure out if an optimal value for this exists at a later time..
     found=0
-    b-=lin_size
-    if b < 0:
-        b=0
+   # b-=lin_size
+   # if b < 0:
+   #     b=0
 
     print("[i](Psieve)Building interval with divisor: "+str(div)+" (to do: sieve around the coefficient the b-smooth was found at)")
     
   #  div=1
-    kstart=0
-    while kstart < 50_000:
+    kstart=1
+    while kstart < 1+k_max:
         ystart=0
-        while ystart < b+50_000:
+        while ystart < b+1_000_000:
             hit=0
             hitlist=[]
+            row=min(k_max,k_size)
 
-
-            interval=np.ones([lin_size,lin_size],dtype=np.int8)
+            interval=np.ones([row,lin_size],dtype=np.int8)
             t=0
             while t < len(fbase):
                 prime=fbase[t]
@@ -1916,8 +1929,8 @@ def psieve(fbase,n,div,hmap2,ret_array,primelist_f,b):#(n,fbase,div,hmap2,ret_ar
                 sqr=find_roots_poly(sq, prime)
 
                 if len(sqr)==0 or math.gcd(div,prime)!=1:
-                    k=0
-                    while k < prime:
+                    k=1
+                    while k < prime:# and k < k_max:
                         i=0
                         while i < prime:
                             disc=div*(i)**2+4*n*k
@@ -1934,38 +1947,42 @@ def psieve(fbase,n,div,hmap2,ret_array,primelist_f,b):#(n,fbase,div,hmap2,ret_ar
                             i+=1
                         k+=1
 
-           #         print("prime: "+str(prime)+" solutions: "+str(sol_count)+" median: "+str(round((prime**2)/2)))
+                #    print("prime: "+str(prime)+" solutions: "+str(sol_count)+" median: "+str(round((prime**2)/2)))
                     t+=1
                     continue
                 hit+=1
                 hitlist.append(prime)
                 rt=sqr[0] #note: both roots have the same solution set.. no point in doing both.. afaik
-
+                exp=1
+                if prime < lift_lim:
+                    exp=2
                 k=0
-                while k < prime:
+                while k < prime**exp:# and k < k_max:
                     i=0
-                    while i < prime:
+                    while i < prime**exp:
                         if math.gcd(div,prime)!=1:
                             i+=1
                             continue
                         try:
-                            test=hmap2[t][k][(i*rt)%prime]
+                            test=hmap2[t][tuple([k,(i*rt)%prime**exp])]
                             sol_count+=1
                         except Exception as e:
-                            if (k)%prime < lin_size and i < lin_size:
-                                diff=(i-ystart)%prime
-                                kdiff=(k-kstart)%prime
-                                if (ystart+diff)%prime != i:
+                        #    print(e)
+                            if (k)%prime**exp < lin_size and i < lin_size:
+                                diff=(i-ystart)%prime**exp
+                                kdiff=(k-kstart)%prime**exp
+                                if (ystart+diff)%prime**exp != i:
                                     print("fatal error")
                                     sys.exit()
                                # if prime < 38:
                                   # print("Marking prime: "+str(prime)+" k: "+str((kdiff)%prime)+" b: "+str(diff)+" root: "+str(rt))
-                                interval[(kdiff)%prime::prime,diff::prime]=0                
+                                interval[(kdiff)%prime**exp::prime**exp,diff::prime**exp]=0                
                         i+=1
                     k+=1
-             #   print("prime: "+str(prime)+" solutions: "+str(sol_count)+" median: "+str(round((prime**2)/2)))
+             #   print("prime: "+str(prime)+" exp: "+str(exp)+" solutions: "+str(sol_count)+" median: "+str(round((prime**2)/2)))
                 t+=1
-   # print(interval)
+          #  sys.exit()
+          #  print(interval)
             indexlist=np.nonzero(interval)
             indexlist_x=indexlist[1]
             indexlist_y=indexlist[0]
@@ -1984,15 +2001,17 @@ def psieve(fbase,n,div,hmap2,ret_array,primelist_f,b):#(n,fbase,div,hmap2,ret_ar
 
                 disc=div*(y)**2+4*n*k
                 disc_test=math.isqrt(disc)
-                for pr in hitlist:
-                    leg=compute_legendre_character(disc,pr)
-                    if leg == -1:
-                        print("Some bug happened here... this should never happen: "+str(pr))
-                        sys.exit()
+                for pr in fbase:
+                    if math.gcd(k,pr)==1:
+                        leg=compute_legendre_character(disc,pr)
+                        if leg == -1:
+                            print("Some bug happened here... this should never happen: "+str(pr)+" k: "+str(k))
+                            sys.exit()
                 bsmooth=(div*y)**2+4*n*k*div
 
       #  print("disc: "+str(disc)+" (bsmooth//div)**0.5: "+str((bsmooth//div)**0.5)+" bsmooth: "+str(bsmooth)+" hit: "+str(hit)+" k: "+str(k)+" y: "+str(y))
                 if disc_test**2 !=disc:
+                    print("Wasn't a square.. should really never happen..")
                     ind+=1
                     continue
 
@@ -2011,13 +2030,79 @@ def psieve(fbase,n,div,hmap2,ret_array,primelist_f,b):#(n,fbase,div,hmap2,ret_ar
                     
                     found+=1
                     ###Try to do linear algebra...
-                    return found
+                
+                   # return found
                 ind+=1
+            if found > 0:
+                return found
             ystart+=lin_size
-        kstart+=lin_size
+        kstart+=k_size
     return found
 
 def psieve_solve_roots(prime,n):
+    
+    solutions=[]
+    hmap_p2={}
+    k=0
+    while k < prime and k < k_max:
+      #  hmap_p2.append({})
+        i=0
+        while i < prime:
+            combo=[k,i]
+            current = list(combo) +  [(-n)%prime]
+            root = find_roots_poly(current, prime)
+            if len(root)>0:
+                for r in root:
+                    solutions.append([k,i,r])
+            i+=1
+        k+=1
+
+    #To do: Verify this covers all solutions
+    #Check if we need to do both roots
+    #Use actual p-adic lifting once this is verified to be correct and then verify the code with p-adic lifting against this one.. bleh.
+    if prime < lift_lim:
+        new_solutions=[]
+        exp=2
+        #Now lift once
+        for sol in solutions:
+
+            k=sol[0]     
+            while k < prime**exp:# and k < k_max:
+                i=sol[1]
+                while i < prime**exp:
+                    r2=sol[2]
+                    while r2 < prime**exp:
+                        fx=[k,i,-n]
+                            #p#rint("prime: "+str(prime)+" fx: "+str(fx)+" r: "+str(r2)+" eval: "+str(evaluate(fx,r2)%prime**2))
+                        if evaluate(fx,r2)%prime**exp ==0:
+                            new_solutions.append([k,i,r2])
+                        r2+=prime
+                    i+=prime
+                k+=prime
+        solutions=new_solutions
+    else:
+        exp=1
+
+    for sol in solutions:
+       
+        #To do: index by poly perhaps? 
+        try:
+            res=hmap_p2[tuple([sol[0],sol[1]])]
+            if evaluate([sol[0],sol[1],-n],sol[2])%prime**exp !=0:
+                print("fatal error")
+                sys.exit()
+            res.append(sol[2])
+           # print("shouldn't happen")
+           # sys.exit()
+        except Exception as e:
+            hmap_p2[tuple([sol[0],sol[1]])]=[sol[2]] 
+        #    print(sol)        
+            if evaluate([sol[0],sol[1],-n],sol[2])%prime**exp !=0:
+                print("fatal error")
+                sys.exit()
+    return hmap_p2
+
+def psieve_solve_roots2(prime,n):
     hmap_p2=[]
     k=0
     while k < prime:
