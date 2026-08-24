@@ -26,6 +26,8 @@ I have verified the score actually matters, as trying to run it on a very small 
 
 I do seem to have introduced a minor bug in my code too in marking the interval.. it does work, but let me figure out what's up. Shouldn't be hard to track down by adding some additional verification.
 
+https://www.youtube.com/watch?v=LAjiTn5t78U
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
