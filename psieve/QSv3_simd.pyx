@@ -55,7 +55,7 @@ mod_mul=0.5
 g_max_exp=20
 quad_per_interval=1
 lift_lim=1
-k_max = 10_000
+k_max = 100_000
 ##Key gen function##
 def power(x, y, p):
     res = 1;
@@ -1411,7 +1411,7 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                     div*=odd_exp_factor
                 ret_array[3].append([])
                 #To do: Sieve around the coefficient the b-smooth was found at
-            #    print("[*]Smooths: "+str(len(ret_array[0]))+" / "+str(base)+" b: "+str(new_root)+" k: "+str(quad_can)+" square: "+str((poly_val//div)**0.5))
+                print("[*]Smooths: "+str(len(ret_array[0]))+" / "+str(base)+" b: "+str(new_root)+" k: "+str(quad_can)+" square: "+str((poly_val//div)**0.5))
                 if bitlen(div)<keysize*1: ##Dont know if this matters.. another parameter to test with..
                     psievefound=psieve(fbase,n,div,hmap2,ret_array,primelist_f,new_root)
                     if psievefound !=0:
@@ -1901,8 +1901,8 @@ def psieve(fbase,n,div,hmap2,ret_array,primelist_f,b):#(n,fbase,div,hmap2,ret_ar
     if score <7:
         return 0
 
-    lin_size=100_000
-    k_size=1000
+    lin_size=10_000
+    k_size=10_000
     b=0 #I dont know.. figure out if an optimal value for this exists at a later time..
     found=0
    # b-=lin_size
@@ -1915,7 +1915,7 @@ def psieve(fbase,n,div,hmap2,ret_array,primelist_f,b):#(n,fbase,div,hmap2,ret_ar
     kstart=1
     while kstart < 1+k_max:
         ystart=0
-        while ystart < b+1_000_000:
+        while ystart < b+100_000:
             hit=0
             hitlist=[]
             row=min(k_max,k_size)
