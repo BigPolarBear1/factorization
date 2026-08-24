@@ -26,6 +26,10 @@ Update: Let me focus next on either optimizing the sieve region or divisor value
 Update: So the whole thing about lifting solutions to quadratics.. and how these quadratics link to the squaredness of the discriminant.. we can lift solutions for small primes.. and the density of those solutions sets will actually let us optimize this divisor I believe. Its really those very small primes that matter most.. should be able to get it done this weekend hopefully. Just add a function to generate some type of scoring for each divisor.. then either run the psieve logic when we find a divisor with a good score or just multiply the divisor with squares until it sits in a good score.. 
 
 Update: Did some late night testing.. seems the number of solutions, it depends whether or not the divisor is a square residue mod p... and I also know that if I multiply primes with eachother to construct a divisor.. their legendre symbols carry over into the product.. hmm.. this hence shouldn't be very complicated.
+What this means, is that in psieve, where it either checks the hashmap or calculates a legendre symbol based on whether or not the divisor is a square residue.. those two code paths actually yield very different amounts of solutions.. with the non-QR case (Where we just calculate legendre on the discriminant) being more favorable.
+Hence if we simply maximize that.. find a divisor that is a non-QR for as many small primes as possible (and we can even integrate lifting) .. then that will yield a much better interval and higher probability of hitting a b-smooth with a large square in it. 
+OH SHIT. I'm starting to see it now. 
+Tomorrow could be the day. Tomorrow could be the day THIS ENDS. This 3+ years nightmare. Lets go. 
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
