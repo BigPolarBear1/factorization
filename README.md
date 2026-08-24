@@ -18,18 +18,11 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 45 -base 10_000 -debug 0 -lin_size 10_000 -quad_size 1</br></br>
 
-Uploaded a very first commit. This basically merges cuda_qs_variant and coefficient_sieve. Calling into coefficient sieve (see psieve()) whenever a b-smooth is found. 
-Whats left to do is setting the proper sieve region to check.. because now its just doing 0 to 5000 in a 2d plane.. which is not going to work if we increase key size. Let me do some analysis how to find the best region. In addition we could also tune "div" that's being passed into psieve as another parameter. So this seems like a very promising research direction so far. Lets see.
+This merges both algorithms. In addition it only jumps into psieve() (the coefficient sieve style variant) if a divisor is found with a high enough score.
+All that is left now is actively looking for a divisor that generates much higher scores, and can also use p-adic lifting for this. I've implemented some brute force p-adic lifting already in psieve_solve_roots (but not used yet) ... I'm doing bruteforce first so I have some code that I know covers all solutions to error check against my final p-adic lifting implementation.
 
-Update: Let me focus next on either optimizing the sieve region or divisor value in psieve(). If I can find a divisor value that's going to have more "valid" solutions on average per prime.. then thats going to create a better sieve interval. So it can definitely be optimized.. question is if it can be optimized in a way that actually matters I guess. May also need to include p-adic lifting for this.
-
-Update: So the whole thing about lifting solutions to quadratics.. and how these quadratics link to the squaredness of the discriminant.. we can lift solutions for small primes.. and the density of those solutions sets will actually let us optimize this divisor I believe. Its really those very small primes that matter most.. should be able to get it done this weekend hopefully. Just add a function to generate some type of scoring for each divisor.. then either run the psieve logic when we find a divisor with a good score or just multiply the divisor with squares until it sits in a good score.. 
-
-Update: Did some late night testing.. seems the number of solutions, it depends whether or not the divisor is a square residue mod p... and I also know that if I multiply primes with eachother to construct a divisor.. their legendre symbols carry over into the product.. hmm.. this hence shouldn't be very complicated.
-What this means, is that in psieve, where it either checks the hashmap or calculates a legendre symbol based on whether or not the divisor is a square residue.. those two code paths actually yield very different amounts of solutions.. with the non-QR case (Where we just calculate legendre on the discriminant) being more favorable.
-Hence if we simply maximize that.. find a divisor that is a non-QR for as many small primes as possible (and we can even integrate lifting) .. then that will yield a much better interval and higher probability of hitting a b-smooth with a large square in it. 
-OH SHIT. I'm starting to see it now. 
-Tomorrow could be the day. Tomorrow could be the day THIS ENDS. This 3+ years nightmare. Lets go. 
+Most importantly prime = 2 also needs to be included, since this one will contribute to the score the most...
+I have verified the score actually matters, as trying to run it on a very small score, i.e < 2... basically never yields a solution with psieve(). So I hit the jackpot.. and this is what I needed to finish my work. I might build a pure coefficient_sieve style algorithm without combining both.. but it will depend on how I end up optimizing this "div" parameter.. there may be some use in combining both algorithm styles.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
