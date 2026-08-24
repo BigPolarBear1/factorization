@@ -25,6 +25,8 @@ Update: Let me focus next on either optimizing the sieve region or divisor value
 
 Update: So the whole thing about lifting solutions to quadratics.. and how these quadratics link to the squaredness of the discriminant.. we can lift solutions for small primes.. and the density of those solutions sets will actually let us optimize this divisor I believe. Its really those very small primes that matter most.. should be able to get it done this weekend hopefully. Just add a function to generate some type of scoring for each divisor.. then either run the psieve logic when we find a divisor with a good score or just multiply the divisor with squares until it sits in a good score.. 
 
+Update: Did some late night testing.. seems the number of solutions, it depends whether or not the divisor is a square residue mod p... and I also know that if I multiply primes with eachother to construct a divisor.. their legendre symbols carry over into the product.. hmm.. this hence shouldn't be very complicated.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
