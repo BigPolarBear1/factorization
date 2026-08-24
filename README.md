@@ -22,6 +22,10 @@ Update: I made a bit of a mistake... it's not the legendre symbol using the divi
 
 Update: Doing some more analysis. So we should actually combine both methods... and we should also be able to roughly calculate where these solutions in the interval ends up being.. because if div is the odd exponent factors of an original b-smooth.. then this actually does create some algebraic structure that is going to garantuee solutions... it's just at higher keysizes predicting where these will be becomes a little harder. So I need to figure out some kind formula for this.
 
+Update: Yeap, I'm certain now. Don't touch div.. leave it as it was from the original b-smooth.. don't multiply or divide it... it's the sieve region that we must adjust.. but where the next solutions will be should be calculate-able... what I'm seeing isn't random at all.. it's a clear pattern.. so close to victory now... tomorrow could be the day.
+
+My father is going to the hospital tomorrow... I must succeed. I have to succeed. My father has to see me succeed at this. I won't accept any other reality.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
