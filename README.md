@@ -28,6 +28,8 @@ I do seem to have introduced a minor bug in my code too in marking the interval.
 
 Update: I'll try and push improvements shortly. Trying to study it a bit more.. also using divisors that are just a prime.. small prime.. large prime.. and their composite products and see how that links back to that score I'm calculating to see how to best optimize this approach.
 
+Ah fuck it. There is 100% something here. 100%. If div in psieve() is set to a single large prime and a low score, then it wont find solutions.. so I got to study the case where div is a prime first and then their products.. give me a few days.. won't take long. 
+
 https://www.youtube.com/watch?v=LAjiTn5t78U
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
