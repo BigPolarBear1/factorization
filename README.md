@@ -18,19 +18,7 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 45 -base 10_000 -debug 0 -lin_size 10_000 -quad_size 1</br></br>
 
-This merges both algorithms. In addition it only jumps into psieve() (the coefficient sieve style variant) if a divisor is found with a high enough score.
-All that is left now is actively looking for a divisor that generates much higher scores, and can also use p-adic lifting for this. I've implemented some brute force p-adic lifting already in psieve_solve_roots (but not used yet) ... I'm doing bruteforce first so I have some code that I know covers all solutions to error check against my final p-adic lifting implementation.
-
-Most importantly prime = 2 also needs to be included, since this one will contribute to the score the most...
-I have verified the score actually matters, as trying to run it on a very small score, i.e < 2... basically never yields a solution with psieve(). So I hit the jackpot.. and this is what I needed to finish my work. I might build a pure coefficient_sieve style algorithm without combining both.. but it will depend on how I end up optimizing this "div" parameter.. there may be some use in combining both algorithm styles.
-
-I do seem to have introduced a minor bug in my code too in marking the interval.. it does work, but let me figure out what's up. Shouldn't be hard to track down by adding some additional verification.
-
-Update: I'll try and push improvements shortly. Trying to study it a bit more.. also using divisors that are just a prime.. small prime.. large prime.. and their composite products and see how that links back to that score I'm calculating to see how to best optimize this approach.
-
-Ah fuck it. There is 100% something here. 100%. If div in psieve() is set to a single large prime and a low score, then it wont find solutions.. so I got to study the case where div is a prime first and then their products.. give me a few days.. won't take long. 
-
-https://www.youtube.com/watch?v=LAjiTn5t78U
+Update: I made a bit of a mistake... it's not the legendre symbol using the divisor that determines chance of success. Let me actually add some better metrics and see how often the sieve interval actually gets marked per prime and compare. Thinking in the right direction though.. need to find cases when the interval is least saturated by invalid solutions from small primes (i.e flipped to 0).
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
