@@ -24,6 +24,8 @@ All that is left now is actively looking for a divisor that generates much highe
 Most importantly prime = 2 also needs to be included, since this one will contribute to the score the most...
 I have verified the score actually matters, as trying to run it on a very small score, i.e < 2... basically never yields a solution with psieve(). So I hit the jackpot.. and this is what I needed to finish my work. I might build a pure coefficient_sieve style algorithm without combining both.. but it will depend on how I end up optimizing this "div" parameter.. there may be some use in combining both algorithm styles.
 
+I do seem to have introduced a minor bug in my code too in marking the interval.. it does work, but let me figure out what's up. Shouldn't be hard to track down by adding some additional verification.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
