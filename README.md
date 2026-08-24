@@ -20,6 +20,8 @@ To run: python3 run_qs.py -keysize 45 -base 10_000 -debug 0 -lin_size 10_000 -qu
 
 Update: I made a bit of a mistake... it's not the legendre symbol using the divisor that determines chance of success. Let me actually add some better metrics and see how often the sieve interval actually gets marked per prime and compare. Thinking in the right direction though.. need to find cases when the interval is least saturated by invalid solutions from small primes (i.e flipped to 0).
 
+Update: Doing some more analysis. So we should actually combine both methods... and we should also be able to roughly calculate where these solutions in the interval ends up being.. because if div is the odd exponent factors of an original b-smooth.. then this actually does create some algebraic structure that is going to garantuee solutions... it's just at higher keysizes predicting where these will be becomes a little harder. So I need to figure out some kind formula for this.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
