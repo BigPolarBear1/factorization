@@ -18,14 +18,6 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 45 -base 10_000 -debug 0 -lin_size 10_000 -quad_size 1</br></br>
 
-Update: I made a bit of a mistake... it's not the legendre symbol using the divisor that determines chance of success. Let me actually add some better metrics and see how often the sieve interval actually gets marked per prime and compare. Thinking in the right direction though.. need to find cases when the interval is least saturated by invalid solutions from small primes (i.e flipped to 0).
-
-Update: Doing some more analysis. So we should actually combine both methods... and we should also be able to roughly calculate where these solutions in the interval ends up being.. because if div is the odd exponent factors of an original b-smooth.. then this actually does create some algebraic structure that is going to garantuee solutions... it's just at higher keysizes predicting where these will be becomes a little harder. So I need to figure out some kind formula for this.
-
-Update: Yeap, I'm certain now. Don't touch div.. leave it as it was from the original b-smooth.. don't multiply or divide it... it's the sieve region that we must adjust.. but where the next solutions will be should be calculate-able... what I'm seeing isn't random at all.. it's a clear pattern.. so close to victory now... tomorrow could be the day.
-
-My father is going to the hospital tomorrow... I must succeed. I have to succeed. My father has to see me succeed at this. I won't accept any other reality.
-
 Update: Absolute dreadful days with my father about to have surgery. I did some more brainstorming.. so the best way to approach this I believe is to actually multiply div with squares until there is a small solution that shows up for every prime (well, every prime where div is a quadratic residue). That's how you would do that... so let me get rid of the interval approach of favor of a residue based approach.. then optimize the hell out of it.. and then I'll be done..
 
 Ps: I will keep going until I drop dead. And I will destroy Russia and MAGA while I'm at it. For the smears and lies you people have spread about the LGBTQ community. Go to hell. And Europe can go to hell to for being spineless. 
