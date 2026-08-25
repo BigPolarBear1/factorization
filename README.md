@@ -18,7 +18,7 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 45 -base 10_000 -debug 0 -lin_size 10_000 -quad_size 1</br></br>
 
-Update: Absolute dreadful days with my father about to have surgery. I did some more brainstorming.. so the best way to approach this I believe is to actually multiply div with squares until there is a small solution that shows up for every prime (well, every prime where div is a quadratic residue). That's how you would do that... so let me get rid of the interval approach of favor of a residue based approach.. then optimize the hell out of it.. and then I'll be done..
+Update: Absolute dreadful days with my father about to have surgery. I did some more brainstorming.. so the best way to approach this I believe is to actually multiply div with squares until there is a small solution that shows up for every prime (well, every prime where div is a quadratic residue). That's how you would do that... so let me get rid of the interval approach in favor of a residue based approach.. then optimize the hell out of it.. and then I'll be done..
 
 Ps: I will keep going until I drop dead. And I will destroy Russia and MAGA while I'm at it. For the smears and lies you people have spread about the LGBTQ community. Go to hell. And Europe can go to hell to for being spineless. 
 
