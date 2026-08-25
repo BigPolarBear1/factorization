@@ -26,6 +26,8 @@ Update: Yeap, I'm certain now. Don't touch div.. leave it as it was from the ori
 
 My father is going to the hospital tomorrow... I must succeed. I have to succeed. My father has to see me succeed at this. I won't accept any other reality.
 
+Update: Absolute dreadful days with my father about to have surgery. I did some more brainstorming.. so the best way to approach this I believe is to actually multiply div with squares until there is a small solution that shows up for every prime (well, every prime where div is a quadratic residue). That's how you would do that... so let me get rid of the interval approach of favor of a residue based approach.. then optimize the hell out of it.. and then I'll be done..
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
