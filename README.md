@@ -29,6 +29,8 @@ Update: Thinking about how to implement a proper algorithm around this method I 
 Update: I got it. I'm sure of it. Deciding what squares to multiply div with is easy. You look cases where the linear coefficient is 0 mod p... then divide out p^2.. and then we also know that the quadratic on the other side must be divisible by p^2 when taking the discriminant. That construction may be enough... 
 Anyway... Russia, America, loser pete hegseth, how does it feel to get obliterated across space-time and there is nothing you can do about it? Fck you. Fight you all weaklings. 
 
+Update: Yea.. just find some k value where I end up with a bunch of 0 solutions for the linear coefficient that I can divide out to reduce the size of the linear coefficient until it gets shrunk enough so that it maps to a valid solution for every prime. Really shouldn't be too complicated now. About to make history. Watch me. I know I got it. I just know it.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
