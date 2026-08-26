@@ -26,6 +26,9 @@ Update: Alright.. I think I know how to do it.. got to include p-adic/hensel lif
 
 Update: Thinking about how to implement a proper algorithm around this method I have developed here. So trying to find a square to divide by.. thats going to generate a solution within some coefficient / sieve region.. I should probably start with p-adic/hensel lifting to find good candidates for this. I'll figure this out before the end of the week. I know I almost got it. I know I'm about to complete my work. I don't care how insane that sounds. I know nothing can stop me from finishing this and I know that I will succeed. I refuse to believe all the horrors of the past few years were meaningless. It's like the universe wanted me to solve this. I will succeed now, no matter the cost.
 
+Update: I got it. I'm sure of it. Deciding what squares to multiply div with is easy. You look cases where the linear coefficient is 0 mod p... then divide out p^2.. and then we also know that the quadratic on the other side must be divisible by p^2 when evaluated by the same root. That construction may be enough... 
+Anyway... Russia, America, loser pete hegseth, how does it feel to get obliterated across space-time and there is nothing you can do about it? Fck you. Fight you all weaklings. 
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
