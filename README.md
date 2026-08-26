@@ -22,6 +22,8 @@ Update: Absolute dreadful days with my father about to have surgery. I did some 
 
 Ps: I will keep going until I drop dead. And I will destroy Russia and MAGA while I'm at it. For the smears and lies you people have spread about the LGBTQ community. Go to hell. And Europe can go to hell to for being spineless. 
 
+Update: Alright.. I think I know how to do it.. got to include p-adic/hensel lifting and singular roots. Thats where these quadratics and root solutions and their link to the discriminant are useful. I'll go for a run first I think. Stressed out of my mind with my father undergoing surgery.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
