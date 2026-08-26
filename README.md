@@ -24,6 +24,8 @@ Ps: I will keep going until I drop dead. And I will destroy Russia and MAGA whil
 
 Update: Alright.. I think I know how to do it.. got to include p-adic/hensel lifting and singular roots. Thats where these quadratics and root solutions and their link to the discriminant are useful. I'll go for a run first I think. Stressed out of my mind with my father undergoing surgery.
 
+Update: Thinking about how to implement a proper algorithm around this method I have developed here. So trying to find a square to divide by.. thats going to generate a solution within some coefficient / sieve region.. I should probably start with p-adic/hensel lifting to find good candidates for this. I'll figure this out before the end of the week. I know I almost got it. I know I'm about to complete my work. I don't care how insane that sounds. I know nothing can stop me from finishing this and I know that I will succeed. I refuse to believe all the horrors of the past few years were meaningless. It's like the universe wanted me to solve this. I will succeed now, no matter the cost.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
