@@ -31,6 +31,8 @@ Anyway... Russia, America, loser pete hegseth, how does it feel to get obliterat
 
 Update: Yea.. just find some k value where I end up with a bunch of 0 solutions for the linear coefficient that I can divide out to reduce the size of the linear coefficient until it gets shrunk enough so that it maps to a valid solution for every prime. Really shouldn't be too complicated now. About to make history. Watch me. I know I got it. I just know it.
 
+Update: Shit day.. been doing more analysis today. The appraoch I have in mind would really only work if I sieve x^2-Nk rather then x^2+Nk ... definitely for the algo in psieve() although my SIQS would also get a size-able speedboost from it.. but let me see if I can switch psieve() to x^2-N first without touching the rest.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
