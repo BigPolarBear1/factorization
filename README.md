@@ -33,6 +33,8 @@ Update: Yea.. just find some k value where I end up with a bunch of 0 solutions 
 
 Update: Shit day.. been doing more analysis today. The appraoch I have in mind would really only work if I sieve x^2-Nk rather then x^2+Nk ... definitely for the algo in psieve() although my SIQS would also get a size-able speedboost from it.. but let me see if I can switch psieve() to x^2-N first without touching the rest.
 
+UPDATE: HOLY FUCK. I'M OVERCOMPLICATING THINGS AGAIN. I GOT IT. WATCH. WILL FINISH THIS THIS WEEKEND. GET FCKED WANKERS. GET FCKED BY A POLAR BEAR SHITHEADS. THIS IS FOR EVERYTHING. GO TO HELL AND FCKING STAY THERE *MIDDLE FINGER*
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
