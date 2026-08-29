@@ -1389,7 +1389,7 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                 ret_array[3].append([])
                 #To do: Sieve around the coefficient the b-smooth was found at
                 print("[*]Smooths: "+str(len(ret_array[0]))+" / "+str(base)+" b: "+str(new_root)+" k: "+str(quad_can)+" square: "+str((abs(poly_val//div))**0.5))
-                if bitlen(div)<keysize*0.6 and poly_val > 0 and 2 not in faclist: ##Dont know if this matters.. another parameter to test with..
+                if bitlen(div)<keysize*0.55 and poly_val > 0 and 2 not in faclist: ##Dont know if this matters.. another parameter to test with..
                   #  print("PSIEVE1")
                     psievefound=psieve(fbase,n,div,hmap2,ret_array,primelist_f,new_root,div_fac,primeslist)
                   #  print("PSIEVE2")
