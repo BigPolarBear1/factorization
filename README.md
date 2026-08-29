@@ -20,7 +20,7 @@ To run: python3 run_qs.py -keysize 60 -base 10_000 -debug 0 -lin_size 10_000 -qu
 
 Update: Alright... quite a bit better now. All that remains now is setting the ideal sieve region in psieve() to produce the smallest values and then optimize it with the quadratic coefficient (like we used div in the previous version) .. since this will divide linear coefficients.. so in theory we just need to find a quadratic coefficient thats going to cluster solutions within the sieve region.. so an optimization problem similar to NFS polynomial selection... its quite fortunate that I did what I was doing now using that quadratic coefficient previously and noticed how it can be used to optimize a sieve region... very fortunate...
 
-Update: Alright.. fix the optimal coefficient range.. also need to add a few lines of code for graycode support in psieve()
+Update: Alright.. fixed the optimal coefficient range.. also need to add a few lines of code for graycode support in psieve(). I'll do that next.. then the final task is optimizing a sieve region with the quadratic coefficients.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
