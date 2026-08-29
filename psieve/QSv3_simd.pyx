@@ -2112,7 +2112,7 @@ def psieve(fbase,n,div,hmap2,ret_array,primelist_f,b,div_fac,primeslist):#(n,fba
 
 
     found=0
-    lin_size=100_000
+    lin_size=10_000
    # print("div: "+str(div)+" factors: "+str(div_fac))
     k=2
     while k < k_max:
@@ -2162,13 +2162,13 @@ def psieve(fbase,n,div,hmap2,ret_array,primelist_f,b,div_fac,primeslist):#(n,fba
                         print("sasadasdasdsadsadasdsad")
                         sys.exit()
                     diff=(x-b_start)%div
-                    b_start=b_start+diff
-                    if b_start%div !=x:
+                    new_x=b_start+diff
+                    if new_x%div !=x:
                         print("fatal")
                         sys.exit()
 
-                    interval=psieve_build_interval(n,div,hmap2,fbase,k,b_start,lin_size)
-                    found+=psieve_process_interval(interval,div,k,b_start,n,primelist_f,ret_array)
+                    interval=psieve_build_interval(n,div,hmap2,fbase,k,new_x,lin_size)
+                    found+=psieve_process_interval(interval,div,k,new_x,n,primelist_f,ret_array)
                     poly_ind+=1
                 #if found >0:
                   #  return found
