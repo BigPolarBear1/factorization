@@ -22,6 +22,8 @@ Update: Alright... quite a bit better now. All that remains now is setting the i
 
 Update: Alright.. fixed the optimal coefficient range.. also need to add a few lines of code for graycode support in psieve(). I'll do that next.. then the final task is optimizing a sieve region with the quadratic coefficients.
 
+Update: Approach in psieve() will do 70 bit fairly trivially. If I finetune everything.. probably push that up to 100. However, the by far biggest gains should be coming from optimizing the sieve region with the quadratic coefficient.. once I got that figured out.. hopefully it will give me a chance at factoring very large numbers. Since psieve() does not need a big factor base... as compared to normal SIQS. I just need to find ways to speed it up now and I'll have defeated the biggest bottleneck in QS (factor base size).
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
