@@ -18,7 +18,7 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 50 -base 10_000 -debug 0 -lin_size 10_000 -quad_size 1</br></br>
 
-Update: Alright... quite a bit better now. All that remains now is setting the ideal sieve region in psieve() to produce the smallest values and then optimize it with the quadratic coefficient (like we used div in the previous version) .. since this will divide linear coefficients.. so in theory we just need to find a quadratic coefficient thats going to cluster solutions within the sieve region.. so an optimization problem similar to NFS polynomial selection.
+Update: Alright... quite a bit better now. All that remains now is setting the ideal sieve region in psieve() to produce the smallest values and then optimize it with the quadratic coefficient (like we used div in the previous version) .. since this will divide linear coefficients.. so in theory we just need to find a quadratic coefficient thats going to cluster solutions within the sieve region.. so an optimization problem similar to NFS polynomial selection... its quite fortunate that I did what I was doing now using that quadratic coefficient previously and noticed how it can be used to optimize a sieve region... very fortunate...
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
