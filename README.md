@@ -24,6 +24,8 @@ Update: Alright.. fixed the optimal coefficient range.. also need to add a few l
 
 Update: Approach in psieve() will do 70 bit fairly trivially. If I finetune everything.. probably push that up to 100. However, the by far biggest gains should be coming from optimizing the sieve region with the quadratic coefficient.. once I got that figured out.. hopefully it will give me a chance at factoring very large numbers. Since psieve() does not need a big factor base... as compared to normal SIQS. I just need to find ways to speed it up now and I'll have defeated the biggest bottleneck in QS (factor base size). I've already worked out the math behind how quadratic coefficients can be used to optimize a region.. since they effectively end up dividing the linear coefficient.. just need to think now... should probably do some reading about murphy-E and all that. First things first, tomorrow I'll add some dummy code that changes the quadratic coefficient.. after that I can add a function that finds the optimal quadratic coefficient.
 
+Update: Added support for a leading/quadratic coefficient. But its not really useful yet if it calculate an optimal sieve region based on the leading coefficient. We need a fixed sieve region and then find a leading coefficient that optimizes this sieve region. I'll begin looking at this tomorrow.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
