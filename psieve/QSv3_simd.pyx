@@ -2124,10 +2124,10 @@ def psieve(fbase,n,div,hmap2,ret_array,primelist_f,b,div_fac,primeslist,a):#(n,f
     #TO DO: GRAYCODES!!!
 
     grays = get_gray_code(20) #to do.. just pass as an argument from construct_interval.
-
+ #   shown_opt=0
 
     found=0
-    lin_size=10_000
+    lin_size=1_000
    # print("div: "+str(div)+" factors: "+str(div_fac))
     k=2
     while k < k_max:
@@ -2139,7 +2139,9 @@ def psieve(fbase,n,div,hmap2,ret_array,primelist_f,b,div_fac,primeslist,a):#(n,f
         disc=a*(b_start)**2-4*n*k#k_max//2) #note-to-self: multiply with div is we're going to use div in its original shape.... 
         b_start-=((lin_size*div)//2)  
         disc2=a*(b_start)**2-4*n*k
-      #  print("opt: "+str(bitlen(disc))+" start: "+str(bitlen(disc2)))
+     #   if shown_opt == 0:
+     #       print("opt: "+str(bitlen(disc))+" start: "+str(bitlen(disc2))+" k: "+str(k)+" a: "+str(a))
+     #       shown_opt=1
         fail=0
         i=0
         while i < len(div_fac):
