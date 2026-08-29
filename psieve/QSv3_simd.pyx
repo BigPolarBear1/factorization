@@ -2108,7 +2108,7 @@ def psieve(fbase,n,div,hmap2,ret_array,primelist_f,b,div_fac,primeslist):#(n,fba
     #TO DO: USE QUADRATIC COEFFICIENT TO OPTIMIZE SIEVE REGION.. I've worked out the math before. 
     #TO DO: GRAYCODES!!!
 
-
+    grays = get_gray_code(20) #to do.. just pass as an argument from construct_interval.
 
 
     found=0
@@ -2136,18 +2136,40 @@ def psieve(fbase,n,div,hmap2,ret_array,primelist_f,b,div_fac,primeslist):#(n,fba
             if factors != -1:
            #     print("found a valid modulus at k: "+str(k))
                 x,x_parts=get_lin2(div_fac,div,k,n)
-                if (x**2-4*n*k)%div!=0:
-                    print("sasadasdasdsadsadasdsad")
-                    sys.exit()
-                diff=(x-b_start)%div
-                b_start=b_start+diff
-                if b_start%div !=x:
-                    print("fatal")
-                    sys.exit()
-               # b_start=0
-                ##To do: iterate with graycode
-                interval=psieve_build_interval(n,div,hmap2,fbase,k,b_start,lin_size)
-                found+=psieve_process_interval(interval,div,k,b_start,n,primelist_f,ret_array)
+
+                q=0
+ 
+                lin2=x#lin3%new_mod
+                poly_ind=0
+                end = 1 << (len(div_fac) - 1)
+                x=0
+                while poly_ind < end:
+                    if poly_ind != 0:
+                        v,e=grays[poly_ind] #gay codes
+                        x=(x + 2 * e * x_parts[v])%div
+                    else:
+                        x=lin2
+
+
+         
+
+
+           
+
+
+
+                    if (x**2-4*n*k)%div!=0:
+                        print("sasadasdasdsadsadasdsad")
+                        sys.exit()
+                    diff=(x-b_start)%div
+                    b_start=b_start+diff
+                    if b_start%div !=x:
+                        print("fatal")
+                        sys.exit()
+
+                    interval=psieve_build_interval(n,div,hmap2,fbase,k,b_start,lin_size)
+                    found+=psieve_process_interval(interval,div,k,b_start,n,primelist_f,ret_array)
+                    poly_ind+=1
                 #if found >0:
                   #  return found
         k+=1
