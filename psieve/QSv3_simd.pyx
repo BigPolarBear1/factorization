@@ -1393,7 +1393,7 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                   #  print("PSIEVE1")
                     
                     a=1
-                    while a <20:
+                    while a <2:
                         if math.gcd(a,div)!=1:
                             a+=1
                             continue
