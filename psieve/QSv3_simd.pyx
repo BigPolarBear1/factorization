@@ -57,7 +57,7 @@ mod_mul=0.5
 g_max_exp=20
 quad_per_interval=1
 lift_lim=1
-k_max = 10_000
+k_max = 10_000#_000
 b_max=50_000
 quad_sign="neg"
 ##Key gen function##
@@ -1389,9 +1389,9 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                 ret_array[3].append([])
                 #To do: Sieve around the coefficient the b-smooth was found at
                 print("[*]Smooths: "+str(len(ret_array[0]))+" / "+str(base)+" b: "+str(new_root)+" k: "+str(quad_can)+" square: "+str((poly_val//div)**0.5))
-                if bitlen(div)<keysize*0.6 and poly_val > 0: ##Dont know if this matters.. another parameter to test with..
+                if bitlen(div)<keysize*0.7 and poly_val > 0 and 2 not in faclist: ##Dont know if this matters.. another parameter to test with..
                   #  print("PSIEVE1")
-                    psievefound=psieve(fbase,n,div,hmap2,ret_array,primelist_f,new_root,div_fac)
+                    psievefound=psieve(fbase,n,div,hmap2,ret_array,primelist_f,new_root,div_fac,primeslist)
                   #  print("PSIEVE2")
                  #   psievefound=psieve(fbase,n,div*23*23,hmap2,ret_array,primelist_f,new_root,div_fac)
                  #   sys.exit()
@@ -1434,15 +1434,18 @@ cdef factorise_fast_quads(value,long long [::1] factor_base):
         if value % 2 == 0:
             return -1, -1
     length=factor_base[0]#len(factor_base)#factor_base[0]
+    
     cdef Py_ssize_t i=1
     while i < length:
+        exp=0
         factor=factor_base[i]
-        if value % factor == 0:
+        while value % factor == 0:
+            exp+=1
             factors ^= {factor}
             value //= factor
-            if value % factor == 0:
-                return -1, -1
         i+=1
+        if exp !=0 and exp%2==0:
+            return -1,-1
     return factors, value
 
 
@@ -1723,28 +1726,23 @@ def generate_modulus2(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_S
                 return cmod,cfact,indexes
     return 0,0,0
 
-def get_lin(cfact,local_mod,indexes,quad_co,n,roots2d):
+def get_lin(cfact,local_mod,quad_co,n):
     all_lin_parts=[]
     j=0
     lin=0
-    #print("indexes: ",indexes)
-    while j < len(indexes):
-        ind=indexes[j]
-        prime=math.isqrt(cfact[j])
- 
 
-        r1=int(roots2d[quad_co,ind])#hmap[ind][2]
-    #    print("prime: "+str(prime)+" quad_co: "+str(quad_co))
+    while j < len(cfact):
+
+        prime=math.isqrt(cfact[j])
         if quad_sign == "neg":
+            r1=find_roots_poly([quad_co,0,-n],prime)
+            r1=r1[0]
             r1=lift_root2([quad_co,0,-n],r1,prime,2)#(r1,prime,-n,quad_co,2) #to do: use the cleaner lift_root2()
         else:
+            r1=find_roots_poly([quad_co,0,n],prime)
+            r1=r1[0]
             r1=lift_root2([quad_co,0,n],r1,prime,2)
-       # r1=quad_co*r1*2
-       # r1=lift_b(prime,n,r1,quad_co,2)
-      #  if (r1**2+n*4*quad_co)%prime**2 !=0:
-           # print("fatal error")
-          #  print("prime: "+str(prime)+" index: "+str(ind)+" hmap[ind][2]: "+str(hmap[ind][1]))
-          #  time.sleep(1000)
+
         prime=prime**2
         aq = local_mod // prime
         invaq = modinv(aq%prime, prime)
@@ -1757,25 +1755,22 @@ def get_lin(cfact,local_mod,indexes,quad_co,n,roots2d):
     return lin,all_lin_parts
 
 
-def get_lin2(cfact,local_mod,indexes,quad_co,n,roots2d):
+def get_lin2(cfact,local_mod,quad_co,n):
     all_lin_parts=[]
     j=0
     lin=0
-    #print("indexes: ",indexes)
-    while j < len(indexes):
-        ind=indexes[j]
-        prime=cfact[j]
- 
 
-        r1=int(roots2d[quad_co,ind])#hmap[ind][2]
-    #    print("prime: "+str(prime)+" quad_co: "+str(quad_co))
-      #  r1=lift_root(r1,prime,n,quad_co,2)
-       # r1=quad_co*r1*2
-       # r1=lift_b(prime,n,r1,quad_co,2)
-      #  if (r1**2+n*4*quad_co)%prime**2 !=0:
-           # print("fatal error")
-          #  print("prime: "+str(prime)+" index: "+str(ind)+" hmap[ind][2]: "+str(hmap[ind][1]))
-          #  time.sleep(1000)
+    while j < len(cfact):
+
+        prime=cfact[j]
+        if quad_sign == "neg":
+            r1=find_roots_poly([1,0,-n*4*quad_co],prime)
+            r1=r1[0]
+
+        else:
+            r1=find_roots_poly([1,0,n*4*quad_co],prime)
+            r1=r1[0]
+
 
         aq = local_mod // prime
         invaq = modinv(aq%prime, prime)
@@ -1784,8 +1779,8 @@ def get_lin2(cfact,local_mod,indexes,quad_co,n,roots2d):
         all_lin_parts.append(aq*gamma)
         j+=1
     lin%=local_mod
+   # print("all_lin_parts: "+str(all_lin_parts)+" cfact: "+str(cfact)+" local_mod: "+str(local_mod))
     return lin,all_lin_parts
-
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -2015,196 +2010,135 @@ def psieve2(div,n,fbase,hmap):
   ##          break
  ##       i+=1
     sys.exit()
-def psieve(fbase,n,div,hmap2,ret_array,primelist_f,b,div_fac):#(n,fbase,div,hmap2,ret_array):
-   # psieve2(div,n,fbase,hmap2)
-  #  score,primes_found=check_score(div,fbase)#To do: Rather then just checking the score now optimize is.. also need to look at the case prime=2^e.. which is skipped at the moment.
-  #  if score <6:# or 2 not in primes_found or 3 not in primes_found or 5 not in primes_found or 7 not in primes_found or 11 not in primes_found:   
-   # if score >2:#0.3:#3:#<7:
-   #     return 0
-    t=0
-    while t < len(fbase):
-        pr=fbase[t]
-        sq=[1,0,-div]
-        sqr=find_roots_poly(sq, pr)
-    #    try:
-    #        test=hmap2[t][tuple([1%pr,(b*2)%pr])]
-          #  print("prime: "+str(pr)+" found: "+str(test))
-   #    except Exception as e:
-   #         print("failed at prime: "+str(pr)+" "+str(e))
 
-        t+=1
-    lin_size=1000
-    k_size=10_000#00
-    b_temp=(4*n*(k_max//2))/div#k_max//2))/div
-  #  print("b_temp: "+str(b_temp)+" div: "+str(div))
-    b=round(b_temp**0.5)#0 #I dont know.. figure out if an optimal value for this exists at a later time..
-    disc=div*(b)**2-4*n*(k_max//2)#k_max//2)
-    print("Opt bits: "+str(bitlen(disc))+" b: "+str(b)+" k: "+str((k_max//2)))
+
+def psieve_build_interval(n,div,hmap2,fbase,quad,x,linsize):
+
+    interval_single=np.ones(linsize,dtype=np.int8)    
+    i=0
+    while i < len(fbase):
+        prime=fbase[i]
+        if div%prime ==0 or quad%prime ==0:
+            i+=1
+            continue
+
+        modi=modinv(div%prime,prime)
+        log=round(math.log2(prime))
+        b=0
+        while b < prime:
+
+            ldisc=b**2-4*n*quad
+            div_inv=modinv(div,prime)
+            if compute_legendre_character((ldisc*div_inv)%prime,prime)==-1:
+                    #print("euhm, WHAT THE FUCK MAN?: "+str(e)+" prime: "+str(prime))
+                root_dist1=solve_lin_con(div,b-x,prime)
+                disc=(x+div*root_dist1)**2-4*n*quad
+                if compute_legendre_character((disc*div_inv)%prime,prime) != -1:
+                    print("fatal error: "+str(compute_legendre_character(disc,prime)))
+               # x_b=(prime-x)%prime 
+               # root_dist2=solve_lin_con(div,b-x_b,prime)        
+                interval_single[root_dist1::prime]=0#log 
+               # if root_dist1 != root_dist2:
+               #     interval_single[root_dist2::prime]=0#(log)           
+               # disc=(x+div*root_dist2)**2-4*n*quad
+               # if compute_legendre_character(disc,prime) != -1:
+                #    print("fatal error: "+str(compute_legendre_character(disc,prime)))
+            b+=1
+        i+=1
+
+    return interval_single
+
+def psieve_process_interval(interval,div,k,x,n,primelist_f,ret_array):
     found=0
-   # b=b*2
-    b-=(b_max//2)
-   # if b < 0:
-   #     b=0
 
-    print("[i](Psieve)Building interval with divisor: "+str(div)+" "+str(div_fac)+" (to do: sieve around the coefficient the b-smooth was found at)")
-    
-  #  div=1
-    kstart=1
-    while kstart < 1+k_max:
-        ystart=b
-        while ystart < b+b_max:
-            total_marked=0
-            hit=0
-            hitlist=[]
-            row=min(k_max,k_size)
-
-            interval=np.ones([row,lin_size],dtype=np.int8)
-            t=0
-            while t < len(fbase):
-                prime=fbase[t]
-                sol_count=0
-                sq=[1,0,-div]
-                sqr=find_roots_poly(sq, prime)
-                if 1:
-               # if len(sqr)==0 or math.gcd(div,prime)!=1:
-                    k=1
-                    while k < prime:# and k < k_max:
-                        i=0
-                        while i < prime:
-                            disc=div*(i)**2-4*n*k
-                            leg=compute_legendre_character((disc)%prime,prime)
-                            diff=(i-ystart)%prime
-                            kdiff=(k-kstart)%prime
-                            if (ystart+diff)%prime != i:
-                                print("fatal error")
-                                sys.exit()
-                            if leg == -1:
-
-                                interval[(kdiff)%prime::prime,diff::prime]=0
-                                r0 = kdiff % prime
-                                total = axis_count(row, r0, prime) * axis_count(lin_size, diff, prime)
-                               # if prime < 20:
-                                total_marked+=total
-                            else:
-                                sol_count+=1
-                            i+=1
-                        k+=1
-
-                #    print("prime: "+str(prime)+" solutions: "+str(sol_count))#+" median: "+str(round((prime**2)/2)))
-                    t+=1
-                    continue
-            #    hit+=1
-            #    hitlist.append(prime)
-            #    rt=sqr[0] #note: both roots have the same solution set.. no point in doing both.. afaik
-            #    exp=1
-            #    if prime < lift_lim:
-            #        exp=2
-            #    k=0
-            #    while k < prime**exp:# and k < k_max:
-            #        i=0
-            #        while i < prime**exp:
-            #            if math.gcd(div,prime)!=1:
-            #                i+=1
-            #                continue
-            #            try:
-            #                test=hmap2[t][tuple([k,(i*rt)%prime**exp])]
-            #                sol_count+=1
-            #            except Exception as e:
-            #                diff=(i-ystart)%prime**exp
-            #                kdiff=(k-kstart)%prime**exp
-            #                if (ystart+diff)%prime**exp != i:
-            #                    print("fatal error")
-            #                    sys.exit()
-            #                   # if prime < 38:
-            #                      # print("Marking prime: "+str(prime)+" k: "+str((kdiff)%prime)+" b: "+str(diff)+" root: "+str(rt))
-            #                interval[(kdiff)%prime**exp::prime**exp,diff::prime**exp]=0    
-            #                r0 = kdiff % prime
-            #                total = axis_count(row, r0, prime) * axis_count(lin_size, diff, prime)
-            #                #if prime < 20:
-            #                total_marked+=total         
-            #            i+=1
-            #        k+=1
-         #       print("prime: "+str(prime)+" exp: "+str(exp)+" solutions: "+str(sol_count))#+" median: "+str(round((prime**2)/2)))
-                t+=1
-          #  sys.exit()
-          #  print(interval)
-          #  print("total mraked: "+str(total_marked))
-            indexlist=np.nonzero(interval)
+    indexlist=np.nonzero(interval)
          #  verify_interval(interval,kstart,ystart,div,n)
-            indexlist_x=indexlist[1]
-            indexlist_y=indexlist[0]
-            ind=0
-            length=len(indexlist_x)
-            print("[i](Psieve)Checking interval, # elements found: "+str(length)+" kstart: "+str(kstart)+" ystart: "+str(ystart))
+    indexlist_x=indexlist[0]
+    #indexlist_y=indexlist[0]
+    ind=0
+    length=len(indexlist_x)
+  #  print("[i](Psieve)Checking interval, # elements found: "+str(length))#+" kstart: "+str(kstart)+" ystart: "+str(ystart))
           #  sys.exit()
-            while ind < length:# length:  
-                y=int(indexlist_x[ind])
-                y+=ystart
-                k=int(indexlist_y[ind])
-                k+=kstart
-                if k == 0:# or (k !=152):# and k !=38): #to do: restore this lol
-                    ind+=1
-                    continue
+    while ind < length:# length:  
+        i=int(indexlist_x[ind])
+        
 
-                disc=div*(y)**2-4*n*k
-                disc_test=math.isqrt(abs(disc))
-             #   t=0
-             #   while t < len(fbase):
-             #       pr=fbase[t]
-           
-             #       sq=[1,0,-div]
-             #       sqr=find_roots_poly(sq, pr)
 
-             #       if len(sqr)>0:# and math.gcd(div,pr)==1:
-             #           rt=sqr[0]
-             #           try:
-             #               test=hmap2[t][tuple([k%pr,(y*rt)%pr])]
-             #         #      print("prime: "+str(pr)+" found: "+str(test)+" poly: "+str(tuple([k%pr,(y*rt)%pr]))+" sqr: "+str(sqr))
-             #           except Exception as e:
-             #               print("failed at prime: "+str(pr)+" "+str(e))
-             #           try:
-             #               test=hmap2[t][tuple([k%pr,(y)%pr])]
-                      #      print("without sq prime: "+str(pr)+" found: "+str(test)+" poly: "+str(tuple([k%pr,(y)%pr])))
-             #           except Exception as e:
-             #               pass
-                          #  print("without sq failed at prime: "+str(pr)+" "+str(e))
-                    
-              #      if math.gcd(k,pr)==1:
-             #           leg=compute_legendre_character(disc,pr)
-             #           if leg == -1:
-             #               print("Some bug happened here... this should never happen: "+str(pr)+" k: "+str(k))
-             # #              sys.exit()
-            #        t+=1
-                bsmooth=(div*y)**2-4*n*k*div
+        if interval[i]!=0:
+            print("found an solution at i: "+str(i)+" k: "+str(k))
+            disc=(x+div*i)**2-4*n*k
+            if disc%div !=0:
+                print("fatal error!!!!!!!!!!!!!!AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH")
+                sys.exit()
+            test=math.isqrt(disc//div)
+            if test**2 != disc//div:
+                print("something went really wrong lol")
+                sys.exit()
 
-      #  print("disc: "+str(disc)+" (bsmooth//div)**0.5: "+str((bsmooth//div)**0.5)+" bsmooth: "+str(bsmooth)+" hit: "+str(hit)+" k: "+str(k)+" y: "+str(y))
-                if disc_test**2 !=disc:
-                    print("Wasn't a square.. should really never happen..")
-                    ind+=1
-                    continue
 
-                local_factors, value = factorise_fast(div,primelist_f)
-      #  print("value: "+str(value))
+            local_factors, value = factorise_fast(disc,primelist_f) #to do: just repurpose div_fac lol
 
-                test=math.isqrt(value)
 
-                if test**2 == value and (div*y)**2 not in ret_array[1]:# and local_factors not in ret_array[2]:
-                    print("[*](Psieve)Smooths: "+str(len(ret_array[0]))+" / "+str(base)+" b: "+str(y)+" k: "+str(k)+" k square: "+str(k**0.5)+" square: "+str((bsmooth//div)**0.5)+" disc bits: "+str(bitlen(disc)))
+            test=math.isqrt(value)
+
+            if test**2 == value and (x+div*i)**2 not in ret_array[1]:# and local_factors not in ret_array[2]:
+                print("[*](Psieve)Smooths: "+str(len(ret_array[0]))+" / "+str(base))#+" b: "+str(y)+" k: "+str(k)+" k square: "+str(k**0.5)+" square: "+str((bsmooth//div)**0.5)+" disc bits: "+str(bitlen(disc)))
         #        print("**Smooths: "+str(len(ret_array[0]))+" local_factors: "+str(local_factors2)+" degree: "+str(degree)+" "+str(newcan/(smoothcan_org*odd_mod))+" odd_mod: "+str(odd_mod)+" "+str(value3))#+" local2: "+str(local_factors2)+" value2: "+str(value2)+" value1: "+str(value)+" local_org: "+str(local_factors_org))
-                    ret_array[1].append((div*y)**2)
-                    ret_array[0].append(bsmooth)
-                    ret_array[2].append(local_factors)
-                    ret_array[3].append([])
+                ret_array[1].append((x+div*i)**2)
+                ret_array[0].append(disc)
+                ret_array[2].append(local_factors)
+                ret_array[3].append([])
                     
-                    found+=1
-                    ###Try to do linear algebra...
+                found+=1
+
                 
-                    return found
-                ind+=1
-          #  if found > 0:
-          #      return found
-            ystart+=lin_size
-        kstart+=k_size
+                 
+        ind+=1
+
+    return found
+
+def psieve(fbase,n,div,hmap2,ret_array,primelist_f,b,div_fac,primeslist):#(n,fbase,div,hmap2,ret_array):
+    #TO DO: OPTIMAL SIEVE RANGE
+    #TO DO: USE QUADRATIC COEFFICIENT TO OPTIMIZE SIEVE REGION.. I've worked out the math before. 
+
+    #b_temp=(4*n*(k_max//2))/div#k_max//2))/div
+  #  print("b_temp: "+str(b_temp)+" div: "+str(div))
+   # b=round(b_temp**0.5)#0 #I dont know.. figure out if an optimal value for this exists at a later time..
+   # disc=div*(b)**2-4*n*(k_max//2)#k_max//2)
+   # print("Opt bits: "+str(bitlen(disc))+" b: "+str(b)+" k: "+str((k_max//2)))
+   # found=0
+   # b=b*2
+   # b-=(b_max//2)
+
+    found=0
+    lin_size=1000_000
+   # print("div: "+str(div)+" factors: "+str(div_fac))
+    k=2
+    while k < k_max:
+  
+        fail=0
+        i=0
+        while i < len(div_fac):
+            fac=div_fac[i]
+
+            if  jacobi((k*n)%fac,fac)!=1:
+                fail=1
+                break
+            i+=1
+        if fail == 0:
+            factors,value=factorise_fast_quads(k,primelist_f)
+            if factors != -1:
+           #     print("found a valid modulus at k: "+str(k))
+                x,x_parts=get_lin2(div_fac,div,k,n)
+                if (x**2-4*n*k)%div!=0:
+                    print("sasadasdasdsadsadasdsad")
+                    sys.exit()
+                ##To do: iterate with graycode
+                interval=psieve_build_interval(n,div,hmap2,fbase,k,x,lin_size)
+                found+=psieve_process_interval(interval,div,k,x,n,primelist_f,ret_array)
+                #if found >0:
+                  #  return found
+        k+=1
     return found
 
 def psieve_solve_roots(prime,n):
@@ -2217,7 +2151,7 @@ def psieve_solve_roots(prime,n):
         i=0
         while i < prime:
             combo=[k,i]
-            current = list(combo) +  [(-n)%prime]
+            current = list(combo) +  [(n)%prime]
             root = find_roots_poly(current, prime)
             if len(root)>0:
                 for r in root:
@@ -2240,7 +2174,7 @@ def psieve_solve_roots(prime,n):
                 while i < prime**exp:
                     r2=sol[2]
                     while r2 < prime**exp:
-                        fx=[k,i,-n]
+                        fx=[k,i,n]##To do:
                             #p#rint("prime: "+str(prime)+" fx: "+str(fx)+" r: "+str(r2)+" eval: "+str(evaluate(fx,r2)%prime**2))
                         if evaluate(fx,r2)%prime**exp ==0:
                             new_solutions.append([k,i,r2])
@@ -2256,8 +2190,8 @@ def psieve_solve_roots(prime,n):
         #To do: index by poly perhaps? 
         try:
             res=hmap_p2[tuple([sol[0],sol[1]])]
-            if evaluate([sol[0],sol[1],-n],sol[2])%prime**exp !=0:
-                print("fatal error")
+            if evaluate([sol[0],sol[1],n],sol[2])%prime**exp !=0:
+                print("fatal errorddd")
                 sys.exit()
             res.append(sol[2])
            # print("shouldn't happen")
@@ -2265,7 +2199,7 @@ def psieve_solve_roots(prime,n):
         except Exception as e:
             hmap_p2[tuple([sol[0],sol[1]])]=[sol[2]] 
         #    print(sol)        
-            if evaluate([sol[0],sol[1],-n],sol[2])%prime**exp !=0:
+            if evaluate([sol[0],sol[1],n],sol[2])%prime**exp !=0:
                 print("fatal error")
                 sys.exit()
     return hmap_p2
@@ -2375,18 +2309,18 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
         print("mod: "+str(new_mod)+" cfact: "+str(cfact)+" indexes: "+str(indexes))
 
    
-        #new_mod=37**2
-        #cfact=[37**2]
+       # new_mod=37**2
+       # cfact=[37**2]
        # indexes=[10]
         if new_mod ==0:
             retry+=1
-            if retry > 10000:
+            if retry > 10:
                 print("failed to generate modulus..")
                 return 0,0
             continue
 
         retry=0
-        lin,lin_parts=get_lin(cfact,new_mod,indexes,quad,n,roots2d)
+        lin,lin_parts=get_lin(cfact,new_mod,quad,n)
         z=quad#quadlist[j]
         lin_co_array=[]
         q=0
