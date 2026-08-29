@@ -1389,7 +1389,7 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                 ret_array[3].append([])
                 #To do: Sieve around the coefficient the b-smooth was found at
                 print("[*]Smooths: "+str(len(ret_array[0]))+" / "+str(base)+" b: "+str(new_root)+" k: "+str(quad_can)+" square: "+str((abs(poly_val//div))**0.5))
-                if bitlen(div)<keysize*0.7 and poly_val > 0 and 2 not in faclist: ##Dont know if this matters.. another parameter to test with..
+                if bitlen(div)<keysize*0.6 and poly_val > 0 and 2 not in faclist: ##Dont know if this matters.. another parameter to test with..
                   #  print("PSIEVE1")
                     psievefound=psieve(fbase,n,div,hmap2,ret_array,primelist_f,new_root,div_fac,primeslist)
                   #  print("PSIEVE2")
@@ -2088,7 +2088,7 @@ def psieve_process_interval(interval,div,k,x,n,primelist_f,ret_array):
             test=math.isqrt(value)
 
             if test**2 == value and (x+div*i)**2 not in ret_array[1]:# and local_factors not in ret_array[2]:
-                print("[*](Psieve)Smooths: "+str(len(ret_array[0]))+" / "+str(base)+" b: "+str((x+div*i))+" k: "+str(k)+" square: "+str(test2)+" bitlen: "+str(bitlen(disc//div))+" interval index: "+str(i))#+" b: "+str(y)+" k: "+str(k)+" k square: "+str(k**0.5)+" square: "+str((bsmooth//div)**0.5)+" disc bits: "+str(bitlen(disc)))
+                print("[*](Psieve)Smooths: "+str(len(ret_array[0]))+" / "+str(base)+" b: "+str((x+div*i))+" k: "+str(k)+" square: "+str(test2)+" bitlen: "+str(bitlen(disc//div))+" interval index: "+str(i)+" bitlen div: "+str(bitlen(div)))#+" b: "+str(y)+" k: "+str(k)+" k square: "+str(k**0.5)+" square: "+str((bsmooth//div)**0.5)+" disc bits: "+str(bitlen(disc)))
         #        print("**Smooths: "+str(len(ret_array[0]))+" local_factors: "+str(local_factors2)+" degree: "+str(degree)+" "+str(newcan/(smoothcan_org*odd_mod))+" odd_mod: "+str(odd_mod)+" "+str(value3))#+" local2: "+str(local_factors2)+" value2: "+str(value2)+" value1: "+str(value)+" local_org: "+str(local_factors_org))
                 ret_array[1].append((x+div*(i))**2)
                 ret_array[0].append(disc)
