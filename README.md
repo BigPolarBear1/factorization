@@ -32,6 +32,7 @@ say x = 46:
 46^2-148*46+4387 = -305
 
 Since 305 = 61 \* 5, this also means that if we calculate the derivative 2\*46-148 = -56 and then calculate the discriminant using the derivative value (which is the linear coefficient for a quadratic with flipped signs) 56^2+4\*4387 = 20684 and this is garantueed to be a square residue mod 61 and mod 5. Hence, all we need to do is find a small coefficient from a quadratic that generates a number divisible by many primes inside a factor base.. so we can sieve this much better... ok... this ends tomorrow... this was the FINAL CLUE. THIS ENDS TOMORROW. PREPARE YOURSELVES! GO TO HELL.
+SHOWN ME NOTHING, ABSOLUTELY NOTHING, BUT ENDLESS DISRESPECT. At this point it's too late to prevent this. There was plenty of chances though, and none where taken. I guess fcking retards are too busy mocking transgender people then actually use a single braincell. Fucking losers. And with so much at stake too. Cant believe it.
 
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
