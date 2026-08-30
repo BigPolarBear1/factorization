@@ -26,6 +26,8 @@ The main mechanism for optimization would be add squares to the quadratic coeffi
 
 Update: Figured out how to use the quadratic representations of the discriminant. You just need to find a quadratic that solves for 0, since that means the discriminant will be square. I've also worked out priorly how we can divide out the discriminant with some value so we get a discriminant of shape div\*x^2-4\*N\*k and how to retrieve quadratics that map to that.. so you just need to generate a quadratic that solve for 0... easy as that... time to finish this.
 
+TOMORROW. REMEMBER TOMORROW ASSHOLES. Tell pete hegseth he is a fcking loser. Hahaha. Shitheads.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
