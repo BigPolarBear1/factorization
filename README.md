@@ -24,7 +24,7 @@ That's all that remains now. I should just be able to use Murphy's E score and a
 
 The main mechanism for optimization would be add squares to the quadratic coefficient, as this effectively divides out the linear coefficient, hence changing where that linear coefficient sits in a sieve region.
 
-Update: Figured out how to use the quadratic representations. You just need to find a quadratic that solves for 0, since that means the discriminant will be square. I've also worked out priorly how we can divide out the discriminant with some value... easy as that... time to finish this.
+Update: Figured out how to use the quadratic representations of the discriminant. You just need to find a quadratic that solves for 0, since that means the discriminant will be square. I've also worked out priorly how we can divide out the discriminant with some value... easy as that... time to finish this.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
