@@ -18,7 +18,7 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 70 -base 10_000 -debug 0 -lin_size 1_00 -quad_size 1</br></br>
 
-To do: Almost there now. All that remains is optimizing a sieve region. Which we can do now by using something similar to NFS's polynomial selection method.
+To do: Almost there now. All that remains is optimizing a sieve region (for psieve(), which is called into after my SIQS variant finds a b-smooth). Which we can do now by using something similar to NFS's polynomial selection method.
 We can optimize the quadratic/polynomial representations of the discriminant, since the more primes their polynomial values divide by the more primes the discriminant is a quadratic residue modulo thoese primes.
 That's all that remains now. I should just be able to use Murphy's E score and all that from NFS.
 
