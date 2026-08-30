@@ -22,7 +22,7 @@ To do: Almost there now. All that remains is optimizing a sieve region. Which we
 We can optimize the quadratic/polynomial representations of the discriminant, since the more primes their polynomial values divide by the more primes the discriminant is a quadratic residue modulo thoese primes.
 That's all that remains now. I should just be able to use Murphy's E score and all that from NFS.
 
-
+The main mechanism for optimization would be add squares to the quadratic coefficient, as this effectively divides out the linear coefficient, hence changing where that linear coefficient sits in a sieve region.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
