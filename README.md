@@ -18,16 +18,11 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 70 -base 10_000 -debug 0 -lin_size 1_00 -quad_size 1</br></br>
 
-Update: Alright... quite a bit better now. All that remains now is setting the ideal sieve region in psieve() to produce the smallest values and then optimize it with the quadratic coefficient (like we used div in the previous version) .. since this will divide linear coefficients.. so in theory we just need to find a quadratic coefficient thats going to cluster solutions within the sieve region.. so an optimization problem similar to NFS polynomial selection... its quite fortunate that I did what I was doing now using that quadratic coefficient previously and noticed how it can be used to optimize a sieve region... very fortunate...
+To do: Almost there now. All that remains is optimizing a sieve region. Which we can do now by using something similar to NFS's polynomial selection method.
+We can optimize the quadratic/polynomial representations of the discriminant, since the more primes their polynomial values divide by the more primes the discriminant is a quadratic residue modulo thoese primes.
+That's all that remains now. I should just be able to use Murphy's E score and all that from NFS.
 
-Update: Alright.. fixed the optimal coefficient range.. also need to add a few lines of code for graycode support in psieve(). I'll do that next.. then the final task is optimizing a sieve region with the quadratic coefficients.
 
-Update: Approach in psieve() will do 70 bit fairly trivially. If I finetune everything.. probably push that up to 100. However, the by far biggest gains should be coming from optimizing the sieve region with the quadratic coefficient.. once I got that figured out.. hopefully it will give me a chance at factoring very large numbers. Since psieve() does not need a big factor base... as compared to normal SIQS. I just need to find ways to speed it up now and I'll have defeated the biggest bottleneck in QS (factor base size). I've already worked out the math behind how quadratic coefficients can be used to optimize a region.. since they effectively end up dividing the linear coefficient.. just need to think now... should probably do some reading about murphy-E and all that. First things first, tomorrow I'll add some dummy code that changes the quadratic coefficient.. after that I can add a function that finds the optimal quadratic coefficient.
-
-Update: Added support for a leading/quadratic coefficient. But its not really useful yet. I'll begin looking at this tomorrow. I had some ideas how this might work with p-adic lifting and all that. Lets see. I guess the idea is to generate a sieve region thats more favorable by changing residues using the leading coefficient.. it should work from what I can see.. its just going to be a little tedious to work out the details for.
-
-update: Done for today. Visiting my father at the hospital tomorrow. I managed to factor 100 bits with the psieve approach on my laptop (like it actually called into psieve and found a solution). So now to push it far beyond 100 bits.. which just using legendre symbol at a factor base capped at +/- 40 primes would be incredibly novel.
-I know I can optimize a sieve region using those leading coefficients.. so that's what I'll do next... I know the math, I know it works, I know this lends itself especially well to being optimized... I just need to think about implementing it a little better. This wont take long though...
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
