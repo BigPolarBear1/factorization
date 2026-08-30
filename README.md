@@ -26,6 +26,9 @@ Update: Approach in psieve() will do 70 bit fairly trivially. If I finetune ever
 
 Update: Added support for a leading/quadratic coefficient. But its not really useful yet. I'll begin looking at this tomorrow. I had some ideas how this might work with p-adic lifting and all that. Lets see. I guess the idea is to generate a sieve region thats more favorable by changing residues using the leading coefficient.. it should work from what I can see.. its just going to be a little tedious to work out the details for.
 
+update: Done for today. Visiting my father at the hospital tomorrow. I managed to factor 100 bits with the psieve approach on my laptop (like it actually called into psieve and found a solution). So now to push it far beyond 100 bits.. which just using legendre symbol at a factor base capped at +/- 40 primes would be incredibly novel.
+I know I can optimize a sieve region using those leading coefficients.. so that's what I'll do next... I know the math, I know it works, I know this lends itself especially well to being optimized... I just need to think about implementing it a little better. This wont take long though...
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
