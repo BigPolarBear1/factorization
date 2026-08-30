@@ -28,7 +28,7 @@ Update: Figured out how to use the quadratic representations of the discriminant
 
 TOMORROW. REMEMBER TOMORROW ASSHOLES. Tell pete hegseth he is a fcking loser. Hahaha. Shitheads.
 
-So yea.. everything is already roughly in the uploaded PoC, but rather then using a sieve interval with legendre symbols.. we need to find a quadratic with a leading coefficient that evaluates to 0. Easy enough. Since it means the discriminamt will be square. 
+So yea.. everything is already roughly in the uploaded PoC, but rather then using a sieve interval with legendre symbols.. we need to find a quadratic with a leading coefficient that evaluates to 0. Easy enough. Since it means the discriminamt will be square. Its really having this way to represent squaredness of the discriminant with these quadratics that is the novel bit.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
