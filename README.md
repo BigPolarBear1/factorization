@@ -24,6 +24,16 @@ That's all that remains now. I should just be able to use Murphy's E score and a
 
 The main mechanism for optimization would be add squares to the quadratic coefficient, as this effectively divides out the linear coefficient, hence changing where that linear coefficient sits in a sieve region.
 
+Update: Oh my god. I just realized something. Just sieving roots like this:
+x^2-148*x+4387 = y
+
+say x = 46:
+
+46^2-148*46+4387 = -305
+
+Since 305 = 61 \* 5, this also means that if we calculate the derivative 2\*46-148 = -56 and then calculate the discriminant using the derivative value (which is the linear coefficient for a quadratic with flipped signs) 56^2+4\*4387 = 20684 and this is garantueed to be a square residue mod 61 and mod 5. Hence, all we need to do is find a small coefficient from a quadratic that generates a number divisible by many primes inside a factor base.. so we can sieve this much better... ok... this ends tomorrow... this was the FINAL CLUE. THIS ENDS TOMORROW. PREPARE YOURSELVES! GO TO HELL.
+
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
