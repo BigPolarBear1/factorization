@@ -1391,6 +1391,7 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                 print("[*]Smooths: "+str(len(ret_array[0]))+" / "+str(base)+" b: "+str(new_root)+" k: "+str(quad_can))#+" square: "+str((abs(poly_val//div))**0.5))
                # if bitlen(div)<keysize*0.50: ##Dont know if this matters.. another parameter to test with..
                   #  print("PSIEVE1")
+                div_fac.sort()
                 for odd_exp_factor in div_fac:
                     print("Trying psieve with: "+str(odd_exp_factor))
                     psievefound=psieve(fbase,n,hmap2,ret_array,primelist_f,new_root,primeslist,odd_exp_factor)
@@ -1992,7 +1993,7 @@ def check_score(div,fbase):
     print("Score: "+str(score)+" primes hit: "+str(primes_found))
     return score,primes_found
 
-def verify_interval(interval,k_diff,b_diff,div,n):
+def verify_interval_2d(interval,k_diff,b_diff,div,n):
     for i, j in np.ndindex(interval.shape):
         val = interval[i, j]
         k=k_diff+i
@@ -2010,8 +2011,27 @@ def verify_interval(interval,k_diff,b_diff,div,n):
                 sys.exit()
        # if val != 0:
            # print("k: "+str(k)+" b: "+str(b))
-            
 
+def verify_interval_1d(interval,x,div,n,k,a):
+    i=0
+    while i < len(interval):
+        val = interval[i]
+
+        b=x+i*div
+        bsmooth=(a*b)**2-4*n*k*a
+        if bsmooth%(div*a)!=0:
+            print("fatal")
+            sys.exit()
+        bsmooth//=div*a
+        test=math.isqrt(abs(bsmooth))
+        if test**2 == bsmooth:
+            print("FOUND ONE !!!!!!!!!!!!!! k: "+str(k)+" b: "+str(b))
+            if val == 0:
+                print("fatal shouldn't happen")
+                sys.exit()
+       # if val != 0:
+           # print("k: "+str(k)+" b: "+str(b))            
+        i+=1
 def axis_count(N, start, step):
     if start >= N:
         return 0
@@ -2081,7 +2101,7 @@ def psieve2(div,n,fbase,hmap):
 
 def psieve_build_interval(n,div,hmap2,fbase,quad,x,linsize,a):
 
-    interval_single=np.ones(linsize,dtype=np.int8)    
+    interval_single=array.array('i',[1]*linsize)#np.ones(linsize,dtype=np.int8)    
     i=0
     while i < len(fbase):
         prime=fbase[i]
@@ -2106,8 +2126,10 @@ def psieve_build_interval(n,div,hmap2,fbase,quad,x,linsize,a):
               #  diff=(root_dist1-b_start)%prime
                # if diff%prime != root
                # x_b=(prime-x)%prime 
-               # root_dist2=solve_lin_con(div,b-x_b,prime)        
-                interval_single[root_dist1::prime]=0#log 
+               # root_dist2=solve_lin_con(div,b-x_b,prime)   
+                while root_dist1 < len(interval_single):   
+                    interval_single[root_dist1]=0#log 
+                    root_dist1+=prime
                 #disc=(b_start+div*(root_dist1))**2-4*n*quad
                # if compute_legendre_character((disc*div_inv)%prime,prime) != -1:
                #     print("fatal error: "+str(compute_legendre_character(disc,prime)))
@@ -2124,16 +2146,17 @@ def psieve_build_interval(n,div,hmap2,fbase,quad,x,linsize,a):
 def psieve_process_interval(interval,div,k,x,n,primelist_f,ret_array,a,fbase):
     found=0
 
-    indexlist=np.nonzero(interval)
+   # indexlist=np.nonzero(interval)
          #  verify_interval(interval,kstart,ystart,div,n)
-    indexlist_x=indexlist[0]
+  #  indexlist_x=indexlist[0]
     #indexlist_y=indexlist[0]
-    ind=0
-    length=len(indexlist_x)
+ #   ind=0
+  #  length=len(indexlist_x)
   #  print("[i](Psieve)Checking interval, # elements found: "+str(length))#+" kstart: "+str(kstart)+" ystart: "+str(ystart))
           #  sys.exit()
-    while ind < length:# length:  
-        i=int(indexlist_x[ind])
+    i=0
+    while i < len(interval):# length:  
+      #  i=int(indexlist_x[ind])
         
 
 
@@ -2153,13 +2176,14 @@ def psieve_process_interval(interval,div,k,x,n,primelist_f,ret_array,a,fbase):
 
 
             test=math.isqrt(value)
-          #  for prime in fbase:
-          #      r1=[]
-          #      sq=[1,0,-a*div]
-          #      sqr=find_roots_poly(sq, prime)      
-          #      if len(sqr)>0:
-          #          r1=find_roots_poly([k,-((x+(i))*sqr[0]),n],prime)
-          #          print(" r1: "+str(r1)+" sqr: "+str(sqr)+" prime: "+str(prime))          
+            for prime in fbase:
+                r1=[]
+                sq=[1,0,-a]
+                sqr=find_roots_poly(sq, prime)      
+                if len(sqr)>0:
+                    r1=find_roots_poly([k,((x+(i*div))*sqr[0]),n],prime)
+                   
+                    print(" r1: "+str(r1)+" sqr: "+str(sqr)+" prime: "+str(prime))          
             if test**2 == value and ((x+div*(i))*a)**2 not in ret_array[1]:# and local_factors not in ret_array[2]:
                 print("[*](Psieve)Smooths: "+str(len(ret_array[0]))+" / "+str(base)+" b: "+str((x+div*i))+" k: "+str(k)+" square: "+str(test2)+" bitlen: "+str(bitlen(disc//(div*a)))+" interval index: "+str(i)+" bitlen div: "+str(bitlen(div))+" a: "+str(a)+" disc: "+str(disc))#+" b: "+str(y)+" k: "+str(k)+" k square: "+str(k**0.5)+" square: "+str((bsmooth//div)**0.5)+" disc bits: "+str(bitlen(disc)))
         #        print("**Smooths: "+str(len(ret_array[0]))+" local_factors: "+str(local_factors2)+" degree: "+str(degree)+" "+str(newcan/(smoothcan_org*odd_mod))+" odd_mod: "+str(odd_mod)+" "+str(value3))#+" local2: "+str(local_factors2)+" value2: "+str(value2)+" value1: "+str(value)+" local_org: "+str(local_factors_org))
@@ -2172,7 +2196,7 @@ def psieve_process_interval(interval,div,k,x,n,primelist_f,ret_array,a,fbase):
 
                 
                  
-        ind+=1
+        i+=1
 
     return found
 
@@ -2193,7 +2217,7 @@ def psieve(fbase,n,hmap2,ret_array,primelist_f,b,primeslist,a):#(n,fbase,div,hma
     max_it=1000
     k=2
     while k < k_max:
-        tnum=int((((4*n*(k))/a)**0.50) / lin_size)
+        tnum=int((((4*n*(k))/a)**0.50) / 1)#(lin_size//2))
         seen=[]
         it=0
         while it < max_it: #Note to self: We set it = max_it when an interval gets build and checked.. so max runs is 1 per k value.
@@ -2213,7 +2237,7 @@ def psieve(fbase,n,hmap2,ret_array,primelist_f,b,primeslist,a):#(n,fbase,div,hma
 
                 mod_it+=1  
             diff=bitlen(div)-(bitlen(tnum))
-            if abs(diff) > 2 or div in seen or div==1:
+            if abs(diff) > 10 or div in seen or div==1:
                 it+=1
                 continue
             seen.append(div)
@@ -2291,9 +2315,10 @@ def psieve(fbase,n,hmap2,ret_array,primelist_f,b,primeslist,a):#(n,fbase,div,hma
                             print("fatal")
                             sys.exit()
                         it=max_it
-                  #      print("opt: "+str(bitlen(disc))+" start: "+str(bitlen(disc2))+" k: "+str(k)+" a: "+str(a))
+                     #   print("opt: "+str(bitlen(disc))+" start: "+str(bitlen(disc2))+" k: "+str(k)+" a: "+str(a))
                         interval=psieve_build_interval(n,div,hmap2,fbase,k,new_x,lin_size,a)
                      #   print(interval)
+                      #  verify_interval_1d(interval,x,div,n,k,a)
                         found+=psieve_process_interval(interval,div,k,new_x,n,primelist_f,ret_array,a,fbase)
                         poly_ind+=1
                        # if found >0:
