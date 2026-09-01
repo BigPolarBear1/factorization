@@ -18,19 +18,11 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 
 #### To run from folder "psieve" WORK IN PROGRES...extremely early version:</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 70 -base 10_000 -debug 0 -lin_size 1_00 -quad_size 1</br></br>
+To run: python3 run_qs.py -keysize 50 -base 10_000 -debug 0 -lin_size 1_00 -quad_size 1</br></br>
 
-To do: Almost there now. All that remains is optimizing a sieve region (for psieve(), which is called into after my SIQS variant finds a b-smooth). Which we can do now by using something similar to NFS's polynomial selection method.
-We can optimize the quadratic/polynomial representations of the discriminant, since the more primes their polynomial values divide by the more primes the discriminant is a quadratic residue modulo thoese primes.
-That's all that remains now. I should just be able to use Murphy's E score and all that from NFS.
+Update: Bit slow on progress with my father being in the hospital. Changed a few things though. The modulus/interval stepsize for psieve (refered to as div) ...is now square.. and the factors we want to find are now the quadratic coefficient.
 
-The main mechanism for optimization would be add squares to the quadratic coefficient, as this effectively divides out the linear coefficient, hence changing where that linear coefficient sits in a sieve region.
-
-Update: Figured out how to use the quadratic representations of the discriminant. You just need to find a quadratic that solves for 0, since that means the discriminant will be square. I've also worked out priorly how we can divide out the discriminant with some value so we get a discriminant of shape div\*x^2-4\*N\*k and how to retrieve quadratics that map to that.. so you just need to generate a quadratic that solve for 0... easy as that... time to finish this.
-
-TOMORROW. REMEMBER TOMORROW ASSHOLES. Tell pete hegseth he is a fcking loser. Hahaha. Shitheads.
-
-So yea.. everything is already roughly in the uploaded PoC, but rather then using a sieve interval with legendre symbols.. we need to find a quadratic with a leading coefficient that evaluates to 0. Easy enough. Since it means the discriminamt will be square. Its really having this way to represent squaredness of the discriminant with these quadratics that is the novel bit.
+Now I can actually change things further and use the quadratic representations of the discriminant and replace the whole interval setup with that... since we just need to find quadratics that evaluate to 0... as this maps to a discriminant that is a square residue modulo any prime.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
