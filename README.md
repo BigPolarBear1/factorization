@@ -24,6 +24,8 @@ Update: Bit slow on progress with my father being in the hospital. Changed a few
 
 Now I can actually change things further and use the quadratic representations of the discriminant and replace the whole interval setup with that... since we just need to find quadratics that evaluate to 0... as this maps to a discriminant that is a square residue modulo any prime.
 
+Update: fixed the code that shows the quadratics and their roots at line 2184. Next I'll get rid of the legendre based interval and we're going to build an algorithm using these quadratics.. 
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
