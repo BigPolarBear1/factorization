@@ -2233,6 +2233,7 @@ def psieve_process_interval(interval,div,k,x,n,primelist_f,ret_array,a,fbase):
                 sq=[1,0,-a]
                 sqr=find_roots_poly(sq, prime)   
                 if len(sqr) > 0:
+                    counter+=2
                     break
             for sqr_r in sqr:
             
