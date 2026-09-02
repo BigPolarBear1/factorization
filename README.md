@@ -30,6 +30,8 @@ UPDATE: OH YEA. WAIT. I should really just be able to reveal the factor of N onc
 
 Update: Works with squares.. now to get it to work with non-squares.. this can't be so hard... I'll have it before the end of the week. I just know it can be done. 
 
+Update: I might have it. Instead of using some random large prime.. we should take whats non-square in the b-smooth, ie if we're looking for a discriminant where a\*x^2+4\*N\*k is square and a is not square, then we lift using a (and use CRT if a has multiple primes ofcourse). That could work hmm.. I like this idea. I'll try it tomorrow. If that works I probably need to rework my PoC and just use the psieve approach.. because all we will need to do is find a single b-smooth with it with a large enough square in it... or could probably also use the SIQS method to sieve for these types of b-smooth... which might be faster.. and then just finish with the approach I just mentioned.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
