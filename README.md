@@ -28,7 +28,7 @@ Update: fixed the code that shows the quadratics and their roots at line 2184. N
 
 UPDATE: OH YEA. WAIT. I should really just be able to reveal the factor of N once I have a b-smooth with a large enough square in it using that logic at line 2184 (2214 in new version). That would reduce factorization to finding a single B-smooth and put RSA-1024 well within scope. Ok.. this won't be very difficult, give me a day. I went to visit my father at the hospital and when I came back the battery of my research laptop stopped working. Most likely some morrons tried to insert an implant or some shit.
 
-Update: Works with squares.. now to get it to work with non-squares.. this can't be so hard... I'll have it before the end of the week. I just know it can be done. Also weird fcking sound outside. Like a military drone circling above my house. Haha. Come then fckers. Piece of shit.
+Update: Works with squares.. now to get it to work with non-squares.. this can't be so hard... I'll have it before the end of the week. I just know it can be done. 
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
