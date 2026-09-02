@@ -32,7 +32,7 @@ Update: Works with squares.. now to get it to work with non-squares.. this can't
 
 Update: I might have it. Instead of using some random large prime.. we should take whats non-square in the b-smooth, ie if we're looking for a discriminant where a\*x^2+4\*N\*k is square and a is not square, then we lift using a (and use CRT if a has multiple primes ofcourse). That could work hmm.. I like this idea. I'll try it tomorrow. If that works I probably need to rework my PoC and just use the psieve approach.. because all we will need to do is find a single b-smooth with it with a large enough square in it... or could probably also use the SIQS method to sieve for these types of b-smooth... which might be faster.. and then just finish with the approach I just mentioned.
 
-ps: Hello Russia, Hello loser pete hegseth. How does it feel to get destroyed by a single polar bear? Retrocausility b*tches. You lost before the game even began.
+ps: Hello Russia, Hello loser pete hegseth. How does it feel to get destroyed by a single polar bear? Retrocausality b*tches. You lost before the game even began.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
