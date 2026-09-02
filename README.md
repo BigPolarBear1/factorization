@@ -26,7 +26,7 @@ Now I can actually change things further and use the quadratic representations o
 
 Update: fixed the code that shows the quadratics and their roots at line 2184. Next I'll get rid of the legendre based interval and we're going to build an algorithm using these quadratics.. 
 
-UPDATE: OH YEA. WAIT. I should really just be able to reveal the factor of N once I have a b-smooth with a large enough square in it using that logic at line 2184. That would reduce factorization to finding a single B-smooth and put RSA-1024 well within scope. Ok.. this won't be very difficult, give a day. I went to visit my father at the hospital and when I came back the battery of my research laptop stopped working. Most likely some morrons tried to insert an implant or some shit.
+UPDATE: OH YEA. WAIT. I should really just be able to reveal the factor of N once I have a b-smooth with a large enough square in it using that logic at line 2184. That would reduce factorization to finding a single B-smooth and put RSA-1024 well within scope. Ok.. this won't be very difficult, give me a day. I went to visit my father at the hospital and when I came back the battery of my research laptop stopped working. Most likely some morrons tried to insert an implant or some shit.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
