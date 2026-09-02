@@ -1394,17 +1394,17 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                # if bitlen(div)<keysize*0.50: ##Dont know if this matters.. another parameter to test with..
                   #  print("PSIEVE1")
                 div_fac.sort()
-           #     for odd_exp_factor in div_fac:
-                print("[i]Trying psieve")#: "+str(odd_exp_factor))
-                psievefound=psieve(fbase,n,hmap2,ret_array,primelist_f,new_root,primeslist,37*37)
-                if psievefound !=0:
-                    print("[*](Psieve)Trying linear algebra after succesful psieve run")
-                    test,test2=QS(n,primelist,ret_array[0],ret_array[2],ret_array[1],ret_array[3])
+                for odd_exp_factor in div_fac:
+                    print("[i]Trying psieve"+str(odd_exp_factor))
+                    psievefound=psieve(fbase,n,hmap2,ret_array,primelist_f,new_root,primeslist,odd_exp_factor**2)
+                    if psievefound !=0:
+                        print("[*](Psieve)Trying linear algebra after succesful psieve run")
+                        test,test2=QS(n,primelist,ret_array[0],ret_array[2],ret_array[1],ret_array[3])
                     
 
-                    if test !=0:
-                        print("\n\n\n\nFound at: ",len(ret_array[0]))
-                        sys.exit()
+                        if test !=0:
+                            print("\n\n\n\nFound at: ",len(ret_array[0]))
+                            sys.exit()
 
 
 
@@ -2222,10 +2222,10 @@ def psieve_process_interval(interval,div,k,x,n,primelist_f,ret_array,a,fbase):
           #  all_sol=get_partials(test_mod,all_sol)
         #    all_sol_lin=get_partials(test_mod,all_sol_lin)
           #  print("all_sol: "+str(all_sol))
+            counter=n**2
+            if counter%2==0:
+                counter+=1
             while 1:     
-                counter=n**2
-                if counter%2==0:
-                    counter+=1
                 while isPrime(counter,5) ==0:
                     counter+=2
                     continue
