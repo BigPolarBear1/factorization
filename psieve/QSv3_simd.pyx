@@ -2245,7 +2245,7 @@ def psieve_process_interval(interval,div,k,x,n,primelist_f,ret_array,a,fbase):
                 for r in roots:
                     gcdtest=math.gcd(r,n)
                     if gcdtest != 1 and gcdtest != n:
-                        print("found one: "+str(r))
+                        print("found one: "+str(r)+" factors of N are: "+str(gcdtest)+" and "+str(n//gcdtest))
                         sys.exit()
             if test**2 == value and ((x+div*(i))*a)**2 not in ret_array[1]:# and local_factors not in ret_array[2]:
                 print("[*](Psieve)Smooths: "+str(len(ret_array[0]))+" / "+str(base)+" b: "+str((x+div*i))+" k: "+str(k)+" square: "+str(test2)+" bitlen: "+str(bitlen(disc//(div*a)))+" interval index: "+str(i)+" bitlen div: "+str(bitlen(div))+" a: "+str(a)+" disc: "+str(disc))#+" b: "+str(y)+" k: "+str(k)+" k square: "+str(k**0.5)+" square: "+str((bsmooth//div)**0.5)+" disc bits: "+str(bitlen(disc)))
