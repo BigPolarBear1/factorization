@@ -2253,7 +2253,7 @@ def psieve_process_interval(interval,div,k,x,n,primelist_f,ret_array,a,fbase):
                         roots=find_roots_poly(curc,prime)
 
                         for r in roots:
-                            r=lift_root2(cur, r, prime, lift_exp)  #NOTE TO SELF: r=lift_root2(cur, sqr_r, prime, lift_exp) why the hell does this yield a valid solution sometimes too? What's going on...
+                            r=lift_root2(cur, r, prime, lift_exp)  
                             print("root: "+str(r)+" prime: "+str(prime)+" sqr: "+str(sqr_r))
                             gcdtest=math.gcd(r,n)
                             if gcdtest != 1 and gcdtest != n:
