@@ -1405,7 +1405,7 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                         if test !=0:
                             print("\n\n\n\nFound at: ",len(ret_array[0]))
                             sys.exit()
-
+               #     break
 
 
                   #  print("PSIEVE2")
@@ -2222,28 +2222,33 @@ def psieve_process_interval(interval,div,k,x,n,primelist_f,ret_array,a,fbase):
           #  all_sol=get_partials(test_mod,all_sol)
         #    all_sol_lin=get_partials(test_mod,all_sol_lin)
           #  print("all_sol: "+str(all_sol))
-            counter=n**2
-            if counter%2==0:
-                counter+=1
-            while 1:     
-                while isPrime(counter,5) ==0:
-                    counter+=2
-                    continue
-                prime=counter
+           # counter=n**2
+           # if counter%2==0:
+           #     counter+=1
+           # while 1:     
+           #     while isPrime(counter,5) ==0:
+            #        counter+=2
+            #        continue
+
+            for prime in fbase:
+
                 sq=[1,0,-a]
                 sqr=find_roots_poly(sq, prime)   
-                if len(sqr) > 0:
+                if len(sqr) > 1:
                     break
-                counter+=2
+            lift_exp=round(math.log(n**3,prime))#(n**3)//prime
             for sqr_r in sqr:
-            
+                sqr_r=lift_root2([1,0,-a], sqr_r, prime, lift_exp)
                 if quad_sign == "neg":
                     cur=[1,((x+(i*div))*sqr_r),n*k]
                 else:
                     cur=[1,((x+(i*div))*sqr_r),-n*k]
-                roots=find_roots_poly(cur,prime)
-                print("roots: "+str(roots)+" prime: "+str(prime)+" sqr: "+str(sqr_r))
+                curc=copy.deepcopy(cur)
+                roots=find_roots_poly(curc,prime)
+               # print("roots: "+str(roots)+" prime: "+str(prime)+" sqr: "+str(sqr_r))
+
                 for r in roots:
+                    r=lift_root2(cur, sqr_r, prime, lift_exp)
                     gcdtest=math.gcd(r,n)
                     if gcdtest != 1 and gcdtest != n:
                         print("found one: "+str(r)+" factors of N are: "+str(gcdtest)+" and "+str(n//gcdtest))
@@ -2577,9 +2582,9 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
         print("mod: "+str(new_mod)+" cfact: "+str(cfact)+" indexes: "+str(indexes))
 
    
-       # new_mod=37**2
-      #  cfact=[37**2]
-      # indexes=[10]
+    #    new_mod=37**2
+    #    cfact=[37**2]
+    #    indexes=[10]
         if new_mod ==0:
             retry+=1
             if retry > 10:
