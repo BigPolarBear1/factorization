@@ -34,7 +34,7 @@ Update: I might have it. Instead of using some random large prime.. we should ta
 
 ps: Hello Russia, Hello loser pete hegseth. How does it feel to get destroyed by a single polar bear? Retrocausality b*tches. You lost before the game even began.
 
-Update: One step closer to completion yet again. Replaced the square root over a large prime with p-adic lifting now. However, rather then lifting some small prime where "a" is a quadratic residue, we need to solve the case where the prime divides a... I'm guessing using the theory about singular and non-singular roots that I described in the paper.. once that works.. hopefully I can solve cases where "a" is non-square... and IF that works.. I have an immediate breakthrough of historical proportions and RSA-1024 would fall for sure.. and who knows what else.
+Update: One step closer to completion yet again. Replaced the square root over a large prime with p-adic lifting now. However, rather then lifting some small prime where "a" is a quadratic residue (a as in a\*x^2+4\*N\*k .. or see how it is used in psieve_process_interval()), we need to solve the case where the prime divides a... I'm guessing using the theory about singular and non-singular roots that I described in the paper.. once that works.. hopefully I can solve cases where "a" is non-square... and IF that works.. I have an immediate breakthrough of historical proportions and RSA-1024 would fall for sure.. and who knows what else.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
