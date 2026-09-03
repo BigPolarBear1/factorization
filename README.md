@@ -36,6 +36,8 @@ ps: Hello Russia, Hello loser pete hegseth. How does it feel to get destroyed by
 
 Update: One step closer to completion yet again. Replaced the square root over a large prime with p-adic lifting now. However, rather then lifting some small prime where "a" is a quadratic residue (a as in a\*x^2+4\*N\*k .. or see how it is used in psieve_process_interval()), we need to solve the case where the prime divides a... I'm guessing using the theory about singular and non-singular roots that I described in the paper.. once that works.. hopefully I can solve cases where "a" is non-square... and IF that works.. I have an immediate breakthrough of historical proportions and RSA-1024 would fall for sure.. and who knows what else.
 
+I'll continue later.. busy day tomorrow.. have to run to therapy, 30k of running in a day, and will also make a detour to visit my father in the hospital. I'll be running my usual route incase some piece of shit russians or americans want to try and whack me. Losers. Ofcourse no american or russian alive is strong enough. haha. 
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
