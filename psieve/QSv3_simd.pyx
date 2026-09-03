@@ -1405,7 +1405,7 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                         if test !=0:
                             print("\n\n\n\nFound at: ",len(ret_array[0]))
                             sys.exit()
-               #     break
+                    break
 
 
                   #  print("PSIEVE2")
@@ -2234,25 +2234,43 @@ def psieve_process_interval(interval,div,k,x,n,primelist_f,ret_array,a,fbase):
 
                 sq=[1,0,-a]
                 sqr=find_roots_poly(sq, prime)   
-                if len(sqr) > 1:
-                    break
-            lift_exp=round(math.log(n**3,prime))#(n**3)//prime
-            for sqr_r in sqr:
-                sqr_r=lift_root2([1,0,-a], sqr_r, prime, lift_exp)
-                if quad_sign == "neg":
-                    cur=[1,((x+(i*div))*sqr_r),n*k]
-                else:
-                    cur=[1,((x+(i*div))*sqr_r),-n*k]
-                curc=copy.deepcopy(cur)
-                roots=find_roots_poly(curc,prime)
-               # print("roots: "+str(roots)+" prime: "+str(prime)+" sqr: "+str(sqr_r))
+                if len(sqr) > 0:
+  
+                    #prime=37
+                    #sq=[1,0,-a]
+                    #sqr=find_roots_poly(sq, 37)   
+            
+                    lift_exp=round(math.log(n**2,prime))#(n**3)//prime\
+         #   to do: calculate for different primes in fbase... check if we get the same root.. then reverse engineer how to get that root solution for the prime = 37 case
+                    for sqr_r in sqr:
+                        sqr_r=lift_root2([1,0,-a], sqr_r, prime, lift_exp)
+                       # sqr_r=37
+                        if quad_sign == "neg":
+                            cur=[1,((x+(i*div))*sqr_r),n*k]
+                        else:
+                            cur=[1,((x+(i*div))*sqr_r),-n*k]
+                        curc=copy.deepcopy(cur)
+                        roots=find_roots_poly(curc,prime)
 
-                for r in roots:
-                    r=lift_root2(cur, sqr_r, prime, lift_exp)
-                    gcdtest=math.gcd(r,n)
-                    if gcdtest != 1 and gcdtest != n:
-                        print("found one: "+str(r)+" factors of N are: "+str(gcdtest)+" and "+str(n//gcdtest))
-                        sys.exit()
+                        for r in roots:
+                            r=lift_root2(cur, r, prime, lift_exp)  #NOTE TO SELF: r=lift_root2(cur, sqr_r, prime, lift_exp) why the hell does this yield a valid solution sometimes too? What's going on...
+                            print("root: "+str(r)+" prime: "+str(prime)+" sqr: "+str(sqr_r))
+                            gcdtest=math.gcd(r,n)
+                            if gcdtest != 1 and gcdtest != n:
+                                print("found one: "+str(r)+" factors of N are: "+str(gcdtest)+" and "+str(n//gcdtest))
+                                sys.exit()
+                        #        deriv=get_derivative(cur)
+                        #        dval=evaluate(deriv,r)
+                        #        cur2=[1,dval,n*k]
+                        #        cur2c=copy.deepcopy(cur2)
+                        #        roots2=find_roots_poly(cur2c,prime)
+                        #        for r in roots2:
+                        #            r=lift_root2(cur2, sqr_r, prime, lift_exp)
+                        #            print("root: "+str(r)+" prime: "+str(prime)+" sqr: "+str(sqr_r))
+                        #            gcdtest=math.gcd(r,n)
+                        #            if gcdtest != 1 and gcdtest != n:
+                        #                print("***found one: "+str(r)+" factors of N are: "+str(gcdtest)+" and "+str(n//gcdtest))
+                        #                #sys.exit()
             if test**2 == value and ((x+div*(i))*a)**2 not in ret_array[1]:# and local_factors not in ret_array[2]:
                 print("[*](Psieve)Smooths: "+str(len(ret_array[0]))+" / "+str(base)+" b: "+str((x+div*i))+" k: "+str(k)+" square: "+str(test2)+" bitlen: "+str(bitlen(disc//(div*a)))+" interval index: "+str(i)+" bitlen div: "+str(bitlen(div))+" a: "+str(a)+" disc: "+str(disc))#+" b: "+str(y)+" k: "+str(k)+" k square: "+str(k**0.5)+" square: "+str((bsmooth//div)**0.5)+" disc bits: "+str(bitlen(disc)))
         #        print("**Smooths: "+str(len(ret_array[0]))+" local_factors: "+str(local_factors2)+" degree: "+str(degree)+" "+str(newcan/(smoothcan_org*odd_mod))+" odd_mod: "+str(odd_mod)+" "+str(value3))#+" local2: "+str(local_factors2)+" value2: "+str(value2)+" value1: "+str(value)+" local_org: "+str(local_factors_org))
@@ -2582,9 +2600,9 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
         print("mod: "+str(new_mod)+" cfact: "+str(cfact)+" indexes: "+str(indexes))
 
    
-    #    new_mod=37**2
-    #    cfact=[37**2]
-    #    indexes=[10]
+      #  new_mod=37**2
+      #  cfact=[37**2]
+      #  indexes=[10]
         if new_mod ==0:
             retry+=1
             if retry > 10:
