@@ -25,6 +25,8 @@ Only one thing left to do. In psieve_process_interval() "a" is square. And then 
 Update: Did some initial analysis.. there definitely is a good chance that it can be done. I'll continue shortly although the next two days are a bit busy.
 
 Update: EUREKA!!!!!!!!!!!! I figured it out!!!! If for the discriminant a\*x^2+4\*N\*k, "a" is non-square.. we need to calculate everything in the finite field of some divisor of k :). I got it! ITS DEFINITELY POSSIBLE!
+
+Update: Yeap. I got it. This was the correct way to approach it. FINALLY. I'm about to break reality. This is going to be fcking surreal. And either everyone underestimates me and this is going to come out of nowhere.. or people know.. and I guess.. then they got what they deserve. Have to do some shit tomorrow.. but will start uploading a more finished version soon. 
  
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
