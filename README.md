@@ -21,6 +21,8 @@ To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 40 -base 10_000 -debug 0 -lin_size 1_00 -quad_size 1</br></br>
 
 Only one thing left to do. In psieve_process_interval() "a" is square. And then we can simply calculate a root in a finite field for some prime such that "a" is a quadratic residue for that prime. However, if we can make these calculations for some prime that divides "a" .. then the discriminant a\*x^2+4\*N\*k then "a" becomes a 0 solution and we might be able to reveal the factor of N even when "a" is not square. That would reduce factorization to simply finding some discriminant a\*x^2+4\*N\*k that is square and where the factorization of a is known, but not necessarily square. If I can achieve this one thing, it would be a complete break in the factorization problem. Might be able to do it using the singular vs non-singular theory in my paper. 
+
+Update: Did some initial analysis.. there definitely is a good chance that it can be done. I'll continue shortly although the next two days are a bit busy.
  
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
