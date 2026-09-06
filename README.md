@@ -29,6 +29,8 @@ Update: EUREKA!!!!!!!!!!!! I figured it out!!!! If for the discriminant a\*x^2+4
 Update: Yeap. I got it. This was the correct way to approach it. FINALLY. I'm about to break reality. This is going to be fcking surreal. And either everyone underestimates me and this is going to come out of nowhere.. or people know.. and I guess.. then they got what they deserve. Have to do some shit tomorrow.. but will start uploading a more finished version soon. 
 
 update: Yeap.. 100% got it. Just double checked the math, ran the numbers. Good luck getting destroyed across space-time you transphobic pieces of shit.
+
+Just got bad news. Father is struggling with complications after surgery, still in the hospital after 1.5 weeks and its getting worse. I don't know what the fck these doctors are doing. It was going well and then they operate him again and reattach a drain and now his health is going to shit. 
  
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
