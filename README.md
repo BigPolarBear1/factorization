@@ -33,6 +33,10 @@ update: Yeap.. 100% got it. Just double checked the math, ran the numbers. Good 
 Just got bad news. Father is struggling with complications after surgery, still in the hospital after 1.5 weeks and its getting worse. I don't know what the fck these doctors are doing. It was going well and then they operate him again and reattach a drain and now his health is going to shit. 
 
 Both the linear coefficient and k (which also implies the discriminant will be divisible) need to divide by some prime. Then we can use this as a field to calculate the root without having to figure a square root to "a".. because that just bypasses the problem. And we can also look at their exponents.. the larger the exponent that both k and the linear coefficient divide by the easier it becomes to calculate a root that will contain the factorization of N. Its quite trivial actually.. I should have had a deeper look at these 0 mod p solutions sooner.. PoC will be done in the coming days. After this I'm going to take my backpack and run east toward Russia. And then I'm going to destroy Russia. And then I'm turning around and running west, and I'm going to destroy pete hegseth. I'll figure out how to run across the atlantic somehow to go get that fcker.
+
+Update: Actually, if I can use square factors of the discriminant and manipulate my quadratic so it moves to k instead (ive done these manipulations before).. then I know absolutely how to solve it since ill gain access to a bunch of finite fields to do inspection of roots with.
+
+
  
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
