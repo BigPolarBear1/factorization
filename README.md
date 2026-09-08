@@ -1,4 +1,4 @@
-Note: Psieve PoC is incomplete, a needs to be non-square and I'm close to getting it to work.. effectively letting me derive the factorization of N without having a fully square B-smooth.
+Note: Psieve PoC is incomplete, "a" needs to be non-square in psieve_process_interval() and I'm close to getting it to work.. effectively letting me derive the factorization of N without having a fully square B-smooth.
 
 
 I'm quitting uploading my work here so it doesn't just end up getting scraped by AI and someone stealing the credits.
