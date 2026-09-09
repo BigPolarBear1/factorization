@@ -1369,10 +1369,10 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                     if bSeenOnly==1:
                         print("seen_primes: "+str(local_factors)+" cmod: "+str(cmod))
                 found+=1
-                ret_array[1].append(new_root**2)
-                ret_array[0].append(poly_val)
-                ret_array[2].append(local_factors)
-                ret_array[3].append([])
+                #ret_array[1].append(new_root**2)
+                #ret_array[0].append(poly_val)
+                #ret_array[2].append(local_factors)
+                #ret_array[3].append([])
                 div_fac=[]
                 faclist=list(local_factors)
                 faclist.sort()
@@ -1394,7 +1394,7 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                 print("[*]Smooths: "+str(len(ret_array[0]))+" / "+str(base)+" b: "+str(new_root)+" k: "+str(quad_can))#+" square: "+str((abs(poly_val//div))**0.5))
                # if bitlen(div)<keysize*0.50: ##Dont know if this matters.. another parameter to test with..
                   #  print("PSIEVE1")
-                if poly_val >0 and bitlen(div) < keysize/2:
+                if poly_val >0 and bitlen(div) < keysize/2:# and len(div_fac)==1:
                     
                     print("[i]Trying psieve")
                     psievefound=psieve(n,ret_array,primelist_f,new_root,primeslist,div)
@@ -1995,43 +1995,73 @@ def psieve_factor(b,a,k,n,fbase):
     ##Shitty work in progress. But it conveys the idea atleast.
     ##Will improve shortly
     found=0
-    for prime in fbase:
-        sq=[1,0,-a]
-        sqr=find_roots_poly(sq,prime)
-        if (b)%prime!=0 or len(sqr)!=2:
-            continue
-      #  print("checking: "+str(prime)+" sqr: "+str(sqr))
+   # print("CHEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEECKING*****************")
+    
+    
+    d=0
+    while d < n**(1/2):
+        solutions=[]
+        mod=1
+        
 
 
+
+
+
+        for prime in fbase:
+        #sq=[1,0,-a]
+        #sqr=find_roots_poly(sq,prime)
+            if (b)%prime!=0:# or len(sqr)==0:
+                continue
+        #print("checking: "+str(prime)+" sqr: "+str(sqr)+" a: "+str(a))
+
+        
         ####
         #TO DO!!!!!: It should be possible the calculate the correct d here rather then bruteforce. Just uploading a first rough draft.
         ####
-        d=0
-        while d < n**(1/2):# and k%prime==0:#prime == k:
+        
             target=round(n**0.5)      
-            lift_exp=math.ceil(math.log(target,prime))#(n**3)//prime\
+            lift_exp=2#ath.ceil(math.log(target,prime))#(n**3)//prime\
+            solutions.append(prime**lift_exp)
+            mod*=prime**lift_exp
+            solutions.append([])
             cur=[1,b*d,-n*k]
             cur2=[1,b*a,-n*k*a]
-            cur3=[a,0,4*n*k]
+            
             curc=copy.deepcopy(cur)
             roots=find_roots_poly(curc,prime)
+
             curc2=copy.deepcopy(cur2)
             roots2=find_roots_poly(curc2,prime)
-            try:
-                curc3=copy.deepcopy(cur3)
-                roots3=find_roots_poly(curc3,prime)
-            except Exception as e:
-                roots3=-1
-                pass
+
             for r in roots:
                 r=lift_root2(cur, r, prime, lift_exp)  
-                gcdtest=math.gcd(r,n)
-                if gcdtest != 1 and gcdtest != n:
-                    diff=r//gcdtest
-                    found=1
-                    print("Factors of N are: "+str(gcdtest)+" and "+str(n//gcdtest)+" sqr_root of a in Z/p: "+str(d)+" a: "+str(a)+" p: "+str(prime)+" exp: "+str(lift_exp))#**found one: "+str(r)+" roots: "+str(roots)+" roots2: "+str(roots2)+" roots3: "+str(roots3)+" d: "+str(d)+" d%prime: "+str(d%prime)+" diff: "+str(diff)+" factors of N are: "+str(gcdtest)+" and "+str(n//gcdtest)+" prime: "+str(prime)+" lift_exp: "+str(lift_exp)+" cur: "+str(cur)+" cur2: "+str(cur2))
-                    sys.exit()
-            d+=1
+                solutions[-1].append(r)
+
+        solutions=get_partials(mod,solutions)
+      #  print("solutions: "+str(solutions))
+        enum=[]
+        i=0
+        while i < len(solutions):
+            enum.append(solutions[i+1])
+            i+=2
+
+        for combo in itertools.product(*enum):
+            tot=0
+            for l in combo:
+                tot+=l
+
+            tot%=mod
+            gcdtest=math.gcd(tot,n)
+            if gcdtest != 1 and gcdtest != n:
+                #diff=r//gcdtest
+                found=1
+                print("Factors of N are: "+str(gcdtest)+" and "+str(n//gcdtest)+" sqr_root of a in Z/p: "+str(d)+" a: "+str(a)+" mod "+str(mod)+" r: "+str(tot)+" solutions: "+str(solutions))#**found one: "+str(r)+" roots: "+str(roots)+" roots2: "+str(roots2)+" roots3: "+str(roots3)+" d: "+str(d)+" d%prime: "+str(d%prime)+" diff: "+str(diff)+" factors of N are: "+str(gcdtest)+" and "+str(n//gcdtest)+" prime: "+str(prime)+" lift_exp: "+str(lift_exp)+" cur: "+str(cur)+" cur2: "+str(cur2))
+
+
+
+
+        d+=1
     if found == 1:
         print("exiting")   
         sys.exit()
