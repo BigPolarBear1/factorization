@@ -22,7 +22,7 @@ To run: python3 run_qs.py -keysize 40 -base 10_000 -debug 0 -lin_size 1_00 -quad
 
 Update: Working towards achieving factorization from non-square b-smooths. In psieve_factor(), I believe that correct d value can either be calculated or have a way to increase the amount of correct "d" values (which it already does by ensuring p divides the linear coefficient, but I think I can push it much further). I'll upload more soon. 
 
-I'll push some more updates shortly... 
+I'll push some more updates shortly... got to CRT some shit together to improve how many valid d solutions there will be.. then next I can look at how to calculate this "d".. and also have a look at quartics to see if there are further gains there.
  
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
