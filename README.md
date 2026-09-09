@@ -2,8 +2,7 @@
 https://stackoverflow.com/questions/79330304/optimizing-sieving-code-in-the-self-initializing-quadratic-sieve-for-pypy
 https://github.com/basilegithub/General-number-field-sieve-Python 
 
-
-
+No AI was used for this research. I tried using it from time to time, but it is always a waste of time. AI is only having success at math bc of context aware bruteforce for answers. It cannot generate novel thought. I hate AI, waste of time.
 
 Note: Psieve PoC is incomplete, "a" needs to be non-square in psieve_process_interval() and I'm close to getting it to work.. effectively letting me derive the factorization of N without having a fully square B-smooth.
 
