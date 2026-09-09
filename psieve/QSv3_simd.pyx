@@ -1996,10 +1996,11 @@ def psieve_factor(b,a,k,n,fbase):
     ##Will improve shortly
     found=0
     for prime in fbase:
-        
-        if (b)%prime!=0:
+        sq=[1,0,-a]
+        sqr=find_roots_poly(sq,prime)
+        if (b)%prime!=0 or len(sqr)!=2:
             continue
-      #  print("checking: "+str(prime))
+      #  print("checking: "+str(prime)+" sqr: "+str(sqr))
 
 
         ####
