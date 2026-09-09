@@ -25,6 +25,8 @@ Update: Working towards achieving factorization from non-square b-smooths. In ps
 I'll push some more updates shortly... got to CRT some shit together to improve how many valid d solutions there will be.. then next I can look at how to calculate this "d".. and also have a look at quartics to see if there are further gains there.
 
 Update: Added CRT. Just run on 30-bit for now. Not aiming for speed just yet as there is a few things left to resolve anyway. The distance between valid "d" values is determined by the modulus. Let me see if I can either calculate this d value or improve the amount of valid d values further..
+
+Update: Going to run 20k. I'll check some more when I come back. Let me explore now if I can either calculate this "d" value (see psieve_factor()) or narrow it done enough.
  
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
