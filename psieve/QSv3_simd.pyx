@@ -1995,9 +1995,24 @@ def psieve_factor(b,a,k,n,fbase):
     ##Shitty work in progress. But it conveys the idea atleast.
     ##Will improve shortly
     found=0
+    mod=1
+    primes_found=[]
+    sqr_list=[]
    # print("CHEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEECKING*****************")
-    
-    
+    for prime in fbase:
+
+            
+        if (b)%prime!=0:# or len(sqr)==0:
+            continue
+        mod*=prime
+        primes_found.append(prime)
+        sq=[1,0,-a]
+        sqr=find_roots_poly(sq,prime)
+        sqr_list.append(prime)
+        sqr_list.append(sqr)
+    if mod < n**(1/2):
+        print("not large enough modulus")
+        return 0
     d=0
     while d < n**(1/2):
         solutions=[]
@@ -2008,11 +2023,11 @@ def psieve_factor(b,a,k,n,fbase):
 
 
 
-        for prime in fbase:
-        #sq=[1,0,-a]
-        #sqr=find_roots_poly(sq,prime)
-            if (b)%prime!=0:# or len(sqr)==0:
-                continue
+        for prime in primes_found:
+
+            
+
+
         #print("checking: "+str(prime)+" sqr: "+str(sqr)+" a: "+str(a))
 
         
@@ -2056,7 +2071,7 @@ def psieve_factor(b,a,k,n,fbase):
             if gcdtest != 1 and gcdtest != n:
                 #diff=r//gcdtest
                 found=1
-                print("Factors of N are: "+str(gcdtest)+" and "+str(n//gcdtest)+" sqr_root of a in Z/p: "+str(d)+" a: "+str(a)+" mod "+str(mod)+" r: "+str(tot)+" solutions: "+str(solutions))#**found one: "+str(r)+" roots: "+str(roots)+" roots2: "+str(roots2)+" roots3: "+str(roots3)+" d: "+str(d)+" d%prime: "+str(d%prime)+" diff: "+str(diff)+" factors of N are: "+str(gcdtest)+" and "+str(n//gcdtest)+" prime: "+str(prime)+" lift_exp: "+str(lift_exp)+" cur: "+str(cur)+" cur2: "+str(cur2))
+                print("Factors of N are: "+str(gcdtest)+" and "+str(n//gcdtest)+" sqr_root of a in Z/p: "+str(d)+" a: "+str(a)+" mod "+str(mod)+" r: "+str(tot)+" solutions: "+str(solutions)+" sqr_list: "+str(sqr_list))#**found one: "+str(r)+" roots: "+str(roots)+" roots2: "+str(roots2)+" roots3: "+str(roots3)+" d: "+str(d)+" d%prime: "+str(d%prime)+" diff: "+str(diff)+" factors of N are: "+str(gcdtest)+" and "+str(n//gcdtest)+" prime: "+str(prime)+" lift_exp: "+str(lift_exp)+" cur: "+str(cur)+" cur2: "+str(cur2))
 
 
 
@@ -2065,7 +2080,8 @@ def psieve_factor(b,a,k,n,fbase):
     if found == 1:
         print("exiting")   
         sys.exit()
-
+    else:
+        print("sqr_list: "+str(sqr_list))
 
 def psieve(n,ret_array,primelist_f,b,primeslist,a):#(n,fbase,div,hmap2,ret_array):
   #  print("b: "+str(b)+" a: "+str(a))
