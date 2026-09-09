@@ -1994,36 +1994,47 @@ def build_2drootmap(primeslist,hmap,n):
 def psieve_factor(b,a,k,n,fbase):
     ##Shitty work in progress. But it conveys the idea atleast.
     ##Will improve shortly
+   # legendre_list=[]
     found=0
     mod=1
     primes_found=[]
     sqr_list=[]
+    exp_list=[]
    # print("CHEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEECKING*****************")
     for prime in fbase:
 
             
-        if (b)%prime!=0:# or len(sqr)==0:
+        if (b)%prime!=0:# or a%prime==0:# or len(sqr)==0:
             continue
-        mod*=prime
+      #  legendre_list.append(kronecker_symbol(n,prime))
         primes_found.append(prime)
         sq=[1,0,-a]
         sqr=find_roots_poly(sq,prime)
         sqr_list.append(prime)
         sqr_list.append(sqr)
-    if mod < n**(1/2):
+        bcpy=b
+        exp=0
+        while bcpy%prime==0:
+            bcpy//=prime
+            exp+=1
+        exp_list.append(exp)
+        mod*=prime**exp
+    if mod**2 < n**(0.9):
         print("not large enough modulus")
         return 0
     d=0
-    while d < n**(1/2):
+    while d < mod**2 and d < n**0.5:
         solutions=[]
-        mod=1
+
         
 
 
 
 
-
-        for prime in primes_found:
+        j=0
+        while j < len(primes_found):
+            prime=primes_found[j]
+   #     for prime in primes_found:
 
             
 
@@ -2034,11 +2045,9 @@ def psieve_factor(b,a,k,n,fbase):
         ####
         #TO DO!!!!!: It should be possible the calculate the correct d here rather then bruteforce. Just uploading a first rough draft.
         ####
-        
-            target=round(n**0.5)      
-            lift_exp=2#ath.ceil(math.log(target,prime))#(n**3)//prime\
+           
+            lift_exp=exp_list[j]*2#*2ath.ceil(math.log(target,prime))#(n**3)//prime\
             solutions.append(prime**lift_exp)
-            mod*=prime**lift_exp
             solutions.append([])
             cur=[1,b*d,-n*k]
             cur2=[1,b*a,-n*k*a]
@@ -2051,9 +2060,12 @@ def psieve_factor(b,a,k,n,fbase):
 
             for r in roots:
                 r=lift_root2(cur, r, prime, lift_exp)  
+                if evaluate(cur,r)%prime**lift_exp !=0:
+                    print("fatal error")
+                  #  sys.exit()
                 solutions[-1].append(r)
-
-        solutions=get_partials(mod,solutions)
+            j+=1
+        solutions=get_partials(mod**2,solutions)
       #  print("solutions: "+str(solutions))
         enum=[]
         i=0
@@ -2066,7 +2078,7 @@ def psieve_factor(b,a,k,n,fbase):
             for l in combo:
                 tot+=l
 
-            tot%=mod
+            tot%=mod**2
             gcdtest=math.gcd(tot,n)
             if gcdtest != 1 and gcdtest != n:
                 #diff=r//gcdtest
@@ -2078,10 +2090,12 @@ def psieve_factor(b,a,k,n,fbase):
 
         d+=1
     if found == 1:
+      #  print("sqr_list: "+str(sqr_list)+" a: "+str(a)+" leg: "+str(legendre_list)+" exp_list: "+str(exp_list))
         print("exiting")   
         sys.exit()
-    else:
-        print("sqr_list: "+str(sqr_list))
+  #  else:
+      #  print("sqr_list: "+str(sqr_list)+" a: "+str(a)+" mod: "+str(mod))#" leg: "+str(legendre_list)+" exp_list: "+str(exp_list))
+      #  sys.exit()
 
 def psieve(n,ret_array,primelist_f,b,primeslist,a):#(n,fbase,div,hmap2,ret_array):
   #  print("b: "+str(b)+" a: "+str(a))
@@ -2168,7 +2182,7 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
       #  indexes=[10]
         if new_mod ==0:
             retry+=1
-            if retry > 10:
+            if retry > 5:
                 print("failed to generate modulus..")
                 return 0,0
             continue
