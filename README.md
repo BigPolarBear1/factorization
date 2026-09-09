@@ -27,6 +27,8 @@ I'll push some more updates shortly... got to CRT some shit together to improve 
 Update: Added CRT. Just run on 30-bit for now. Not aiming for speed just yet as there is a few things left to resolve anyway. The distance between valid "d" values is determined by the modulus. Let me see if I can either calculate this d value or improve the amount of valid d values further..
 
 Update: Going to run 20k. I'll check some more when I come back. Let me explore now if I can either calculate this "d" value (see psieve_factor()) or narrow it done enough.
+
+Update: Oh yea, if we have a discriminant like this: ab^2+4Nk and we calculate roots like this x^2+bx-Nk the root will encode some multiple usually.. which can be factored out using this "k" ... but... this also lets us straight up eliminate "multiples" or "k" values that cannot possibly exist. And this also tells use something about possible values for this "d" variable that I'm multiplying b with in psieve_factor(). BOOOOOOM. Go to hell. Quickly zero-ing in on the solution now. Could be as early as tomorrow now. I'll destroy you all for what you people have done to my life, and those around me. 
  
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
