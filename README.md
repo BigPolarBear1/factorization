@@ -28,6 +28,8 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH. Started refactoring. Fuck I'm an idiot. 
 
 Update: Going to run 20k. Then few more hours on my math. As long as I know the factorization of the root that produced a B-smooth with a large enough square in it.. then I can work in the reverse direction and compute residues to make it completely square. I know it can be done. Watch me. #nevergiveup
 
+Update: Alright. Added the "main idea" very roughly to psieve_factor() ... lots more work needs to be done. I'll do that tomorrow. It's really about trying to find the square that generated the original b-smooth from the other side around. And.. we know how that works... how quadratics with a solution are a QR when taking the discriminant. Code is very bad right now.. but going to expand on this idea quickly now and streamline it. THIS IS IT! I KNOW IT! I GOT IT! LETS GO! TIME TO FINISH THIS! MY FATHER WILL SEE ME SUCCEED AT THIS.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
