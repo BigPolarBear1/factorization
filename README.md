@@ -24,7 +24,9 @@ Update: Still missing something. I need to be able to calculate the correct "d" 
 
 Update: Oh wait.. maybe rather then d.. it's the "k" that I need to multiply... wait a minute.. ergh. God damnit. Seeing something.
 
-You know... I just got to zero in hard on these 0 mod p solutions.. because that implies divisibility.. and if some pattern that can be leveraged exists.. it is exactly through this mechanism.
+Bah.. you know, taking that square root of "a" when "a" is not square... sure.. sometimes that works mod p... if a is a QR. But its not going to work I think. Need to increase that "k" instead. Change which "a" our large square is paired with. In addition.. this time.. I also have the original coefficient that generated the b-smooth... so we can work with two sides at the same time to actually narrow down a solution.. if you only look at one side then you end up with two many residue combinations that you cant filter out.
+
+
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
