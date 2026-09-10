@@ -24,6 +24,8 @@ Update: Still missing something. I need to be able to calculate the correct "d" 
 
 Update: Oh wait.. maybe rather then d.. it's the "k" that I need to multiply... wait a minute.. ergh. God damnit. Seeing something.
 
+You know... I just got to zero in hard on these 0 mod p solutions.. because that implies divisibility.. and if some pattern that can be leveraged exists.. it is exactly through this mechanism.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
