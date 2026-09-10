@@ -26,6 +26,8 @@ Right now its only calculating possible k values for one linear coefficient. BUT
 
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH. Started refactoring. Fuck I'm an idiot. If you know the factorization of both linear coefficients, and both are large enough.. then ofcourse you can find the solution. It literally becomes finding a correct k plus you can add the modulus to the linear coefficient of the near square b-smooth. Its not difficult. Expect a solution to come online soon.
 
+Update: Going to run 20k. Then few more hours on my math. As long as I know the factorization of the root that produced a B-smooth with a large enough square in it.. then I can work in the reverse direction and compute residues to make it completely square. I know it can be done. Watch me. #nevergiveup
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
