@@ -24,6 +24,8 @@ Update: Alright, rather then taking a square root of a non-square leading coeffi
 
 Right now its only calculating possible k values for one linear coefficient. BUT... if we know the factorization of the other linear coefficient, then we know that whatever k we use, must also be a valid k for every prime that divides that other linear coefficient. This feels right now. Should be it. Get fcked losers.
 
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH. Started refactoring. Fuck I'm an idiot. If you know the factorization of both linear coefficients, and both are large enough.. then ofcourse you can find the solution. It literally becomes finding a correct k plus you can add the modulus to the linear coefficient of the near square b-smooth. Its not difficult. Expect a solution to come online soon.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
