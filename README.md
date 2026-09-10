@@ -20,18 +20,8 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 30 -base 10_000 -debug 0 -lin_size 1_00 -quad_size 1</br></br>
 
-Update: Working towards achieving factorization from non-square b-smooths. In psieve_factor(), I believe that correct d value can either be calculated or have a way to increase the amount of correct "d" values (which it already does by ensuring p divides the linear coefficient, but I think I can push it much further). I'll upload more soon. 
+Update: Still missing something. I need to be able to calculate the correct "d" value in psieve_factor(). Let me change my PoC to also use different "k" (as in ax^2-Nk) values in my SIQS logic. Make sure k is prime... then try and do calculations in its finite field. That might flatten those k solutions out..
 
-I'll push some more updates shortly... got to CRT some shit together to improve how many valid d solutions there will be.. then next I can look at how to calculate this "d".. and also have a look at quartics to see if there are further gains there.
-
-Update: Added CRT. Just run on 30-bit for now. Not aiming for speed just yet as there is a few things left to resolve anyway. The distance between valid "d" values is determined by the modulus. Let me see if I can either calculate this d value or improve the amount of valid d values further..
-
-Update: Going to run 20k. I'll check some more when I come back. Let me explore now if I can either calculate this "d" value (see psieve_factor()) or narrow it done enough.
-
-Update: Oh yea, if we have a discriminant like this: ab^2+4Nk and we calculate roots like this x^2+bx-Nk the root will encode some multiple usually.. which can be factored out using this "k" ... but... this also lets us straight up eliminate "multiples" or "k" values that cannot possibly exist. And this also tells use something about possible values for this "d" variable that I'm multiplying b with in psieve_factor(). BOOOOOOM. Go to hell. Quickly zero-ing in on the solution now. Could be as early as tomorrow now. I'll destroy you all for what you people have done to my life, and those around me. 
-
-OH. This also implies I can create a sieve interval for this "d" variable i'm currently iterating in psieve_factor(). God damn. I got it. Solved it. 
- 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
