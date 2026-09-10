@@ -2122,9 +2122,7 @@ def psieve_factor(b,a,k,n,fbase,o_b):
             except Exception as e:
                 skip=1
                 break
-            if totk%klist3[g] not in klist3[g+1]:
-                skip=1
-                break
+
             g+=2
         
         if skip==1:
