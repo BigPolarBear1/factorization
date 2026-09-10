@@ -22,6 +22,8 @@ To run:  python3 run_qs.py -keysize 40 -base 1000 -debug 0 -lin_size 1_000 -quad
 
 Update: Alright, rather then taking a square root of a non-square leading coefficient I'm just going to try and find some "k" such that we have a full square on both sides. The premise being that as long as we know the factorization of both linear coefficients, and both linear coefficients are large enough... then we can calculate the correct "k" value (k as in x^2-4Nk).
 
+Right now its only calculating possible k values for one linear coefficient. BUT... if we know the factorization of the other linear coefficient, then we know that whatever k we use, must also be a valid k for every prime that divides that other linear coefficient. This feels right now. Should be it. Get fcked losers.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
