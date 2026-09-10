@@ -1394,7 +1394,8 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                 print("[*]Smooths: "+str(len(ret_array[0]))+" / "+str(base)+" b: "+str(new_root)+" k: "+str(quad_can))#+" square: "+str((abs(poly_val//div))**0.5))
                # if bitlen(div)<keysize*0.50: ##Dont know if this matters.. another parameter to test with..
                   #  print("PSIEVE1")
-                if poly_val >0 and bitlen(div) < keysize/2:# and len(div_fac)==1:
+                local_factors2, value2 = factorise_fast(new_root,primelist_f)
+                if poly_val >0 and bitlen(div) < keysize/2 and value2==1:# and len(div_fac)==1:
                     
                     print("[i]Trying psieve")
                     psievefound=psieve(n,ret_array,primelist_f,new_root,primeslist,div)
@@ -1410,14 +1411,6 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                     #break
 
 
-                  #  print("PSIEVE2")
-                 #   psievefound=psieve(fbase,n,div*23*23,hmap2,ret_array,primelist_f,new_root,div_fac)
-                 #   sys.exit()
-                #    psievefound=psieve(fbase,n,div*4,hmap2,ret_array,primelist_f,new_root,div_fac)
-                #    psievefound=psieve(fbase,n,div*9,hmap2,ret_array,primelist_f,new_root,div_fac)
-                 #   psievefound=psieve(fbase,n,div*25,hmap2,ret_array,primelist_f,new_root,div_fac)
-                 #   psievefound=psieve(fbase,n,div*7*7,hmap2,ret_array,primelist_f,new_root,div_fac)
-                 #   psievefound=psieve(fbase,n,div*173*173,hmap2,ret_array,primelist_f,new_root,div_fac)
 
                   #  sys.exit()
             #    print("***seen_primes: "+str(local_factors)+" cmod: "+str(cmod)+" root: "+str(new_root)+" polyval: "+str(poly_val))
@@ -1991,7 +1984,30 @@ def build_2drootmap(primeslist,hmap,n):
     i=0
     return roots2d
 
-def psieve_factor(b,a,k,n,fbase):
+def debug_find_residues(prime,n,b,exp):
+    hmap=[]
+    
+
+    k=0
+    while k < prime**exp:
+        poly=[1,b,-n*k]
+        roots=find_roots_poly(poly,prime)
+        if len(roots)>0:
+            if exp > 1:
+                r=roots[0]
+                polyc=copy.deepcopy(poly)
+                ##To do: If singular take deriv?
+                r=lift_root2(polyc, r, prime, exp)
+                if evaluate(poly,r)%prime**exp ==0:
+                    hmap.append(k)
+            else:
+                hmap.append(k)
+
+        k+=1
+
+   # print("prime: "+str(prime)+" hmap: "+str(hmap))
+    return hmap
+def psieve_factor(b,a,k,n,fbase,o_b):
     ##Shitty work in progress. But it conveys the idea atleast.
     ##Will improve shortly
    # legendre_list=[]
@@ -2001,11 +2017,14 @@ def psieve_factor(b,a,k,n,fbase):
     sqr_list=[]
     exp_list=[]
    # print("CHEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEECKING*****************")
+    klist=[]
     for prime in fbase:
 
             
         if (b)%prime!=0:# or a%prime==0:# or len(sqr)==0:
             continue
+
+        
       #  legendre_list.append(kronecker_symbol(n,prime))
         primes_found.append(prime)
         sq=[1,0,-a]
@@ -2018,87 +2037,108 @@ def psieve_factor(b,a,k,n,fbase):
             bcpy//=prime
             exp+=1
         exp_list.append(exp)
+
+        klist.append(prime**exp)
+        klist.append(debug_find_residues(prime,n,b,exp))
         mod*=prime**exp
-    if mod**2 < n**(0.9):
+    if mod**2 < n**(0.5):
         print("not large enough modulus")
         return 0
-    d=0
-    while d < mod**2 and d < n**0.5:
-        solutions=[]
+   # print("klist: "+str(klist))
+    klist=get_partials(mod,klist)
+    kenum=[]
+    i=0
+    while i < len(klist):
+        kenum.append(klist[i+1])
+        i+=2
 
-        
 
+    for combo in itertools.product(*kenum):
+        totk=0
+        for l in combo:
+            totk+=l
+        totk%=mod
 
-
-
-        j=0
-        while j < len(primes_found):
-            prime=primes_found[j]
-   #     for prime in primes_found:
-
+       # k=totk
+       # print("trying ")
+        d=1
+        while d < 100:# and d < n**0.5:
+            solutions=[]
+            skip=0
+            j=0
+            while j < len(primes_found):
+                prime=primes_found[j]
+                
+                lift_exp=exp_list[j]*2#*2ath.ceil(math.log(target,prime))#(n**3)//prime\
+                solutions.append(prime**lift_exp)
+                solutions.append([])
+                cur=[1,b,-n*(totk+mod*d)]
+                cur2=[1,b*a,-n*k*a]
             
-
-
-        #print("checking: "+str(prime)+" sqr: "+str(sqr)+" a: "+str(a))
-
-        
-        ####
-        #TO DO!!!!!: It should be possible the calculate the correct d here rather then bruteforce. Just uploading a first rough draft.
-        ####
-           
-            lift_exp=exp_list[j]*2#*2ath.ceil(math.log(target,prime))#(n**3)//prime\
-            solutions.append(prime**lift_exp)
-            solutions.append([])
-            cur=[1,b*d,-n*k]
-            cur2=[1,b*a,-n*k*a]
-            
-            curc=copy.deepcopy(cur)
-            roots=find_roots_poly(curc,prime)
-
-            curc2=copy.deepcopy(cur2)
-            roots2=find_roots_poly(curc2,prime)
-
-            for r in roots:
-                r=lift_root2(cur, r, prime, lift_exp)  
-                if evaluate(cur,r)%prime**lift_exp !=0:
-                    print("fatal error")
+                curc=copy.deepcopy(cur)
+                roots=find_roots_poly(curc,prime)
+                if len(roots)==0:
+                    print("def shouldn't happen, bailing, fix the bug.. if this breaks everything is fcking broken")
+                    sys.exit()
+                    skip=1
+              #  print("wtf this cant possible be a sol")
+                curc2=copy.deepcopy(cur2)
+                roots2=find_roots_poly(curc2,prime)
+                if skip == 1:
+                    break
+                for r in roots:
+                    r=lift_root2(cur, r, prime, lift_exp)  
+                    if evaluate(cur,r)%prime**lift_exp !=0:
+                      #  print("shouldnt happen man")
+                        skip=1
+                        break
+                 #   print("fatal error")
                   #  sys.exit()
-                solutions[-1].append(r)
-            j+=1
-        solutions=get_partials(mod**2,solutions)
+                    solutions[-1].append(r)
+                if skip == 1:
+                    break
+                j+=1
+            if skip ==1:
+                d+=1
+                continue
+            solutions=get_partials(mod**2,solutions)
       #  print("solutions: "+str(solutions))
-        enum=[]
-        i=0
-        while i < len(solutions):
-            enum.append(solutions[i+1])
-            i+=2
+            enum=[]
+            i=0
+            while i < len(solutions):
+                enum.append(solutions[i+1])
+                i+=2
 
-        for combo in itertools.product(*enum):
-            tot=0
-            for l in combo:
-                tot+=l
+            for combo in itertools.product(*enum):
+                tot=0
+                for l in combo:
+                    tot+=l
 
-            tot%=mod**2
-            gcdtest=math.gcd(tot,n)
-            if gcdtest != 1 and gcdtest != n:
+                tot%=mod**2
+                gcdtest=math.gcd(tot,n)
+                if gcdtest != 1 and gcdtest != n:
                 #diff=r//gcdtest
-                found=1
-                print("Factors of N are: "+str(gcdtest)+" and "+str(n//gcdtest)+" sqr_root of a in Z/p: "+str(d)+" a: "+str(a)+" mod "+str(mod)+" r: "+str(tot)+" solutions: "+str(solutions)+" sqr_list: "+str(sqr_list))#**found one: "+str(r)+" roots: "+str(roots)+" roots2: "+str(roots2)+" roots3: "+str(roots3)+" d: "+str(d)+" d%prime: "+str(d%prime)+" diff: "+str(diff)+" factors of N are: "+str(gcdtest)+" and "+str(n//gcdtest)+" prime: "+str(prime)+" lift_exp: "+str(lift_exp)+" cur: "+str(cur)+" cur2: "+str(cur2))
+                    found=1
+                    disc=(b*d)**2+4*n*k*d
+                    disc2=(b*a)**2+4*n*k*a
+                    o_disc=a*b**2+4*n*k
+                    diff=tot//gcdtest
+                    print("Factors of N are: "+str(gcdtest)+" and "+str(n//gcdtest)+" sqr_root of a in Z/p: "+str(d)+" a: "+str(a)+" mod "+str(mod)+" r: "+str(tot)+" diff: "+str(diff)+" solutions: "+str(solutions)+" sqr_list: "+str(sqr_list)+" cur: "+str(cur)+" disc: "+str(disc)+" disc2: "+str(disc2)+" o_disc: "+str(o_disc)+" o_b: "+str(o_b))#**found one: "+str(r)+" roots: "+str(roots)+" roots2: "+str(roots2)+" roots3: "+str(roots3)+" d: "+str(d)+" d%prime: "+str(d%prime)+" diff: "+str(diff)+" factors of N are: "+str(gcdtest)+" and "+str(n//gcdtest)+" prime: "+str(prime)+" lift_exp: "+str(lift_exp)+" cur: "+str(cur)+" cur2: "+str(cur2))
+
+             #   to do: Look at the disc of cur and also roots2
 
 
-
-
-        d+=1
-    if found == 1:
+            d+=1
+        if found == 1:
       #  print("sqr_list: "+str(sqr_list)+" a: "+str(a)+" leg: "+str(legendre_list)+" exp_list: "+str(exp_list))
-        print("exiting")   
-        sys.exit()
+            print("exiting")   
+            sys.exit()
   #  else:
       #  print("sqr_list: "+str(sqr_list)+" a: "+str(a)+" mod: "+str(mod))#" leg: "+str(legendre_list)+" exp_list: "+str(exp_list))
       #  sys.exit()
 
 def psieve(n,ret_array,primelist_f,b,primeslist,a):#(n,fbase,div,hmap2,ret_array):
-  #  print("b: "+str(b)+" a: "+str(a))
+    print("b: "+str(b)+" a: "+str(a))
     disc=(2*b)**2-4*n
   #  print("disc: "+str(disc))
     disc//=a 
@@ -2108,7 +2148,7 @@ def psieve(n,ret_array,primelist_f,b,primeslist,a):#(n,fbase,div,hmap2,ret_array
         return 0
     disc2=a*disc_sqr**2+4*n 
   #  print("disc2: "+str(disc2))
-    psieve_factor(disc_sqr,a,1,n,primeslist)
+    psieve_factor(disc_sqr,a,1,n,primeslist,2*b)
    
     return 0
 
