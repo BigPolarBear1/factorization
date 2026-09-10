@@ -22,6 +22,8 @@ To run: python3 run_qs.py -keysize 30 -base 10_000 -debug 0 -lin_size 1_00 -quad
 
 Update: Still missing something. I need to be able to calculate the correct "d" value in psieve_factor(). Let me change my PoC to also use different "k" (as in ax^2-Nk) values in my SIQS logic. Make sure k is prime... then try and do calculations in its finite field. That might flatten those k solutions out..
 
+Update: Oh wait.. maybe rather then d.. it's the "k" that I need to multiply... wait a minute.. ergh. God damnit. Seeing something.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
