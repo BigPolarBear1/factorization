@@ -20,7 +20,7 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 1000 -debug 0 -lin_size 1_000 -quad_size 1</br></br>
 
-Update: Alright, rather then taking a square root of a non-square leading coefficient I'm just going to try and find some "k" such that we have a full square on both sides. The premise being that as long as we know the factorization of both coefficients, and both coefficients are large enough... then we can calculate the correct "k" value (k as in x^2-4Nk).
+Update: Alright, rather then taking a square root of a non-square leading coefficient I'm just going to try and find some "k" such that we have a full square on both sides. The premise being that as long as we know the factorization of both linear coefficients, and both linear coefficients are large enough... then we can calculate the correct "k" value (k as in x^2-4Nk).
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
