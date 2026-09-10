@@ -18,15 +18,9 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 
 #### To run from folder "psieve" WORK IN PROGRES...extremely early version:</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 30 -base 10_000 -debug 0 -lin_size 1_00 -quad_size 1</br></br>
+To run:  python3 run_qs.py -keysize 40 -base 1000 -debug 0 -lin_size 1_000 -quad_size 1</br></br>
 
-Update: Still missing something. I need to be able to calculate the correct "d" value in psieve_factor(). Let me change my PoC to also use different "k" (as in ax^2-Nk) values in my SIQS logic. Make sure k is prime... then try and do calculations in its finite field. That might flatten those k solutions out..
-
-Update: Oh wait.. maybe rather then d.. it's the "k" that I need to multiply... wait a minute.. ergh. God damnit. Seeing something.
-
-Bah.. you know, taking that square root of "a" when "a" is not square... sure.. sometimes that works mod p... if a is a QR. But its not going to work I think. Need to increase that "k" instead. Change which "a" our large square is paired with. In addition.. this time.. I also have the original coefficient that generated the b-smooth... so we can work with two sides at the same time to actually narrow down a solution.. if you only look at one side then you end up with two many residue combinations that you cant filter out.
-
-
+Update: Alright, rather then taking a square root of a non-square leading coefficient I'm just going to try and find some "k" such that we have a full square on both sides. The premise being that as long as we know the factorization of both coefficients, and both coefficients are large enough... then we can calculate the correct "k" value (k as in x^2-4Nk).
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
