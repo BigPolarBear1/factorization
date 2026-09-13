@@ -18,17 +18,9 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 
 #### To run from folder "psieve" WORK IN PROGRES...extremely early version:</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 40 -base 1000 -debug 0 -lin_size 1_000 -quad_size 1</br></br>
+To run:  python3 run_qs.py -keysize 30 -base 1000 -debug 0 -lin_size 10_000 -quad_size 1</br></br>
 
-Update: Alright, rather then taking a square root of a non-square leading coefficient I'm just going to try and find some "k" such that we have a full square on both sides. The premise being that as long as we know the factorization of both linear coefficients, and both linear coefficients are large enough... then we can calculate the correct "k" value (k as in x^2-4Nk).
-
-Right now its only calculating possible k values for one linear coefficient. BUT... if we know the factorization of the other linear coefficient, then we know that whatever k we use, must also be a valid k for every prime that divides that other linear coefficient. This feels right now. Should be it. Get fcked losers.
-
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH. Started refactoring. Fuck I'm an idiot. If you know the factorization of both linear coefficients, and both are large enough.. then ofcourse you can find the solution. It literally becomes finding a correct k plus you can add the modulus to the linear coefficient of the near square b-smooth. Its not difficult. Expect a solution to come online soon.
-
-Update: Going to run 20k. Then few more hours on my math. As long as I know the factorization of the root that produced a B-smooth with a large enough square in it.. then I can work in the reverse direction and compute residues to make it completely square. I know it can be done. Watch me. #nevergiveup
-
-Update: Alright. Added the "main idea" very roughly to psieve_factor() ... lots more work needs to be done. I'll do that tomorrow. It's really about trying to find the root that generated the original b-smooth from the other side around. And.. we know how that works... how quadratics with a solution are a QR when taking the discriminant. Code is very bad right now.. but going to expand on this idea quickly now and streamline it. THIS IS IT! I KNOW IT! I GOT IT! LETS GO! TIME TO FINISH THIS! MY FATHER WILL SEE ME SUCCEED AT THIS.
+Update: Streamlined some of that previous code.. let me re-add a 2d interval next like I did with coefficient_sieve.. easy enough.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
