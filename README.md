@@ -18,7 +18,7 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 
 #### To run from folder "psieve" WORK IN PROGRES...extremely early version:</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 30 -base 1000 -debug 0 -lin_size 10_000 -quad_size 1</br></br>
+To run:  python3 run_qs.py -keysize 30 -base 1000 -debug 0 -lin_size 100 -quad_size 1</br></br>
 
 Update: Streamlined some of that previous code.. let me re-add a 2d interval next like I did with coefficient_sieve.. easy enough.
 After that I also need to optimize the sieve region.. because I can roughly estimate the region(s) that I need to consider.
