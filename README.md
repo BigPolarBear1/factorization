@@ -25,6 +25,8 @@ After that I also need to optimize the sieve region.. because I can roughly esti
 
 Uploaded PoC is still shit but psieve_factor() shows the math... 
 
+I'll see when I can implement this.. hopefully tomorrow.. awful shit happening right now. I hope nobody ever has to see a parent suffer like I have. And I hope to have my father back, as before, soon. I am not prepared to lose my father.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
