@@ -23,6 +23,8 @@ To run:  python3 run_qs.py -keysize 30 -base 1000 -debug 0 -lin_size 10_000 -qua
 Update: Streamlined some of that previous code.. let me re-add a 2d interval next like I did with coefficient_sieve.. easy enough.
 After that I also need to optimize the sieve region.. because I can roughly estimate the region(s) that I need to consider.
 
+Uploaded PoC is still shit but psieve_factor() shows the math... 
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
