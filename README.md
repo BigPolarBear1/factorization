@@ -27,11 +27,16 @@ Uploaded PoC is still shit but psieve_factor() shows the math...
 
 I'll see when I can implement this.. hopefully tomorrow.. awful shit happening right now. I hope nobody ever has to see a parent suffer like I have. And I hope to have my father back, as before, soon. I am not prepared to lose my father.
 
+
+uploaded poc is broken. Ill fix it soon. Hard time getting work done with my father at the ICU. Nearly there though
+
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
 
 Just demonstrates the math from the paper using quadratics. For educational purposes. And rather then taking a square root over a large prime we can also just calculate the discriminant. But this demonstrates the interesting relation between these quadratics and the factors of N.
+
 
 #### To run from folder "CUDA_QS_variant" (Failed Experiment):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
