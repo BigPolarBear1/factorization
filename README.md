@@ -30,6 +30,8 @@ I'll see when I can implement this.. hopefully tomorrow.. awful shit happening r
 
 uploaded poc is broken. Ill fix it soon. Hard time getting work done with my father at the ICU. Nearly there though
 
+Update: Damnit was very close already. Lets say I have 211^2-4387\*4 = 37\*27^2  .. then after that we can set "k" (as in ab^2-4Nk) to 37 .. and this means that b must also be divisible by 37 to generate b-smooth candidates divisible by 37. So we get 0 solutions mod 37 on both sides. In addition 37b^2-4N must then be square. And I've shown how this can be calculated. And the same would also need to hold from the other side around (discriminant with +4Nk instead). Thats the way you do it. I've got all the chess pieces figured out. My father is in critical condition and its very hard to focus. I want my father to see my succeed, and I also want my father to see me run 100k next month. If my father would be gone, that's one less person to oppose this grim world of stalkers who constantly send me emails and idiots shouting slurs in the streets and persistent unemployed and a society that doesnt want me. I will succeed.
+
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
