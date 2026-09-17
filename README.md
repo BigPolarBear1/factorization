@@ -20,7 +20,9 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 30 -base 500 -debug 0 -lin_size 100 -quad_size 1</br></br>
 
-Update: Did some more refining of this two sided concept. Merging multiple things I learned in the last few weeks. Almost there. Now its pulling a solution from the resulting residue lists by bruteforce.. so we need something more clever there. The math however is now starting to look very solid... it's really coming together... while my father is in critical condition in the ICU. If anything happens to my father and he doesn't get to see me succeed.. I swear, I will refuse for the rest of my life to say a single word to anyone who isn't direct family or current friends. 
+Update: Did some more refining of this two sided concept. Merging multiple things I learned in the last few weeks. Almost there. Now its pulling a solution from the resulting residue lists by bruteforce.. so we need something more clever there. The math however is now starting to look very solid... it's really coming together... while my father is in critical condition in the ICU. If anything happens to my father and he doesn't get to see me succeed.. I swear, I will refuse for the rest of my life to say a single word to anyone who isn't direct family or current friends.
+
+Update: Let me try to figure out how to finish my work now. Probably construct all combinations for one side and then use the modulus to sieve with the other side... something like that.. let me see if that can be made to work.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
