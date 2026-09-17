@@ -24,7 +24,7 @@ Update: Did some more refining of this two sided concept. Merging multiple thing
 
 Update: Let me try to figure out how to finish my work now. Probably construct all combinations for one side and then use the modulus to sieve with the other side... something like that.. let me see if that can be made to work.
 
-Update: Oh yea.. kind of a similar construction back to what I had a week ago. But I got a better mental picture now how how both sides are connected. bringing divisors of "a" over to k (as in ab^2-4nk or ab^2+4nk) lets us create singular solutions for their quadratics which we can lift (see paper) ... singular solutions have an interesting property because sometimes we can eliminate a coefficient as valid solution. Now if we find one prime which a spare density of solutions when lifting (like modulo a small prime) ... then that can give us a huge advantage.
+Update: Oh yea.. kind of a similar construction back to what I had a week ago. But I got a better mental picture now how how both sides are connected. bringing divisors of "a" over to k (as in ab^2-4nk or ab^2+4nk) lets us create singular solutions for their quadratics which we can lift (see paper) ... singular solutions have an interesting property because sometimes we can eliminate a coefficient as valid solution. Now if we find one prime with a sparse density of solutions when lifting (like modulo a small prime) ... then that can give us a huge advantage.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
