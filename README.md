@@ -18,20 +18,9 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 
 #### To run from folder "psieve" WORK IN PROGRES...extremely early version:</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 30 -base 1000 -debug 0 -lin_size 100 -quad_size 1</br></br>
+To run:  python3 run_qs.py -keysize 30 -base 500 -debug 0 -lin_size 100 -quad_size 1</br></br>
 
-Update: Streamlined some of that previous code.. let me re-add a 2d interval next like I did with coefficient_sieve.. easy enough.
-After that I also need to optimize the sieve region.. because I can roughly estimate the region(s) that I need to consider.
-
-Uploaded PoC is still shit but psieve_factor() shows the math... 
-
-I'll see when I can implement this.. hopefully tomorrow.. awful shit happening right now. I hope nobody ever has to see a parent suffer like I have. And I hope to have my father back, as before, soon. I am not prepared to lose my father.
-
-
-uploaded poc is broken. Ill fix it soon. Hard time getting work done with my father at the ICU. Nearly there though
-
-Update: Damnit was very close already. Lets say I have 211^2-4387\*4 = 37\*27^2  .. then after that we can set "k" (as in ab^2-4Nk) to 37 .. and this means that b must also be divisible by 37 to generate b-smooth candidates divisible by 37. So we get 0 solutions mod 37 on both sides. In addition 37b^2-4N must then be square. And I've shown how this can be calculated. And the same would also need to hold from the other side around (discriminant with +4Nk instead). Thats the way you do it. I've got all the chess pieces figured out. My father is in critical condition and its very hard to focus. I want my father to see my succeed, and I also want my father to see me run 100k next month. If my father would be gone, that's one less person to oppose this grim world of stalkers who constantly send me emails and idiots shouting slurs in the streets and persistent unemployed and a society that doesnt want me. I will succeed.
-
+Update: Did some more refining of this two sided concept. Merging multiple things I learned in the last few weeks. Almost there. Now its pulling a solution from the resulting residue lists by bruteforce.. so we need some more clever there. The math however is now starting to look very solid... it's really coming together... while my father is in critical condition in the ICU. If anything happens to my father and he doesn't get to see me succeed.. I swear, I will refuse for the rest of my life to say a single word to anyone who isn't direct family or current friends. 
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
