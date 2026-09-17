@@ -5,7 +5,8 @@
 ###Author: Essbee Vanhoutte
 ###WORK IN PROGRESS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ###Cuda_QS_Variant
- 
+###This code is pro-LGBTQ.
+
 ##References: I have borrowed many of the optimizations from here: https://stackoverflow.com/questions/79330304/optimizing-sieving-code-in-the-self-initializing-quadratic-sieve-for-pypy
 
 
@@ -59,7 +60,7 @@ quad_per_interval=1
 lift_lim=1
 k_max = 12#_000
 b_max=10_000
-quad_sign="pos" 
+quad_sign="neg" 
 ##Key gen function##
 def power(x, y, p):
     res = 1;
@@ -1279,7 +1280,7 @@ def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,
         k+=1
     return found
 
-cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,partials,lin,cmod,factor_ranking,fb_map,bSeenOnly,seen_factors,interval,primeslist,resmaps,valid_quads,valid_quads_factors,qlist,primelist,hmap2):#,lin,cmod,sum_list):
+cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,partials,lin,cmod,factor_ranking,fb_map,bSeenOnly,seen_factors,interval,primeslist,resmaps,valid_quads,valid_quads_factors,qlist,primelist,hmap2,sbase):#,lin,cmod,sum_list):
     linsize=lin_sieve_size
     if bSeenOnly==1:
         linsize=lin_sieve_size2
@@ -1371,10 +1372,10 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                 found+=1
 
                 #To do: uncomment later
-               # ret_array[1].append(new_root**2)
-               # ret_array[0].append(poly_val)
-               # ret_array[2].append(local_factors)
-               # ret_array[3].append([])
+                ret_array[1].append(new_root**2)
+                ret_array[0].append(poly_val)
+                ret_array[2].append(local_factors)
+                ret_array[3].append([])
                 div_fac=[]
                 faclist=list(local_factors)
                 faclist.sort()
@@ -1397,10 +1398,10 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                # if bitlen(div)<keysize*0.50: ##Dont know if this matters.. another parameter to test with..
                   #  print("PSIEVE1")
                 local_factors2, value2 = factorise_fast(new_root,primelist_f)
-                if poly_val >0 and bitlen(div) < keysize/2 and value2==1:# and len(div_fac)==1:
+                if poly_val >0:# and bitlen(div) < keysize/2 and value2==1:# and len(div_fac)==1:
                     
                     print("[i]Trying psieve")
-                    psievefound=psieve(n,ret_array,primelist_f,new_root,primeslist,div,hmap2)
+                    psievefound=psieve(n,ret_array,primelist_f,new_root,primeslist,div,hmap2,sbase)
                     if psievefound !=0:
                         print("[*](Psieve)Trying linear algebra after succesful psieve run")
                         test,test2=QS(n,primelist,ret_array[0],ret_array[2],ret_array[1],ret_array[3])
@@ -1986,7 +1987,7 @@ def build_2drootmap(primeslist,hmap,n):
     i=0
     return roots2d
 
-def debug_find_residues(prime,n,b,exp):
+def debug_find_residues(prime,n,b,exp,o_b):
   
     klist=[]
     blist=[]
@@ -1999,7 +2000,8 @@ def debug_find_residues(prime,n,b,exp):
 
         poly=[1,-b,n*k]
         roots=find_roots_poly(poly,prime)
-        if len(roots)>0:
+        disc=b**2-4*n*k
+        if len(roots)>0 and disc%prime**exp == (o_b**2)%prime**exp:
             if exp > 1:
                 r=roots[0]
                 polyc=copy.deepcopy(poly)
@@ -2034,9 +2036,59 @@ def debug_find_residues2(prime,n,b,exp):
 
         k+=1
     return hmap
-def debug_find_residues3(prime,n,k,exp):
+def debug_find_residues3(prime,n,a,exp):
  #   hmap={}
-    klist=[prime**exp,[]]
+   # klist=[prime**exp,[]]
+    blist=[prime**exp,[]]
+    k=a
+    b=0
+    sq=[1,0,-a]
+    sqr=find_roots_poly(sq, prime) 
+    if len(sqr)==0:
+        return []
+ #   for sqr_r in sqr:
+   # sqr_r=sqr[0]
+   # sqr_r=lift_root2([1,0,-a], sqr_r, prime, 2)
+      #  print("sqr_r: "+str(sqr_r))
+    while b < prime**exp:
+        poly=[1,b*a,-n*a]
+        polyc=copy.deepcopy(poly)
+        roots=find_roots_poly(polyc,prime)
+      #  if b == 2 and len(roots)==2:
+        #    print("roots: "+str(roots)+" b: "+str(b)+" prime**exp: "+str(prime**exp))
+        if len(roots)>0: ##to do: singular??
+            i=0
+            while i < len(roots):
+                #deriv=get_derivative(poly)
+               # der=evaluate(deriv,roots[i])
+               # poly2=[1,-der*sqr_r,n]
+                roots[i]=lift_root2(poly, roots[i], prime, exp)
+
+                if evaluate(poly,roots[i])%prime**exp!=0:
+             #   if (roots[i]**2-4*n*k)%prime**exp !=0:
+                    print("something screwed up: "+str(roots)+" k: "+str(k))
+                    sys.exit(0)
+                disc1=a*b**2+4*n
+                if kronecker_symbol(disc1,prime)==-1:
+                    print("kroneckerfail")
+                    sys.exit()
+                disc2=(a*b)**2+4*n*a 
+                if disc2%a!=0:
+                    print("fatal")
+                    sys.exit()
+                i+=1
+           # klist[-1].append(k%prime**exp)
+            blist[-1].append(b)
+          #  hmap[k]=roots
+           # hmap.append(roots)
+   
+        b+=1
+   # print("prime: "+str(prime)+" hmap: "+str(blist))
+    return blist
+
+def debug_find_residues4(prime,n,k,exp):
+    k=1
+ #   hmap={}
     blist=[prime**exp,[]]
 
 
@@ -2051,14 +2103,14 @@ def debug_find_residues3(prime,n,k,exp):
                 print("something screwed up: "+str(roots)+" k: "+str(k))
                 sys.exit(0)
             i+=1
-        klist[-1].append(k%prime**exp)
-        blist[-1].append(roots)
+
+        blist[-1].extend(roots)
           #  hmap[k]=roots
            # hmap.append(roots)
         
   
-   # print("prime: "+str(prime)+" hmap: "+str(hmap))
-    return klist,blist
+ #   print("4prime: "+str(prime)+" hmap: "+str(blist))
+    return blist
 
 def psieve_calc_res_for_prime(prime,n):
     hmap={}
@@ -2098,8 +2150,8 @@ def psieve_create_hashmap(n,fbase):
         i+=1
     return hmap_collection
 
-def psieve_build_interval(n,div,hmap2,fbase,quad,x,linsize,a):
-
+def psieve_build_interval(n,div,hmap2,fbase,quad,x,linsize):
+    ##TO DO: 2d????? 2D!!!!!!!!!!!!!???
     interval_single=array.array('i',[1]*linsize)#np.ones(linsize,dtype=np.int8)    
     i=0
     while i < len(fbase):
@@ -2108,24 +2160,21 @@ def psieve_build_interval(n,div,hmap2,fbase,quad,x,linsize,a):
             i+=1
             continue
 
-        modi=modinv(div%prime,prime)
+      #  modi=modinv(div%prime,prime)
         log=round(math.log2(prime))
         b=0
         while b < prime:
-            if quad_sign == "neg":
-                ldisc=a*b**2-4*n*quad
-            else:
-                ldisc=a*b**2+4*n*quad                
-            div_inv=modinv(div,prime)
-            if compute_legendre_character((ldisc*div_inv)%prime,prime)==-1:
+
+            ldisc=b**2-4*n*quad
+              
+
+            if compute_legendre_character((ldisc)%prime,prime)==-1:
                     #print("euhm, WHAT THE FUCK MAN?: "+str(e)+" prime: "+str(prime))
                 root_dist1=solve_lin_con(div,b-x,prime)
-                if quad_sign == "neg":
-                    disc=a*(x+div*root_dist1)**2-4*n*quad
-                else:
-                    disc=a*(x+div*root_dist1)**2+4*n*quad
-                if compute_legendre_character((disc*div_inv)%prime,prime) != -1:
-                    print("fatal error: "+str(compute_legendre_character(disc,prime)))
+  
+                disc=(x+div*root_dist1)**2-4*n*quad
+ 
+
 
               #  diff=(root_dist1-b_start)%prime
                # if diff%prime != root
@@ -2134,9 +2183,9 @@ def psieve_build_interval(n,div,hmap2,fbase,quad,x,linsize,a):
                 while root_dist1 < len(interval_single):   
                     interval_single[root_dist1]=0#log 
                     root_dist1+=prime
-                #disc=(b_start+div*(root_dist1))**2-4*n*quad
-               # if compute_legendre_character((disc*div_inv)%prime,prime) != -1:
-               #     print("fatal error: "+str(compute_legendre_character(disc,prime)))
+                disc=(x+div*(root_dist1))**2-4*n*quad
+                if compute_legendre_character((disc)%prime,prime) != -1:
+                    print("fatal error: "+str(compute_legendre_character(disc,prime)))
                # if root_dist1 != root_dist2:
                #     interval_single[root_dist2::prime]=0#(log)           
                # disc=(x+div*root_dist2)**2-4*n*quad
@@ -2280,23 +2329,27 @@ def psieve_process_interval(interval,div,k,x,n,primelist_f,ret_array,a,fbase):
 def enumerated_product(*args):
     yield from itertools.product(*(range(len(x)) for x in args))
 
-def psieve_factor(b,a,k_o,n,fbase,o_b,hmap2):
-    
-
+def psieve_factor(b,a,k_o,n,fbase,o_b,hmap2,sbase,ret_array,primelist_f):
+    ##TO DO: This needs a pure residue approach rather then sieving... because we now that the original coefficient should show up for every prime.
+    ##This isn't rocket science... the discriminant here should divide by the square of o_b.. in addition since we're looking specifically for o_b from the reverse order... that residue has to show up for every prime.
+    linsize=1000
     ##Step one calculate residues for when the discriminant is divisible by factors of the original root (o_b)
     #o_b_residues=[]
     klist=[]
     blist=[]
+    blist_otherside=[]
     primes_found=[]  
     o_mod=1
     mod=1
-    for prime in fbase:
-        if (o_b)%prime==0:
-            print("building: "+str(prime))
-            bcpy=o_b
+    found=0
+    for prime in sbase:
+        if (a)%prime!=0:
+            
+           # print("building: "+str(prime))
+            acpy=a
             exp=0
-            while bcpy%prime==0 and bcpy!=0:
-                bcpy//=prime
+            while acpy%prime==0 and acpy!=0: ##to do: exp will never be > 1 for a..
+                acpy//=prime
                 exp+=1
             exp*=2 ##Since we divide the discriminant not just coefficient
             #if prime > 100:  #we can fix this later... 
@@ -2306,116 +2359,90 @@ def psieve_factor(b,a,k_o,n,fbase,o_b,hmap2):
             primes_found.append(prime)
           #  print("building prime: "+str(prime)+" exp: "+str(exp))
        #     o_b_residues.append(prime**exp)
-            temp_klist,temp_blist=debug_find_residues3(prime,n,k_o,exp) ##TO DO: when prime == 2
-            klist.extend(temp_klist)
-            blist.extend(temp_blist)
-   # print("o_b_klist: "+str(o_b_klist)+" o_b_blist: "+str(o_b_blist))
-    ##Step two calculate residues all possible "k" values for the large square o_b generated
-    
-    for prime in fbase:
-        if b%prime==0:
-            print("building2: "+str(prime))
-            
-            bcpy=b
+            temp_blist=debug_find_residues3(prime,n,a,1) ##TO DO: when prime == 2
+       #     klist.extend(temp_klist)
+            if len(temp_blist)>0:
+                blist.extend(temp_blist)
+
+        if a%prime==0:
+            acpy=a
             exp=0
-            while bcpy%prime==0:
-                bcpy//=prime
+            while acpy%prime==0 and acpy!=0: ##to do: exp will never be > 1 for a..
+                acpy//=prime
                 exp+=1
-            exp*=2
+         #   exp*=2 ##Since we divide the discriminant not just coefficient   
+            temp_blist=debug_find_residues4(prime,n,a,exp) ##TO DO: when prime == 2    
+            if len(temp_blist)>0:
+                blist_otherside.extend(temp_blist)     
+  #  print(" o_b_blist: "+str(blist))
+ #   print("blist_otherside: "+str(blist_otherside))
+    i=1
+    while i < 10000:
+        skip=0
+        j=0
+        while j < len(blist):
+            i_temp=i%blist[j]
+            if i_temp not in blist[j+1]:
+                skip=1
+                break
 
-            primes_found.append(prime)
-            temp_klist,temp_blist=debug_find_residues(prime,n,b,exp)
-            klist.extend(temp_klist)
-            blist.extend(temp_blist)
-            o_mod*=prime**exp
-    klist=get_partials(o_mod,klist)
-    print("Finished building")
-    kenum=[]
-    benum=[]
-    i=0
-    while i < len(klist):
-        kenum.append(klist[i+1])
-        benum.append(blist[i+1])
-        i+=2
-    #print("done: ",kenum)
-    for idx in enumerated_product(*kenum):
-        
-        roots=[]
-        k=0
-        i=0
-        while i < len(idx):
-            ind=idx[i]
-            k+=kenum[i][ind]
-            roots.append(blist[i*2])
-            roots.append(benum[i][ind])
-            i+=1
-        roots=get_partials(o_mod,roots)
-        k%=o_mod
-       # print("mod: "+str(o_mod)+" "+str(k)+" roots: "+str(roots)+" idx: "+str(idx)+"  primesfound: "+str(primes_found))#+" "+str(len(klist)))
-        enum=[]
-        i=0
-        while i < len(roots):
-            enum.append(roots[i+1])
+            j+=2
+        if skip == 0:
+            disc=a*i**2+4*n
+            j=0
+            skip2=0
+            while j < len(blist_otherside):
+                prime=blist_otherside[j]
+                sq=[1,0,-disc]
+                sqr=find_roots_poly(sq, prime) 
+             #   print("sqr: "+str(sqr)+"prime: "+str(prime))
+                if sqr[0] not in blist_otherside[j+1]:
+                    skip2=1
+                    break
+                j+=2
+            if skip2==0:
+             #   print("found one: "+str(i)+" disc: "+str(disc))
+                
+                new_root=math.isqrt(disc)
+                poly_val=new_root**2-4*n
+                local_factors, value = factorise_fast(poly_val,primelist_f)
+                if new_root**2 == disc:
+                    ret_array[1].append(new_root**2)
+                    ret_array[0].append(poly_val)
+                    ret_array[2].append(local_factors)
+                    ret_array[3].append([])
+                    found+=1
 
-
-            i+=2
-        for combo in itertools.product(*enum):
-            root=0
-            for l in combo:
-                root+=l 
-            root%=o_mod
-            ###To do: 2d interval like in coefficient sieve...
-            k_mod=0
-            while k_mod < 1000:
-                b_mod=0
-                while b_mod < 10:
-
-                    disc=(root+(b_mod*o_mod))**2-4*n*(k+k_mod*o_mod)
-                    if disc < 1:
-                        b_mod+=1
-                        continue
-                    disc_sqrt=math.isqrt(disc)
-                    if disc%mod!=0:
-                        print("fatal error bleh: "+str(mod))
-                        sys.exit()
-                    #for prim in primes_found:
-                    #    if kronecker_symbol(disc,prim)==-1:
-                    #        print("fatal error.. shitty bug somewhere")
-                    #        sys.exit()
-                    if disc_sqrt**2==disc:
-                        gcdtest=math.gcd(disc_sqrt+(root+(b_mod*o_mod)),n)
-                        if gcdtest != 1 and gcdtest != n:
-                            print("[PSIEVE]found factors of "+str(n)+" : "+str(gcdtest)+" and "+str(n//gcdtest))
-                            sys.exit()
-                    b_mod+=1
-                k_mod+=1
-    return 0
-
-def psieve(n,ret_array,primelist_f,b,primeslist,a,hmap2):#(n,fbase,div,hmap2,ret_array):
-    print("b: "+str(b)+" a: "+str(a))
-    disc=(2*b)**2+4*n
+            else:
+                print("disc: "+str(disc)+" is not a square")
+        i+=1
+    return found
+def psieve(n,ret_array,primelist_f,b,primeslist,a,hmap2,sbase):#(n,fbase,div,hmap2,ret_array):
+    found=0
+   # print("b: "+str(b)+" a: "+str(a))
+    disc=(2*b)**2-4*n
   #  print("disc: "+str(disc))
     disc//=a 
     disc_sqr=math.isqrt(disc)
     if disc_sqr**2 != disc:
         print("fatal error in psieve()")
         return 0
-    disc2=a*disc_sqr**2-4*n
+    disc2=a*disc_sqr**2+4*n
     if math.isqrt(disc2)!= 2*b:
         print("2fatal error in psieve()")
         return 0
 
      
   #  print("disc2: "+str(disc2))
-    psieve_factor(disc_sqr,a,1,n,primeslist,2*b,hmap2)
+    found+=psieve_factor(disc_sqr,a,1,n,primeslist,2*b,hmap2,sbase,ret_array,primelist_f)
    
-    return 0
+    return found
 
 def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,primeslist2,resmaps):
-    fbase=copy.deepcopy(primeslist[0:40])
+    sbase=copy.deepcopy(primeslist[0:40])
    # print("fbase: "+str(fbase))
     print("[i]Building psieve Residue Map (to do: some duplication here from merging two algos, fix later)")
-    hmap2=psieve_create_hashmap(n,fbase) ##For psieve related code..
+    hmap2=[]#psieve_create_hashmap(n,sbase) ##For psieve related code..
     #sys.exit()
 
     grays = get_gray_code(20)
@@ -2476,9 +2503,9 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
         print("mod: "+str(new_mod)+" cfact: "+str(cfact)+" indexes: "+str(indexes))
 
    
-      #  new_mod=37**2
-      #  cfact=[37**2]
-      #  indexes=[10]
+       # new_mod=37**2
+       # cfact=[37**2]
+       # indexes=[10]
         if new_mod ==0:
             retry+=1
             if retry > 5:
@@ -2511,7 +2538,7 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
                     print("super big error")
                     sys.exit()            
             interval=build_database2interval(primeslist_a,quad,n,lin,new_mod,roots2d,0,factor_ranking)
-            found+=process_interval2d(n,ret_array,quad,primelist_f,large_prime_bound,partials,lin,new_mod,factor_ranking,fb_map,0,seen_factors,interval,primeslist,resmaps,valid_quads,valid_quads_factors,qlist,primelist,hmap2)#,lin,new_mod,sum_list)
+            found+=process_interval2d(n,ret_array,quad,primelist_f,large_prime_bound,partials,lin,new_mod,factor_ranking,fb_map,0,seen_factors,interval,primeslist,resmaps,valid_quads,valid_quads_factors,qlist,primelist,hmap2,sbase)#,lin,new_mod,sum_list)
             if found > 5 or len(ret_array[0]) > base+10:
                 if g_debug ==1:
                     print("seen_factors: ",seen_factors)
