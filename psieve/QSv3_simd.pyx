@@ -2377,7 +2377,7 @@ def psieve_factor(b,a,k_o,n,fbase,o_b,hmap2,sbase,ret_array,primelist_f):
   #  print(" o_b_blist: "+str(blist))
  #   print("blist_otherside: "+str(blist_otherside))
     i=1
-    while i < 10000:
+    while i < 1_000_000:
         skip=0
         j=0
         while j < len(blist):
@@ -2401,12 +2401,13 @@ def psieve_factor(b,a,k_o,n,fbase,o_b,hmap2,sbase,ret_array,primelist_f):
                     break
                 j+=2
             if skip2==0:
-             #   print("found one: "+str(i)+" disc: "+str(disc))
+            #    print("found one: "+str(i)+" disc: "+str(disc))
                 
                 new_root=math.isqrt(disc)
                 poly_val=new_root**2-4*n
                 local_factors, value = factorise_fast(poly_val,primelist_f)
-                if new_root**2 == disc:
+                if new_root**2 == disc and new_root != o_b:
+                    print("****************************************************************************Found one with psieve")
                     ret_array[1].append(new_root**2)
                     ret_array[0].append(poly_val)
                     ret_array[2].append(local_factors)
@@ -2419,8 +2420,9 @@ def psieve_factor(b,a,k_o,n,fbase,o_b,hmap2,sbase,ret_array,primelist_f):
     return found
 def psieve(n,ret_array,primelist_f,b,primeslist,a,hmap2,sbase):#(n,fbase,div,hmap2,ret_array):
     found=0
-   # print("b: "+str(b)+" a: "+str(a))
+    
     disc=(2*b)**2-4*n
+   # print("b: "+str(b)+" a: "+str(a)+" disc: "+str(disc))
   #  print("disc: "+str(disc))
     disc//=a 
     disc_sqr=math.isqrt(disc)
