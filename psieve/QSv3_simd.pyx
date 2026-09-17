@@ -2364,6 +2364,7 @@ def psieve_factor(b,a,k_o,n,fbase,o_b,hmap2,sbase,ret_array,primelist_f):
             if len(temp_blist)>0:
                 blist.extend(temp_blist)
 
+    for prime in fbase:
         if a%prime==0:
             acpy=a
             exp=0
@@ -2373,9 +2374,9 @@ def psieve_factor(b,a,k_o,n,fbase,o_b,hmap2,sbase,ret_array,primelist_f):
          #   exp*=2 ##Since we divide the discriminant not just coefficient   
             temp_blist=debug_find_residues4(prime,n,a,exp) ##TO DO: when prime == 2    
             if len(temp_blist)>0:
-                blist_otherside.extend(temp_blist)     
+                blist_otherside.extend(temp_blist)    
   #  print(" o_b_blist: "+str(blist))
- #   print("blist_otherside: "+str(blist_otherside))
+  #  print("blist_otherside: "+str(blist_otherside))
     i=1
     while i < 1_000_000:
         skip=0
@@ -2422,8 +2423,7 @@ def psieve(n,ret_array,primelist_f,b,primeslist,a,hmap2,sbase):#(n,fbase,div,hma
     found=0
     
     disc=(2*b)**2-4*n
-   # print("b: "+str(b)+" a: "+str(a)+" disc: "+str(disc))
-  #  print("disc: "+str(disc))
+  #  print("b: "+str(b)+" a: "+str(a)+" disc: "+str(disc))
     disc//=a 
     disc_sqr=math.isqrt(disc)
     if disc_sqr**2 != disc:
