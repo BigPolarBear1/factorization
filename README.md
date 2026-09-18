@@ -20,13 +20,8 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 500 -debug 0 -lin_size 100 -quad_size 1</br></br>
 
-Update: Did some more refining of this two sided concept. Merging multiple things I learned in the last few weeks. Almost there. Now its pulling a solution from the resulting residue lists by bruteforce.. so we need something more clever there. The math however is now starting to look very solid... it's really coming together... while my father is in critical condition in the ICU. If anything happens to my father and he doesn't get to see me succeed.. I swear, I will refuse for the rest of my life to say a single word to anyone who isn't direct family or current friends.
-
-Update: Let me try to figure out how to finish my work now. Probably construct all combinations for one side and then use the modulus to sieve with the other side... something like that.. let me see if that can be made to work.
-
-Update: Oh yea.. kind of a similar construction back to what I had a week ago. But I got a better mental picture now how how both sides are connected. bringing divisors of "a" over to k (as in ab^2-4nk or ab^2+4nk) lets us create singular solutions for their quadratics which we can lift (see paper) ... singular solutions have an interesting property because sometimes we can eliminate a coefficient as valid solution. Now if we find one prime with a sparse density of solutions when lifting (like modulo a small prime) ... then that can give us a huge advantage.
-
-Alright let me start finishing my work now... first find a good "a" that we can move over to "k" and use its finite field to weed out solutions. I've worked out that math of how lifting can be used for this many times before... actually... this was one of my research approaches I had arrived at after only one year... because I uncovered that pattern with pattern analysis but just didn't know enough math yet to connect all the dots I guess. Time to end it. There's no time left.
+Update: Almost finished. Going for a run first.
+Then I'll add some small prime... where we left possible solutions p-adically and try to find a set that has a sparse amount of solutions and use that as an initial filter... easy enough.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
