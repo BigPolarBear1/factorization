@@ -21,7 +21,7 @@ To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 500 -debug 0 -lin_size 100 -quad_size 1</br></br>
 
 Update: Almost finished. Going for a run first.
-Then I'll add some small prime... where we left possible solutions p-adically and try to find a set that has a sparse amount of solutions and use that as an initial filter... easy enough.
+Then I'll add some small prime... where we lift possible solutions p-adically and try to find a set that has a sparse amount of solutions and use that as an initial filter... easy enough.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
