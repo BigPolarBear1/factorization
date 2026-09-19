@@ -27,6 +27,8 @@ Update: first commit where I added the above idea.. next I need to add an interv
 
 Update: added an interval. Now I need to improve the filter by using hensel... the larger the modulus on that filter (aka the step size of the interval) the more powerful it will be... this cant be very difficult. Valid solutions from blist must also map to valid solutions from blist_otherside .. but I need to brainstorm if one implies the other (if we encode 'a' as the leading coefficient for the discriminant) or if there is any use there.
 
+Update: Improved brute_force_padic_solutions(), so it just lifts for as long as we can gain an advantage with the solution density. Next I'll do this for multiple small primes.. then CRT them together... and after that we should use hensel to speed this up... then I can get a better idea of how good of a "filter" we can achieve and find some smart ways to optimize for it rather then testing "k" values one by one.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
