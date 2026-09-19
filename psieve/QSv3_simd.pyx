@@ -2063,8 +2063,121 @@ def debug_find_residues4(prime,n,exp,k):
  #   print("4prime: "+str(prime)+" hmap: "+str(blist))
     return blist
 
+def find_r(mod,total):
+    mo,i=mod,0
+    while (total%mod)==0:
+        mod=mod*mo
+        i+=1
+    return i
 
-def brute_force_padic_solutions(prime,k,n,a,max_filter):
+
+def brute_force_padic_solutions2(prime,k,n,a):
+    ##to do: delete later.. just for verifications
+    solutions=[]
+    blist=[]
+    exp=1
+    b=0
+    while b < prime**exp:
+       # print("b: "+str(b)+" prime: "+str(prime))
+        poly=[1,b*a,-n*a*k]
+        #poly=[1,-b,n*k]
+        roots=[]
+        x=0
+        while x < prime**exp:
+            if evaluate(poly,x)%prime**exp ==0:
+                roots.append(x)
+
+            x+=1
+        if len(roots)>0:
+            solutions.extend([b,roots,0])
+        b+=1
+   # print("solutions: "+str(solutions))
+    max_lift=15
+    exp+=1
+    while exp < max_lift:
+        am_to_lift=0
+        new_solutions=[]
+        i=0
+        while i < len(solutions):
+            b=solutions[i]
+            while b < prime**exp:
+                #print("b: "+str(b)+" prime: "+str(prime)+" exp: "+str(exp)+" prime**exp: "+str(prime**exp))
+                poly=[1,(b*a)%prime**exp,(-n*a*k)%prime**exp]
+                der=get_derivative(poly)
+                #poly=[1,-b,n*k]
+                new_roots=[]
+                hit=0
+                if solutions[i+2]==0:
+                    roots=solutions[i+1]
+                    j=0
+                    while j < len(roots):
+                        r=roots[j]
+                 #   print("r: "+str(r)+" b: "+str(b))
+                        while r < prime**exp:
+                            if evaluate(poly,r)%prime**exp ==0:
+                                new_roots.append(r)
+                                deriv=evaluate(der,r)
+                                r0=find_r(prime,deriv)
+                                ceiling=(prime*r0)
+                                ceiling=prime**ceiling
+                                if prime**exp > ceiling:
+                                    hit=1
+                              #  print("******************prime**exp: "+str(prime**exp)+" b: "+str(b)+" r: "+str(r)+" "+str(deriv)+" ceiling: "+str(ceiling))
+                           # else:
+                             #   print("prime**exp: "+str(prime**exp)+" b: "+str(b)+" r: "+str(r)+" "+str(deriv)+" ceiling: "+str(ceiling))
+                            r+=prime**(exp-1)
+                        j+=1
+                    if len(new_roots)>0:
+                    #print("b: "+str(b)+" "+str(len(new_roots)))
+                        if hit==1:
+                            new_solutions.extend([b,new_roots,0])
+                        else:
+                            new_solutions.extend([b,new_roots,0])
+                            am_to_lift+=1
+                
+                #if solutions[i+2]==1 and len(roots)==0:
+                #    print("fatal error")
+                #    sys.exit()
+                #if solutions[i+2]==1 and hit==0:
+                #    print("fata; error2")
+                #    sys.exit()
+
+
+
+                b+=prime**(exp-1)
+            i+=3
+        solutions=new_solutions
+       # print("solutions: "+str(prime**exp)+" "+str(len(solutions)//3))
+        if am_to_lift==0:
+          #  print("!!!!!!!!!!!!!!!!FULLY LIFTED AT: "+str(exp))
+            break
+        if exp+1 == max_lift:
+            break
+        exp+=1
+
+    
+    blist.append(prime**(exp))
+    blist.append([])
+    i=0
+    while i < len(solutions):
+        if solutions[i+2]==1:
+            texp=solutions[i+1]
+            tempb=solutions[i]
+            while tempb < prime**(exp):
+                blist[-1].append(tempb)
+                ##To do: can add a verification loop here later if I'm bored to make sure everything added is correct
+
+                tempb+=prime**texp
+        else:    
+            blist[-1].append(solutions[i])
+
+        i+=3
+    blist[-1].sort()
+    #print("solutions len: "+str(len(blist[-1]))+" k: "+str(k))
+
+    return blist
+
+def brute_force_padic_solutions(prime,k,n,a):
     ##Add proper hensel later and use this to verify
     solutions=[]
     blist=[]
@@ -2082,52 +2195,95 @@ def brute_force_padic_solutions(prime,k,n,a,max_filter):
 
             x+=1
         if len(roots)>0:
-            solutions.extend([b,roots])
+            solutions.extend([b,roots,0])
         b+=1
-    #print("solutions: "+str(solutions))
+  #  print("solutions: "+str(solutions))
+    max_lift=15
     exp+=1
-    while exp < 10:
+    while exp < max_lift:
+        am_to_lift=0
         new_solutions=[]
-        nsols=0
         i=0
         while i < len(solutions):
             b=solutions[i]
             while b < prime**exp:
                 #print("b: "+str(b)+" prime: "+str(prime)+" exp: "+str(exp)+" prime**exp: "+str(prime**exp))
-                poly=[1,b*a,-n*a*k]
+                poly=[1,(b*a)%prime**exp,(-n*a*k)%prime**exp]
+                der=get_derivative(poly)
                 #poly=[1,-b,n*k]
                 new_roots=[]
-                roots=solutions[i+1]
-                j=0
-                while j < len(roots):
-                    r=roots[j]
+                hit=0
+                if solutions[i+2]==0:
+                    roots=solutions[i+1]
+                    j=0
+                    while j < len(roots):
+                        r=roots[j]
                  #   print("r: "+str(r)+" b: "+str(b))
-                    while r < prime**exp:
-                        if evaluate(poly,r)%prime**exp ==0:
-                            new_roots.append(r)
-                        r+=prime**(exp-1)
-                    j+=1
-                if len(new_roots)>0:
-                    new_solutions.extend([b,new_roots])
-                    nsols+=1
-                    if nsols>max_filter:
-                        return -1
-                b+=prime**(exp-1)
-            i+=2
-        solutions=new_solutions
+                        while r < prime**exp:
+                            if evaluate(poly,r)%prime**exp ==0:
+                                new_roots.append(r)
+                                deriv=evaluate(der,r)
+                                r0=find_r(prime,deriv)
+                                ceiling=(prime*r0)
+                                ceiling=prime**ceiling
+                                if prime**exp > ceiling:
+                                    hit=1
+                              #  print("******************prime**exp: "+str(prime**exp)+" b: "+str(b)+" r: "+str(r)+" "+str(deriv)+" ceiling: "+str(ceiling))
+                           # else:
+                             #   print("prime**exp: "+str(prime**exp)+" b: "+str(b)+" r: "+str(r)+" "+str(deriv)+" ceiling: "+str(ceiling))
+                            r+=prime**(exp-1)
+                        j+=1
+                    if len(new_roots)>0:
+                    #print("b: "+str(b)+" "+str(len(new_roots)))
+                        if hit==1:
+                            new_solutions.extend([b,exp,1])
+                        else:
+                            new_solutions.extend([b,new_roots,0])
+                            am_to_lift+=1
 
+                else:
+                    new_solutions.extend([solutions[i],solutions[i+1],solutions[i+2]])
+                    break
+                #if solutions[i+2]==1 and len(roots)==0:
+                #    print("fatal error")
+                #    sys.exit()
+                #if solutions[i+2]==1 and hit==0:
+                #    print("fata; error2")
+                #    sys.exit()
+
+
+
+                b+=prime**(exp-1)
+            i+=3
+        solutions=new_solutions
+       # print("solutions: "+str(prime**exp)+" "+str(len(solutions)//3))
+        if am_to_lift==0:
+          #  print("!!!!!!!!!!!!!!!!FULLY LIFTED AT: "+str(exp))
+            break
+        if exp+1 == max_lift:
+            break
         exp+=1
 
     
-    blist.append(prime**(exp-1))
+    blist.append(prime**(exp))
     blist.append([])
     i=0
     while i < len(solutions):
-        blist[-1].append(solutions[i])
+        if solutions[i+2]==1:
+            texp=solutions[i+1]
+            tempb=solutions[i]
+            while tempb < prime**(exp):
+                blist[-1].append(tempb)
+                ##To do: can add a verification loop here later if I'm bored to make sure everything added is correct
 
-        i+=2
+                tempb+=prime**texp
+        else:    
+            blist[-1].append(solutions[i])
+
+        i+=3
     blist[-1].sort()
     #print("solutions len: "+str(len(blist[-1]))+" k: "+str(k))
+
     return blist
 
 def psieve_calc_res_for_prime(prime,n):
@@ -2195,7 +2351,7 @@ def build_disc_residues(fbase,a,n,k):
 
 def psieve_build_interval(sbase,n,k,mod,root,a):
   #  interval=array.array("i",[1]*1_000_000)
-    interval=np.ones(1_000_000,dtype=np.uint8)
+    interval=np.ones(100_000,dtype=np.uint8)
     i=0
     while i < len(sbase):
         prime=sbase[i]
@@ -2219,29 +2375,39 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b):
             primes_to_check.append(prime)
 
     k=1
-    while k < 10000: #to do: can also just precalculate residues here... but probably want to consider mostly small-ish k values...
+    while k < 1000: #to do: can also just precalculate residues here... but probably want to consider mostly small-ish k values...
         if math.gcd(a,k)!=1 or isPrime(k,5)!=1: #to do: does not need to be prime.. just need to avoid squares in the factorization... fix later
             k+=1
             continue
+        
         skip=0
         for prime in primes_to_check:
             if kronecker_symbol(4*n*k,prime)==-1:
                 skip=1
 
         if skip == 0:
-            max_filter=30
+            print("[i]Checking k: "+str(k))
+           # max_filter=100
             ##THIS I WILL REFER TO AS THE FILTER AND WE WILL SET THE STEP SIZE FOR INTERVAL TO THIS!
-            solutions=brute_force_padic_solutions(2,k,n,a,max_filter) ##Using this as a filter... got to expand on this concept and add actual hensel too..
-           # print(len(solutions[-1]))
-            if solutions != -1 and len(solutions[-1])< max_filter and len(solutions[-1]) > 0:
+            solutions=brute_force_padic_solutions(2,k,n,a) ##Using this as a filter... got to expand on this concept and add actual hensel too..
+          #  solutions2=brute_force_padic_solutions2(2,k,n,a) ##Using this as a filter... got to expand on this concept and add actual hensel too..
+          #  if solutions != solutions2:
+          #      print("solutions: "+str(solutions))
+          #      print("solutios2: "+str(solutions2))
+          #      print("wtf")
+          #      sys.exit()
+            #print(solutions)
+            #print(len(solutions[-1]))
+            if solutions != -1 and len(solutions[-1]) > 0:
+           #     print(str(len(solutions[-1]))+" mod: "+str(solutions[0]))
               #  print("hallo?")
-                blist=build_residues(sbase,n,a,k)
+               # blist=build_residues(sbase,n,a,k)
                # blist.extend(solutions)
              #   print("blist: "+str(blist))
               #  print("solutions: "+str(solutions))
-                blist_otherside,mod_otherside=build_disc_residues(fbase,a,n,k)
+              #  blist_otherside,mod_otherside=build_disc_residues(fbase,a,n,k)
                 #print("mod_otherside: "+str(mod_otherside)+" blist_otherside: "+str(blist_otherside))
-                blist_otherside_t=get_partials(mod_otherside,blist_otherside)
+             #   blist_otherside_t=get_partials(mod_otherside,blist_otherside)
 
 
                 mod=1
@@ -2263,30 +2429,32 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b):
                     root%=mod
 
                     interval=psieve_build_interval(sbase,n,k,mod,root,a)
-                   # np.putmask(interval, interval<threshold, 0)
                     indexlist=np.nonzero(interval)[0]
-                    #temp=interval
-                   # root=lin
-           # print("Checking lin: "+str(lin)+" quad: "+str(quad_can)+" cmod: "+str(cmod)+" u2: "+str(u2)+" u: "+str(u)+" temp: "+str(temp))
 
+           # print("Checking lin: "+str(lin)+" quad: "+str(quad_can)+" cmod: "+str(cmod)+" u2: "+str(u2)+" u: "+str(u)+" temp: "+str(temp))
+                  #  print("k: "+str(k)+" root: "+str(root)+" mod: "+str(mod))
                     ind=0
                     length=len(indexlist)
-                 #   print(indexlist)
+                  #  print(indexlist)
                     while ind < length:# length:  
                         i=int(indexlist[ind])
-               
-               #     while i < 1_000_000:
+                  #  print(interval)
+                  #  i=0
+                  #  while i < len(interval):
                      #   print("hallo??")
-                        krons=[]
+                       # krons=[]
                         for sprime in sbase:
                             if math.gcd(sprime, a)!=1:
                                 continue
-                        #    a_inv=modinv(a,sprime)
+                            #a_inv=modinv(a,sprime)
 
                             disc_otherside=(a*(root+mod*i)**2+4*n*k)%sprime    
-                        #    disc_otherside*=a_inv
-                        #    disc_otherside%=sprime
-                            krons.append(kronecker_symbol(disc_otherside,sprime))
+                          #  disc_otherside*=a_inv
+                           # disc_otherside%=sprime
+                            if kronecker_symbol(disc_otherside,sprime)==-1:
+                                print("super catastrophic error core logic went wrong: "+str(sprime))
+                                sys.exit()
+                         #   krons.append(kronecker_symbol(disc_otherside,sprime))
                         disc_otherside=a*(root+mod*i)**2+4*n*k 
                     #    print(str(disc_otherside)+" i: "+str(i)+" k: "+str(k)+" a: "+str(a)+" mod: "+str(mod)+" krons: "+str(krons))
 
@@ -2304,12 +2472,12 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b):
 
                             if test**2 == disc_otherside:# and (root+mod_otherside*i) != o_b:
                                 ##To do: use blist for marking an interval.. we can use the small prime that we lifted as step size
-                                t=0
-                                while t < len(blist_otherside): ##I'm still thinking on how to incorporate this otherside.. some meet in the middle type algo? I odn't know..
-                                    if test%blist_otherside[t] not in blist_otherside[t+1]:
-                                        print("SUPER FATAL ERROR!!!!!!!!!!!!!!!!!!!!!!!!!!!!! "+str(blist[t])+" "+str(test%blist[t])+" test: "+str(test))
-                                        #sys.exit()
-                                    t+=2
+                               # t=0
+                               # while t < len(blist_otherside): ##I'm still thinking on how to incorporate this otherside.. some meet in the middle type algo? I odn't know..
+                               #     if test%blist_otherside[t] not in blist_otherside[t+1]:
+                               #         print("SUPER FATAL ERROR!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ")#+str(blist[t])+" "+str(test%blist[t])+" test: "+str(test))
+                               #         sys.exit()
+                               #     t+=2
                                 #print("test: "+str(test)+" root: "+str((root+mod_otherside*i))+" mod_otherside: "+str(mod_otherside))
                                 #print("found i (blist): "+str(i)+" new_root (otherside): "+str(new_root)+" mod_otherside: "+str(mod_otherside))
                                 print("****************************************************************************Found one with psieve: "+str(test)+" k: "+str(k)+" a: "+str(a)+" interval[i]: "+str(interval[i]))#,krons)
@@ -2324,7 +2492,7 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b):
                                 found+=1
 
 
-
+                      #  i+=1
                         ind+=1
         if found > 1:
             return found #should be enouhg..
@@ -2340,15 +2508,15 @@ def psieve_factor(b,a,k_o,n,fbase,o_b,hmap2,sbase,ret_array,primelist_f):
 
    
 def psieve(n,ret_array,primelist_f,b,primeslist,a,hmap2,sbase):#(n,fbase,div,hmap2,ret_array):
-    hit=0
-    i=0
-    while i < 2**9: ##To do: just find a small prime as filter that meets this rather then just bail
-        if i**2==a%2**9:
-            hit=1
-            break
-        i+=1
-    if hit ==0:
-        return 0
+   # hit=0
+   # i=0
+   # while i < 2**7: ##To do: use fast root finding + hensel..
+   #     if i**2==a%2**7:
+   #         hit=1
+   #         break
+   #     i+=1
+   # if hit ==0:
+   #     return 0
     found=0
     
     disc=(2*b)**2-4*n
