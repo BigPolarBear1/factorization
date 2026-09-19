@@ -18,10 +18,12 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 
 #### To run from folder "psieve" WORK IN PROGRES...extremely early version:</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 40 -base 500 -debug 0 -lin_size 100 -quad_size 1</br></br>
+To run:  python3 run_qs.py -keysize 30 -base 500 -debug 0 -lin_size 100 -quad_size 1</br></br>
 
 Update: Almost finished. Going for a run first.
 Then I'll add some small prime... where we lift possible solutions p-adically and try to find a set that has a sparse amount of solutions and use that as an initial filter... easy enough.
+
+Update: first commit where I added the above idea.. next I need to add an interval and use the filter as step size for the interval...
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
