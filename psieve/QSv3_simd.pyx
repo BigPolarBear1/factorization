@@ -1987,55 +1987,6 @@ def build_2drootmap(primeslist,hmap,n):
     i=0
     return roots2d
 
-def debug_find_residues(prime,n,b,exp,o_b):
-  
-    klist=[]
-    blist=[]
-    blist.append(prime**exp)
-    klist.append(prime**exp)
-    blist.append([])
-    klist.append([])
-    k=0
-    while k < prime**exp:
-
-        poly=[1,-b,n*k]
-        roots=find_roots_poly(poly,prime)
-        disc=b**2-4*n*k
-        if len(roots)>0 and disc%prime**exp == (o_b**2)%prime**exp:
-            if exp > 1:
-                r=roots[0]
-                polyc=copy.deepcopy(poly)
-                ##To do: If singular take deriv?
-                r=lift_root2(polyc, r, prime, exp)
-                if evaluate(poly,r)%prime**exp ==0:
-                    klist[-1].append(k)
-                    blist[-1].append([b%prime**exp])
-            else:
-                klist[-1].append(k)
-                blist[-1].append([b%prime**exp])
-        k+=1
-    return klist,blist
-def debug_find_residues2(prime,n,b,exp):
-    hmap=[]
-    
-
-    k=0
-    while k < prime**exp:
-        poly=[1,b,-n*k]
-        polyc=copy.deepcopy(poly)
-        roots=find_roots_poly(polyc,prime)
-        if len(roots)>0:
-            if exp > 1:
-                r=roots[0]
-                ##To do: If singular take deriv?
-                r=lift_root2(poly, r, prime, exp)
-                if evaluate(poly,r)%prime**exp ==0:
-                    hmap.append(k)
-            else:
-                hmap.append(k)
-
-        k+=1
-    return hmap
 def debug_find_residues3(prime,n,a,exp,k):
  #   hmap={}
    # klist=[prime**exp,[]]
@@ -2177,78 +2128,6 @@ def brute_force_padic_solutions(prime,k,n,a,max_filter):
         i+=2
     blist[-1].sort()
     #print("solutions len: "+str(len(blist[-1]))+" k: "+str(k))
-    return blist
-def debug_find_residues5(n,blist):
-    prime=2
-   # n=4387
-    k=1
-    brute_force_padic_solutions(prime,k,n)
-    sys.exit()
-  #  n=4387
-  #  print("fffffffff")
-  #  prime=11
-  #  b=148
-  #  poly=[1,-b,n]
-  #  polyc=copy.deepcopy(poly)
-  #  roots=find_roots_poly(polyc,prime)
-  #  print("b: "+str(b)+" roots: "+str(roots))  
-  #  r=roots[0]
-  #  deriv=get_derivative(poly)
-  #  der=evaluate(deriv,r)
-  #  print("derivative: "+str(deriv)+" r: "+str(r))
-  #  poly2=[1,-der,-n]
-  #  r=lift_root2(poly2, r, prime, 2)
-  #  print("poly2: "+str(poly2))
-  #  if evaluate(poly,r)%prime**2 !=0:
-  #      print("something screwed up: "+str(roots))#+" k: "+str(k))
-  #                 # sys.exit(0)
-  #  else:
-  #      print("found one*************************************************8")
-  #  sys.exit()
-    exp=1
-    print("blist: "+str(blist))
-    k=1
- #   hmap={}
-    q=0
-    while q < len(blist):
-    #blist=[prime**exp,[]]
-        prime=blist[q]
-        brute_force_padic_solutions(prime,k,n)
-        #div2=modinv(2,prime)
-        #w=0
-        #while w < len(blist[q+1]):
-        #    b=blist[q+1][w]
-            
-        #    poly=[1,-b,n*k]
-        #    polyc=copy.deepcopy(poly)
-        #    roots=find_roots_poly(polyc,prime)
-        #    print("b: "+str(b)+" roots: "+str(roots))
-        #    if len(roots)>0:
-        #        if len(roots)==2:
-        #            print("ergh something went super wrong")
-        #            sys.exit()
-        #        r=roots[0]
-
-        #        deriv=get_derivative(poly)
-        #        der=evaluate(deriv,r)
-        #        poly2=[1,-der,-n*k]
-
-
-        #        r=lift_root2(poly2, r, prime, 2)
-        #        print("poly2: "+str(poly2))
-        #        if evaluate(poly,r)%prime**2 !=0:
-        #            print("something screwed up: "+str(roots)+" k: "+str(k))
-                   # sys.exit(0)
-        #        else:
-        #            print("found one*************************************************8")
-                    
-        #    w+=1
-        #blist[-1].extend(roots)
-          #  hmap[k]=roots
-           # hmap.append(roots)
-        
-        q+=2
- #   print("4prime: "+str(prime)+" hmap: "+str(blist))
     return blist
 
 def psieve_calc_res_for_prime(prime,n):
