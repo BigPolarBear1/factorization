@@ -25,7 +25,7 @@ Then I'll add some small prime... where we lift possible solutions p-adically an
 
 Update: first commit where I added the above idea.. next I need to add an interval and use the filter as step size for the interval... and the function responsible for building the filter (brute_force_padic_solutions) needs to use hensel instead... and then we can try to find ways to find an as good as possible filter too..
 
-Update: added an interval. Now I need to improve the filter by using hensel... the larger the modulus on that filter (aka the step size of the interval) the more powerful it will be... this cant be very difficult.
+Update: added an interval. Now I need to improve the filter by using hensel... the larger the modulus on that filter (aka the step size of the interval) the more powerful it will be... this cant be very difficult. Valid solutions from blist must also map to valid solutions from blist_otherside .. but I need to brainstorm if one implies the other (if we encode 'a' as the leading coefficient for the discriminant) or if there is any use there.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
