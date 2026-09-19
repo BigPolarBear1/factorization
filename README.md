@@ -25,6 +25,8 @@ Then I'll add some small prime... where we lift possible solutions p-adically an
 
 Update: first commit where I added the above idea.. next I need to add an interval and use the filter as step size for the interval... and the function responsible for building the filter (brute_force_padic_solutions) needs to use hensel instead... and then we can try to find ways to find an as good as possible filter too..
 
+Update: added an interval. Now I need to improve the filter by using hensel... 
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
