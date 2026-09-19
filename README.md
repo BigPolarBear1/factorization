@@ -23,7 +23,7 @@ To run:  python3 run_qs.py -keysize 30 -base 500 -debug 0 -lin_size 100 -quad_si
 Update: Almost finished. Going for a run first.
 Then I'll add some small prime... where we lift possible solutions p-adically and try to find a set that has a sparse amount of solutions and use that as an initial filter... easy enough.
 
-Update: first commit where I added the above idea.. next I need to add an interval and use the filter as step size for the interval...
+Update: first commit where I added the above idea.. next I need to add an interval and use the filter as step size for the interval... and the function responsible for building the filter (brute_force_padic_solutions) needs to use hensel instead... and then we can try to find ways to find an as good as possible filter too..
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
