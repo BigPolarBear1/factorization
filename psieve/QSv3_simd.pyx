@@ -2193,6 +2193,24 @@ def build_disc_residues(fbase,a,n,k):
 
     return blist_otherside,mod_otherside
 
+def psieve_build_interval(sbase,n,k,mod,root,a):
+  #  interval=array.array("i",[1]*1_000_000)
+    interval=np.ones(1_000_000,dtype=np.uint8)
+    i=0
+    while i < len(sbase):
+        prime=sbase[i]
+
+        j=0
+        while j <prime:
+            disc=a*j**2+4*n*k
+            if kronecker_symbol(disc,prime)==-1:
+                
+                dist=solve_lin_con(mod,j-root,prime)
+                interval[dist::prime]=0
+            j+=1
+        i+=1
+    return interval
+
 def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b):
     found=0
     primes_to_check=[]
@@ -2218,16 +2236,20 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b):
             if solutions != -1 and len(solutions[-1])< max_filter and len(solutions[-1]) > 0:
               #  print("hallo?")
                 blist=build_residues(sbase,n,a,k)
-                blist.extend(solutions)
+               # blist.extend(solutions)
              #   print("blist: "+str(blist))
-                
+              #  print("solutions: "+str(solutions))
                 blist_otherside,mod_otherside=build_disc_residues(fbase,a,n,k)
                 #print("mod_otherside: "+str(mod_otherside)+" blist_otherside: "+str(blist_otherside))
                 blist_otherside_t=get_partials(mod_otherside,blist_otherside)
+
+
+                mod=1
                 enum=[]
                 i=0
-                while i < len(blist_otherside_t):
-                    enum.append(blist_otherside_t[i+1])
+                while i < len(solutions):
+                    mod*=solutions[i]
+                    enum.append(solutions[i+1])
                     i+=2
                 #print("enum: "+str(enum))
                 for idx in enumerated_product(*enum):
@@ -2238,48 +2260,61 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b):
                         ind=idx[i]
                         root+=enum[i][ind]
                         i+=1
-                    root%=mod_otherside
-                    i=0
-                    while i < 1_000_000:
+                    root%=mod
+
+                    interval=psieve_build_interval(sbase,n,k,mod,root,a)
+                   # np.putmask(interval, interval<threshold, 0)
+                    indexlist=np.nonzero(interval)[0]
+                    #temp=interval
+                   # root=lin
+           # print("Checking lin: "+str(lin)+" quad: "+str(quad_can)+" cmod: "+str(cmod)+" u2: "+str(u2)+" u: "+str(u)+" temp: "+str(temp))
+
+                    ind=0
+                    length=len(indexlist)
+                 #   print(indexlist)
+                    while ind < length:# length:  
+                        i=int(indexlist[ind])
+               
+               #     while i < 1_000_000:
                      #   print("hallo??")
-                        #krons=[]
-                        #for sprime in sbase:
-                        #    if math.gcd(sprime, a)!=1:
-                        #        continue
+                        krons=[]
+                        for sprime in sbase:
+                            if math.gcd(sprime, a)!=1:
+                                continue
                         #    a_inv=modinv(a,sprime)
 
-                        #    disc_otherside=((root+mod_otherside*i)**2-4*n)%sprime    
+                            disc_otherside=(a*(root+mod*i)**2+4*n*k)%sprime    
                         #    disc_otherside*=a_inv
                         #    disc_otherside%=sprime
-                        #    krons.append(kronecker_symbol(disc_otherside,sprime))
-                        disc_otherside=(root+mod_otherside*i)**2-4*n*k 
+                            krons.append(kronecker_symbol(disc_otherside,sprime))
+                        disc_otherside=a*(root+mod*i)**2+4*n*k 
+                    #    print(str(disc_otherside)+" i: "+str(i)+" k: "+str(k)+" a: "+str(a)+" mod: "+str(mod)+" krons: "+str(krons))
 
 
-
-                        if disc_otherside%mod_otherside !=0:
-                            print('fatal error')
-                            sys.exit()
-                        if disc_otherside%a == 0 and disc_otherside > 0:
-                            disc_otherside//=a
+                      #  if disc_otherside%mod_otherside !=0:
+                      #      print('fatal error')
+                      #      sys.exit()
+                        if 1:#disc_otherside%a == 0 and disc_otherside > 0:
+                           # disc_otherside//=a
                             test=math.isqrt(disc_otherside)
 
 
 
 
 
-                            if test**2 == disc_otherside and (root+mod_otherside*i) != o_b:
+                            if test**2 == disc_otherside:# and (root+mod_otherside*i) != o_b:
                                 ##To do: use blist for marking an interval.. we can use the small prime that we lifted as step size
                                 t=0
-                                while t < len(blist):
-                                    if test%blist[t] not in blist[t+1]:
+                                while t < len(blist_otherside): ##I'm still thinking on how to incorporate this otherside.. some meet in the middle type algo? I odn't know..
+                                    if test%blist_otherside[t] not in blist_otherside[t+1]:
                                         print("SUPER FATAL ERROR!!!!!!!!!!!!!!!!!!!!!!!!!!!!! "+str(blist[t])+" "+str(test%blist[t])+" test: "+str(test))
                                         #sys.exit()
                                     t+=2
                                 #print("test: "+str(test)+" root: "+str((root+mod_otherside*i))+" mod_otherside: "+str(mod_otherside))
                                 #print("found i (blist): "+str(i)+" new_root (otherside): "+str(new_root)+" mod_otherside: "+str(mod_otherside))
-                                print("****************************************************************************Found one with psieve: "+str(test)+" k: "+str(k)+" a: "+str(a))#,krons)
-                                new_root=(root+mod_otherside*i)
-                                poly_val=(new_root)**2-4*n*k 
+                                print("****************************************************************************Found one with psieve: "+str(test)+" k: "+str(k)+" a: "+str(a)+" interval[i]: "+str(interval[i]))#,krons)
+                                new_root=a*(root+mod*i)
+                                poly_val=(new_root)**2+4*n*k*a 
                                 local_factors, value = factorise_fast(poly_val,primelist_f)
 
                                 ret_array[1].append(new_root**2)
@@ -2290,7 +2325,7 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b):
 
 
 
-                        i+=1
+                        ind+=1
         if found > 1:
             return found #should be enouhg..
 
