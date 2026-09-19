@@ -2113,7 +2113,7 @@ def debug_find_residues4(prime,n,exp,k):
     return blist
 
 
-def brute_force_padic_solutions(prime,k,n,a):
+def brute_force_padic_solutions(prime,k,n,a,max_filter):
     ##Add proper hensel later and use this to verify
     solutions=[]
     blist=[]
@@ -2137,6 +2137,7 @@ def brute_force_padic_solutions(prime,k,n,a):
     exp+=1
     while exp < 10:
         new_solutions=[]
+        nsols=0
         i=0
         while i < len(solutions):
             b=solutions[i]
@@ -2157,9 +2158,13 @@ def brute_force_padic_solutions(prime,k,n,a):
                     j+=1
                 if len(new_roots)>0:
                     new_solutions.extend([b,new_roots])
+                    nsols+=1
+                    if nsols>max_filter:
+                        return -1
                 b+=prime**(exp-1)
             i+=2
         solutions=new_solutions
+
         exp+=1
 
     
@@ -2327,11 +2332,11 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b):
                 skip=1
 
         if skip == 0:
-
+            max_filter=30
             ##THIS I WILL REFER TO AS THE FILTER AND WE WILL SET THE STEP SIZE FOR INTERVAL TO THIS!
-            solutions=brute_force_padic_solutions(2,k,n,a) ##Using this as a filter... got to expand on this concept and add actual hensel too..
+            solutions=brute_force_padic_solutions(2,k,n,a,max_filter) ##Using this as a filter... got to expand on this concept and add actual hensel too..
            # print(len(solutions[-1]))
-            if len(solutions[-1])< 30 and len(solutions[-1]) > 0:
+            if solutions != -1 and len(solutions[-1])< max_filter and len(solutions[-1]) > 0:
               #  print("hallo?")
                 blist=build_residues(sbase,n,a,k)
                 blist.extend(solutions)
