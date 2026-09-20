@@ -29,7 +29,7 @@ Update: added an interval. Now I need to improve the filter by using hensel... t
 
 Update: Improved brute_force_padic_solutions(), so it just lifts for as long as we can gain an advantage with the solution density. Next I'll do this for multiple small primes.. then CRT them together... and after that we should use hensel to speed this up... then I can get a better idea of how good of a "filter" we can achieve and find some smart ways to optimize for it rather then testing "k" values one by one.
 
-Update: Bah did some more thinking today. So if in psieve we are looking for ab^2+4Nk ... then the smallest solutions will be near 0. So if we just lift small primes up to a certain bound... and a small solution exists... then its going to show up for each prime... so I probably should try to exploit this fact rather then a interval-based sieving approach. This is how I can actually construct a pure residue based approach and find ways to speed it up...
+Update: Bah did some more thinking today. So if in psieve we are looking for ab^2+4Nk ... then the smallest solutions will be near 0 for b. So if we just lift small primes up to a certain bound... and a small solution exists... then its going to show up for each prime... so I probably should try to exploit this fact rather then a interval-based sieving approach. This is how I can actually construct a pure residue based approach and find ways to speed it up...
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
