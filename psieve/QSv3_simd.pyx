@@ -1384,11 +1384,10 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
               #  print("faclist: "+str(faclist))
                 div=1
                 for odd_exp_factor in faclist:
-                    if odd_exp_factor!=-1:# and odd_exp_factor > 2:
-                        div*=odd_exp_factor
-                        div_fac.append(odd_exp_factor)
+                    div*=odd_exp_factor
+                    div_fac.append(odd_exp_factor)
 
-
+                #div*=-1
                 #    break
              #   div*=3
                # div_fac.append(3)
@@ -1398,7 +1397,7 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                # if bitlen(div)<keysize*0.50: ##Dont know if this matters.. another parameter to test with..
                   #  print("PSIEVE1")
                 local_factors2, value2 = factorise_fast(new_root,primelist_f)
-                if poly_val >0:# and bitlen(div) < keysize/2 and value2==1:# and len(div_fac)==1:
+                if 1:#poly_val < 0 and bitlen(div) < keysize/2:# and value2==1:# and len(div_fac)==1:
                     
                     print("[i]Trying psieve")
                     psievefound=psieve(n,ret_array,primelist_f,new_root,primeslist,div,hmap2,sbase)
@@ -2373,6 +2372,11 @@ def psieve_build_interval(sbase,n,k,mod,root,a):
             if kronecker_symbol(disc,prime)==-1:
                 
                 dist=solve_lin_con(mod,j-root,prime)
+             #   diff=(dist-start_ind)%prime
+             #   dist2=start_ind+diff
+              #  if dist2%prime != dist:
+             #       print("fatal error")
+
                 while dist < len(interval):
                     interval[dist]=0
                     dist+=prime
@@ -2404,7 +2408,7 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b):
             solutions=[]
             pcan=2
             total_combo=1
-            while bitlen(sol_mod)<keysize//2 and pcan < 10:
+            while bitlen(sol_mod)<keysize//4 and pcan < 10:
                 if isPrime(pcan,5)==1 and a%pcan !=0:
            # max_filter=100
             ##THIS I WILL REFER TO AS THE FILTER AND WE WILL SET THE STEP SIZE FOR INTERVAL TO THIS!
@@ -2426,7 +2430,7 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b):
                   #      sys.exit()
 
                 pcan+=1
-            if bitlen(sol_mod)<keysize//2 or total_combo > 1_000:
+            if bitlen(sol_mod)<keysize//4 or total_combo > 1_000:
                 k+=1
                 continue
          #   print("sol_mod: "+str(sol_mod)+" total_combo: "+str(total_combo))
@@ -2469,6 +2473,14 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b):
                         root+=enum[i][ind]
                         i+=1
                     root%=mod
+                    diff=abs((4*n*k)//a)
+                    diff=math.isqrt(diff)
+                    rdiff=(root-diff)%mod
+                    diff+=rdiff
+                    if diff%mod != root:
+                        print("fatal error")
+                        sys.exit()
+                    bstart=diff-(mod*500)
 
                     interval=psieve_build_interval(sbase,n,k,mod,root,a)
                     indexlist=np.nonzero(interval)[0]
@@ -2502,7 +2514,8 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b):
                                 sys.exit()
                          #   krons.append(kronecker_symbol(disc_otherside,sprime))
                         disc_otherside=a*(root+mod*i)**2+4*n*k 
-                    #    print(str(disc_otherside)+" i: "+str(i)+" k: "+str(k)+" a: "+str(a)+" mod: "+str(mod)+" krons: "+str(krons))
+                      #  if i==500:
+                       #     print(str(bitlen(disc_otherside))+" i: "+str(i))#+" k: "+str(k)+" a: "+str(a)+" mod: "+str(mod)+" krons: "+str(krons))
 
 
                       #  if disc_otherside%mod_otherside !=0:
@@ -2510,7 +2523,7 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b):
                       #      sys.exit()
                         if 1:#disc_otherside%a == 0 and disc_otherside > 0:
                            # disc_otherside//=a
-                            test=math.isqrt(disc_otherside)
+                            test=math.isqrt(abs(disc_otherside))
 
 
 
@@ -2526,7 +2539,7 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b):
                                #     t+=2
                                 #print("test: "+str(test)+" root: "+str((root+mod_otherside*i))+" mod_otherside: "+str(mod_otherside))
                                 #print("found i (blist): "+str(i)+" new_root (otherside): "+str(new_root)+" mod_otherside: "+str(mod_otherside))
-                                print("****************************************************************************Found one with psieve: "+str(test)+" k: "+str(k)+" a: "+str(a)+" interval index: "+str(i))#,krons)
+                                print("****************************************************************************Found one with psieve: "+str(test)+" k: "+str(k)+" a: "+str(a)+" interval index: "+str(i)+" interval[i]: "+str(interval[i]))#,krons)
                                 new_root=a*(root+mod*i)
                                 poly_val=(new_root)**2+4*n*k*a 
                                 local_factors, value = factorise_fast(poly_val,primelist_f)
@@ -2547,7 +2560,7 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b):
 
     return found
 
-def psieve_factor(b,a,k_o,n,fbase,o_b,hmap2,sbase,ret_array,primelist_f):
+def psieve_factor(a,k_o,n,fbase,o_b,hmap2,sbase,ret_array,primelist_f):
     found=0
     found+=find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b)
     return found
@@ -2565,21 +2578,21 @@ def psieve(n,ret_array,primelist_f,b,primeslist,a,hmap2,sbase):#(n,fbase,div,hma
    #     return 0
     found=0
     
-    disc=(2*b)**2-4*n
+   # disc=(2*b)**2-4*n
     #print("b: "+str(b)+" a: "+str(a)+" disc: "+str(disc))
-    disc//=a 
-    disc_sqr=math.isqrt(disc)
-    if disc_sqr**2 != disc:
-        print("fatal error in psieve()")
-        return 0
-    disc2=a*disc_sqr**2+4*n
-    if math.isqrt(disc2)!= 2*b:
-        print("2fatal error in psieve()")
-        return 0
+   # disc//=a 
+   # disc_sqr=math.isqrt(abs(disc))
+   # if disc_sqr**2 != disc:
+   #     print("fatal error in psieve()")
+   #     return 0
+   # disc2=a*disc_sqr**2+4*n
+   # if math.isqrt(disc2)!= 2*b:
+   #     print("2fatal error in psieve()")
+   #     return 0
 
      
   #  print("disc2: "+str(disc2))
-    found+=psieve_factor(disc_sqr,a,1,n,primeslist,2*b,hmap2,sbase,ret_array,primelist_f)
+    found+=psieve_factor(a,1,n,primeslist,2*b,hmap2,sbase,ret_array,primelist_f)
    
     return found
 
