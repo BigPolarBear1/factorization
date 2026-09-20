@@ -29,6 +29,8 @@ Update: added an interval. Now I need to improve the filter by using hensel... t
 
 Update: Improved brute_force_padic_solutions(), so it just lifts for as long as we can gain an advantage with the solution density. Next I'll do this for multiple small primes.. then CRT them together... and after that we should use hensel to speed this up... then I can get a better idea of how good of a "filter" we can achieve and find some smart ways to optimize for it rather then testing "k" values one by one.
 
+Update: Added some logic for a better "filter" ... from testing however.. we should definitely work with ab^2-4Nk rather than ab^2+4Nk .. because squares become harder to find the bigger the number... so we want a small interval near the optimal candidates for ab^2-4Nk and then just keep iterating k. The advantage that we have is that we need a factor base of about 30-40 primes at most, regardless of bitlength. This does allow us to sieve quicly and effectively over a small interval.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
