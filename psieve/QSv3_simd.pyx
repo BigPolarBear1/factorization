@@ -2092,7 +2092,7 @@ def brute_force_padic_solutions2(prime,k,n,a):
             solutions.extend([b,roots,0])
         b+=1
    # print("solutions: "+str(solutions))
-    max_lift=15
+    max_lift=6
     exp+=1
     while exp < max_lift:
         am_to_lift=0
@@ -2198,7 +2198,16 @@ def brute_force_padic_solutions(prime,k,n,a):
             solutions.extend([b,roots,0])
         b+=1
   #  print("solutions: "+str(solutions))
-    max_lift=15
+    if prime == 2:
+        max_lift=10
+    elif prime == 3:
+        max_lift=8
+    elif prime == 5:
+        max_lift=5
+    elif prime == 7:
+        max_lift=4
+    else:
+        max_lift=3
     exp+=1
     while exp < max_lift:
         am_to_lift=0
@@ -2350,19 +2359,23 @@ def build_disc_residues(fbase,a,n,k):
     return blist_otherside,mod_otherside
 
 def psieve_build_interval(sbase,n,k,mod,root,a):
-  #  interval=array.array("i",[1]*1_000_000)
-    interval=np.ones(100_000,dtype=np.uint8)
+    interval=array.array("i",[1]*1_000)
+  #  interval=np.ones(10_000,dtype=np.uint8)
     i=0
     while i < len(sbase):
         prime=sbase[i]
-
+        if mod%prime==0:
+            i+=1
+            continue
         j=0
         while j <prime:
             disc=a*j**2+4*n*k
             if kronecker_symbol(disc,prime)==-1:
                 
                 dist=solve_lin_con(mod,j-root,prime)
-                interval[dist::prime]=0
+                while dist < len(interval):
+                    interval[dist]=0
+                    dist+=prime
             j+=1
         i+=1
     return interval
@@ -2386,19 +2399,42 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b):
                 skip=1
 
         if skip == 0:
-            print("[i]Checking k: "+str(k))
+            #print("[i]Checking k: "+str(k))
+            sol_mod=1
+            solutions=[]
+            pcan=2
+            total_combo=1
+            while bitlen(sol_mod)<keysize//2 and pcan < 10:
+                if isPrime(pcan,5)==1 and a%pcan !=0:
            # max_filter=100
             ##THIS I WILL REFER TO AS THE FILTER AND WE WILL SET THE STEP SIZE FOR INTERVAL TO THIS!
-            solutions=brute_force_padic_solutions(2,k,n,a) ##Using this as a filter... got to expand on this concept and add actual hensel too..
-          #  solutions2=brute_force_padic_solutions2(2,k,n,a) ##Using this as a filter... got to expand on this concept and add actual hensel too..
-          #  if solutions != solutions2:
-          #      print("solutions: "+str(solutions))
-          #      print("solutios2: "+str(solutions2))
-          #      print("wtf")
-          #      sys.exit()
+                   # print("building pcan: "+str(pcan))
+                    temp_solutions=brute_force_padic_solutions(pcan,k,n,a) ##Using this as a filter... got to expand on this concept and add actual hensel too..
+                    
+                    density=(temp_solutions[0]/len(temp_solutions[1]))
+                    
+                    if temp_solutions != -1 and len(temp_solutions[-1]) > 0 and density>4:
+                      #  print("density: "+str(density)+" prime: "+str(pcan)+" prime^e: "+str(temp_solutions[0]))
+                        solutions.extend(temp_solutions)
+                        sol_mod*=temp_solutions[0]
+                        total_combo*=len(temp_solutions[1])
+                  #  solutions2=brute_force_padic_solutions2(pcan,k,n,a) ##Using this as a filter... got to expand on this concept and add actual hensel too..
+                  #  if temp_solutions != solutions2:
+                  #      print("solutions: "+str(solutions))
+                  #      print("solutios2: "+str(solutions2))
+                  #      print("wtf")
+                  #      sys.exit()
+
+                pcan+=1
+            if bitlen(sol_mod)<keysize//2 or total_combo > 1_000:
+                k+=1
+                continue
+         #   print("sol_mod: "+str(sol_mod)+" total_combo: "+str(total_combo))
+            solutions=get_partials(sol_mod,solutions)
+
             #print(solutions)
             #print(len(solutions[-1]))
-            if solutions != -1 and len(solutions[-1]) > 0:
+            
            #     print(str(len(solutions[-1]))+" mod: "+str(solutions[0]))
               #  print("hallo?")
                # blist=build_residues(sbase,n,a,k)
@@ -2408,16 +2444,22 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b):
               #  blist_otherside,mod_otherside=build_disc_residues(fbase,a,n,k)
                 #print("mod_otherside: "+str(mod_otherside)+" blist_otherside: "+str(blist_otherside))
              #   blist_otherside_t=get_partials(mod_otherside,blist_otherside)
-
+            if 1:
 
                 mod=1
                 enum=[]
+                total_combo=1
                 i=0
                 while i < len(solutions):
                     mod*=solutions[i]
                     enum.append(solutions[i+1])
+                    total_combo*=len(solutions[i+1])
                     i+=2
+                if mod != sol_mod:
+                    print("catasrophic error")
+                    sys.exit()
                 #print("enum: "+str(enum))
+                #print("total_combo: "+str(total_combo))
                 for idx in enumerated_product(*enum):
 
                     root=0
@@ -2433,18 +2475,22 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b):
 
            # print("Checking lin: "+str(lin)+" quad: "+str(quad_can)+" cmod: "+str(cmod)+" u2: "+str(u2)+" u: "+str(u)+" temp: "+str(temp))
                   #  print("k: "+str(k)+" root: "+str(root)+" mod: "+str(mod))
-                    ind=0
-                    length=len(indexlist)
+                  #  ind=0
+                  #  length=len(indexlist)
                   #  print(indexlist)
-                    while ind < length:# length:  
-                        i=int(indexlist[ind])
+                 #   while ind < length:# length:  
+                  #      i=int(indexlist[ind])
+                       # print("Found one at index: "+str(i))
                   #  print(interval)
-                  #  i=0
-                  #  while i < len(interval):
+                    i=0
+                    while i < len(interval):
+                        if interval[i]==0:
+                            i+=1
+                            continue
                      #   print("hallo??")
                        # krons=[]
                         for sprime in sbase:
-                            if math.gcd(sprime, a)!=1:
+                            if math.gcd(sprime, a)!=1 or mod%sprime ==0:
                                 continue
                             #a_inv=modinv(a,sprime)
 
@@ -2480,7 +2526,7 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b):
                                #     t+=2
                                 #print("test: "+str(test)+" root: "+str((root+mod_otherside*i))+" mod_otherside: "+str(mod_otherside))
                                 #print("found i (blist): "+str(i)+" new_root (otherside): "+str(new_root)+" mod_otherside: "+str(mod_otherside))
-                                print("****************************************************************************Found one with psieve: "+str(test)+" k: "+str(k)+" a: "+str(a)+" interval[i]: "+str(interval[i]))#,krons)
+                                print("****************************************************************************Found one with psieve: "+str(test)+" k: "+str(k)+" a: "+str(a)+" interval index: "+str(i))#,krons)
                                 new_root=a*(root+mod*i)
                                 poly_val=(new_root)**2+4*n*k*a 
                                 local_factors, value = factorise_fast(poly_val,primelist_f)
@@ -2492,8 +2538,8 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b):
                                 found+=1
 
 
-                      #  i+=1
-                        ind+=1
+                        i+=1
+                      #  ind+=1
         if found > 1:
             return found #should be enouhg..
 
@@ -2538,7 +2584,7 @@ def psieve(n,ret_array,primelist_f,b,primeslist,a,hmap2,sbase):#(n,fbase,div,hma
     return found
 
 def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,primeslist2,resmaps):
-    sbase=copy.deepcopy(primeslist[0:40])
+    sbase=copy.deepcopy(primeslist[0:20])
    # print("fbase: "+str(fbase))
     print("[i]Building psieve Residue Map (to do: some duplication here from merging two algos, fix later)")
     hmap2=[]#psieve_create_hashmap(n,sbase) ##For psieve related code..
