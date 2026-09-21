@@ -20,16 +20,9 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 1000 -debug 0 -lin_size 100 -quad_size 1</br></br>
 
-Update: Almost finished. Going for a run first.
-Then I'll add some small prime... where we lift possible solutions p-adically and try to find a set that has a sparse amount of solutions and use that as an initial filter... easy enough.
+Most of the novel logic is situated in find_good_k() .. this is an ongoing project to find a completely novel method for sieving. The idea is to search for a b-smooth with a large square in it to complete an intial b-smooth found with an SIQS variant. 
 
-Update: first commit where I added the above idea.. next I need to add an interval and use the filter as step size for the interval... and the function responsible for building the filter (brute_force_padic_solutions) needs to use hensel instead... and then we can try to find ways to find an as good as possible filter too..
-
-Update: added an interval. Now I need to improve the filter by using hensel... the larger the modulus on that filter (aka the step size of the interval) the more powerful it will be... this cant be very difficult. Valid solutions from blist must also map to valid solutions from blist_otherside .. but I need to brainstorm if one implies the other (if we encode 'a' as the leading coefficient for the discriminant) or if there is any use there.
-
-Update: Improved brute_force_padic_solutions(), so it just lifts for as long as we can gain an advantage with the solution density. Next I'll do this for multiple small primes.. then CRT them together... and after that we should use hensel to speed this up... then I can get a better idea of how good of a "filter" we can achieve and find some smart ways to optimize for it rather then testing "k" values one by one.
-
-Update: Bah did some more thinking today. So if in psieve we are looking for ab^2+4Nk ... then the smallest solutions will be near 0 for b. So if we just lift small primes up to a certain bound... and a small solution exists... then its going to show up for each prime... so I probably should try to exploit this fact rather then a interval-based sieving approach. This is how I can actually construct a pure residue based approach and find ways to speed it up...
+I'll keep pushing updates.. unless someone wants to hire me I'm happy to take my research private: big_polar_bear1@proton.me
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
