@@ -20,7 +20,7 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 1000 -debug 0 -lin_size 100 -quad_size 1</br></br>
 
-Most of the novel logic is situated in find_good_k() .. this is an ongoing project to find a completely novel method for sieving. The idea is to search for a b-smooth with a large square in it to complete an intial b-smooth found with an SIQS variant. 
+Most of the novel logic is situated in find_good_k() .. this is an ongoing project to find a completely novel method for sieving. The idea is to search for a b-smooth with a large square in it to complete an intial b-smooth found with an SIQS variant. Basically sieving for quadratic residues rather then divisibility.. because that way we can operate a much small "factor base".
 
 I'll keep pushing updates.. unless someone wants to hire me I'm happy to take my research private: big_polar_bear1@proton.me
 
