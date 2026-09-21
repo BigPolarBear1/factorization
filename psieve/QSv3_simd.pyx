@@ -840,446 +840,6 @@ def find_roots_poly(f, p):
         del g[-1]
     return r + roots(g, p)
 
-
-
-
-def solve_quadratic(a,b,c):
-    d=b**2-4*a*c
-    if d < 0:
-        return None
-    s = math.isqrt(d)# d**0.5
-    return ((-b+s)//(2*a)), ((-b-s)//(2*a))
-
-def create_root_map(mod_fac,n,k,poly,ind):
-    resmap=[]
-    i=0
-    while i < len(mod_fac):
-        resmap.append({})
-        factor=mod_fac[i]
-        lin=0
-        while lin < factor:
-        #print("Building factor: "+str(factor))
-
-            polyc=copy.deepcopy(poly)
-            polyc[ind]=lin
-            roots=find_roots_poly(polyc, factor)
-            if len(roots)>0:
-                for r in roots:
-                    try:    
-                        res=resmap[-1][r]
-                        res.append(lin)
-                    except Exception as e:
-                        resmap[-1][r]=[lin]
-
-            lin+=1
-        i+=1
-    return resmap
-
-
-def closest_integer_root(e, N):
-    approx = N**(1.0/e)
-    base = int(approx)
-    candidates = {base-1,base,base+1}
-    candidates = {c for c in candidates if c >= 0}
-    best = min(candidates, key=lambda x: abs(x**e-N))
-    return best
-
-cdef binomial_coeffs_fast(y, n):
-    coeffs=[1]                
-    c=1
-    yk=1
-    for k in range(1, n):
-        c=c*(n-k+1)//k 
-        yk*=y                
-        coeffs.append(c*yk)
-    return coeffs
-
-def fac2resmapb(mdfac,n,k,degree,predefined_range):
-    predef=copy.deepcopy(predefined_range)
-    i=0
-    while i < len(predefined_range):
-        if predef[i]>mdfac:
-            predef[i]=mdfac
-
-        i+=1
-
-    if mdfac == -1 or mdfac == 2:
-        return {}
-    resmap={}
-
-
-    ranges = [range(0, limit) for limit in predef]
- #   print("ranges: "+str(ranges))
-
-    for combo in itertools.product(*ranges):
-        
-        cur=list(combo)+[-n*k]
-        if cur[0]==0: ##to do: Probably should just add code to solve a lienar congruence instead
-            continue
-
-        roots=find_roots_poly(cur, mdfac)
-        if len(roots)>0:
-            for root in roots:
-                pval=evaluate(list(combo)+[-n*k],root)
-           #     print("added: "+str(co+list(combo)+[-n*k])+" root: "+str(root))
-                if pval%mdfac!=0:
-                    print("epic fail")
-                    sys.exit()
-                try:
-                    res=resmap[root]
-                    res.append(list(combo))
-                except Exception as e: 
-                    resmap[root]=[list(combo)]
-
-    return resmap
-
-def fac2resmap2b(mdfac,n,k,degree,poly):
-    tot=0
-    for co in poly:
-        tot+=co%mdfac
-    if tot == 0:
-        return {},{}
-
-    if mdfac == -1 or mdfac == 2:
-        return {}
-    resmap={}
-    resmap2={}
-
-    cur=copy.deepcopy(poly)
- #   print("cur: "+str(cur)+" mdfac: "+str(mdfac))
-        
-    roots=find_roots_poly(cur, mdfac)
-       # print("cur: "+str(cur)+" combo: "+str(combo)+" prime: "+str(mdfac)+" roots: "+str(roots))
-    if len(roots)>0:
-        for root in roots:
-            try:
-                res=resmap[tuple(poly)]
-                res.append(root)
-            except Exception as e: 
-                resmap[tuple(poly)]=[root]
-    cur=copy.deepcopy(poly)
-
-    roots=find_roots_poly(cur+[-n*k], mdfac)
-       # print("cur: "+str(cur)+" combo: "+str(combo)+" prime: "+str(mdfac)+" roots: "+str(roots))
-    if len(roots)>0:
-        for root in roots:
-            pval=evaluate(poly+[-n*k],root)
-            if pval%mdfac != 0:
-                 #   print("todo: some bug we need to fix eventually.. "+str(list(combo))+" mdfac: "+str(mdfac)+" root: "+str(root))
-                continue
-            try:
-                res=resmap2[tuple(poly)]
-                res.append(root)
-            except Exception as e: 
-                resmap2[tuple(poly)]=[root]
-
-    return resmap,resmap2
-
-def fac2resmap(mdfac,n,k,degree,co):
-    if mdfac == -1 or mdfac == 2:
-        return {}
-    resmap={}
-    coeff=[]
-    d=degree
-    d_ind=0
-    while d_ind < d-len(co):
-        coeff.append(0)
-        d_ind+=1
-
-    ranges = [range(start, mdfac) for start in coeff[:]]
-    for combo in itertools.product(*ranges):
-        cur=co+list(combo)+[-n*k]
-        roots=find_roots_poly(cur, mdfac)
-        if len(roots)>0:
-            for root in roots:
-                pval=evaluate(co+list(combo)+[-n*k],root)
-           #     print("added: "+str(co+list(combo)+[-n*k])+" root: "+str(root))
-                if pval%mdfac!=0:
-                    print("epic fail")
-                    sys.exit()
-                try:
-                    res=resmap[root]
-                    res.append(co+list(combo))
-                except Exception as e: 
-                    resmap[root]=[co+list(combo)]
-
-    return resmap
-
-def f2res(mdfac,n,k,degree,predefined_range):
-    predef=copy.deepcopy(predefined_range)
-    i=0
-    while i < len(predefined_range):
-        if predef[i]>mdfac:
-            predef[i]=mdfac
-
-        i+=1
-    if mdfac == -1 or mdfac == 2:
-        return []
-    resmap={}
-
-
-    ranges = [range(0, limit) for limit in predef]
- #   print("ranges: "+str(ranges))
-
-    for combo in itertools.product(*ranges):
-        cur=list(combo)+[-n*k]
-        roots=find_roots_poly(cur, mdfac)
-        if len(roots)>0:
-            for root in roots:
-                pval=evaluate(list(combo)+[-n*k],root)
-           #     print("added: "+str(co+list(combo)+[-n*k])+" root: "+str(root))
-                if pval%mdfac!=0:
-                    print("epic fail")
-                    sys.exit()
-
-                try:
-                    res=resmap[tuple(list(combo))]
-                    res.append(root)
-                except Exception as e:
-                    resmap[tuple(list(combo))]=[root]
-             #   resmap.append([root,co+list(combo)])
-                    #res=resmap[root]
-                   # res.append(co+list(combo))
-
-                   # resmap[root]=[co+list(combo)]
-
-    return resmap
-
-def fac2resmap2(mdfac,degree):
-    if mdfac == -1 or mdfac == 2:
-        return {}
-    resmap={}
-    predef=[(0,mdfac),(0,mdfac)]##to do: change when we change degree
-    ranges = [range(start, limit) for (start,limit) in predef]
-    for combo in itertools.product(*ranges):
-
-
-
-
-        cur=list(combo)
-        i=0
-        while i < len(cur):
-            cur[i]=cur[i]%mdfac
-            i+=1
-
-        if combo[0]%mdfac ==0:  ###to do: Solve linear congruence...
-            continue
-        tot=0
-        for c in cur: ##To do: Just refactor this entire thing eventually.. this is sloppy
-            tot+=c%mdfac 
-        if tot == 0:
-            continue
-     #   print("cur: "+str(cur)+" mdfac: "+str(mdfac))
-        cur_c=copy.deepcopy(cur)
-        roots=find_roots_poly(cur_c, mdfac)
-        if len(roots)>0:
-            for root in roots:
-                try:
-                    res=resmap[root]
-                    res.append(cur)
-                except Exception as e: 
-                    resmap[root]=[cur]
-
-    return resmap
-
-def cpartial(r1,prime,mod):
-
-    aq = mod // prime
-    invaq = modinv(aq%prime, prime)
-    gamma = r1 * invaq % prime
-
-    return aq*gamma
-
-def new_coeffs(f, x):
-    b = 1
-    tmp = [i for i in f]
-    for i in range(len(f)-1):
-        tmp[i] *= b
-        b *= x
-    tmp[-1] *= b
-    return tmp
-
-def calculate_poly_residues(mdfac,degree,c):
-    if mdfac == -1 or mdfac == 2:
-        return {}
-    resmap={}
-    predef=[(1,2),(0,mdfac)]##to do: change when we change degree
-    ranges = [range(start, limit) for (start,limit) in predef]
-    for combo in itertools.product(*ranges):
-        cur=list(combo)+[c]
-        if combo[0]%mdfac ==0:  ###to do: Solve linear congruence...
-            continue
-
-     #   print("cur: "+str(cur)+" mdfac: "+str(mdfac))
-        cur_c=copy.deepcopy(cur)
-        roots=find_roots_poly(cur_c, mdfac)
-        if len(roots)>0:
-            for root in roots:
-                try:
-                    res=resmap[root]
-                    res.append(cur)
-                except Exception as e: 
-                    resmap[root]=[cur]
-    print("resmap: "+str(resmap))
-    sys.exit()
-
-def find_same(n,local_factors,poly_val,primelist_f,ret_array,primeslist,resmaps,valid_quads,valid_quads_factors,qlist,new_root):
-    ###TO DO: We dont just want to sieve here.. we actually need to build a residue map for the REGION that's being sieved here.. and try to find a valid solution where f(x) is reducible. 
-    ###This setup actually solved my problem with CRT causing an explosion in possibilities... since we can set a bound for residues now. 
- 
- 
-    count=0
-
-    ###Support for degree 4 not implemented... might experiment in the future
-    ###Edit: Yea, we will need to go up in degree
-    degree=2
-    found=0
-
-    max_iterations=10
-  #  local_factors.extend(primeslist[0:10])
-    k=1
-    while k < 100:
-       # print(k)
-        seen=[]
-        t=0
-        while t < max_iterations:
-            mod=1
-            mod_fac=[]
-            mod_r=[]
-
-    
-            leng=primelist_f[0]
-            mod_ind=[]
-            t2=0
-       # print("local factors: "+str(local_factors))
-            while t2 < max_iterations:
-                i = random.randrange(len(local_factors))
-                fac=local_factors[i]
-                if fac not in mod_fac and fac != -1 and fac !=2 and jacobi((-n*k)%fac,fac)==1 and k%fac!=0:
-                 #   calculate_poly_residues(fac,2,n*k)
-                    if bitlen(mod*fac)>(bitlen(n*k)*0.50):
-                        break 
-                    mod_ind.append(len(mod_fac))
-                    mod_fac.append(fac)
-                    mod_r.append(fac)
-
-                    roots=find_roots_poly([1,0,n*k],fac)
-                    if len(roots) == 0:
-                        print("oops")
-                        sys.exit()
-                    mod_r.append([])
-                    for root in roots:
-                      #  root2=lift_root2([1,0,n*k], root, fac, 2)
-                      #  if evaluate([1,0,n*k],root2)%(fac**2)!=0:
-                      #      print("fail: "+str(fac)+" roots: "+str(roots)+" root2: "+str(root2)+" k: "+str(k))
-                      #      sys.exit()
-
-                        mod_r[-1].append(root)
-                    mod*=fac
-                    if mod_fac[mod_ind[-1]] != fac:
-                        print("fatal")
-                        sys.exit() 
-                t2+=1  
-            diff=bitlen(mod)-(bitlen(n*k)*0.50)
-            if abs(diff) > 3 or mod in seen:
-                t+=1
-                continue
-           # print("mod_r: "+str(mod_r))
-            partials=get_partials(mod,mod_r)
-      #  tot=0
-            i=0
-            enum=[]
-            while i < len(partials):
-           # tot+=partials[i+1][0]
-                enum.append(partials[i+1])
-                i+=2
-            seen.append(mod)
-            for combo in itertools.product(*enum):
-                tot=0
-                for to in combo:
-                    tot+=to
-                tot%=(mod)
-        
-                if (tot**2+n*k)%mod !=0:
-                    print("fatal")
-                    sys.exit()
-            
-
-              #  print("[i]Looking for: "+str(local_factors)+" mod bits: "+str(bitlen(mod))+" original pval: "+str(poly_val)+" root: "+str(new_root)+" partials: "+str(partials))
-                y_start=mod#round(n**(1/degree))#y_start//2#round(n**0.25)#y_start//2
-        
-                co_sieve_len=4
-                
-                co_start=-2
-                co_ind=co_start
-                while co_ind < co_start+co_sieve_len:
-
-                    y=y_start+co_ind*(mod)
-                    co=binomial_coeffs_fast(y, degree)
-                    offset=tot#+mod
-                    constant=-(n*k-((y)**degree-((y)-offset)**degree))
-                    f_x=co+[constant]
-                  #  f_x=new_coeffs(f_x_temp,b)
-                    if f_x[-1]%mod !=0:
-                        print("blah1")
-                        sys.exit()
-
-                    g_x=[f_x[0],(((y)*2)-offset)]
-                    h_x=[1,offset]
-                    i_x=poly_prod(g_x,h_x)
-                    disc1=f_x[1]**2-4*(f_x[2]*f_x[0])
-                    disc2=i_x[1]**2-4*(i_x[2]*i_x[0])
-                    disc_sqr2=math.isqrt(disc2)
-                    fx_eval=evaluate(f_x,-y)
-                    gx_eval=evaluate(g_x,-y)
-                    hx_eval=evaluate(h_x,-y)
-                    ix_eval=evaluate(i_x,-y)
-                 #   for fac in mod_fac:
-                     #   roots=find_roots_poly(f_x,fac)
-                     #   roots2=find_roots_poly(i_x,fac)
-                    #    df_x=get_derivative(f_x)
-                    #    dfx_eval=evaluate(df_x,-y)
-                    #    f_x2=[f_x[0],dfx_eval,f_x[2]]
-                    #    fx2_eval=evaluate(f_x2,-y)
-                    #    roots2=find_roots_poly(f_x2,fac)
-                      #  print("fac: "+str(fac)+" roots: "+str(roots)+" roots2: "+str(roots2)+" f_x: "+str(f_x)+" i_x: "+str(i_x)+" df_x: "+str(df_x)+" f_x2: "+str(f_x2))
-                    ####NOTE: We can lift with either f(x) or i(x) ... 
-
-
-                    if disc_sqr2**2 != disc2:
-                        print("something wentwrong")
-                        sys.exit()
-                    if disc1%(mod*4)!=0:
-                        print("something went wrong")
-                        sys.exit()
-                    if math.isqrt(-ix_eval)!= disc_sqr2//2:
-                        print("oops")
-                        sys.exit()
-                    if (-fx_eval)*4!=disc1:
-                        print("something went wrong: ")
-                        sys.exit
-                  #  print("disc1: "+str(disc1//(mod*4))+" disc_sqr2: "+str(disc_sqr2)+" f_x: "+str(f_x)+" co_ind: "+str(co_ind)+" bits: "+str(bitlen(disc1//(mod*4)))+" k: "+str(k)+" mod: "+str(mod))
-
-                    local_factors4, value4,seen_primes4 = factorise_fast2(disc1,primelist_f)
-                    if value4 ==1 and local_factors4 not in ret_array[2]:# and math.gcd(disc2,b)==1:
-                        print("found one in find_same: "+str(len(ret_array[0]))+"/"+str((base+10))+" k: "+str(k)+" DISC(fx): "+str(disc1)+" DISC(gx)**0.5: "+str(disc_sqr2)+" fx_eval: "+str(fx_eval)+" gx_eval: "+str(gx_eval)+" hx_eval: "+str(hx_eval)+" ix_eval: "+str(ix_eval)+" f_x: "+str(f_x)+" g_x: "+str(g_x)+" h_x: "+str(h_x)+" i_x: "+str(i_x)+" y: "+str(y))
-                        if (disc2)%n!=(disc1)%n:
-                            print("wtf")
-                            sys.exit()
-                        found+=1
-                    #    print("disc1: "+str(disc1)+" disc2: "+str(disc2))
-                        ret_array[1].append(disc2)
-                        ret_array[0].append(disc1)
-                        ret_array[2].append(local_factors4)
-                        ret_array[3].append([])
-                        if len(ret_array[0])>(base+10):
-                            return found   
-
-
-                    co_ind+=1
-        k+=1
-    return found
-
 cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,partials,lin,cmod,factor_ranking,fb_map,bSeenOnly,seen_factors,interval,primeslist,resmaps,valid_quads,valid_quads_factors,qlist,primelist,hmap2,sbase):#,lin,cmod,sum_list):
     linsize=lin_sieve_size
     if bSeenOnly==1:
@@ -1986,82 +1546,6 @@ def build_2drootmap(primeslist,hmap,n):
     i=0
     return roots2d
 
-def debug_find_residues3(prime,n,a,exp,k):
- #   hmap={}
-   # klist=[prime**exp,[]]
-    blist=[prime**exp,[]]
-  
-    b=0
-    sq=[1,0,-a]
-    sqr=find_roots_poly(sq, prime) 
-    if len(sqr)==0:
-        return []
- #   for sqr_r in sqr:
-   # sqr_r=sqr[0]
-   # sqr_r=lift_root2([1,0,-a], sqr_r, prime, 2)
-      #  print("sqr_r: "+str(sqr_r))
-    while b < prime**exp:
-        poly=[1,b*a,-n*a*k]
-        polyc=copy.deepcopy(poly)
-        roots=find_roots_poly(polyc,prime)
-      #  if b == 2 and len(roots)==2:
-        #    print("roots: "+str(roots)+" b: "+str(b)+" prime**exp: "+str(prime**exp))
-        if len(roots)>0: ##to do: singular??
-            i=0
-            while i < len(roots):
-                #deriv=get_derivative(poly)
-               # der=evaluate(deriv,roots[i])
-               # poly2=[1,-der*sqr_r,n]
-                roots[i]=lift_root2(poly, roots[i], prime, exp)
-
-                if evaluate(poly,roots[i])%prime**exp!=0:
-             #   if (roots[i]**2-4*n*k)%prime**exp !=0:
-                    print("something screwed up: "+str(roots)+" k: "+str(k))
-                    sys.exit(0)
-                disc1=a*b**2+4*n*k
-                if kronecker_symbol(disc1,prime)==-1:
-                    print("kroneckerfail")
-                    sys.exit()
-                disc2=(a*b)**2+4*n*a*k 
-                if disc2%a!=0:
-                    print("fatal")
-                    sys.exit()
-                i+=1
-           # klist[-1].append(k%prime**exp)
-            blist[-1].append(b)
-          #  hmap[k]=roots
-           # hmap.append(roots)
-   
-        b+=1
-   # print("prime: "+str(prime)+" hmap: "+str(blist))
-    return blist
-
-def debug_find_residues4(prime,n,exp,k):
-
- #   hmap={}
-    blist=[prime**exp,[]]
-
-
-    poly=[1,0,-4*n*k]
-    polyc=copy.deepcopy(poly)
-    roots=find_roots_poly(polyc,prime)
-    if len(roots)>1:
-        i=0
-        while i < len(roots):
-            roots[i]=lift_root2(poly, roots[i], prime, exp)
-            if (roots[i]**2-4*n*k)%prime**exp !=0:
-                print("something screwed up: "+str(roots)+" k: "+str(k))
-                sys.exit(0)
-            i+=1
-
-        blist[-1].extend(roots)
-          #  hmap[k]=roots
-           # hmap.append(roots)
-        
-  
- #   print("4prime: "+str(prime)+" hmap: "+str(blist))
-    return blist
-
 def find_r(mod,total):
     mo,i=mod,0
     while (total%mod)==0:
@@ -2199,7 +1683,7 @@ def brute_force_padic_solutions(prime,k,n,a,sqr):
         b+=1
   #  print("solutions: "+str(solutions))
     if prime == 2:
-        max_lift=10
+        max_lift=15
     elif prime == 3:
         max_lift=8
     elif prime == 5:
@@ -2267,9 +1751,9 @@ def brute_force_padic_solutions(prime,k,n,a,sqr):
             i+=3
         solutions=new_solutions
        # print("solutions: "+str(prime**exp)+" "+str(len(solutions)//3))
-        if am_to_lift==0:
+      #  if am_to_lift==0:
           #  print("!!!!!!!!!!!!!!!!FULLY LIFTED AT: "+str(exp))
-            break
+          #  break
         if exp+1 == max_lift:
             break
         exp+=1
@@ -2296,68 +1780,8 @@ def brute_force_padic_solutions(prime,k,n,a,sqr):
 
     return blist
 
-def psieve_calc_res_for_prime(prime,n):
-    hmap={}
-    b=0
-    while b < prime:
-        k=0
-        while k < prime:
-
-            poly=[1,-b,n*k]
-            polyc=copy.deepcopy(poly)
-            roots=find_roots_poly(polyc,prime)
-            if len(roots)>0:
-                i=0
-                while i < len(roots):
-                    try:
-                        klist=hmap[b]
-                        klist.append(k)
-                    except Exception as e:
-                        hmap[b]=[k]    
-                    i+=1
-            
-           # hmap.append(roots)
-        
-            k+=1
-        b+=1
-   # print("prime: "+str(prime)+" hmap: "+str(hmap))
-    return hmap
-
-
-def psieve_create_hashmap(n,fbase):
-    hmap_collection=[]
-    i=0
-    while i < len(fbase):
-        prime=fbase[i]
-        hmap_collection.append(psieve_calc_res_for_prime(prime,n))
-        
-        i+=1
-    return hmap_collection
-
 def enumerated_product(*args):
     yield from itertools.product(*(range(len(x)) for x in args))
-
-def build_residues(sbase,n,a,k):
-    blist=[]
-    for prime in sbase:
-        if (a)%prime!=0:
-            exp=1
-            temp_blist=debug_find_residues3(prime,n,a,1,k) ##TO DO: when prime == 2
-            if len(temp_blist)>0:
-                blist.extend(temp_blist)
-    return blist
-
-def build_disc_residues(fbase,a,n,k):
-    blist_otherside=[]
-    mod_otherside=1
-    for prime in fbase:
-        if a%prime==0:
-            temp_blist=debug_find_residues4(prime,n,1,k) ##TO DO: when prime == 2    
-            if len(temp_blist)>0:
-                mod_otherside*=prime
-                blist_otherside.extend(temp_blist)   
-
-    return blist_otherside,mod_otherside
 
 def psieve_build_interval(sbase,n,k,mod,root,a):
     interval=array.array("i",[1]*1_000)
@@ -2425,7 +1849,7 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b):
                        # print("pcan: "+str(pcan)+" len(temp_solutions[1]): "+str(len(temp_solutions[1])))
                         density=(temp_solutions[0]/len(temp_solutions[1]))
                     
-                        if temp_solutions != -1 and len(temp_solutions[-1]) > 0 and density>4:
+                        if temp_solutions != -1 and len(temp_solutions[-1]) > 0 and density>2:
                       #  print("density: "+str(density)+" prime: "+str(pcan)+" prime^e: "+str(temp_solutions[0]))
                             solutions.extend(temp_solutions)
                             sol_mod*=temp_solutions[0]
@@ -2439,10 +1863,10 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b):
                   #      sys.exit()
 
                 pcan+=1
-            if bitlen(sol_mod)<keysize//4 or total_combo > 1_000:
+            if bitlen(sol_mod)<keysize//4 or total_combo > 300:
                 k+=1
                 continue
-         #   print("sol_mod: "+str(sol_mod)+" total_combo: "+str(total_combo))
+          #  print("sol_mod: "+str(sol_mod)+" total_combo: "+str(total_combo))
             solutions=get_partials(sol_mod,solutions)
 
             #print(solutions)
@@ -2508,7 +1932,7 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b):
                         if interval[i]==0:
                             i+=1
                             continue
-                     #   print("hallo??")
+                       # print("hallo??")
                        # krons=[]
                         for sprime in sbase:
                             if math.gcd(sprime, a)!=1 or mod%sprime ==0:
