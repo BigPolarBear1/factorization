@@ -2070,7 +2070,7 @@ def find_r(mod,total):
     return i
 
 
-def brute_force_padic_solutions2(prime,k,n,a):
+def brute_force_padic_solutions2(prime,k,n,a,sqr):
     ##to do: delete later.. just for verifications
     solutions=[]
     blist=[]
@@ -2078,7 +2078,7 @@ def brute_force_padic_solutions2(prime,k,n,a):
     b=0
     while b < prime**exp:
        # print("b: "+str(b)+" prime: "+str(prime))
-        poly=[1,b*a,-n*a*k]
+        poly=[1,b*sqr,-n*k]
         #poly=[1,-b,n*k]
         roots=[]
         x=0
@@ -2095,13 +2095,14 @@ def brute_force_padic_solutions2(prime,k,n,a):
     exp+=1
     while exp < max_lift:
         am_to_lift=0
+        sqr_lifted=lift_root2([1,0,-a],sqr,prime,exp)
         new_solutions=[]
         i=0
         while i < len(solutions):
             b=solutions[i]
             while b < prime**exp:
                 #print("b: "+str(b)+" prime: "+str(prime)+" exp: "+str(exp)+" prime**exp: "+str(prime**exp))
-                poly=[1,(b*a)%prime**exp,(-n*a*k)%prime**exp]
+                poly=[1,(b*sqr_lifted)%prime**exp,(-n*k)%prime**exp]
                 der=get_derivative(poly)
                 #poly=[1,-b,n*k]
                 new_roots=[]
@@ -2176,7 +2177,7 @@ def brute_force_padic_solutions2(prime,k,n,a):
 
     return blist
 
-def brute_force_padic_solutions(prime,k,n,a):
+def brute_force_padic_solutions(prime,k,n,a,sqr):
     ##Add proper hensel later and use this to verify
     solutions=[]
     blist=[]
@@ -2184,7 +2185,7 @@ def brute_force_padic_solutions(prime,k,n,a):
     b=0
     while b < prime**exp:
        # print("b: "+str(b)+" prime: "+str(prime))
-        poly=[1,b*a,-n*a*k]
+        poly=[1,b*sqr,-n*k]
         #poly=[1,-b,n*k]
         roots=[]
         x=0
@@ -2209,6 +2210,7 @@ def brute_force_padic_solutions(prime,k,n,a):
         max_lift=3
     exp+=1
     while exp < max_lift:
+        sqr_lifted=lift_root2([1,0,-a],sqr,prime,exp)
         am_to_lift=0
         new_solutions=[]
         i=0
@@ -2216,7 +2218,7 @@ def brute_force_padic_solutions(prime,k,n,a):
             b=solutions[i]
             while b < prime**exp:
                 #print("b: "+str(b)+" prime: "+str(prime)+" exp: "+str(exp)+" prime**exp: "+str(prime**exp))
-                poly=[1,(b*a)%prime**exp,(-n*a*k)%prime**exp]
+                poly=[1,(b*sqr_lifted)%prime**exp,(-n*k)%prime**exp]
                 der=get_derivative(poly)
                 #poly=[1,-b,n*k]
                 new_roots=[]
@@ -2406,22 +2408,29 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b):
             #print("[i]Checking k: "+str(k))
             sol_mod=1
             solutions=[]
-            pcan=2
+            pcan=3 ##to do: prime=2 is most powerful but the find_roots_poly(poly,pcan) wont work on it.
             total_combo=1
-            while bitlen(sol_mod)<keysize//4 and pcan < 10:
+            primes_added=[]
+            while bitlen(sol_mod)<keysize//4 and pcan < 40:
+                
                 if isPrime(pcan,5)==1 and a%pcan !=0:
+                    poly=[1,0,-a]
+                    sqr=find_roots_poly(poly,pcan)
+                    if len(sqr)>0:
+  
            # max_filter=100
             ##THIS I WILL REFER TO AS THE FILTER AND WE WILL SET THE STEP SIZE FOR INTERVAL TO THIS!
                    # print("building pcan: "+str(pcan))
-                    temp_solutions=brute_force_padic_solutions(pcan,k,n,a) ##Using this as a filter... got to expand on this concept and add actual hensel too..
+                        temp_solutions=brute_force_padic_solutions(pcan,k,n,a,sqr[0]) ##Using this as a filter... got to expand on this concept and add actual hensel too..
+                       # print("pcan: "+str(pcan)+" len(temp_solutions[1]): "+str(len(temp_solutions[1])))
+                        density=(temp_solutions[0]/len(temp_solutions[1]))
                     
-                    density=(temp_solutions[0]/len(temp_solutions[1]))
-                    
-                    if temp_solutions != -1 and len(temp_solutions[-1]) > 0 and density>4:
+                        if temp_solutions != -1 and len(temp_solutions[-1]) > 0 and density>4:
                       #  print("density: "+str(density)+" prime: "+str(pcan)+" prime^e: "+str(temp_solutions[0]))
-                        solutions.extend(temp_solutions)
-                        sol_mod*=temp_solutions[0]
-                        total_combo*=len(temp_solutions[1])
+                            solutions.extend(temp_solutions)
+                            sol_mod*=temp_solutions[0]
+                            total_combo*=len(temp_solutions[1])
+                            primes_added.append(prime)
                   #  solutions2=brute_force_padic_solutions2(pcan,k,n,a) ##Using this as a filter... got to expand on this concept and add actual hensel too..
                   #  if temp_solutions != solutions2:
                   #      print("solutions: "+str(solutions))
@@ -2514,6 +2523,10 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b):
                                 sys.exit()
                          #   krons.append(kronecker_symbol(disc_otherside,sprime))
                         disc_otherside=a*(root+mod*i)**2+4*n*k 
+                        for prime in primes_added:
+                            if kronecker_symbol(disc_otherside,prime)==-1:
+                                print("catastrophic error")
+                                sys.exit()
                       #  if i==500:
                        #     print(str(bitlen(disc_otherside))+" i: "+str(i))#+" k: "+str(k)+" a: "+str(a)+" mod: "+str(mod)+" krons: "+str(krons))
 
