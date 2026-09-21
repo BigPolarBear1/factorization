@@ -24,6 +24,8 @@ Most of the novel logic is situated in find_good_k() .. this is an ongoing proje
 
 I'll keep pushing updates.. unless someone wants to hire me I'm happy to take my research private: big_polar_bear1@proton.me
 
+note: I am aware hensel's lifting still needs to be implemented.. I'll do it later. It would just give a speedboost so it's not my priority right now.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
