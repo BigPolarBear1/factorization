@@ -28,6 +28,8 @@ note: I am aware hensel's lifting still needs to be implemented.. I'll do it lat
 
 Update: AHA! I was doing some brain-storming. So the one big thing that always held back this quadratic residue approach from being competitive was that I couldn't get a linear algebra step working to combine multiple sieving results. But actually, within certain limitations, it can be done. For example.. just adding squares to the leading coefficient of the discriminant should yield sieving results that can be combined by running linear algebra on the legendre symbols. Or something in that direction... seeing something suddenly...  let me hack something together tomorrow.
 
+Update: So you can probably ditch all the QS style logic here and so use the psieve() logic and add a linear algebra step purely operating on legendre symbols. I just realized that the only important thing is that the matrix rank is kept as small as possible... BUT i know exactly how to do this now with hensel's lifting. That's it. That's how simple this is. I'll try and finish it this week. If I don't die in battle. Heard people shouting homophobic slurs while running last night, pretty sure someone was out hunting for me. I'm going to try and find these people and "legally defend myself". Although the belgian justice system probably wont agree with what I consider as legal self defence. Not going to live in fear or get hatecrimed anymore. I had enough. Time to fight.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
