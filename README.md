@@ -26,6 +26,8 @@ I'll keep pushing updates.. unless someone wants to hire me I'm happy to take my
 
 note: I am aware hensel's lifting still needs to be implemented.. I'll do it later. It would just give a speedboost so it's not my priority right now.
 
+Update: AHA! I was doing some brain-storming. So the one big thing that always held back this quadratic residue approach from being competitive was that I couldn't get a linear algebra step working to combine multiple sieving results. But actually, within certain limitations, it can be done. For example.. just adding squares to the leading coefficient of the discriminant should yield sieving results that can be combined by running linear algebra on the legendre symbols. Or something in that direction... seeing something suddenly...  let me hack something together tomorrow.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
