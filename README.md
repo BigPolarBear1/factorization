@@ -28,7 +28,7 @@ note: I am aware hensel's lifting still needs to be implemented.. I'll do it lat
 
 Update: AHA! I was doing some brain-storming. So the one big thing that always held back this quadratic residue approach from being competitive was that I couldn't get a linear algebra step working to combine multiple sieving results. But actually, within certain limitations, it can be done. For example.. just adding squares to the leading coefficient of the discriminant should yield sieving results that can be combined by running linear algebra on the legendre symbols. Or something in that direction... seeing something suddenly...  let me hack something together tomorrow.
 
-Update: Digging in a bit.. so now we got a mechanism that much closer resembles NFS's approach. I'll need to return to rings and modules literature and study all that stuff... I am certain a linear algebra step can be implemented (ditching all this QS-style logic)...
+Update: Digging in a bit.. so now we got a mechanism that much closer resembles NFS's approach. I'll need to return to rings and modules literature and study all that stuff... I am certain a linear algebra step can be implemented (ditching all this QS-style logic)... let me first spent a few more days just without linear algebra using a pure residue style approach. 
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
