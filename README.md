@@ -18,17 +18,11 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 
 #### To run from folder "psieve" WORK IN PROGRES...extremely early version:</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 40 -base 1000 -debug 0 -lin_size 100 -quad_size 1</br></br>
+To run:  python3 run_qs.py -keysize 50 -base 1000 -debug 0 -lin_size 100 -quad_size 1</br></br>
 
-Most of the novel logic is situated in find_good_k() .. this is an ongoing project to find a completely novel method for sieving. The idea is to search for a b-smooth with a large square in it to complete an intial b-smooth found with an SIQS variant. Basically sieving for quadratic residues rather then divisibility.. because that way we can operate a much small "factor base".
-
-I'll keep pushing updates.. unless someone wants to hire me I'm happy to take my research private: big_polar_bear1@proton.me
-
-note: I am aware hensel's lifting still needs to be implemented.. I'll do it later. It would just give a speedboost so it's not my priority right now.
-
-Update: AHA! I was doing some brain-storming. So the one big thing that always held back this quadratic residue approach from being competitive was that I couldn't get a linear algebra step working to combine multiple sieving results. But actually, within certain limitations, it can be done. For example.. just adding squares to the leading coefficient of the discriminant should yield sieving results that can be combined by running linear algebra on the legendre symbols. Or something in that direction... seeing something suddenly...  let me hack something together tomorrow.
-
-Update: Digging in a bit.. so now we got a mechanism that much closer resembles NFS's approach. I'll need to return to rings and modules literature and study all that stuff... I am certain a linear algebra step can be implemented (ditching all this QS-style logic)... let me first spent a few more days just without linear algebra using a pure residue style approach. 
+Minimized a lot of the code now. Gutting all the SIQS style code. 
+I'm trying to figure out how to get some type of linear algebra implemented. 
+I don't think finding an analogue to "b-smooths" is the correct approach... but rather finding a correct a and k such that b shows up modulo enough primes to ensure squaredness in the integers, for discriminant ab^2+Nk. This has to be something that can be solved for with linear algebra... a and k basically just multiply/divide b mod p.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
