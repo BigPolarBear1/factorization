@@ -22,7 +22,7 @@ To run:  python3 run_qs.py -keysize 50 -base 1000 -debug 0 -lin_size 100 -quad_s
 
 Minimized a lot of the code now. Gutting all the SIQS style code. 
 I'm trying to figure out how to get some type of linear algebra implemented. 
-I don't think finding an analogue to "b-smooths" is the correct approach... but rather finding a correct a and k such that b shows up modulo enough primes to ensure squaredness in the integers, for discriminant ab^2+Nk. This has to be something that can be solved for with linear algebra... a and k basically just multiply/divide b mod p.
+I don't think finding an analogue to "b-smooths" is the correct approach... but rather finding a correct a and k such that b shows up modulo enough primes to ensure squaredness in the integers, for discriminant ab^2+4Nk. This has to be something that can be solved for with linear algebra... a and k basically just multiply/divide b mod p.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
