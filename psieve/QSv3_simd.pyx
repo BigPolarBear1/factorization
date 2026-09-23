@@ -320,20 +320,12 @@ def launch(n,primeslist,primeslist2):
     primeslist_a=copy.copy(primeslist)
     primeslist_a=array.array('q',primeslist_a)
 
-    div=1
-    while div < 100:
 
-        psievefound=psieve(n,ret_array,primelist_f,primeslist,div,sbase)
-        if psievefound !=0:
-            print("[*](Psieve)Trying linear algebra after succesful psieve run")
-            test,test2=QS(n,primelist,ret_array[0],ret_array[2],ret_array[1],ret_array[3])
-                    
 
-            if test !=0:
-                print("\n\n\n\nFound at: ",len(ret_array[0]))
-                sys.exit()
+    psievefound=psieve(n,ret_array,primelist_f,primeslist,sbase)
 
-        div+=1 
+
+   
     
     return 
 
@@ -689,6 +681,9 @@ def brute_force_padic_solutions2(prime,k,n,a,sqr):
     while exp < max_lift:
         am_to_lift=0
         sqr_lifted=lift_root2([1,0,-a],sqr,prime,exp)
+        if evaluate([1,0,-a],sqr_lifted)%prime**exp != 0:
+            print("fatal error")
+            sys.exit()
         new_solutions=[]
         i=0
         while i < len(solutions):
@@ -804,6 +799,9 @@ def brute_force_padic_solutions(prime,k,n,a,sqr):
     exp+=1
     while exp < max_lift:
         sqr_lifted=lift_root2([1,0,-a],sqr,prime,exp)
+        if evaluate([1,0,-a],sqr_lifted)%prime**exp != 0:
+            print("fatal error")
+            sys.exit()
         am_to_lift=0
         new_solutions=[]
         i=0
@@ -919,52 +917,58 @@ def psieve_build_interval(sbase,n,k,mod,root,a):
         i+=1
     return interval
    
-def psieve(n,ret_array,primelist_f,fbase,a,sbase):#(n,fbase,div,hmap2,ret_array):
+def psieve(n,ret_array,primelist_f,fbase,sbase):#(n,fbase,div,hmap2,ret_array):
     sbase_trunc=20
     found=0
-    primes_to_check=[]
-    for prime in fbase:
-        if a%prime==0:
-            primes_to_check.append(prime)
+
 
     k=1
     while k < 1000: #to do: can also just precalculate residues here... but probably want to consider mostly small-ish k values...
-        if math.gcd(a,k)!=1 or isPrime(k,5)!=1: #to do: does not need to be prime.. just need to avoid squares in the factorization... fix later
-            k+=1
-            continue
-        
-        skip=0
-        for prime in primes_to_check:
-            if kronecker_symbol(4*n*k,prime)==-1:
-                skip=1
+        a=1
+        while a < 100:
+            if math.gcd(a,k)!=1 or isPrime(k,5)!=1: #to do: does not need to be prime.. just need to avoid squares in the factorization... fix later
+                a+=1
+                continue
+            primes_to_check=[]
+            for prime in fbase:
+                if a%prime==0:
+                    primes_to_check.append(prime)        
+            skip=0
+            for prime in primes_to_check:
+                if kronecker_symbol(4*n*k,prime)==-1:
+                    skip=1
 
-        if skip == 0:
+            if skip == 0:
             #print("[i]Checking k: "+str(k))
-            sol_mod=1
-            solutions=[]
-            pcan=3 ##to do: prime=2 is most powerful but the find_roots_poly(poly,pcan) wont work on it.
-            total_combo=1
-            primes_added=[]
-            while bitlen(sol_mod)<keysize//3 and pcan < 40:
-                
-                if isPrime(pcan,5)==1 and a%pcan !=0:
-                    poly=[1,0,-a]
-                    sqr=find_roots_poly(poly,pcan)
-                    if len(sqr)>0:
+                sol_mod=1
+                solutions=[]
+                pcan=3 ##to do: prime=2 is most powerful but the find_roots_poly(poly,pcan) wont work on it.
+                total_combo=1
+                primes_added=[]
+                while bitlen(sol_mod)<keysize//3 and pcan < 40:
+                    if isPrime(pcan,5)==1 and a%pcan !=0:
+                        if pcan == 2 and a%pcan !=0:
+                            sqr=[]
+                            i=0
+                            while i < 2:
+                                if i**2==a%2:
+                                    sqr=[i]
+                                    break
+                                i+=1
+                        else:
+                            poly=[1,0,-a]
+                            sqr=find_roots_poly(poly,pcan)
+                        if len(sqr)>0:
   
-           # max_filter=100
-            ##THIS I WILL REFER TO AS THE FILTER AND WE WILL SET THE STEP SIZE FOR INTERVAL TO THIS!
-                   # print("building pcan: "+str(pcan))
-                        temp_solutions=brute_force_padic_solutions(pcan,k,n,a,sqr[0]) ##Using this as a filter... got to expand on this concept and add actual hensel too..
-                       # print("pcan: "+str(pcan)+" len(temp_solutions[1]): "+str(len(temp_solutions[1])))
-                        density=(temp_solutions[0]/len(temp_solutions[1]))
-                    
-                        if temp_solutions != -1 and len(temp_solutions[-1]) > 0 and density>3:
+                            temp_solutions=brute_force_padic_solutions(pcan,k,n,a,sqr[0]) ##Using this as a filter... got to expand on this concept and add actual hensel too..
+                            density=(temp_solutions[0]/len(temp_solutions[1]))
+                     #   print("density: "+str(density)+" prime: "+str(pcan)+" prime^e: "+str(temp_solutions[0])+" len: "+str(len(temp_solutions[1])))
+                            if temp_solutions != -1 and len(temp_solutions[-1]) > 0 and density>3:
                       #  print("density: "+str(density)+" prime: "+str(pcan)+" prime^e: "+str(temp_solutions[0]))
-                            solutions.extend(temp_solutions)
-                            sol_mod*=temp_solutions[0]
-                            total_combo*=len(temp_solutions[1])
-                            primes_added.append(pcan)
+                                solutions.extend(temp_solutions)
+                                sol_mod*=temp_solutions[0]
+                                total_combo*=len(temp_solutions[1])
+                                primes_added.append(pcan)
                   #  solutions2=brute_force_padic_solutions2(pcan,k,n,a) ##Using this as a filter... got to expand on this concept and add actual hensel too..
                   #  if temp_solutions != solutions2:
                   #      print("solutions: "+str(solutions))
@@ -972,14 +976,12 @@ def psieve(n,ret_array,primelist_f,fbase,a,sbase):#(n,fbase,div,hmap2,ret_array)
                   #      print("wtf")
                   #      sys.exit()
 
-                pcan+=1
-            if bitlen(sol_mod)<keysize//3:# or total_combo > 10_000:
-                k+=1
-                continue
+                    pcan+=1
+                if bitlen(sol_mod)<keysize//3 or total_combo > 50_000:
+                    k+=1
+                    continue
 
-            solutions=get_partials(sol_mod,solutions)
-            if 1:
-
+                solutions=get_partials(sol_mod,solutions)
                 mod=1
                 enum=[]
                 total_combo=1
@@ -1091,11 +1093,20 @@ def psieve(n,ret_array,primelist_f,fbase,a,sbase):#(n,fbase,div,hmap2,ret_array)
                                 ret_array[3].append([])
                                 found+=1
 
-
+                    
                         i+=1
-                      #  ind+=1
-        if found > 1:
-            return found #should be enouhg..
+
+            if found > 1:
+                test,test2=QS(n,fbase,ret_array[0],ret_array[2],ret_array[1],ret_array[3])
+                    
+
+                if test !=0:
+                    print("\n\n\n\nFound at: ",len(ret_array[0]))
+                    sys.exit()
+
+            a+=1          
+
+
 
         k+=1
 
