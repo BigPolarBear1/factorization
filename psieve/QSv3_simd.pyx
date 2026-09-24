@@ -932,10 +932,10 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                 found+=1
 
                 #To do: uncomment later
-                ret_array[1].append(new_root**2)
-                ret_array[0].append(poly_val)
-                ret_array[2].append(local_factors)
-                ret_array[3].append([])
+                #ret_array[1].append(new_root**2)
+                #ret_array[0].append(poly_val)
+                #ret_array[2].append(local_factors)
+                #ret_array[3].append([])
                 div_fac=[]
                 faclist=list(local_factors)
                 faclist.sort()
@@ -946,7 +946,7 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                 for odd_exp_factor in faclist:
                     div*=odd_exp_factor
                     div_fac.append(odd_exp_factor)
-
+                
                 #div*=-1
                 #    break
              #   div*=3
@@ -957,10 +957,10 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                # if bitlen(div)<keysize*0.50: ##Dont know if this matters.. another parameter to test with..
                   #  print("PSIEVE1")
                 local_factors2, value2 = factorise_fast(new_root,primelist_f)
-                if 1:#poly_val < 0 and bitlen(div) < keysize/2:# and value2==1:# and len(div_fac)==1:
+                if bitlen(div) < keysize and isPrime(div,5)==1:# and value2==1:# and len(div_fac)==1:
                     
                     print("[i]Trying psieve")
-                    psievefound=psieve(n,ret_array,primelist_f,new_root,primeslist,div,hmap2,sbase)
+                    psievefound=psieve(n,ret_array,primelist_f,primeslist,div,hmap2,sbase)
                     if psievefound !=0:
                         print("[*](Psieve)Trying linear algebra after succesful psieve run")
                         test,test2=QS(n,primelist,ret_array[0],ret_array[2],ret_array[1],ret_array[3])
@@ -1810,7 +1810,7 @@ def psieve_build_interval(sbase,n,k,mod,root,a):
         i+=1
     return interval
 
-def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b):
+def find_good_k(fbase,a,n,sbase,ret_array,primelist_f):
     found=0
     primes_to_check=[]
     for prime in fbase:
@@ -1818,16 +1818,21 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b):
             primes_to_check.append(prime)
 
     k=1
-    while k < 1000: #to do: can also just precalculate residues here... but probably want to consider mostly small-ish k values...
-        if math.gcd(a,k)!=1 or isPrime(k,5)!=1: #to do: does not need to be prime.. just need to avoid squares in the factorization... fix later
+    while k < 100: #to do: can also just precalculate residues here... but probably want to consider mostly small-ish k values...
+        if isPrime(k,5)!=1 and k != 1:
             k+=1
             continue
+       # print("trying k: "+str(k))
         
+        if math.gcd(a,k)!=1: #to do: does not need to be prime.. just need to avoid squares in the factorization... fix later
+            k+=1
+            continue
+       # print("trying k: "+str(k))
         skip=0
         for prime in primes_to_check:
             if kronecker_symbol(4*n*k,prime)==-1:
                 skip=1
-
+       # print("*trying k: "+str(k))
         if skip == 0:
             #print("[i]Checking k: "+str(k))
             sol_mod=1
@@ -1835,7 +1840,7 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b):
             pcan=3 ##to do: prime=2 is most powerful but the find_roots_poly(poly,pcan) wont work on it.
             total_combo=1
             primes_added=[]
-            while bitlen(sol_mod)<keysize//4 and pcan < 40:
+            while bitlen(sol_mod)<keysize//3 and pcan < 40:
                 
                 if isPrime(pcan,5)==1 and a%pcan !=0:
                     poly=[1,0,-a]
@@ -1863,10 +1868,10 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b):
                   #      sys.exit()
 
                 pcan+=1
-            if bitlen(sol_mod)<keysize//4 or total_combo > 300:
+            if bitlen(sol_mod)<keysize//3 or total_combo > 50_000:
                 k+=1
                 continue
-          #  print("sol_mod: "+str(sol_mod)+" total_combo: "+str(total_combo))
+            print("sol_mod: "+str(sol_mod)+" total_combo: "+str(total_combo)+" k: "+str(k)+" a: "+str(a))
             solutions=get_partials(sol_mod,solutions)
 
             #print(solutions)
@@ -1990,47 +1995,19 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b):
 
                         i+=1
                       #  ind+=1
-        if found > 1:
+        if found > 0:
             return found #should be enouhg..
 
         k+=1
 
     return found
 
-def psieve_factor(a,k_o,n,fbase,o_b,hmap2,sbase,ret_array,primelist_f):
-    found=0
-    found+=find_good_k(fbase,a,n,sbase,ret_array,primelist_f,o_b)
-    return found
+
 
    
-def psieve(n,ret_array,primelist_f,b,primeslist,a,hmap2,sbase):#(n,fbase,div,hmap2,ret_array):
-   # hit=0
-   # i=0
-   # while i < 2**7: ##To do: use fast root finding + hensel..
-   #     if i**2==a%2**7:
-   #         hit=1
-   #         break
-   #     i+=1
-   # if hit ==0:
-   #     return 0
+def psieve(n,ret_array,primelist_f,primeslist,a,hmap2,sbase):#(n,fbase,div,hmap2,ret_array):
     found=0
-    
-   # disc=(2*b)**2-4*n
-    #print("b: "+str(b)+" a: "+str(a)+" disc: "+str(disc))
-   # disc//=a 
-   # disc_sqr=math.isqrt(abs(disc))
-   # if disc_sqr**2 != disc:
-   #     print("fatal error in psieve()")
-   #     return 0
-   # disc2=a*disc_sqr**2+4*n
-   # if math.isqrt(disc2)!= 2*b:
-   #     print("2fatal error in psieve()")
-   #     return 0
-
-     
-  #  print("disc2: "+str(disc2))
-    found+=psieve_factor(a,1,n,primeslist,2*b,hmap2,sbase,ret_array,primelist_f)
-   
+    found+=find_good_k(primeslist,a,n,sbase,ret_array,primelist_f)
     return found
 
 def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,primeslist2,resmaps):
