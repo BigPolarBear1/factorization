@@ -34,6 +34,8 @@ Seems its basically done now.. just got to zero in on the exact conditions when 
 
 Damnit. Something hasnt been feeling right, but bc my father is also on intensive care, im not quite able to triangulate if its internal or external. Just have this intensive feeling of being shadowed and impending doom. Its too damn loud and I struggle to figure out whats happening. Perhaps im close to some type of mental break. However, I must fight it and not let it take over.
 
+Update: Yeap... a composite vs prime "a" does matter. A prime "a" more reliably yields a twin solution. Let me check if I can find this "twin solution" more reliably when "a" is prime... because then I can just use linear algebra to construct a b-smooth that is square except for one factor. Which is still a massive breakthrough.. and after that I can look at generalizing toward composite "a". Fck it.. this might be it at last. You know when I crossed Iceland despite extreme weather advisories on the interior... this is the same.. I push on or I perish. There is nothing else anymore. And perhaps people think they can break me, but all it does is make me more determined.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
