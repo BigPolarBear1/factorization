@@ -28,6 +28,8 @@ UPDATE: DAMNIT!!!!! Let me revert and add my SIQS variant again. I just noticed 
 
 UPDATE: Re-uploaded the SIQS style code.... I think I know how to do it now.... let me investigate. 
 
+Update: Just run with the above command. There seems to be this interesting pattern where we are garantueed to find other solutions at the same "k" value when the leading coefficient "a" is a single prime. I'm not sure if the size of the prime matters.. plus I need to do some more testing vs composites. But if this assumption does end up holding true... then its simply a matter of using linear algebra to construct a b-smooth with a single prime... which is massively better then needing a full square. That would be quite interesting... let me do more testing.. might be on the precipice of a monumental breakthrough... at last..
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
