@@ -26,6 +26,8 @@ I don't think finding an analogue to "b-smooths" is the correct approach... but 
 
 UPDATE: DAMNIT!!!!! Let me revert and add my SIQS variant again. I just noticed something. If we find one solution with a large square (via SIQS style sieving for example)... we can use that to find other solutions.... its not just some gimmick or imagined thing. There's an actual pattern here.
 
+UPDATE: Re-uploaded the SIQS style code.... I think I know how to do it now.... let me investigate. 
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
