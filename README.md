@@ -26,15 +26,7 @@ I don't think finding an analogue to "b-smooths" is the correct approach... but 
 
 UPDATE: DAMNIT!!!!! Let me revert and add my SIQS variant again. I just noticed something. If we find one solution with a large square (via SIQS style sieving for example)... we can use that to find other solutions.... its not just some gimmick or imagined thing. There's an actual pattern here.
 
-UPDATE: Re-uploaded the SIQS style code.... I think I know how to do it now.... let me investigate. 
-
-Update: Just run with the above command. There seems to be this interesting pattern where we are garantueed to find other solutions at the same "k" value when the leading coefficient "a" is a single prime. I'm not sure if the size of the prime matters.. plus I need to do some more testing vs composites. But if this assumption does end up holding true... then its simply a matter of using linear algebra to construct a b-smooth with a single prime... which is massively better then needing a full square. That would be quite interesting... let me do more testing.. might be on the precipice of a monumental breakthrough... at last..
-
-Update: Probably just yields more solutions when "a" is small.. since that generates smaller discriminants. But still seems to be a pattern here that we are garantueed to find more solutions if we find atleast one solution already (which we can find with SIQS style sieving). That I need to start zero-ing in hard on now... because I just know that's something I can leverage somehow.
-
-I'll go for a run.. let me do some analysis of the residues of the coefficients on both sides (so for +Nk and -Nk) when it finds these multiple (but non-trivial) solutions with the psieve() logic. There might be something there that I can leverage. Its definitely the case that when "a" is small.. these multiple solutions are easier to find... but that is also as expected. 
-
-I should also add to my siqs variant support for different k values (which is the multiplier to N in the discriminant)... then when we jump into the psieve logic... there may be a trick to find these other solutions... since k is shared on both sides (for the side with -Nk and with +Nk) .. anyway... I got this... so close now. I feel it. I'm a polar bear.
+Update: Ah. I figured out whats going on... I'll upload some improvements this weekend.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
