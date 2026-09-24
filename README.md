@@ -32,6 +32,8 @@ Update: Just run with the above command. There seems to be this interesting patt
 
 Seems its basically done now.. just got to zero in on the exact conditions when it only finds the original bsmooth or the original one plus another. And do some testing where "a" is prime vs composite.. atleast something good came out of this day.. what is happening with my father is fcking with my state of mind.. I guess I also never got over the trauma of the US when I was threatened with a gun and had to say goodbye to all my friends there that I had known for years. Fear of losing more people. And that feeling of being hunted, like those guys when they followed me with a glock outside my apartment. I wish I could go to war, to the frontline in Ukraine, the only thing stopping me is that I cant really leave my mother alone with all this bad shit happening to our family. But maybe on the frontline it is ok to act like a feral animal, I can embrace this constant "fight or flight" there and became an angry heathen from FCKING DOGGERLAND AND EAT THE FLESH OF MY ENEMIES HAHAHAHHAHAHAHAHHAAHAHAHHA.
 
+Damnit. Something hasnt been feeling right, but bc my father is also on intensive care, im not quite able to triangulate if its internal or external. Just have this intensive feeling of being shadowed and impending doom. Its too damn loud and I struggle to figure out whats happening. Perhaps im close to some type of mental break. However, I must fight it and not let it take over.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
