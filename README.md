@@ -32,6 +32,8 @@ Update: Just run with the above command. There seems to be this interesting patt
 
 Update: Probably just yields more solutions when "a" is small.. since that generates smaller discriminants. But still seems to be a pattern here that we are garantueed to find more solutions if we find atleast one solution already (which we can find with SIQS style sieving). That I need to start zero-ing in hard on now... because I just know that's something I can leverage somehow.
 
+I'll go for a run.. let me do some analysis of the residues of the coefficients on both sides (so for +Nk and -Nk) when it finds these multiple (but non-trivial) solutions with the psieve() logic. There might be something there that I can leverage. Its definitely the case that when "a" is small.. these multiple solutions are easier to find... but that is also as expected. 
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
