@@ -962,6 +962,10 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                     print("[i]Trying psieve")
                     psievefound=psieve(n,ret_array,primelist_f,primeslist,div,hmap2,sbase)
                     if psievefound !=0:
+                        ret_array[1].append(new_root**2)
+                        ret_array[0].append(poly_val)
+                        ret_array[2].append(local_factors)
+                        ret_array[3].append([])
                         print("[*](Psieve)Trying linear algebra after succesful psieve run")
                         test,test2=QS(n,primelist,ret_array[0],ret_array[2],ret_array[1],ret_array[3])
                     
@@ -1952,10 +1956,10 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f):
                                 sys.exit()
                          #   krons.append(kronecker_symbol(disc_otherside,sprime))
                         disc_otherside=a*(root+mod*i)**2+4*n*k 
-                        for prime in primes_added:
-                            if kronecker_symbol(disc_otherside,prime)==-1:
-                                print("catastrophic error")
-                                sys.exit()
+                        #for prime in primes_added:
+                        #    if kronecker_symbol(disc_otherside,prime)==-1:
+                        #        print("catastrophic error")
+                        #        sys.exit()
                       #  if i==500:
                        #     print(str(bitlen(disc_otherside))+" i: "+str(i))#+" k: "+str(k)+" a: "+str(a)+" mod: "+str(mod)+" krons: "+str(krons))
 
