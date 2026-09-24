@@ -34,6 +34,8 @@ Update: Probably just yields more solutions when "a" is small.. since that gener
 
 I'll go for a run.. let me do some analysis of the residues of the coefficients on both sides (so for +Nk and -Nk) when it finds these multiple (but non-trivial) solutions with the psieve() logic. There might be something there that I can leverage. Its definitely the case that when "a" is small.. these multiple solutions are easier to find... but that is also as expected. 
 
+I should also add to my siqs variant support for different k values (which is the multiplier to N in the discriminant)... then when we jump into the psieve logic... there may be a trick to find these other solutions... since k is shared on both sides (for the side with -Nk and with +Nk) .. anyway... I got this... so close now. I feel it. I'm a polar bear.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
