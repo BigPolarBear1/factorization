@@ -1818,7 +1818,7 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f):
             primes_to_check.append(prime)
 
     k=1
-    while k < 100: #to do: can also just precalculate residues here... but probably want to consider mostly small-ish k values...
+    while k < 2: #To do: Seems this needs to match the "k" value of the original b-smooth
         if isPrime(k,5)!=1 and k != 1:
             k+=1
             continue
