@@ -28,10 +28,6 @@ UPDATE: DAMNIT!!!!! Let me revert and add my SIQS variant again. I just noticed 
 
 Update: Ah. I figured out whats going on... I'll upload some improvements this weekend.
 
-Update: Yea... there is 100% something here. God damnit. Someone would have known.
-You know what they call a country that works together with another country against its own citizens? Traitors. I hope you remember that traitors.
-I will say this now, there will not be forgiveness. Too much has happened and too much time has passed. Time is all we have in this world.
-
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
