@@ -26,7 +26,9 @@ I don't think finding an analogue to "b-smooths" is the correct approach... but 
 
 UPDATE: DAMNIT!!!!! Let me revert and add my SIQS variant again. I just noticed something. If we find one solution with a large square (via SIQS style sieving for example)... we can use that to find other solutions.... its not just some gimmick or imagined thing. There's an actual pattern here.
 
-Update: Ah. I figured out whats going on... I'll upload some improvements this weekend.
+Update: Ah. I figured out whats going on... I'll upload some improvements this weekend
+
+Update: Just re-added the calculations for blist_otherside (so looking for a discriminant that evaluates to 0 mod the divisors of a). I feel like I should use that two sided approach. Let me see if by applying hensel now on blist_otherside if I can easier figure out correct solutions...
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
