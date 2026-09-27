@@ -26,6 +26,11 @@ It's not completely finished yet, it's very close now. You need to consider both
 
 Trying to finish this.. but its fcking noisy where I live and my father is in critical condition in the ICU. Wish I could get away from this attic room to somewhere quiet. 
 
+Update: Figured it out!!!!!!!!!! So in the psieve() logic. We need to do exactly the same from the other side around. And we can do this simply by transfering "a" like this (making it monic) i.e:
+
+ab^2+4Nk -> (ab)^2+4Nka and hence on the other side (lets name the linear coefficient here y, aka root of the discriminant) ay^2-4Nka = (ab)^2+4Nka.. so that's how we can "consider" it from the other side around... et viola.. that hopefully be enough now. 
+
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
