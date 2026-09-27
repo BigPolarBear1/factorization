@@ -22,7 +22,7 @@ To run:  python3 run_qs.py -keysize 50 -base 1000 -debug 0 -lin_size 100 -quad_s
 
 This starts with an SIQS variant where the stripped away factors are square to minimize the odd exponent factors in the bsmooth and after that we use the research from the paper in psieve(). This then utilizes a two sided approach and looks for similar b-smooths by calculating quadratic residues and applying hensel's lifting (I need to fix some of that hensel code still, its just bruteforcing roots mod p^e for now). 
 
-It's not completely finished yet, it's very close now. You need to consider both sides and keep lifting.. and that should be enough to minimize possible solution while lifting. Atleast that's the angle I'm currently exploring.
+It's not completely finished yet, it's very close now. You need to consider both sides and keep lifting.. and that should be enough to minimize possible solution while lifting. Atleast that's the angle I'm currently exploring. This should work because there are certain conditions that must be met (one side must generate a discriminant divisible by the odd exponent factors we are looking for and from the other side around everything must be a quadratic residue) and we lift using different primes for both sides. 
 
 Trying to finish this.. but its fcking noisy where I live and my father is in critical condition in the ICU. Wish I could get away from this attic room to somewhere quiet. 
 
