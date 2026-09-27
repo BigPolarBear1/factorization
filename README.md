@@ -20,7 +20,7 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 50 -base 1000 -debug 0 -lin_size 100 -quad_size 1</br></br>
 
-This starts with an SIQS variant where the stripped away factors are square to minimize the odd exponent factors in the bsmooth and after that we use the research from the paper in psieve(). This then utilizes a two sided approach and looks similar b-smooths by calculating quadratic residues and applying hensel's lifting (I need to fix some of that hensel code still, its just bruteforcing roots mod p^e for now). 
+This starts with an SIQS variant where the stripped away factors are square to minimize the odd exponent factors in the bsmooth and after that we use the research from the paper in psieve(). This then utilizes a two sided approach and looks for similar b-smooths by calculating quadratic residues and applying hensel's lifting (I need to fix some of that hensel code still, its just bruteforcing roots mod p^e for now). 
 
 It's not completely finished yet, it's very close now. You need to consider both sides and keep lifting.. and that should be enough to minimize possible solution while lifting. Atleast that's the angle I'm currently exploring.
 
