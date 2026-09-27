@@ -20,15 +20,11 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 50 -base 1000 -debug 0 -lin_size 100 -quad_size 1</br></br>
 
-Minimized a lot of the code now. Gutting all the SIQS style code. 
-I'm trying to figure out how to get some type of linear algebra implemented. 
-I don't think finding an analogue to "b-smooths" is the correct approach... but rather finding a correct a and k such that b shows up modulo enough primes to ensure squaredness in the integers, for discriminant ab^2+4Nk. This has to be something that can be solved for with linear algebra... a and k basically just multiply/divide b mod p.
+This starts with an SIQS variant where the stripped away factors are square to minimize the odd exponent factors in the bsmooth and after that we use the research from the paper in psieve(). This then utilizes a two sided approach and looks similar b-smooths by calculating quadratic residues and applying hensel's lifting (I need to fix some of that hensel code still, its just bruteforcing roots mod p^e for now). 
 
-UPDATE: DAMNIT!!!!! Let me revert and add my SIQS variant again. I just noticed something. If we find one solution with a large square (via SIQS style sieving for example)... we can use that to find other solutions.... its not just some gimmick or imagined thing. There's an actual pattern here.
+It's not completely finished yet, it's very close now. You need to consider both sides and keep lifting.. and that should be enough to minimize possible solution while lifting. Atleast that's the angle I'm currently exploring.
 
-Update: Ah. I figured out whats going on... I'll upload some improvements this weekend
-
-Update: Just re-added the calculations for blist_otherside (so looking for a discriminant that evaluates to 0 mod the divisors of a). I feel like I should use that two sided approach. Let me see if by applying hensel now on blist_otherside if I can easier figure out correct solutions...
+Trying to finish this.. but its fcking noisy where I live and my father is in critical condition in the ICU. Wish I could get away from this attic room to somewhere quiet. 
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
