@@ -895,23 +895,26 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                 #    if seen_log != temp[i]:
                      #   print("error:"+str(seen_primes2)+" seen_log: "+str(seen_log)+" assumed log: "+str(temp[i])+" quad: "+str(quad_can)+" cmod: "+str(cmod))
                     #########END DEBUG###############
-            if value != 1:
-                if value < large_prime_bound:
-                    if value in partials:
-                        rel, lf, pv = partials[value]
-                        if rel == new_root:
-                            k+=1
-                            continue
-                        new_root *= rel
-                        local_factors ^= lf
-                        poly_val *= pv
-                    else:
-                        partials[value] = (new_root, local_factors, poly_val)
-                        k+=1
-                        continue
-                else:
-                    k+=1 
-                    continue         
+            #if value != 1:
+            #    if value < large_prime_bound:
+            #        if value in partials:
+            #            rel, lf, pv = partials[value]
+            #            if rel == new_root:
+            #                k+=1
+            #                continue
+            #            new_root *= rel
+            #            local_factors ^= lf
+            #            poly_val *= pv
+            #        else:
+            #            partials[value] = (new_root, local_factors, poly_val)
+            #            k+=1
+            #            continue
+            #    else:
+            #        k+=1 
+            #        continue     
+            if value != 1 and isPrime(value,5)==0:#math.isqrt(abs(value))**2 != value:
+                k+=1
+                continue    
             if new_root not in ret_array[1]:
                 factor_ranking.append([])
                 local_factors=list(local_factors)
@@ -957,9 +960,9 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                # if bitlen(div)<keysize*0.50: ##Dont know if this matters.. another parameter to test with..
                   #  print("PSIEVE1")
                 local_factors2, value2 = factorise_fast(new_root,primelist_f)
-                if bitlen(div) < keysize and isPrime(div,5)==1:# and value2==1:# and len(div_fac)==1:
+                if value==1 and div!=1 and bitlen(div) < keysize*0.20:# and isPrime(value,5)==1:# and isPrime(div,5)==1:# and value2==1:# and len(div_fac)==1:
                     
-                    print("[i]Trying psieve")
+                    print("[i]Trying psieve: "+str(2*new_root))
                     psievefound=psieve(n,ret_array,primelist_f,primeslist,div,hmap2,sbase)
                     if psievefound !=0:
                         ret_array[1].append(new_root**2)
@@ -1687,9 +1690,9 @@ def brute_force_padic_solutions(prime,k,n,a,sqr):
         b+=1
   #  print("solutions: "+str(solutions))
     if prime == 2:
-        max_lift=15
+        max_lift=20
     elif prime == 3:
-        max_lift=8
+        max_lift=12
     elif prime == 5:
         max_lift=5
     elif prime == 7:
@@ -1699,6 +1702,9 @@ def brute_force_padic_solutions(prime,k,n,a,sqr):
     exp+=1
     while exp < max_lift:
         sqr_lifted=lift_root2([1,0,-a],sqr,prime,exp)
+        if evaluate([1,0,-a],sqr_lifted)%prime**exp !=0:
+            print("fatal error")
+            sys.exit()
         am_to_lift=0
         new_solutions=[]
         i=0
@@ -1788,7 +1794,7 @@ def enumerated_product(*args):
     yield from itertools.product(*(range(len(x)) for x in args))
 
 def psieve_build_interval(sbase,n,k,mod,root,a):
-    interval=array.array("i",[1]*1_000)
+    interval=array.array("i",[1]*10_000)
   #  interval=np.ones(10_000,dtype=np.uint8)
     i=0
     while i < len(sbase):
@@ -1814,6 +1820,45 @@ def psieve_build_interval(sbase,n,k,mod,root,a):
         i+=1
     return interval
 
+def debug_find_residues4(prime,n,exp,k):
+
+ #   hmap={}
+    blist=[prime**exp,[]]
+
+
+    poly=[1,0,-4*n*k]
+    polyc=copy.deepcopy(poly)
+    roots=find_roots_poly(polyc,prime)
+    if len(roots)>1:
+        i=0
+        while i < len(roots):
+            roots[i]=lift_root2(poly, roots[i], prime, exp)
+            if (roots[i]**2-4*n*k)%prime**exp !=0:
+                print("something screwed up: "+str(roots)+" k: "+str(k))
+                sys.exit(0)
+            i+=1
+
+        blist[-1].extend(roots)
+          #  hmap[k]=roots
+           # hmap.append(roots)
+        
+  
+ #   print("4prime: "+str(prime)+" hmap: "+str(blist))
+    return blist
+
+def build_disc_residues(fbase,a,n,k):
+    blist_otherside=[]
+    mod_otherside=1
+    for prime in fbase:
+        if a%prime==0:
+            #print("hit: "+str(prime))
+            temp_blist=debug_find_residues4(prime,n,1,k) ##TO DO: when prime == 2    
+            if len(temp_blist)>0:
+                mod_otherside*=prime
+                blist_otherside.extend(temp_blist)   
+
+    return blist_otherside,mod_otherside
+
 def find_good_k(fbase,a,n,sbase,ret_array,primelist_f):
     found=0
     primes_to_check=[]
@@ -1831,6 +1876,8 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f):
         if math.gcd(a,k)!=1: #to do: does not need to be prime.. just need to avoid squares in the factorization... fix later
             k+=1
             continue
+
+            
        # print("trying k: "+str(k))
         skip=0
         for prime in primes_to_check:
@@ -1838,32 +1885,41 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f):
                 skip=1
        # print("*trying k: "+str(k))
         if skip == 0:
+            blist_otherside,mod_otherside=build_disc_residues(fbase,a,n,k)
+
             #print("[i]Checking k: "+str(k))
             sol_mod=1
             solutions=[]
-            pcan=3 ##to do: prime=2 is most powerful but the find_roots_poly(poly,pcan) wont work on it.
+            pcan=2 ##to do: prime=2 is most powerful but the find_roots_poly(poly,pcan) wont work on it.
             total_combo=1
             primes_added=[]
-            while bitlen(sol_mod)<keysize//3 and pcan < 40:
+            while bitlen(sol_mod)<keysize*0.3 and pcan < 40:
                 
                 if isPrime(pcan,5)==1 and a%pcan !=0:
-                    poly=[1,0,-a]
-                    sqr=find_roots_poly(poly,pcan)
-                    if len(sqr)>0:
+                    if pcan == 2:
+                        i=0
+                        while i < 2:
+                            if i**2%2 == a%2:
+                                sqr=[i]
+                            i+=1
+                    else:
+                        poly=[1,0,-a]
+                        sqr=find_roots_poly(poly,pcan)
+                        if len(sqr)>0:
   
            # max_filter=100
             ##THIS I WILL REFER TO AS THE FILTER AND WE WILL SET THE STEP SIZE FOR INTERVAL TO THIS!
                    # print("building pcan: "+str(pcan))
-                        temp_solutions=brute_force_padic_solutions(pcan,k,n,a,sqr[0]) ##Using this as a filter... got to expand on this concept and add actual hensel too..
+                            temp_solutions=brute_force_padic_solutions(pcan,k,n,a,sqr[0]) ##Using this as a filter... got to expand on this concept and add actual hensel too..
                        # print("pcan: "+str(pcan)+" len(temp_solutions[1]): "+str(len(temp_solutions[1])))
-                        density=(temp_solutions[0]/len(temp_solutions[1]))
+                            density=(temp_solutions[0]/len(temp_solutions[1]))
                     
-                        if temp_solutions != -1 and len(temp_solutions[-1]) > 0 and density>2:
+                            if temp_solutions != -1 and len(temp_solutions[-1]) > 0 and density>2.3:
                       #  print("density: "+str(density)+" prime: "+str(pcan)+" prime^e: "+str(temp_solutions[0]))
-                            solutions.extend(temp_solutions)
-                            sol_mod*=temp_solutions[0]
-                            total_combo*=len(temp_solutions[1])
-                            primes_added.append(prime)
+                                solutions.extend(temp_solutions)
+                                sol_mod*=temp_solutions[0]
+                                total_combo*=len(temp_solutions[1])
+                                primes_added.append(prime)
                   #  solutions2=brute_force_padic_solutions2(pcan,k,n,a) ##Using this as a filter... got to expand on this concept and add actual hensel too..
                   #  if temp_solutions != solutions2:
                   #      print("solutions: "+str(solutions))
@@ -1872,7 +1928,7 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f):
                   #      sys.exit()
 
                 pcan+=1
-            if bitlen(sol_mod)<keysize//3 or total_combo > 50_000:
+            if bitlen(sol_mod)<keysize*0.3 or total_combo > 50_000:
                 k+=1
                 continue
             print("sol_mod: "+str(sol_mod)+" total_combo: "+str(total_combo)+" k: "+str(k)+" a: "+str(a))
@@ -1941,6 +1997,26 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f):
                         if interval[i]==0:
                             i+=1
                             continue
+                        disc_otherside=a*(root+mod*i)**2+4*n*k 
+                        o=0
+                        while o < len(blist_otherside):
+                            prime=blist_otherside[o]
+                            #print("prime: "+str(blist_otherside[o])+" "+str(blist_otherside[o+1]))
+                            hit=0
+                            p=0
+                            while p < len(blist_otherside[o+1]):
+                                r=blist_otherside[o+1][p]
+                                if r**2%prime == disc_otherside%prime:
+                                    hit=1
+                                   # print("found: "+str(r**2%prime)+" "+str(blist_otherside[o+1][p]))
+                                p+=1
+                            if hit ==0:
+                                print("didn't find a match with otherside...")
+                            o+=2
+
+
+
+
                        # print("hallo??")
                        # krons=[]
                         for sprime in sbase:
@@ -1955,14 +2031,14 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f):
                                 print("super catastrophic error core logic went wrong: "+str(sprime))
                                 sys.exit()
                          #   krons.append(kronecker_symbol(disc_otherside,sprime))
-                        disc_otherside=a*(root+mod*i)**2+4*n*k 
+                        
                         #for prime in primes_added:
                         #    if kronecker_symbol(disc_otherside,prime)==-1:
                         #        print("catastrophic error")
                         #        sys.exit()
                       #  if i==500:
                        #     print(str(bitlen(disc_otherside))+" i: "+str(i))#+" k: "+str(k)+" a: "+str(a)+" mod: "+str(mod)+" krons: "+str(krons))
-
+                        disc_otherside=a*(root+mod*i)**2+4*n*k 
 
                       #  if disc_otherside%mod_otherside !=0:
                       #      print('fatal error')
@@ -1985,7 +2061,7 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f):
                                #     t+=2
                                 #print("test: "+str(test)+" root: "+str((root+mod_otherside*i))+" mod_otherside: "+str(mod_otherside))
                                 #print("found i (blist): "+str(i)+" new_root (otherside): "+str(new_root)+" mod_otherside: "+str(mod_otherside))
-                                print("****************************************************************************Found one with psieve: "+str(test)+" k: "+str(k)+" a: "+str(a)+" interval index: "+str(i)+" interval[i]: "+str(interval[i]))#,krons)
+                                print("****************************************************************************Found one with psieve: "+str(test)+" k: "+str(k)+" a: "+str(a)+" interval index: "+str(i)+" interval[i]: "+str(interval[i])+" root%mod: "+str((root))+" mod: "+str(mod))#,krons)
                                 new_root=a*(root+mod*i)
                                 poly_val=(new_root)**2+4*n*k*a 
                                 local_factors, value = factorise_fast(poly_val,primelist_f)
