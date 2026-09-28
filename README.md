@@ -22,44 +22,17 @@ To run:  python3 run_qs.py -keysize 50 -base 1000 -debug 0 -lin_size 100 -quad_s
 
 This starts with an SIQS variant where the stripped away factors are square to minimize the odd exponent factors in the bsmooth and after that we use the research from the paper in psieve(). This then utilizes a two sided approach and looks for similar b-smooths by calculating quadratic residues and applying hensel's lifting (I need to fix some of that hensel code still, its just bruteforcing roots mod p^e for now). 
 
-It's not completely finished yet, it's very close now. You need to consider both sides and keep lifting.. and that should be enough to minimize possible solution while lifting. Atleast that's the angle I'm currently exploring. This should work because there are certain conditions that must be met (one side must generate a discriminant divisible by the odd exponent factors we are looking for and from the other side around everything must be a quadratic residue) and we lift using different primes for both sides. 
+Update: New update!! I FINALLY DID IT!!!! I DID IT!!!!! 
 
-Trying to finish this.. but its fcking noisy where I live and my father is in critical condition in the ICU. Wish I could get away from this attic room to somewhere quiet. 
+To do: 
 
-Update: Figured it out!!!!!!!!!! So in the psieve() logic. We need to do exactly the same from the other side around. And we can do this simply by transfering "a" like this (making it monic) i.e:
-
-ab^2+4Nk -> (ab)^2+4Nka and hence on the other side (lets name the linear coefficient here y, aka root of the discriminant) ay^2-4Nka = (ab)^2+4Nka.. so that's how we can "consider" it from the other side around... et viola.. that hopefully be enough now. 
-
-Update: At line 1950 (blist_otherside2=build_residues(sbase,n,a,k)) I have added the residue calculations from the other way around... and we verify that these hold true for any solution we find. So that atleast confirms the math I wrote in the previous paragraph. Now for the coup de grace, let me see if I can use this condition as some type of ladder to build up a solution with hensel or as a filter to atleast meaningfully narrow down solutions. Having a very hard time to focus though. Very loud outside this last week and experiencing paralyzing levels of stress with my father in the ICU. I'm actually experiencing so much stress righ now, I feel at the edge of a fullblown breakdown. But I know that is what people are hoping for and I must stay sane and finish my work, despite everything. I will not be broken like this. I refuse to break.
-
-Oh yea.. I can probably correlate those residues from the other side around between when the prime divides "a" and when not. Let me try something.
-
-Got it! In blist_otherside there will be some residue that if multiplied by "a" will appear in blist_otherside2. Since both these lists uses different primes... this is a condition that we can leverage. Lets go. Until the finish line now.
+1. In find_good_k(fbase,a,n,sbase,ret_array,primelist_f) we need to use hensel for the primes in blist_otherside2 ... so we have sparser solutions sets inside larger moduli.. especially useful for smaller primes. Then the next step is probably to use this to calculate how many times we need to add the modulus to the coefficient. I may do a sieve interval for this. LETS GO. LETS DO THIS. THIS IS IT. TIME TO SHINE FCKERS.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
 
 Just demonstrates the math from the paper using quadratics. For educational purposes. And rather then taking a square root over a large prime we can also just calculate the discriminant. But this demonstrates the interesting relation between these quadratics and the factors of N.
-
-
-#### To run from folder "CUDA_QS_variant" (Failed Experiment):</br></br>
-To build: python3 setup.py build_ext --inplace</br>
-To run: To run:  python3 run_qs.py -keysize 240 -base 100_000 -debug 1 -lin_size 100_000_000 -quad_size 100</br></br>
- 
-Prerequisites: </br>
--Python (tested on 3.13)</br>
--Numpy (tested on 1.26.2)</br>
--Sympy</br>
--cupy-cuda13x</br>
--cython</br>
--setuptools</br>
--h5py</br>
-(please open an issues here if something doesn't work)</br></br>
-
-Additionally cuda support must be enabled. I did this on wsl2 (easy to setup), since it gets a lot harder to access the GPU on a virtual machine.
-
-This was an attempt at finding smooths with similar factorization using an SIQS variant. By using quadratic coefficients. But it didnt end up working as I had hoped so I abondoned this approach, but perhaps someone will get some use out of it.
 
 #### To run debug.py" (Prints the linear and quadratic coefficients to solve for 0 in the integers, for use with my paper):</br></br>
 
