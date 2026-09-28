@@ -32,6 +32,8 @@ ab^2+4Nk -> (ab)^2+4Nka and hence on the other side (lets name the linear coeffi
 
 Update: At line 1950 (blist_otherside2=build_residues(sbase,n,a,k)) I have added the residue calculations from the other way around... and we verify that these hold true for any solution we find. So that atleast confirms the math I wrote in the previous paragraph. Now for the coup de grace, let me see if I can use this condition as some type of ladder to build up a solution with hensel or as a filter to atleast meaningfully narrow down solutions. Having a very hard time to focus though. Very loud outside this last week and experiencing paralyzing levels of stress with my father in the ICU. I'm actually experiencing so much stress righ now, I feel at the edge of a fullblown breakdown. But I know that is what people are hoping for and I must stay sane and finish my work, despite everything. I will not be broken like this. I refuse to break.
 
+Oh yea.. I can probably correlate those residues from the other side around between when the prime divides "a" and when not. Let me try something.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
