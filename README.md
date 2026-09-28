@@ -30,6 +30,7 @@ Update: Figured it out!!!!!!!!!! So in the psieve() logic. We need to do exactly
 
 ab^2+4Nk -> (ab)^2+4Nka and hence on the other side (lets name the linear coefficient here y, aka root of the discriminant) ay^2-4Nka = (ab)^2+4Nka.. so that's how we can "consider" it from the other side around... et viola.. that hopefully be enough now. 
 
+Update: At line 1950 (blist_otherside2=build_residues(sbase,n,a,k)) I have added the residue calculations from the other way around... and we verify that these hold true for any solution we find. So that atleast confirms the math I wrote in the previous paragraph. Now for the coup de grace, let me see if I can use this condition as some type of ladder to build up a solution with hensel or as a filter to atleast meaningfully narrow down solutions. Having a very hard time to focus though. Very loud outside this last week and experiencing paralyzing levels of stress with my father in the ICU.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
