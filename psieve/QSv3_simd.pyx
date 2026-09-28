@@ -956,14 +956,14 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                # div_fac.append(3)
            
                 #To do: Sieve around the coefficient the b-smooth was found at
-                print("[*]Smooths: "+str(len(ret_array[0]))+" / "+str(base)+" b: "+str(new_root)+" k: "+str(quad_can))#+" square: "+str((abs(poly_val//div))**0.5))
+               # print("[*]Smooths: "+str(len(ret_array[0]))+" / "+str(base)+" b: "+str(new_root)+" k: "+str(quad_can))#+" square: "+str((abs(poly_val//div))**0.5))
                # if bitlen(div)<keysize*0.50: ##Dont know if this matters.. another parameter to test with..
                   #  print("PSIEVE1")
                 local_factors2, value2 = factorise_fast(new_root,primelist_f)
-                if value==1 and div!=1 and bitlen(div) < keysize*0.30:# and isPrime(value,5)==1:# and isPrime(div,5)==1:# and value2==1:# and len(div_fac)==1:
+                if value==1 and div!=1 and bitlen(div) < keysize*0.50:# and isPrime(value,5)==1:# and isPrime(div,5)==1:# and value2==1:# and len(div_fac)==1:
                     
                     print("[i]Trying psieve: "+str(2*new_root))
-                    psievefound=psieve(n,ret_array,primelist_f,primeslist,div,hmap2,sbase)
+                    psievefound=psieve(n,ret_array,primelist_f,primeslist,div,hmap2,sbase,2*new_root)
                     if psievefound !=0:
                         ret_array[1].append(new_root**2)
                         ret_array[0].append(poly_val)
@@ -1871,7 +1871,7 @@ def debug_find_residues3(prime,n,a,exp,k):
     return blist
 
 def build_residues(sbase,n,a,k):
-    print("Checking for a: "+str(a)+" k: "+str(k))
+   # print("Checking for a: "+str(a)+" k: "+str(k))
     blist=[]
     for prime in sbase:
         if (a)%prime!=0:
@@ -1920,7 +1920,7 @@ def build_disc_residues(fbase,a,n,k):
 
     return blist_otherside,mod_otherside
 
-def find_good_k(fbase,a,n,sbase,ret_array,primelist_f):
+def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,original_b):
     found=0
     primes_to_check=[]
     for prime in fbase:
@@ -1947,7 +1947,7 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f):
        # print("*trying k: "+str(k))
         if skip == 0:
             blist_otherside,mod_otherside=build_disc_residues(fbase,a,n,k)
-            print("Mod otherside: "+str(mod_otherside)+" blist_otherside: "+str(blist_otherside))
+           # print("Mod otherside: "+str(mod_otherside)+" blist_otherside: "+str(blist_otherside))
             blist_disc=get_partials(mod_otherside,blist_otherside)
             blist_otherside2=build_residues(sbase,n,a,k)
             
@@ -2033,10 +2033,11 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f):
                             krons.append(kronecker_symbol(disc,blist_otherside2[i]))
 
                             i+=2                       
-                        print("Found one!!!!!!!!!!!!!: "+str(disc)+" krons: "+str(krons))
-                        if math.isqrt(disc)**2==disc:
-
-                            new_root=a*(math.isqrt(disc))
+                       # print("Found one!!!!!!!!!!!!!: "+str(disc)+" krons: "+str(krons))
+                        new_root=math.isqrt(disc)
+                        if new_root**2==disc and b!=original_b:
+                            #+" krons: "+str(krons))
+                            new_root=a*new_root
                             poly_val=(new_root)**2+4*n*k*a 
                             local_factors, value = factorise_fast(poly_val,primelist_f)
 
@@ -2044,6 +2045,7 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f):
                             ret_array[0].append(poly_val)
                             ret_array[2].append(local_factors)
                             ret_array[3].append([])
+                            print("[i]Found one with psieve()!!!!!!!!!!!!! b: "+str(new_root)+" #smooths: "+str(len(ret_array[0])))
                             found+=1
                     q+=1
  
@@ -2057,9 +2059,9 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f):
 
 
    
-def psieve(n,ret_array,primelist_f,primeslist,a,hmap2,sbase):#(n,fbase,div,hmap2,ret_array):
+def psieve(n,ret_array,primelist_f,primeslist,a,hmap2,sbase,original_b):#(n,fbase,div,hmap2,ret_array):
     found=0
-    found+=find_good_k(primeslist,a,n,sbase,ret_array,primelist_f)
+    found+=find_good_k(primeslist,a,n,sbase,ret_array,primelist_f,original_b)
     return found
 
 def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,primeslist2,resmaps):
@@ -2124,7 +2126,7 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
         factor_ranking=[]
         quad=1
         new_mod,cfact,indexes=generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,bitlen(tnum),quad)
-        print("mod: "+str(new_mod)+" cfact: "+str(cfact)+" indexes: "+str(indexes))
+      #  print("mod: "+str(new_mod)+" cfact: "+str(cfact)+" indexes: "+str(indexes))
 
    
         #new_mod=37**2
@@ -2163,16 +2165,16 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
                     sys.exit()            
             interval=build_database2interval(primeslist_a,quad,n,lin,new_mod,roots2d,0,factor_ranking)
             found+=process_interval2d(n,ret_array,quad,primelist_f,large_prime_bound,partials,lin,new_mod,factor_ranking,fb_map,0,seen_factors,interval,primeslist,resmaps,valid_quads,valid_quads_factors,qlist,primelist,hmap2,sbase)#,lin,new_mod,sum_list)
-            if found > 5 or len(ret_array[0]) > base+10:
-                if g_debug ==1:
-                    print("seen_factors: ",seen_factors)
-                print("[i]Performing linear algebra")
-                test,test2=QS(n,primelist,ret_array[0],ret_array[2],ret_array[1],ret_array[3])
+           # if found > 100 or len(ret_array[0]) > base+10:
+           #     if g_debug ==1:
+           #         print("seen_factors: ",seen_factors)
+           #     print("[i]Performing linear algebra")
+           #     test,test2=QS(n,primelist,ret_array[0],ret_array[2],ret_array[1],ret_array[3])
       #      test,test2=QS(n,primelist,ret_array[0],ret_array[1],ret_array[2]) 
-                found=0 
-                if test !=0:
-                    print("\n\n\n\nFound at: ",len(ret_array[0]))
-                    return 
+           #     found=0 
+           #     if test !=0:
+           #         print("\n\n\n\nFound at: ",len(ret_array[0]))
+           #         return 
 
             poly_ind+=1
       
