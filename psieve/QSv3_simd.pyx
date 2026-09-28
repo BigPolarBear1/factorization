@@ -960,7 +960,7 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                # if bitlen(div)<keysize*0.50: ##Dont know if this matters.. another parameter to test with..
                   #  print("PSIEVE1")
                 local_factors2, value2 = factorise_fast(new_root,primelist_f)
-                if value==1 and div!=1 and bitlen(div) < keysize*0.20:# and isPrime(value,5)==1:# and isPrime(div,5)==1:# and value2==1:# and len(div_fac)==1:
+                if value==1 and div!=1 and bitlen(div) < keysize*0.30:# and isPrime(value,5)==1:# and isPrime(div,5)==1:# and value2==1:# and len(div_fac)==1:
                     
                     print("[i]Trying psieve: "+str(2*new_root))
                     psievefound=psieve(n,ret_array,primelist_f,primeslist,div,hmap2,sbase)
@@ -1820,6 +1820,67 @@ def psieve_build_interval(sbase,n,k,mod,root,a):
         i+=1
     return interval
 
+def debug_find_residues3(prime,n,a,exp,k):
+ #   hmap={}
+   # klist=[prime**exp,[]]
+    blist=[prime**exp,[]]
+  
+    b=0
+    sq=[1,0,-a]
+    sqr=find_roots_poly(sq, prime) 
+    if len(sqr)==0:
+        return []
+    #for sqr_r in sqr:
+    sqr_r=sqr[0]
+    sqr_r=lift_root2([1,0,-a], sqr_r, prime, 2)
+   # print("sqr_r: "+str(sqr_r))
+    while b < prime**exp:
+        poly=[1,-b*sqr_r,n*k]
+        polyc=copy.deepcopy(poly)
+        roots=find_roots_poly(polyc,prime)
+      #  if b == 2 and len(roots)==2:
+      #  print("roots: "+str(roots)+" b: "+str(b)+" prime**exp: "+str(prime**exp))
+        if len(roots)>0: ##to do: singular??
+            i=0
+            while i < len(roots):
+                #deriv=get_derivative(poly)
+               # der=evaluate(deriv,roots[i])
+               # poly2=[1,-der*sqr_r,n]
+                roots[i]=lift_root2(poly, roots[i], prime, exp)
+
+                if evaluate(poly,roots[i])%prime**exp!=0:
+             #   if (roots[i]**2-4*n*k)%prime**exp !=0:
+                    print("something screwed up: "+str(roots)+" k: "+str(k))
+                    sys.exit(0)
+                disc1=a*b**2-4*n*k
+                if kronecker_symbol(disc1,prime)==-1:
+                    print("kroneckerfail:"+str(prime))
+                    sys.exit()
+                disc2=(a*b)**2-4*n*a*k 
+                if disc2%a!=0:
+                    print("fatal")
+                    sys.exit()
+                i+=1
+           # klist[-1].append(k%prime**exp)
+            blist[-1].append(b)
+          #  hmap[k]=roots
+           # hmap.append(roots)
+   
+        b+=1
+   # print("prime: "+str(prime)+" hmap: "+str(blist))
+    return blist
+
+def build_residues(sbase,n,a,k):
+    print("Checking for a: "+str(a)+" k: "+str(k))
+    blist=[]
+    for prime in sbase:
+        if (a)%prime!=0:
+            exp=1
+            temp_blist=debug_find_residues3(prime,n,a,1,k*a) ##TO DO: when prime == 2
+            if len(temp_blist)>0:
+                blist.extend(temp_blist)
+    return blist
+
 def debug_find_residues4(prime,n,exp,k):
 
  #   hmap={}
@@ -1886,7 +1947,7 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f):
        # print("*trying k: "+str(k))
         if skip == 0:
             blist_otherside,mod_otherside=build_disc_residues(fbase,a,n,k)
-
+            blist_otherside2=build_residues(sbase,n,a,k)
             #print("[i]Checking k: "+str(k))
             sol_mod=1
             solutions=[]
@@ -1998,6 +2059,11 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f):
                             i+=1
                             continue
                         disc_otherside=a*(root+mod*i)**2+4*n*k 
+                        disc_otherside_monic=(a*(root+mod*i))**2+4*n*k*a
+                        if disc_otherside_monic%a !=0:
+                            print("fatal monic")
+                            sys.exit()
+                        disc_otherside_monic//=a      
                         o=0
                         while o < len(blist_otherside):
                             prime=blist_otherside[o]
@@ -2014,9 +2080,22 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f):
                                 print("didn't find a match with otherside...")
                             o+=2
 
+                     #   print("blist_otherside2: "+str(blist_otherside2))
+                        o=0
+                        while o < len(blist_otherside2):
+                            prime=blist_otherside2[o]
+                            hit=0
+                            p=0
+                            while p < len(blist_otherside2[o+1]):
+                                r=blist_otherside2[o+1][p]
+                                if r**2%prime == disc_otherside_monic%prime:
+                                    hit=1
+                                   # print("found: "+str(r**2%prime)+" "+str(blist_otherside[o+1][p]))
 
-
-
+                                p+=1
+                            if hit ==0:
+                                print("123didn't find a match with otherside...")
+                            o+=2
                        # print("hallo??")
                        # krons=[]
                         for sprime in sbase:
@@ -2155,8 +2234,8 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
         print("mod: "+str(new_mod)+" cfact: "+str(cfact)+" indexes: "+str(indexes))
 
    
-       # new_mod=37**2
-       # cfact=[37**2]
+        #new_mod=37**2
+        #cfact=[37**2]
        # indexes=[10]
         if new_mod ==0:
             retry+=1
