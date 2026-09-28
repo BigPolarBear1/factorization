@@ -34,6 +34,8 @@ Update: At line 1950 (blist_otherside2=build_residues(sbase,n,a,k)) I have added
 
 Oh yea.. I can probably correlate those residues from the other side around between when the prime divides "a" and when not. Let me try something.
 
+Got it! In blist_otherside there will be some residue that if multiplied by "a" will appear in blist_otherside2. Since both these lists uses different primes... this is a condition that we can leverage. Lets go. Until the finish line now.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
