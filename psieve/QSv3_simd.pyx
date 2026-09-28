@@ -1947,213 +1947,106 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f):
        # print("*trying k: "+str(k))
         if skip == 0:
             blist_otherside,mod_otherside=build_disc_residues(fbase,a,n,k)
+            print("Mod otherside: "+str(mod_otherside)+" blist_otherside: "+str(blist_otherside))
+            blist_disc=get_partials(mod_otherside,blist_otherside)
             blist_otherside2=build_residues(sbase,n,a,k)
-            #print("[i]Checking k: "+str(k))
-            sol_mod=1
-            solutions=[]
-            pcan=2 ##to do: prime=2 is most powerful but the find_roots_poly(poly,pcan) wont work on it.
-            total_combo=1
-            primes_added=[]
-            while bitlen(sol_mod)<keysize*0.3 and pcan < 40:
-                
-                if isPrime(pcan,5)==1 and a%pcan !=0:
-                    if pcan == 2:
-                        i=0
-                        while i < 2:
-                            if i**2%2 == a%2:
-                                sqr=[i]
-                            i+=1
-                    else:
-                        poly=[1,0,-a]
-                        sqr=find_roots_poly(poly,pcan)
-                        if len(sqr)>0:
-  
-           # max_filter=100
-            ##THIS I WILL REFER TO AS THE FILTER AND WE WILL SET THE STEP SIZE FOR INTERVAL TO THIS!
-                   # print("building pcan: "+str(pcan))
-                            temp_solutions=brute_force_padic_solutions(pcan,k,n,a,sqr[0]) ##Using this as a filter... got to expand on this concept and add actual hensel too..
-                       # print("pcan: "+str(pcan)+" len(temp_solutions[1]): "+str(len(temp_solutions[1])))
-                            density=(temp_solutions[0]/len(temp_solutions[1]))
-                    
-                            if temp_solutions != -1 and len(temp_solutions[-1]) > 0 and density>2.3:
-                      #  print("density: "+str(density)+" prime: "+str(pcan)+" prime^e: "+str(temp_solutions[0]))
-                                solutions.extend(temp_solutions)
-                                sol_mod*=temp_solutions[0]
-                                total_combo*=len(temp_solutions[1])
-                                primes_added.append(prime)
-                  #  solutions2=brute_force_padic_solutions2(pcan,k,n,a) ##Using this as a filter... got to expand on this concept and add actual hensel too..
-                  #  if temp_solutions != solutions2:
-                  #      print("solutions: "+str(solutions))
-                  #      print("solutios2: "+str(solutions2))
-                  #      print("wtf")
-                  #      sys.exit()
-
-                pcan+=1
-            if bitlen(sol_mod)<keysize*0.3 or total_combo > 50_000:
-                k+=1
-                continue
-            print("sol_mod: "+str(sol_mod)+" total_combo: "+str(total_combo)+" k: "+str(k)+" a: "+str(a))
-            solutions=get_partials(sol_mod,solutions)
-
-            #print(solutions)
-            #print(len(solutions[-1]))
             
-           #     print(str(len(solutions[-1]))+" mod: "+str(solutions[0]))
-              #  print("hallo?")
-               # blist=build_residues(sbase,n,a,k)
-               # blist.extend(solutions)
-             #   print("blist: "+str(blist))
-              #  print("solutions: "+str(solutions))
-              #  blist_otherside,mod_otherside=build_disc_residues(fbase,a,n,k)
-                #print("mod_otherside: "+str(mod_otherside)+" blist_otherside: "+str(blist_otherside))
-             #   blist_otherside_t=get_partials(mod_otherside,blist_otherside)
-            if 1:
+            
+            enum=[]
+            
+            i=0
+            while i < len(blist_disc):
+                enum.append(blist_disc[i+1])
 
-                mod=1
-                enum=[]
-                total_combo=1
+                i+=2
+
+            
+            for idx in enumerated_product(*enum):
+                b=0
                 i=0
-                while i < len(solutions):
-                    mod*=solutions[i]
-                    enum.append(solutions[i+1])
-                    total_combo*=len(solutions[i+1])
-                    i+=2
-                if mod != sol_mod:
-                    print("catasrophic error")
+                while i < len(idx):
+                    ind=idx[i]
+                    b+=enum[i][ind]
+                    i+=1
+                b_temp=b%mod_otherside
+              #  print("b: "+str(b)+" mod_otherside: "+str(mod_otherside))
+                if (b**2-4*n*k)%mod_otherside != 0:
+                    print("something weird went wrong")
                     sys.exit()
-                #print("enum: "+str(enum))
-                #print("total_combo: "+str(total_combo))
-                for idx in enumerated_product(*enum):
+                q=0
+                while q < 100_000:
+                    b=b_temp+mod_otherside*q
 
-                    root=0
+                    disc=b**2-4*n*k
+                    disc//=mod_otherside
+                    if disc < 0:
+                        q+=1 
+                        continue
+                 #   test=math.isqrt(disc)
+                  #  if test**2 == disc:
+                 #       print(" hit a square")
+                   #     q+=1
+                   #     continue
+                    
+                         #   if a*test**2+4*n*k != b**2:
+                         #       print('fatal error')
+                         #       sys.exit()
+                         #   print("found a square: "+str(a*test**2+4*n*k)+" b: "+str(b))
+                         #   disc_otherside_monic=(a*test)**2+4*n*k*a
+                         #   if (a*test)**2+4*n*k*a != a*b**2:
+                         #       print("fatal error 2")
+                         #   if disc_otherside_monic%a !=0:
+                         #       print("fatal monic")
+                         #       sys.exit()
+                         #   disc_otherside_monic//=a      
+
+
+
+                    ##TO DO: HENSEL HERE FOR THE SOLUTIONS IN blist_otherside2.. THEN USE THOSE RESIDUES TO JUST STRAIGHT UP CALCULATE THE CORRECT "q" (how many times to add the modulus) IF IT EXISTS
+                    fail=0
                     i=0
-                    while i < len(idx):
-                        ind=idx[i]
-                        root+=enum[i][ind]
-                        i+=1
-                    root%=mod
-                    diff=abs((4*n*k)//a)
-                    diff=math.isqrt(diff)
-                    rdiff=(root-diff)%mod
-                    diff+=rdiff
-                    if diff%mod != root:
-                        print("fatal error")
-                        sys.exit()
-                    bstart=diff-(mod*500)
-
-                    interval=psieve_build_interval(sbase,n,k,mod,root,a)
-                    indexlist=np.nonzero(interval)[0]
-
-           # print("Checking lin: "+str(lin)+" quad: "+str(quad_can)+" cmod: "+str(cmod)+" u2: "+str(u2)+" u: "+str(u)+" temp: "+str(temp))
-                  #  print("k: "+str(k)+" root: "+str(root)+" mod: "+str(mod))
-                  #  ind=0
-                  #  length=len(indexlist)
-                  #  print(indexlist)
-                 #   while ind < length:# length:  
-                  #      i=int(indexlist[ind])
-                       # print("Found one at index: "+str(i))
-                  #  print(interval)
-                    i=0
-                    while i < len(interval):
-                        if interval[i]==0:
-                            i+=1
-                            continue
-                        disc_otherside=a*(root+mod*i)**2+4*n*k 
-                        disc_otherside_monic=(a*(root+mod*i))**2+4*n*k*a
-                        if disc_otherside_monic%a !=0:
-                            print("fatal monic")
+                    while i < len(blist_otherside2): ##TO DO: HENSEL HERE!!
+                        prime=blist_otherside2[i]
+                        hit=0
+                        p=0
+                        while p < len(blist_otherside2[i+1]):
+                            r=blist_otherside2[i+1][p]
+                            if (r)%prime == (b)%prime:
+                                hit=1
+                                break
+                            p+=1
+                        if hit ==0:
+                            fail=1
+                            break
+                        i+=2
+                    if fail == 0:
+                        krons=[]
+                        disc=b**2-4*n*k
+                        if disc%mod_otherside !=0:
+                            print("fatal")
                             sys.exit()
-                        disc_otherside_monic//=a      
-                        o=0
-                        while o < len(blist_otherside):
-                            prime=blist_otherside[o]
-                            #print("prime: "+str(blist_otherside[o])+" "+str(blist_otherside[o+1]))
-                            hit=0
-                            p=0
-                            while p < len(blist_otherside[o+1]):
-                                r=blist_otherside[o+1][p]
-                                if r**2%prime == disc_otherside%prime:
-                                    hit=1
-                                   # print("found: "+str(r**2%prime)+" "+str(blist_otherside[o+1][p]))
-                                p+=1
-                            if hit ==0:
-                                print("didn't find a match with otherside...")
-                            o+=2
 
-                     #   print("blist_otherside2: "+str(blist_otherside2))
-                        o=0
-                        while o < len(blist_otherside2):
-                            prime=blist_otherside2[o]
-                            hit=0
-                            p=0
-                            while p < len(blist_otherside2[o+1]):
-                                r=blist_otherside2[o+1][p]
-                                if r**2%prime == disc_otherside_monic%prime:
-                                    hit=1
-                                   # print("found: "+str(r**2%prime)+" "+str(blist_otherside[o+1][p]))
+                        disc//=mod_otherside
+                        i=0
+                        while i < len(blist_otherside2): 
+                            
+                            krons.append(kronecker_symbol(disc,blist_otherside2[i]))
 
-                                p+=1
-                            if hit ==0:
-                                print("123didn't find a match with otherside...")
-                            o+=2
-                       # print("hallo??")
-                       # krons=[]
-                        for sprime in sbase:
-                            if math.gcd(sprime, a)!=1 or mod%sprime ==0:
-                                continue
-                            #a_inv=modinv(a,sprime)
+                            i+=2                       
+                        print("Found one!!!!!!!!!!!!!: "+str(disc)+" krons: "+str(krons))
+                        if math.isqrt(disc)**2==disc:
 
-                            disc_otherside=(a*(root+mod*i)**2+4*n*k)%sprime    
-                          #  disc_otherside*=a_inv
-                           # disc_otherside%=sprime
-                            if kronecker_symbol(disc_otherside,sprime)==-1:
-                                print("super catastrophic error core logic went wrong: "+str(sprime))
-                                sys.exit()
-                         #   krons.append(kronecker_symbol(disc_otherside,sprime))
-                        
-                        #for prime in primes_added:
-                        #    if kronecker_symbol(disc_otherside,prime)==-1:
-                        #        print("catastrophic error")
-                        #        sys.exit()
-                      #  if i==500:
-                       #     print(str(bitlen(disc_otherside))+" i: "+str(i))#+" k: "+str(k)+" a: "+str(a)+" mod: "+str(mod)+" krons: "+str(krons))
-                        disc_otherside=a*(root+mod*i)**2+4*n*k 
+                            new_root=a*(math.isqrt(disc))
+                            poly_val=(new_root)**2+4*n*k*a 
+                            local_factors, value = factorise_fast(poly_val,primelist_f)
 
-                      #  if disc_otherside%mod_otherside !=0:
-                      #      print('fatal error')
-                      #      sys.exit()
-                        if 1:#disc_otherside%a == 0 and disc_otherside > 0:
-                           # disc_otherside//=a
-                            test=math.isqrt(abs(disc_otherside))
-
-
-
-
-
-                            if test**2 == disc_otherside:# and (root+mod_otherside*i) != o_b:
-                                ##To do: use blist for marking an interval.. we can use the small prime that we lifted as step size
-                               # t=0
-                               # while t < len(blist_otherside): ##I'm still thinking on how to incorporate this otherside.. some meet in the middle type algo? I odn't know..
-                               #     if test%blist_otherside[t] not in blist_otherside[t+1]:
-                               #         print("SUPER FATAL ERROR!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ")#+str(blist[t])+" "+str(test%blist[t])+" test: "+str(test))
-                               #         sys.exit()
-                               #     t+=2
-                                #print("test: "+str(test)+" root: "+str((root+mod_otherside*i))+" mod_otherside: "+str(mod_otherside))
-                                #print("found i (blist): "+str(i)+" new_root (otherside): "+str(new_root)+" mod_otherside: "+str(mod_otherside))
-                                print("****************************************************************************Found one with psieve: "+str(test)+" k: "+str(k)+" a: "+str(a)+" interval index: "+str(i)+" interval[i]: "+str(interval[i])+" root%mod: "+str((root))+" mod: "+str(mod))#,krons)
-                                new_root=a*(root+mod*i)
-                                poly_val=(new_root)**2+4*n*k*a 
-                                local_factors, value = factorise_fast(poly_val,primelist_f)
-
-                                ret_array[1].append(new_root**2)
-                                ret_array[0].append(poly_val)
-                                ret_array[2].append(local_factors)
-                                ret_array[3].append([])
-                                found+=1
-
-
-                        i+=1
-                      #  ind+=1
+                            ret_array[1].append(new_root**2)
+                            ret_array[0].append(poly_val)
+                            ret_array[2].append(local_factors)
+                            ret_array[3].append([])
+                            found+=1
+                    q+=1
+ 
         if found > 0:
             return found #should be enouhg..
 
@@ -2170,7 +2063,7 @@ def psieve(n,ret_array,primelist_f,primeslist,a,hmap2,sbase):#(n,fbase,div,hmap2
     return found
 
 def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,primeslist2,resmaps):
-    sbase=copy.deepcopy(primeslist[0:20])
+    sbase=copy.deepcopy(primeslist[0:60])
    # print("fbase: "+str(fbase))
     print("[i]Building psieve Residue Map (to do: some duplication here from merging two algos, fix later)")
     hmap2=[]#psieve_create_hashmap(n,sbase) ##For psieve related code..
