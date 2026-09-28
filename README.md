@@ -26,7 +26,9 @@ Update: New update!! I FINALLY DID IT!!!! I DID IT!!!!!
 
 To do: 
 
-1. In find_good_k(fbase,a,n,sbase,ret_array,primelist_f) we need to use hensel for the primes in blist_otherside2 ... so we have sparser solutions sets inside larger moduli.. especially useful for smaller primes. Then the next step is probably to use this to calculate how many times we need to add the modulus to the coefficient. I may do a sieve interval for this. LETS GO. LETS DO THIS. THIS IS IT. TIME TO SHINE FCKERS.
+In find_good_k(fbase,a,n,sbase,ret_array,primelist_f) we need to use hensel for the primes in blist_otherside2 ... so we have sparser solutions sets inside larger moduli.. especially useful for smaller primes. Then the next step is probably to use this to calculate how many times we need to add the modulus to the coefficient. I may do a sieve interval for this. LETS GO. LETS DO THIS. THIS IS IT. TIME TO SHINE FCKERS.
+
+note: if it fails beause generate_modulus didn't generate a new modulus.. just run the PoC again. Wont be a problem soon as I optimize the PoC now and make it work for higher bits..
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
