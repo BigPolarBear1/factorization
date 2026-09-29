@@ -33,6 +33,8 @@ note: if it fails because generate_modulus didn't generate a new modulus.. just 
 Update: Close close close... I need to fix that hensel code still.. but once thats done, that should yield a big performance gain. With this setup though, hensel isn't working correctly out of the box... let me have a closer look what's going on.
 With these different residue lists that I'm precalculating.. we got kind of a "triangle" setup, atleast abstractly thats how I picture it.. I'm hoping that with hensel I can narrow down an actual solution quickly.. because a real solution in Z should be in all 3 of these residue lists using this two sided setup.
 
+Update: Actually.. since (ab)^2+4Nka implies the existence of ay^2-4Nka ... then this should also imply a(ab)^2+4Nk(a^2) or something similar, the exact details might not be correct, havnt done hand calculations yet. But this would kind of give a ladder for hensel to climb.... let me check if I'm back..  
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
