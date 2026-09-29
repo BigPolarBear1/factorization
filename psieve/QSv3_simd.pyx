@@ -962,7 +962,7 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                 local_factors2, value2 = factorise_fast(new_root,primelist_f)
                 if value==1 and div!=1 and bitlen(div) < keysize*0.50:# and isPrime(value,5)==1:# and isPrime(div,5)==1:# and value2==1:# and len(div_fac)==1:
                     
-                    print("[i]Trying psieve: "+str(2*new_root))
+                    print("[i]Trying psieve b: "+str(2*new_root)+" a: "+str(div)+" bitlen a: "+str(bitlen(div)))
                     psievefound=psieve(n,ret_array,primelist_f,primeslist,div,hmap2,sbase,2*new_root)
                     if psievefound !=0:
                         ret_array[1].append(new_root**2)
@@ -1793,31 +1793,22 @@ def brute_force_padic_solutions(prime,k,n,a,sqr):
 def enumerated_product(*args):
     yield from itertools.product(*(range(len(x)) for x in args))
 
-def psieve_build_interval(sbase,n,k,mod,root,a):
-    interval=array.array("i",[1]*10_000)
+def psieve_build_interval(n,k,mod,root,a,blist_otherside2):
+    interval=array.array("i",[1]*1_000)
   #  interval=np.ones(10_000,dtype=np.uint8)
     i=0
-    while i < len(sbase):
-        prime=sbase[i]
-        if mod%prime==0:
-            i+=1
-            continue
-        j=0
-        while j <prime:
-            disc=a*j**2+4*n*k
-            if kronecker_symbol(disc,prime)==-1:
-                
-                dist=solve_lin_con(mod,j-root,prime)
-             #   diff=(dist-start_ind)%prime
-             #   dist2=start_ind+diff
-              #  if dist2%prime != dist:
-             #       print("fatal error")
+    while i < len(blist_otherside2):
+        prime=blist_otherside2[i]
 
+        p=0
+        while p < prime:
+            if p not in blist_otherside2[i+1]:
+                dist=solve_lin_con(mod,p-root,prime)
                 while dist < len(interval):
                     interval[dist]=0
                     dist+=prime
-            j+=1
-        i+=1
+            p+=1
+        i+=2
     return interval
 
 def debug_find_residues3(prime,n,a,exp,k):
@@ -1922,23 +1913,30 @@ def build_disc_residues(fbase,a,n,k):
 
 def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,original_b):
     found=0
+
     primes_to_check=[]
     for prime in fbase:
         if a%prime==0:
             primes_to_check.append(prime)
 
+
     k=1
-    while k < 2: #To do: Seems this needs to match the "k" value of the original b-smooth
+    while k < 100: #To do: I know how to calculate possible "k" values for a modulus.. but there seems to be something else also going on.. kronecker(a,-n) must be 1.. but thats still not enough. Investigate later. Can add squares to a instead to optimize the interval.
+
+        
         if isPrime(k,5)!=1 and k != 1:
             k+=1
             continue
        # print("trying k: "+str(k))
         
-        if math.gcd(a,k)!=1: #to do: does not need to be prime.. just need to avoid squares in the factorization... fix later
+        if math.gcd(a,k)!=1:# or kronecker_symbol(a,n) != 1: #to do: does not need to be prime.. just need to avoid squares in the factorization... fix later
+            if k == 1:
+                print("the fuck")
+                sys.exit()
             k+=1
             continue
 
-            
+      #  print("kronecker a,n: "+str(kronecker_symbol(a,n)))
        # print("trying k: "+str(k))
         skip=0
         for prime in primes_to_check:
@@ -1946,6 +1944,10 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,original_b):
                 skip=1
        # print("*trying k: "+str(k))
         if skip == 0:
+            if kronecker_symbol(a,n*k) == -1: ##To do: Explore this a bit deeper eventually... does seem to hold true
+                k+=1
+                continue
+               
             blist_otherside,mod_otherside=build_disc_residues(fbase,a,n,k)
            # print("Mod otherside: "+str(mod_otherside)+" blist_otherside: "+str(blist_otherside))
             blist_disc=get_partials(mod_otherside,blist_otherside)
@@ -1973,15 +1975,21 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,original_b):
                 if (b**2-4*n*k)%mod_otherside != 0:
                     print("something weird went wrong")
                     sys.exit()
+
+                interval=psieve_build_interval(n,k,mod_otherside,b_temp,a,blist_otherside2)
+                
                 q=0
-                while q < 100_000:
+                while q < len(interval):
+                    if interval[q]==0:
+                        q+=1
+                        continue
                     b=b_temp+mod_otherside*q
 
                     disc=b**2-4*n*k
                     disc//=mod_otherside
-                    if disc < 0:
-                        q+=1 
-                        continue
+                  #  if disc < 0:
+                  #      q+=1 
+                  #      continue
                  #   test=math.isqrt(disc)
                   #  if test**2 == disc:
                  #       print(" hit a square")
@@ -2019,6 +2027,9 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,original_b):
                             fail=1
                             break
                         i+=2
+                    if fail == 1:
+                        print("this shouldnt hit since we build the interval.. ")
+                        sys.exit()
                     if fail == 0:
                         krons=[]
                         disc=b**2-4*n*k
@@ -2034,8 +2045,8 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,original_b):
 
                             i+=2                       
                        # print("Found one!!!!!!!!!!!!!: "+str(disc)+" krons: "+str(krons))
-                        new_root=math.isqrt(disc)
-                        if new_root**2==disc and b!=original_b:
+                        new_root=math.isqrt(abs(disc))
+                        if abs(new_root**2)==abs(disc) and b!=original_b:
                             #+" krons: "+str(krons))
                             new_root=a*new_root
                             poly_val=(new_root)**2+4*n*k*a 
@@ -2045,7 +2056,10 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,original_b):
                             ret_array[0].append(poly_val)
                             ret_array[2].append(local_factors)
                             ret_array[3].append([])
-                            print("[i]Found one with psieve()!!!!!!!!!!!!! b: "+str(new_root)+" #smooths: "+str(len(ret_array[0])))
+                            krons=[]
+                            for prime in primes_to_check:
+                                krons.append(kronecker_symbol(prime,n))
+                            print("[i]Found one with psieve()!!!!!!!!!!!!! b: "+str(new_root)+" #smooths: "+str(len(ret_array[0]))+" index: "+str(q)+" interval[q]: "+str(interval[q])+" k: "+str(k)+" kron a,n : "+str(kronecker_symbol(a,n))+" "+str(kronecker_symbol(a,n*k))+" "+str(krons)+" skip: "+str(skip))
                             found+=1
                     q+=1
  
