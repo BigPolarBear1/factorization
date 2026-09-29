@@ -18,7 +18,7 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 
 #### To run from folder "psieve" WORK IN PROGRES...extremely early version:</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 50 -base 1000 -debug 0 -lin_size 100 -quad_size 1</br></br>
+To run:  python3 run_qs.py -keysize 70 -base 10_000 -debug 0 -lin_size 100 -quad_size 1</br></br>
 
 This starts with an SIQS variant where the stripped away factors are square to minimize the odd exponent factors in the bsmooth and after that we use the research from the paper in psieve(). This then utilizes a two sided approach and looks for similar b-smooths by calculating quadratic residues and applying hensel's lifting (I need to fix some of that hensel code still, its just bruteforcing roots mod p^e for now). 
 
@@ -29,6 +29,8 @@ To do:
 In find_good_k(fbase,a,n,sbase,ret_array,primelist_f) we need to use hensel for the primes in blist_otherside2 ... so we have sparser solutions sets inside larger moduli.. especially useful for smaller primes. Then the next step is probably to use this to calculate how many times we need to add the modulus to the coefficient. I may do a sieve interval for this. LETS GO. LETS DO THIS. THIS IS IT. TIME TO SHINE FCKERS.
 
 note: if it fails because generate_modulus didn't generate a new modulus.. just run the PoC again. Wont be a problem soon as I optimize the PoC now and make it work for higher bits..
+
+Update: Close close close... I need to fix that hensel code still.. but once thats done, that should yield a big performance gain. With this setup though, hensel isn't working correctly out of the box... let me have a closer look what's going on.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
