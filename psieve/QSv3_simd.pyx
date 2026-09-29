@@ -1792,7 +1792,7 @@ def enumerated_product(*args):
     yield from itertools.product(*(range(len(x)) for x in args))
 
 def psieve_build_interval(n,k,mod,root,a,blist_otherside2):
-    interval=array.array("i",[1]*1_000)
+    interval=array.array("i",[1]*10_000)
   #  interval=np.ones(10_000,dtype=np.uint8)
     i=0
     while i < len(blist_otherside2):
@@ -1817,8 +1817,7 @@ def debug_find_residues3(prime,n,a,exp,k):
     b=0
     sq=[1,0,-a]
     sqr=find_roots_poly(sq, prime) 
-    if len(sqr)==0:
-        return []
+
     t=0
     while t < len(sqr):
         sqr_r=sqr[t]
@@ -1830,6 +1829,9 @@ def debug_find_residues3(prime,n,a,exp,k):
             poly=[1,-b*sqr_r,n*k]
             polyc=copy.deepcopy(poly)
             roots=find_roots_poly(polyc,prime)
+            if len(roots)<2:
+                b+=1
+                continue
       #  if b == 2 and len(roots)==2:
       #  print("roots: "+str(roots)+" b: "+str(b)+" prime**exp: "+str(prime**exp))
             if len(roots)>0: ##to do: singular??
@@ -1870,6 +1872,7 @@ def debug_find_residues3(prime,n,a,exp,k):
 def build_residues(sbase,n,a,k):
    # print("Checking for a: "+str(a)+" k: "+str(k))
     blist=[]
+    blist_n=[]
     for prime in sbase:
         if (a)%prime!=0 and math.gcd(prime,k)==1:
             exp=1
@@ -1877,11 +1880,12 @@ def build_residues(sbase,n,a,k):
             sqr=find_roots_poly(sq, prime) 
             if len(sqr)==0:
                 continue
-          #  temp_blist=debug_find_residues3(prime,n,a,2,k*a) ##TO DO: when prime == 2
+         #   temp_blist=debug_find_residues3(prime,n,a,2,k*a) ##TO DO: when prime == 2
            # temp_blist2[-1].sort()
             temp_blist=brute_force_padic_solutions2(prime,k*a,n,a,sqr[0])
-            if temp_blist == -1:
-                continue
+            temp_blist_n=brute_force_padic_solutions2(prime,k,-n,a,sqr[0])
+          #  if temp_blist == -1:
+          #      continue
           #  if temp_blist != temp_blist2:
           #      print("something went wrong")
           #      print(temp_blist)
@@ -1889,7 +1893,8 @@ def build_residues(sbase,n,a,k):
           #      sys.exit(0)
             if len(temp_blist)>0:
                 blist.extend(temp_blist)
-    return blist
+                blist_n.extend(temp_blist_n)
+    return blist,blist_n
 
 def debug_find_residues4(prime,n,exp,k):
 
@@ -1940,7 +1945,7 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,original_b):
 
 
     k=1
-    while k < 100: #To do: I know how to calculate possible "k" values for a modulus.. but there seems to be something else also going on.. kronecker(a,-n) must be 1.. but thats still not enough. Investigate later. Can add squares to a instead to optimize the interval.
+    while k < 1000: #To do: I know how to calculate possible "k" values for a modulus.. but there seems to be something else also going on.. kronecker(a,-n) must be 1.. but thats still not enough. Investigate later. Can add squares to a instead to optimize the interval.
 
         
         if isPrime(k,5)!=1 and k != 1:
@@ -1970,7 +1975,7 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,original_b):
             blist_otherside,mod_otherside=build_disc_residues(fbase,a,n,k)
            # print("Mod otherside: "+str(mod_otherside)+" blist_otherside: "+str(blist_otherside))
             blist_disc=get_partials(mod_otherside,blist_otherside)
-            blist_otherside2=build_residues(sbase,n,a,k)
+            blist_otherside2,blist=build_residues(sbase,n,a,k)
             
             
             enum=[]
@@ -2068,20 +2073,46 @@ def find_good_k(fbase,a,n,sbase,ret_array,primelist_f,original_b):
                         new_root=math.isqrt(abs(disc))
                         if new_root**2==disc and b!=original_b:
                             #+" krons: "+str(krons))
-                            new_root=a*new_root
-                            poly_val=(new_root)**2+4*n*k*a 
+                            #=a*new_root
+                            poly_val=(b)**2-4*n*k 
                             local_factors, value = factorise_fast(poly_val,primelist_f)
 
-                            ret_array[1].append(new_root**2)
+                            ret_array[1].append((b)**2)
                             ret_array[0].append(poly_val)
                             ret_array[2].append(local_factors)
                             ret_array[3].append([])
                             krons=[]
                             for prime in primes_to_check:
                                 krons.append(kronecker_symbol(prime,n))
-                          #  print(interval)
-                            print("[i]Found one with psieve()!!!!!!!!!!!!! b: "+str(new_root)+" #smooths: "+str(len(ret_array[0]))+" index: "+str(q)+" interval[q]: "+str(interval[q])+" k: "+str(k)+" kron a,n : "+str(kronecker_symbol(a,n))+" "+str(kronecker_symbol(a,n*k))+" "+str(krons)+" skip: "+str(skip))
+                           # print(interval)
+
+#print("a*b**2+4*n*k: "+str(a*new_root**2+4*n*k)+" (a*b)**2+4*n*k*a: "+str((a*new_root)**2+4*n*k*a)+" b: "+str(b)+" a: "+str(a)+" mod_otherside: "+str(mod_otherside)+" new_root: "+str(new_root)+" b**2-4*n*k: "+str(b**2-4*n*k))
+                            print("[i]Found one with psieve()!!!!!!!!!!!!! b: "+str(b)+" #smooths: "+str(len(ret_array[0]))+" index: "+str(q)+" interval[q]: "+str(interval[q])+" k: "+str(k)+" kron a,n : "+str(kronecker_symbol(a,n))+" "+str(kronecker_symbol(a,n*k))+" "+str(krons)+" skip: "+str(skip))
                             found+=1
+
+                            fail=0
+
+                            i=0
+                            while i < len(blist): ##TO DO: HENSEL HERE!!
+                                prime=blist[i]
+                                hit=0
+                                p=0
+                                while p < len(blist[i+1]):
+                                    r=blist[i+1][p]
+                                    if (r)%prime == (new_root)%prime:
+                                        hit=1
+                                        break
+                                    p+=1
+                                if hit ==0:
+                                    fail=1
+                                    break
+                                i+=2
+                            if fail == 1:
+                                print("this shouldnt hit since we build the interval.. ")
+                                sys.exit()
+
+
+
                     q+=1
  
         if found > 0:
@@ -2115,9 +2146,7 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
     threshold=10
 )    
     found=0
-    file_path = "res.hdf5"
-    if os.path.isfile(file_path):
-        os.remove(file_path)
+
 
     primelist_f=copy.copy(primeslist)
     primelist_f.insert(0,len(primelist_f)+1)
@@ -2161,12 +2190,12 @@ def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,pr
         factor_ranking=[]
         quad=1
         new_mod,cfact,indexes=generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,bitlen(tnum),quad)
-      #  print("mod: "+str(new_mod)+" cfact: "+str(cfact)+" indexes: "+str(indexes))
+        print("mod: "+str(new_mod)+" cfact: "+str(cfact)+" indexes: "+str(indexes))
 
    
         #new_mod=37**2
         #cfact=[37**2]
-       # indexes=[10]
+        #indexes=[10]
         if new_mod ==0:
             retry+=1
             if retry > 5:
