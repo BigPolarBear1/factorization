@@ -31,6 +31,7 @@ In find_good_k(fbase,a,n,sbase,ret_array,primelist_f) we need to use hensel for 
 note: if it fails because generate_modulus didn't generate a new modulus.. just run the PoC again. Wont be a problem soon as I optimize the PoC now and make it work for higher bits..
 
 Update: Close close close... I need to fix that hensel code still.. but once thats done, that should yield a big performance gain. With this setup though, hensel isn't working correctly out of the box... let me have a closer look what's going on.
+With these different residue lists that I'm precalculating.. we got kind of a "triangle" setup, atleast abstractly thats how I picture it.. I'm hoping that with hensel I can narrow down an actual solution quickly.. because a real solution in Z should be in all 3 of these residue lists using this two sided setup.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
