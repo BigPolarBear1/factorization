@@ -22,9 +22,7 @@ To run:  python3 run_qs.py -keysize 60 -base 10_000 -debug 0 -lin_size 100 -quad
 
 This starts with an SIQS variant where the stripped away factors are square to minimize the odd exponent factors in the bsmooth and after that we use the research from the paper in psieve(). This then utilizes a two sided approach and looks for similar b-smooths by calculating quadratic residues and applying hensel's lifting (I need to fix some of that hensel code still, its just bruteforcing roots mod p^e for now). 
 
-To do: This is almost finished. Just needs hensel. Note that the solutions from psieve_build_interval() and psieve_build_interval2() share the same primes... and are distinct solutions. That's the attribute I needed. All that is missing now is hensel to complete it. It's an exceptionally stressful day today.. will know this evening if my father has a chance at surviving and eventually leaving the ICU or if its a lost cause..... will try to finish this soon.
-
-Youre all going to burn in hell btw. If I'm smart enough to do this, I'm smart enough to see whats going on. You fcking morrons. Really burn in hell. You spineless cowards.
+To do: Needs hensel... will complete soon.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
