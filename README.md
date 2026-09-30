@@ -22,20 +22,7 @@ To run:  python3 run_qs.py -keysize 60 -base 10_000 -debug 0 -lin_size 100 -quad
 
 This starts with an SIQS variant where the stripped away factors are square to minimize the odd exponent factors in the bsmooth and after that we use the research from the paper in psieve(). This then utilizes a two sided approach and looks for similar b-smooths by calculating quadratic residues and applying hensel's lifting (I need to fix some of that hensel code still, its just bruteforcing roots mod p^e for now). 
 
-Update: New update!! I FINALLY DID IT!!!! I DID IT!!!!! 
-
-To do: 
-
-In find_good_k(fbase,a,n,sbase,ret_array,primelist_f) we need to use hensel for the primes in blist_otherside2 ... so we have sparser solutions sets inside larger moduli.. especially useful for smaller primes. Then the next step is probably to use this to calculate how many times we need to add the modulus to the coefficient. I may do a sieve interval for this. LETS GO. LETS DO THIS. THIS IS IT. TIME TO SHINE FCKERS.
-
-note: if it fails because generate_modulus didn't generate a new modulus.. just run the PoC again. Wont be a problem soon as I optimize the PoC now and make it work for higher bits..
-
-Update: Close close close... I need to fix that hensel code still.. but once thats done, that should yield a big performance gain. With this setup though, hensel isn't working correctly out of the box... let me have a closer look what's going on.
-With these different residue lists that I'm precalculating.. we got kind of a "triangle" setup, atleast abstractly thats how I picture it.. I'm hoping that with hensel I can narrow down an actual solution quickly.. because a real solution in Z should be in all 3 of these residue lists using this two sided setup.
-
-Update: Actually.. since (ab)^2+4Nka implies the existence of ay^2-4Nka ... then this should also imply a(ab)^2+4Nk(a^2) or something similar, the exact details might not be correct, havnt done hand calculations yet. But this would kind of give a ladder for hensel to climb.... let me check if I'm back..  although if something like this would work... that would be scary as shit because youre not supposed to get a global solution from a local solution... that would have consequences in physics too.. there is no way it will be that easy lol... the fck is happening. I guess.. if that were to work.. I think I'm going to have a nervous breakdown, bc of what it might imply... fcking hell.
-
-Update: Added those residues calculations for a(ab)^2+4Nk(a^2). NOW... for hensel we go from  (ab)^2+4Nka -> a(ab)^2+4Nk(a^2), PoC show how.  This also changes how many times a divides the discriminant from this side around: ie y^2-4Nk becomes ay^2-4Nka.. and so on... so we need to lift using divisors of "a" AND some other primes that we uses to calculate the quadratics representing the discriminants above.. as an analogue for quadratic residues mod p^e (bit more elaborate then simply taking legendre symbols). It's because we have these moduli representing quadratic residues and these moduli representing divisibility of the discriminant (of which we know "a" must divide it)... because these are two distinct algebraic objects... I believe I can build my ladder with it.. this explanation probably sounds vague. I'll implement something tomorrow.
+To do: This is almost finished. Just needs hensel. Note that the solutions from psieve_build_interval() and psieve_build_interval2() share the same primes... and are distinct solutions. That's the attribute I needed. All that is missing now is hensel to complete it. It's an exceptionally stressful day today.. will know this evening if my father has a chance at surviving and eventually leaving the ICU or if its a lost cause..... will try to finish this soon.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
