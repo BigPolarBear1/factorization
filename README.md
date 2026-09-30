@@ -22,7 +22,7 @@ To run:  python3 run_qs.py -keysize 60 -base 10_000 -debug 0 -lin_size 100 -quad
 
 This starts with an SIQS variant where the stripped away factors are square to minimize the odd exponent factors in the bsmooth and after that we use the research from the paper in psieve(). This then utilizes a two sided approach and looks for similar b-smooths by calculating quadratic residues and applying hensel's lifting (I need to fix some of that hensel code still, its just bruteforcing roots mod p^e for now). 
 
-To do: Needs hensel... will complete soon.
+To do: Needs hensel... will complete soon. Same b should appear in the primes that divide "a" and as a solution for some other primes. The good thing is, if it divides "a", we have only 2 solutions per prime.. the other primes we can lift and a correct solution should map onto a solution inside a primefield that divides a. Something like that. 
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
