@@ -24,6 +24,8 @@ This starts with an SIQS variant where the stripped away factors are square to m
 
 To do: Needs hensel... will complete soon. Same b should appear in the primes that divide "a" and as a solution for some other primes. The good thing is, if it divides "a", we have only 2 solutions per prime.. the other primes we can lift and a correct solution should map onto a solution inside a primefield that divides a. Something like that. 
 
+I know how to calculate hensel from the other side around.. so worst case I can do and transfer those results to the correct side.. but that adds an extra modular square root step which I hope to avoid... plus it wouldn't be very elegant. Let me go over a toy example and do some hand calculations to see why hensel isn't working out of the box.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
