@@ -24,6 +24,8 @@ This starts with an SIQS variant where the stripped away factors are square to m
 
 To do: This is almost finished. Just needs hensel. Note that the solutions from psieve_build_interval() and psieve_build_interval2() share the same primes... and are distinct solutions. That's the attribute I needed. All that is missing now is hensel to complete it. It's an exceptionally stressful day today.. will know this evening if my father has a chance at surviving and eventually leaving the ICU or if its a lost cause..... will try to finish this soon.
 
+Youre all going to burn in hell btw. If I'm smart enough to do this, I'm smart enough to see whats going on. You fcking morrons. Really burn in hell. You spineless cowards.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
