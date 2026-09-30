@@ -22,9 +22,7 @@ To run:  python3 run_qs.py -keysize 60 -base 10_000 -debug 0 -lin_size 100 -quad
 
 This starts with an SIQS variant where the stripped away factors are square to minimize the odd exponent factors in the bsmooth and after that we use the research from the paper in psieve(). This then utilizes a two sided approach and looks for similar b-smooths by calculating quadratic residues and applying hensel's lifting (I need to fix some of that hensel code still, its just bruteforcing roots mod p^e for now). 
 
-To do: Needs hensel... will complete soon. Same b should appear in the primes that divide "a" and as a solution for some other primes. The good thing is, if it divides "a", we have only 2 solutions per prime.. the other primes we can lift and a correct solution should map onto a solution inside a primefield that divides a. Something like that. 
-
-I know how to calculate hensel from the other side around.. so worst case I can do and transfer those results to the correct side.. but that adds an extra modular square root step which I hope to avoid... plus it wouldn't be very elegant. Let me go over a toy example and do some hand calculations to see why hensel isn't working out of the box.
+To do: Needs hensel... will complete soon. Same b should appear in the primes that divide "a" and as a solution for some other primes. The good thing is, if it divides "a", we have only 2 solutions per prime.. the other primes we can lift and a correct solution should map onto a solution inside a primefield that divides a. Something like that. I guess I can also lift primes that divide "a" ... because we would have much fewer solutions thus be able to lift much higher. And I know how to do that by adding "a" to the discriminant and switching from one side to the other.. that might actually be the best solution to pursue.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
