@@ -27,7 +27,7 @@ Update: Quickly added an "a_mul" loop in psieve() which adds squares to "a". Thi
 
 Update: Doing some more thinking.. if we're not at the correct "k" then it doesn't matter, we will never find an "a_mul" that will generate solutions in our interval. This line:  if kronecker_symbol(a,n*k) == -1: used to skip bad "k" values does seem to filter out some of the bad "k" values.. if I can narrow it down further.. thats going to be a massive speedboost and only then I should start thinking about optimizing a_mul. So let me explore that first...
 
-Update: Actually.. before I start digging into anything else, I should be able to square the modulus for primes that divide "a" by considering them from the other side. Because its not just divisibility that counts there.... it must also be a non-QR!!!!!!! DUH. 
+Update: Actually.. before I start digging into anything else, I should be able to square the modulus for primes that divide "a" by considering them from the other side. Because its not just divisibility that counts there.... it must also be a non-QR!!!!!!! DUH. This might actually be a critical piece that I missed until now... now let have a look this weekend and zero in on this before I do anything else.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
