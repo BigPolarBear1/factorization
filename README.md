@@ -24,6 +24,8 @@ This starts with an SIQS variant where the stripped away factors are square to m
 
 To do: Needs hensel... will complete soon. Same b should appear in the primes that divide "a" and as a solution for some other primes. The good thing is, if it divides "a", we have only 2 solutions per prime.. the other primes we can lift and a correct solution should map onto a solution inside a primefield that divides a. Something like that. I guess I can also lift primes that divide "a" ... because we would have much fewer solutions thus be able to lift much higher. And I know how to do that by adding "a" to the discriminant and switching from one side to the other.. that might actually be the best solution to pursue.
 
+Update: Ergh. Hensel giving me headache. Let me tomorrow precalculate residues at the start of the algorithm... because we dont need to keep calculating those again. Then the real cost is just finding a solution in the interval. I'm still hoping I can make that easier with hensel... lets see I guess.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
