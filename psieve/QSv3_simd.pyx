@@ -2024,10 +2024,16 @@ def build_disc_residues(fbase,a,n,k):
     mod_otherside=1
     for prime in fbase:
         if a%prime==0:
+            acpy=a
+            exp=0
+            while acpy%prime==0:
+                acpy//=prime
+                exp+=1
+
             #print("hit: "+str(prime))
-            temp_blist=debug_find_residues4(prime,n,1,k) ##TO DO: when prime == 2    
+            temp_blist=debug_find_residues4(prime,n,exp,k) ##TO DO: when prime == 2    
             if len(temp_blist)>0:
-                mod_otherside*=prime
+                mod_otherside*=prime**exp
                 blist_otherside.extend(temp_blist)   
 
     return blist_otherside,mod_otherside
@@ -2089,9 +2095,11 @@ def lift_disc_residues(a,k,n,mod_otherside,blist_otherside):
 
 
    
-def psieve(n,ret_array,primelist_f,fbase,a,sbase,original_b,resmaps):#(n,fbase,div,hmap2,ret_array):
+def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps):#(n,fbase,div,hmap2,ret_array):
     found=0
+    a=a_o
     primes_to_mark=[]
+    primes_to_mark_debug=[]
     sqr_list=[]
     i=0 
     while i < len(sbase):
@@ -2100,6 +2108,7 @@ def psieve(n,ret_array,primelist_f,fbase,a,sbase,original_b,resmaps):#(n,fbase,d
         if len(sqr)>1: 
             primes_to_mark.append(i)
             sqr_list.append(sqr)
+            primes_to_mark_debug.append(prime)
         i+=1
 
     
@@ -2112,106 +2121,107 @@ def psieve(n,ret_array,primelist_f,fbase,a,sbase,original_b,resmaps):#(n,fbase,d
 
     k=1
     while k < 1000: #To do: I know how to calculate possible "k" values for a modulus.. but there seems to be something else also going on.. kronecker(a,-n) must be 1.. but thats still not enough. Investigate later. Can add squares to a instead to optimize the interval.
-
-        
-        if isPrime(k,5)!=1 and k != 1:
-            k+=1
-            continue
+        a_mul=1
+        while a_mul < 10:  ##To do: We should move a_mul into an optimizer functions thats going to find a good value here...
+            a=a_o*(a_mul**2)
+            if isPrime(k,5)!=1 and k != 1:
+                a_mul+=1
+                continue
        # print("trying k: "+str(k))
         
-        if math.gcd(a,k)!=1:# or kronecker_symbol(a,n) != 1: #to do: does not need to be prime.. just need to avoid squares in the factorization... fix later
-            k+=1
-            continue
+            if math.gcd(a,k)!=1:# or kronecker_symbol(a,n) != 1: #to do: does not need to be prime.. just need to avoid squares in the factorization... fix later
+                a_mul+=1
+                continue
 
-      #  print("kronecker a,n: "+str(kronecker_symbol(a,n)))
-       # print("trying k: "+str(k))
-        skip=0
-        for prime in primes_to_check:
-            if kronecker_symbol(4*n*k,prime)==-1:
-                skip=1
+            skip=0
+            for prime in primes_to_check:
+                if kronecker_symbol(4*n*k,prime)==-1:
+                    skip=1
        # print("*trying k: "+str(k))
-        if skip == 0:
-            if kronecker_symbol(a,n*k) == -1: ##To do: Explore this a bit deeper eventually... does seem to hold true
-                k+=1
-                continue
+            if skip == 0:
+                if kronecker_symbol(a,n*k) == -1: ##To do: Explore this a bit deeper eventually... does seem to hold true
+                    a_mul+=1
+                    continue
                
-            blist_otherside,mod_otherside=build_disc_residues(fbase,a,n,k)
-            if mod_otherside!=a:
-                k+=1
-                continue
+                blist_otherside,mod_otherside=build_disc_residues(fbase,a,n,k)
+                if mod_otherside!=a:
+                    #print("skipping: "+str(a_mul))
+                    a_mul+=1
+                    continue
 
-            blist_disc=get_partials(mod_otherside,blist_otherside)            
-            enum=[]            
-            i=0
-            while i < len(blist_disc):
-                enum.append(blist_disc[i+1])
-                i+=2
-
-            for idx in enumerated_product(*enum):
-                b=0
+                blist_disc=get_partials(mod_otherside,blist_otherside)            
+                enum=[]            
                 i=0
-                while i < len(idx):
-                    ind=idx[i]
-                    b+=enum[i][ind]
-                    i+=1
-                b_temp=b%mod_otherside
+                while i < len(blist_disc):
+                    enum.append(blist_disc[i+1])
+                    i+=2
 
-                if (b_temp**2-4*n*k)%a != 0:
-                    print("something weird went wrong: "+str(b_temp))
-                    sys.exit()
+                for idx in enumerated_product(*enum):
+                    b=0
+                    i=0
+                    while i < len(idx):
+                        ind=idx[i]
+                        b+=enum[i][ind]
+                        i+=1
+                    b_temp=b%mod_otherside
 
-                interval=psieve_build_interval(resmaps,n,k,b_temp,a,sbase,primes_to_mark,sqr_list)
+                    if (b_temp**2-4*n*k)%a != 0:
+                        print("something weird went wrong: "+str(b_temp))
+                        sys.exit()
+
+                    interval=psieve_build_interval(resmaps,n,k,b_temp,a,sbase,primes_to_mark,sqr_list)
                 
                 ##note: Just for debugging....
-                icounter=0
-                q=0
-                while q < len(interval):
-                    if interval[q]==1:
-                        icounter+=1
-                    q+=1
-                q=0
-                ####
-
-
-                while q < len(interval):
-                    if interval[q]==0:
+                    icounter=0
+                    q=0
+                    while q < len(interval):
+                        if interval[q]==1:
+                            icounter+=1
                         q+=1
-                        continue
+                    q=0
+                    ####
+
+
+                    while q < len(interval):
+                        if interval[q]==0:
+                            q+=1
+                            continue
                     
-                    b=b_temp+mod_otherside*q
-                    if b == original_b:
-                        q+=1
-                        continue
-                    disc=b**2-4*n*k
-                    if disc%a!=0:
-                        print("fatal error")
-                        sys.exit()
-                    disc//=a
+                        b=b_temp+mod_otherside*q
+                        if b == original_b:
+                            q+=1
+                            continue
+                        disc=b**2-4*n*k
+                        if disc%a!=0:
+                            print("fatal error")
+                            sys.exit()
+                        disc//=a
  
-                    new_root=math.isqrt(abs(disc))
-                    if new_root**2!=disc:
-                        q+=1
-                        continue
+                        new_root=math.isqrt(abs(disc))
+                        if new_root**2!=disc:
+                            q+=1
+                            continue
 
 
-                    new_root=math.isqrt(abs(disc))
-                    if new_root**2==disc and b!=original_b:
-                        poly_val=(b)**2-4*n*k 
-                        local_factors, value = factorise_fast(poly_val,primelist_f)
+                        new_root=math.isqrt(abs(disc))
+                        if new_root**2==disc and b!=original_b:
+                            poly_val=(b)**2-4*n*k 
+                            local_factors, value = factorise_fast(poly_val,primelist_f)
 
-                        ret_array[1].append((b)**2)
-                        ret_array[0].append(poly_val)
-                        ret_array[2].append(local_factors)
-                        ret_array[3].append([])
+                            ret_array[1].append((b)**2)
+                            ret_array[0].append(poly_val)
+                            ret_array[2].append(local_factors)
+                            ret_array[3].append([])
 
-                        print("a*b**2+4*n*k: "+str(a*new_root**2+4*n*k)+" (a*b)**2+4*n*k*a: "+str((a*new_root)**2+4*n*k*a)+" b: "+str(b)+" a: "+str(a)+" k: "+str(k)+" mod_otherside: "+str(mod_otherside)+" new_root: "+str(new_root)+" b**2-4*n*k: "+str(b**2-4*n*k)+" b_temp: "+str(b_temp))
-                        print("[i]Found one with psieve()!!!!!!!!!!!!! b: "+str(b)+" #smooths: "+str(len(ret_array[0]))+" index: "+str(q)+" interval[q]: "+str(interval[q])+" sols in interval: "+str(icounter))#+" interval2: "+str(interval2[q])+" k: "+str(k))
+                            print("a*b**2+4*n*k: "+str(a*new_root**2+4*n*k)+" (a*b)**2+4*n*k*a: "+str((a*new_root)**2+4*n*k*a)+" b: "+str(b)+" a: "+str(a)+" k: "+str(k)+" mod_otherside: "+str(mod_otherside)+" new_root: "+str(new_root)+" b**2-4*n*k: "+str(b**2-4*n*k)+" b_temp: "+str(b_temp)+" primes used to mark: "+str(primes_to_mark_debug))
+                            print("[i]Found one with psieve()!!!!!!!!!!!!! b: "+str(b)+" #smooths: "+str(len(ret_array[0]))+" index: "+str(q)+" interval[q]: "+str(interval[q])+" sols in interval: "+str(icounter)+" a_mul: "+str(a_mul))#+" interval2: "+str(interval2[q])+" k: "+str(k))
                         
-                        found+=1
+                            found+=1
 
 
 
-                    q+=1
+                        q+=1
+            a_mul+=1
  
         if found > 0:
             return found #should be enouhg..
