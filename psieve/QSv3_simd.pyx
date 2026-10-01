@@ -2221,7 +2221,7 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps):#(n,fbase
 
 
                         q+=1
-            a_mul+=1
+            a_mul+=2
  
         if found > 0:
             return found #should be enouhg..
