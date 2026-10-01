@@ -23,6 +23,8 @@ Option 2: Find a way, to for example use hensel's lifting, to just straight up c
 
 There is some small things in psieve() that can increase performance a little more.. like the roots for the primes that divide the discriminant are trivially precalculated and we can also use graycodes there. Thats minor speed increases though.
 
+Update: Quickly added an "a_mul" loop in psieve() which adds squares to "a". This doesn't change the primes where a is a quadratic residue, but does generate a unique interval. Hence this is a perfect variable to build an optimizer function for... let me try to brainstorm how I can do this.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
