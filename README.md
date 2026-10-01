@@ -18,13 +18,15 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 
 #### To run from folder "psieve" WORK IN PROGRES...extremely early version:</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 60 -base 10_000 -debug 0 -lin_size 100 -quad_size 1</br></br>
+To run:  python3 run_qs.py -keysize 70 -base 10_000 -debug 0 -lin_size 100 -quad_size 1</br></br>
 
 This starts with an SIQS variant where the stripped away factors are square to minimize the odd exponent factors in the bsmooth and after that we use the research from the paper in psieve(). This then utilizes a two sided approach and looks for similar b-smooths by calculating quadratic residues and applying hensel's lifting (I need to fix some of that hensel code still, its just bruteforcing roots mod p^e for now). 
 
-To do: Needs hensel... will complete soon. Same b should appear in the primes that divide "a" and as a solution for some other primes. The good thing is, if it divides "a", we have only 2 solutions per prime.. the other primes we can lift and a correct solution should map onto a solution inside a primefield that divides a. Something like that. I guess I can also lift primes that divide "a" ... because we would have much fewer solutions thus be able to lift much higher. And I know how to do that by adding "a" to the discriminant and switching from one side to the other.. that might actually be the best solution to pursue.
+To do: Performance now is decent enough. There are two options now to finish this project:
 
-Update: Ergh. Hensel giving me headache. Let me tomorrow precalculate residues at the start of the algorithm... because we dont need to keep calculating those again. Then the real cost is just finding a solution in the interval. I'm still hoping I can make that easier with hensel... lets see I guess.
+Option 1: Find a way to select a better "a" and "k" parameter. We can just add squares to "a", this won't impact the algorithm but will change how the solutions calculated in "resmaps" are shifted in psieve_build_interval(). Optimizing these parameters should be possible.. but I need to dig a little deeper into how to best approach this. And doing that "shifting" of solutions from "resmaps" until a shared solution is found can probably be done with some type of linear algebra.. but aside from guassian elimination over GF(2) I havnt had too much exposure to linear algebra yet.
+
+Option 2: Find a way, to for example use hensel's lifting, to just straight up calculate solutions. 
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
