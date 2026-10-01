@@ -28,6 +28,8 @@ Option 1: Find a way to select a better "a" and "k" parameter. We can just add s
 
 Option 2: Find a way, to for example use hensel's lifting, to just straight up calculate solutions. 
 
+There is some small things in psieve() that can increase performance a little more.. like the discriminant roots are trivially precalculated and we can also use graycodes there. Thats minor speed increases though.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
