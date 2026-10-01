@@ -1,13 +1,6 @@
 The purpose of this research is to destroy spewers of anti-lgbtq hate (Russia, MAGA) and bring forth the gay future. Also, pete hegseth is a little man and a coward. And so is that pig erdogan and all those other "traditional family values right wing nut jobs" rounding up LGBTQ people simply for existing. Don't travel to Europe. In Europe, nobody gets persecuted for who they are, and people who do shouldn't come here. And maybe people in European politics have forgotten what Europe stands for, but fck them, grow a spine already, because Europe is all that is left of the free world now. People used to take pride in defending freedom and protecting the innocent. What has this world become? Where did courage go? Sick and tired of spineless cowards.
 
-Disclaimer: No AI was used for any of this, except for reviewing my paper these last 2 weeks, but AI has not written a single sentence.
-None of the code is written by AI either, except for one or two functions like lift_root2(),
-which is just hensel, something I had already implemented before but with a coefficient list as input.
-I don't believe AI is quite there yet to do math research. It's very rigid and can't think outside the bounds of existing literature
-and often just makes very dumb conceptual mistakes and it has a total lack of creating abstractions.
-It is a tool, well suited for basic tasks, nothing more.
-This research is also still ongoing, and especially some of the things stated in the last chapter might be missing the mark. 
-I'll also be properly learning about number fields now, and see how all of that can be fit into my work.
+Disclaimer: No AI was used for any of this. I tried using it at times, but the only real application I got out of it was reviewing my paper for minor mistakes (it has however not written a single word in my paper). A context aware search engine.. good for learning things or producing simple code for well known mathematical functions, but it quickly falls apart when it gets into research territory.
 
 #### References (re-used many of the core number theoretical functions from these PoCs to fit my own algorithm): 
 https://stackoverflow.com/questions/79330304/optimizing-sieving-code-in-the-self-initializing-quadratic-sieve-for-pypy
