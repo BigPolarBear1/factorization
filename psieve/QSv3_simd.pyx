@@ -1854,8 +1854,12 @@ def psieve_build_interval(resmaps,n,k,root,a,sbase,primes_to_mark,sqr_list):
             i+=1
             continue
 
-        sqr=sqr_list[i] 
-
+     #   sqr2=sqr_list[i] 
+        sqr=find_roots_poly([1,0,-a], prime) 
+    #    sqr2.sort()
+    #    sqr.sort()
+       # if sqr2 != sqr:
+          #  print("sqr2: "+str(sqr2)+" sqr: "+str(sqr))
         blist=resmaps[ind][k%prime]
            # print("blist: "+str(blist))
 
@@ -2122,7 +2126,7 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps):#(n,fbase
     k=1
     while k < 1000: #To do: I know how to calculate possible "k" values for a modulus.. but there seems to be something else also going on.. kronecker(a,-n) must be 1.. but thats still not enough. Investigate later. Can add squares to a instead to optimize the interval.
         a_mul=1
-        while a_mul < 10:  ##To do: We should move a_mul into an optimizer functions thats going to find a good value here...
+        while a_mul < 5:  ##To do: We should move a_mul into an optimizer functions thats going to find a good value here...
             a=a_o*(a_mul**2)
             if isPrime(k,5)!=1 and k != 1:
                 a_mul+=1
