@@ -2222,7 +2222,7 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
                         if interval[q]==0:
                             q+=1
                             continue
-                    
+                  
                         b=b_temp+mod_otherside*q
                         if b == original_b:
                             q+=1
@@ -2255,10 +2255,18 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
                                 prime=sbase[ind]#blist_otherside2[i][0]**blist_otherside2[i][1]
                                 colist=resmaps2[ind][k%prime][1]
                                 sqr=find_roots_poly([1,0,-a], prime) 
-                                if (new_root*sqr[0])%prime not in colist:
+                                disc=b**2-4*n*k
+                                a_inv=modinv(a,prime)
+                                disc=(disc*a_inv)%prime
+
+                                ###Important: This line below will fail for invalid solutions.. this gives a clue on how to solve what I'm trying to do here....
+                                nroots=find_roots_poly([1,0,-disc], prime) 
+                                
+                                sqr=find_roots_poly([1,0,-a], prime) 
+                                if (nroots[0]*sqr[0])%prime not in colist:
                                     print("fatal error should neer happen. Bear fail: "+str(resmaps2[ind][k%prime])+" prime: "+str(prime)+" new_root: "+str(new_root)+" k: "+str(k)+" sqr: "+str(sqr))
                                     sys.exit()
-                                i+=1
+                                i+=1  
                           #  print("a*b**2+4*n*k: "+str(a*new_root**2+4*n*k)+" (a*b)**2+4*n*k*a: "+str((a*new_root)**2+4*n*k*a)+" b: "+str(b)+" a: "+str(a)+" k: "+str(k)+" mod_otherside: "+str(mod_otherside)+" new_root: "+str(new_root)+" b**2-4*n*k: "+str(b**2-4*n*k)+" b_temp: "+str(b_temp)+" primes used to mark: "+str(primes_to_mark_debug))
                             print("[i]Found one with psieve()!!!!!!!!!!!!! b: "+str(b)+" k: "+str(k)+" #smooths: "+str(len(ret_array[0]))+" index: "+str(q)+" interval[q]: "+str(interval[q])+" sols in interval: "+str(icounter)+" a_mul: "+str(a_mul)+" kronecker_symbol(a,n*k): "+str(kronecker_symbol(a,n*k))+" "+str(kronecker_symbol(a,k)))#+" interval2: "+str(interval2[q])+" k: "+str(k))
                             if kronecker_symbol(a,n*k) != 1:
