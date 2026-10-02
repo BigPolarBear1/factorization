@@ -19,7 +19,7 @@ Update: I added a new datastructure called "resmaps2" this contains all the resi
 
 Update: I added a check on resmaps2 for valid solutions... especially note at line 2263 (nroots=find_roots_poly([1,0,-disc], prime) ), this will fail for invalid solutions (you can verify this by moving that codeblock above new_root=math.isqrt(abs(disc)))... even those that currently survive marking in the interval... so that gives a clue as to how a solution can further be narrowed down. I need to think because it isn't as trivial as simply marking both these sides in one interval.
 
-Update: AHA!!!! I got it! Can build separate intervals for both sides. The primes that we use for marking (those for which "a" is a QR) can be kept few and from valid resolutions in both intervals we should be able to CRT a solution together that works for both sides! HAH! It's bit late right now, but I'll do it tomorrow. Shouldn't be too difficult.
+Update: AHA!!!! I got it! Can build separate intervals for both sides. The primes that we use for marking (those for which "a" is a QR) can be kept few and from valid resolutions in both intervals we should be able to CRT a solution together that works for both sides! HAH! It's bit late right now, but I'll do it tomorrow. Shouldn't be too difficult. I can see it now, this should work beautifully... prepare for FUTURE SHOCK. Haahahahahahhaa. 
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
