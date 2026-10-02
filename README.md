@@ -15,16 +15,6 @@ To run:  python3 run_qs.py -keysize 70 -base 10_000 -debug 0 -lin_size 100 -quad
 
 This starts with an SIQS variant where the stripped away factors are square to minimize the odd exponent factors in the bsmooth and after that we use the research from the paper in psieve(). This then utilizes a two sided approach and looks for similar b-smooths by calculating quadratic residues and applying hensel's lifting (I need to fix some of that hensel code still, its just bruteforcing roots mod p^e for now). 
 
-To do: Performance now is decent enough. There are two options now to finish this project:
-
-Option 1: Find a way to select a better "a" and "k" parameter. We can just add squares to "a", this won't impact the algorithm but will change how the solutions calculated in "resmaps" are shifted in psieve_build_interval(). Optimizing these parameters should be possible.. but I need to dig a little deeper into how to best approach this. And doing that "shifting" of solutions from "resmaps" until a shared solution is found can probably be done with some type of linear algebra.. but aside from guassian elimination over GF(2) I havnt had too much exposure to linear algebra yet.
-
-Option 2: Find a way, to for example use hensel's lifting, to just straight up calculate solutions. 
-
-There is some small things in psieve() that can increase performance a little more.. like the roots for the primes that divide the discriminant are trivially precalculated and we can also use graycodes there. Thats minor speed increases though.
-
-Update: Quickly added an "a_mul" loop in psieve() which adds squares to "a". This doesn't change the primes where a is a quadratic residue, but does generate a unique interval. Hence this is a perfect variable to build an optimizer function for... let me try to brainstorm how I can do this.
-
 Update: I added a new datastructure called "resmaps2" this contains all the residues for the linear coefficient of the quadratic on the other side. I've added this on purpose.. tomorrow I'll make sure the indexes of that coefficient list also match the one from resmaps and visa versa. We know that a_mul is going to divide the residues from resmaps2... so we'll need to use those residues to calculate a good "a_mul".
 The easiest implementation once that is done, is simply adding a second dimension to my sieve interval.. one which accounts for a_mul. Although that will probably be too simplistic to set new records.. but hopefully it allows me to push beyond 100 bits... that alone would be quite an achievement for this QR-based type of algorithm. Once that works I should probably work purely with residues... because there are far fewer "valid solutions" then "invalid solutions" so working with valid solutions rather then marking invalid solutions on an interval will probably be superior...... but it will take some tinkering to find the best approach..... there likely also is some linear algebra math to optimize that a_mul... 
 
