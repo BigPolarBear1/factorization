@@ -11,15 +11,15 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 
 #### To run from folder "psieve" WORK IN PROGRES...extremely early version:</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 60 -base 10_000 -debug 0 -lin_size 100 -quad_size 1</br></br>
+To run:  python3 run_qs.py -keysize 50 -base 10_000 -debug 0 -lin_size 100 -quad_size 1</br></br>
 
 This starts with an SIQS variant where the stripped away factors are square to minimize the odd exponent factors in the bsmooth and after that we use the research from the paper in psieve(). This then utilizes a two sided approach and looks for similar b-smooths by calculating quadratic residues and applying hensel's lifting (I need to fix some of that hensel code still, its just bruteforcing roots mod p^e for now). 
 
-Update: I added a new datastructure called "resmaps2" this contains all the residues for the linear coefficient of the quadratic on the other side. I've added this on purpose.. tomorrow I'll make sure the indexes of that coefficient list also match the one from resmaps and visa versa. We know that a_mul is going to divide the residues from resmaps2... so we'll need to use those residues to calculate a good "a_mul".
+Update: Reorganized everything. Bit slower again then it was yesterday, but this is on purpose. Approaching it from the ab^2+4Nk side rather then the -4Nk side is the only way we can represent "moduli" as intervals and perform quick linear algera on these 2d intervals. 
 
-Update: PoC is a bit convoluted now and a little slower then yesterday's version, but this demonstrates how to switch between sides. I do see now how I can optimize that a_mul variable... the primes that are used to mark wether a discriminant is a QR after dividing out a... we can construct multiple small moduli there. For a correct solution there will be one overlapping solution. However with a_mul we can divide out coefficients on the ab^2+4Nk side. I see it now. This is about to end very soon... people saw how determined I was, yet I was left to rot in an attic room for year. I have no regrets. 
+Right now the interval is just set to: interval=np.ones([1_000,10_000],dtype=np.uint8)   ... however, the dimension should be the total modulus of the primes used to mark the interval.. because they just repeat. Then we can have multiple ones of these and find an a_mul parameter that results in a solution in Z.
 
-Update: Let me start minimizing and streamlining psieve() first now.... then I can work towards my ultimate version :). I see it now.
+:) :) :) :) got it.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
