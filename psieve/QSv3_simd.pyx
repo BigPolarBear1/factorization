@@ -318,7 +318,7 @@ def build_matrix(factor_base, smooth_nums, factors,factor_list2):#,pflist):
 def launch(n,primeslist,primeslist2):
     a_mul=1
     a_mul_list=[]
-    while a_mul< 3:
+    while a_mul< 5:
         amul=a_mul
         
         a_mul_factors=[]
@@ -391,9 +391,9 @@ def launch(n,primeslist,primeslist2):
       #  new_mod=961
       #  cfact=[961]
       #  indexes=[9]
-      #  new_mod=37**2
-      #  cfact=[37**2]
-      #  indexes=[10]
+       # new_mod=37**2
+       # cfact=[37**2]
+       # indexes=[10]
         if new_mod ==0:
             retry+=1
             if retry > 5:
@@ -1028,7 +1028,7 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                   #  print("PSIEVE1")
                 local_factors2, value2 = factorise_fast(new_root,primelist_f)
                 #To do: Fix this for when poly_val is smaller then 0... for some reason my calculations dont always hold true in that case
-                if value==1 and div!=1 and div%2!=0 and bitlen(div) < (keysize*0.4) and poly_val >0:# and isPrime(value,5)==1:# and isPrime(div,5)==1:# and value2==1:# and len(div_fac)==1:
+                if value==1 and div!=1 and div%2!=0 and abs(bitlen(div)-(keysize*0.33))<5 and poly_val >0:# and isPrime(value,5)==1:# and isPrime(div,5)==1:# and value2==1:# and len(div_fac)==1:
                     
                     print("[i]Trying psieve b: "+str(2*new_root)+" a: "+str(div)+" bitlen a: "+str(bitlen(div)))
                     psievefound=psieve(n,ret_array,primelist_f,primeslist,div,sbase,2*new_root,resmaps,resmaps2,a_mul_list)
@@ -1857,58 +1857,41 @@ def enumerated_product(*args):
     yield from itertools.product(*(range(len(x)) for x in args))
 
 
-def iterate(unsigned char[:, ::1] a):
-    cdef Py_ssize_t i, j
-    cdef Py_ssize_t n = a.shape[0], m = a.shape[1]
-    total = []
 
-    for i in range(n):
-        for j in range(m):
-            if a[i, j] == 1: 
-                total.append([i, j])     # read
-            # a[i, j] = 0         # or write
-    return total
 
-def psieve_build_interval(resmaps,n,k,a_o,sbase,primes_to_mark,sqr_list):
- #   interval=array.array("i",[1]*100_000)
+def psieve_build_interval(resmaps,n,k,root,a,sbase,primes_to_mark,sqr_list):
+    interval=array.array("i",[1]*50_000)
 
-    interval=np.ones([1_000,10_000],dtype=np.uint8)
+  #  interval=np.ones(10_000,dtype=np.uint8)
     i=0
     while i < len(primes_to_mark):
-        
-
         ind=primes_to_mark[i]
         prime=sbase[ind]#blist_otherside2[i][0]**blist_otherside2[i][1]
-        a_mul=1
-        while a_mul < prime:
-            a=a_o*(a_mul**2)
-            if a%prime == 0 or k%prime==0:
-                a_mul+=1
-                continue
+        if a%prime == 0 or k%prime==0:
+            i+=1
+            continue
 
      #   sqr2=sqr_list[i] 
-            sqr=find_roots_poly([1,0,-a], prime) 
+        sqr=find_roots_poly([1,0,-a], prime) 
     #    sqr2.sort()
     #    sqr.sort()
        # if sqr2 != sqr:
           #  print("sqr2: "+str(sqr2)+" sqr: "+str(sqr))
-            blist=resmaps[ind][k%prime]
+        blist=resmaps[ind][k%prime]
            # print("blist: "+str(blist))
 
-            rootlist=blist[1]
-            p=0
-            while p < prime:
-                p2=(p*sqr[0])%prime
-                if p2 not in rootlist:
+        rootlist=blist[1]
+        p=0
+        while p < prime:
+            p2=(p*sqr[0])%prime
+            if p2 not in rootlist:
                     
-                    dist=p#solve_lin_con(a,p2-root,prime)
-                    #while dist < len(interval):
-                    interval[(a_mul)%prime::prime,dist::prime]=0
-                    #    dist+=prime
+                dist=solve_lin_con(a,p2-root,prime)
+                while dist < len(interval):
+                    interval[dist]=0
+                    dist+=prime
 
-                
-                p+=1
-            a_mul+=1
+            p+=1
         i+=1
     return interval
 
@@ -2136,7 +2119,6 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
     found=0
     a=a_o
     primes_to_mark=[]
-    primes_to_mark_mod=1
     primes_to_mark_debug=[]
     sqr_list=[]
     i=0 
@@ -2147,7 +2129,6 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
             primes_to_mark.append(i)
             sqr_list.append(sqr)
             primes_to_mark_debug.append(prime)
-            primes_to_mark_mod*=prime
             if len(primes_to_mark)==9:
                 break
         i+=1
@@ -2161,7 +2142,7 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
 
 
     k=2
-    while k < 10: #To do: I know how to calculate possible "k" values for a modulus.. but there seems to be something else also going on.. kronecker(a,-n) must be 1.. but thats still not enough. Investigate later. Can add squares to a instead to optimize the interval.
+    while k < 100: #To do: I know how to calculate possible "k" values for a modulus.. but there seems to be something else also going on.. kronecker(a,-n) must be 1.. but thats still not enough. Investigate later. Can add squares to a instead to optimize the interval.
         if isPrime(k,5)!=1 and k != 1:
             k+=1
             continue
@@ -2196,107 +2177,106 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
 
        # print("*trying k: "+str(k))
             if skip == 0:
+
+               
                 blist_otherside,mod_otherside=build_disc_residues(fbase,a,n,k)
                 if mod_otherside!=a:
                     #print("skipping: "+str(a_mul))
                     a_mul_ind+=1
                     continue
 
-                #blist_disc=get_partials(mod_otherside,blist_otherside)            
-                #enum=[]            
-                #i=0
-                #while i < len(blist_disc):
-                #    enum.append(blist_disc[i+1])
-                #    i+=2
+                blist_disc=get_partials(mod_otherside,blist_otherside)            
+                enum=[]            
+                i=0
+                while i < len(blist_disc):
+                    enum.append(blist_disc[i+1])
+                    i+=2
                # print("checking k: "+str(k)+" a: "+str(a_mul)+" "+str(jacobi(a,n*k))+" "+str(jacobi(a,k))+" "+str(jacobi(n*k,a))+" mod_otherside: "+str(mod_otherside)+" krons: "+str(krons))#+" enum: "+str(enum))
-                #for idx in enumerated_product(*enum):
-                #    b=0
-                #    i=0
-                #    while i < len(idx):
-                #        ind=idx[i]
-                #        b+=enum[i][ind]
-                #        i+=1
-                #    b_temp=b%mod_otherside
+                for idx in enumerated_product(*enum):
+                    b=0
+                    i=0
+                    while i < len(idx):
+                        ind=idx[i]
+                        b+=enum[i][ind]
+                        i+=1
+                    b_temp=b%mod_otherside
 
-                interval=psieve_build_interval(resmaps2,n,k,a_o,sbase,primes_to_mark,sqr_list)
-             #   indices=iterate(interval)
-                ##note: Just for debugging....
+                    if (b_temp**2-4*n*k)%a != 0:
+                        print("something weird went wrong: "+str(b_temp))
+                        sys.exit()
+
+                    interval=psieve_build_interval(resmaps,n,k,b_temp,a,sbase,primes_to_mark,sqr_list)
                 
-              #  q=1
-              #  while q < len(interval):
-              #      if interval[q]==1:
-              #          icounter+=1
-              #      q+=1
-              #  q=0
+                ##note: Just for debugging....
+                    icounter=0
+                    q=0
+                    while q < len(interval):
+                        if interval[q]==1:
+                            icounter+=1
+                        q+=1
+                    q=0
                     ####
                     #print("sols: "+str(icounter))
 
-                indices=np.nonzero(interval)
-                
-                indexlist_b=indices[1]
-                indexlist_a=indices[0]
-                icounter=len(indexlist_a)
-                q=0
-                while q < icounter:
-                    a_mul=int(indexlist_a[q])
-                    b=int(indexlist_b[q])
-                  #  ,b=indices[q][]
-                    a=a_o*a_mul**2
-                    if b == 0 or a == 0:
-                        q+=1
-                        continue
-                   # print(interval[a_mul,b])
-                   # b=q
-                    disc=a*b**2+4*n*k
-                    i=0
-                    while i < len(blist_otherside):
-                        nroots=find_roots_poly([1,0,-disc],blist_otherside[i])
-                        for r in nroots:
-                            if r not in blist_otherside[i+1]:
-                                print("error")
-                                sys.exit()
+                    while q < len(interval):
+                        if interval[q]==0:
+                            q+=1
+                            continue
+                  
+                        b=b_temp+mod_otherside*q
+                        if b == original_b:
+                            q+=1
+                            continue
+                        disc=b**2-4*n*k
+                        if disc%a!=0:
+                            print("fatal error")
+                            sys.exit()
+                        disc//=a
+ 
+                        new_root=math.isqrt(abs(disc))
+                        if new_root**2!=disc:
+                            q+=1
+                            continue
 
-                        i+=2
-                    #if b == original_b:
-                    #    q+=1
-                    #    continue
 
-                    
-                  #  disc=a*b**2+4*n*k
-                    if interval[a_mul,b]==1:
-                        for prime in primes_to_mark_debug:
-                            if a_mul%prime !=0 and jacobi(disc,prime)==-1:
-                                print("fatal error in core logic: "+str(prime)+" b: "+str(b)+" k: "+str(k)+" a_mul: "+str(a_mul))
-                                sys.exit()
-
-                    disc_test=math.isqrt(disc)
-                    if disc_test**2 == disc:
-                        if disc_test!=original_b and disc_test**2 not in ret_array[1]:
-                            poly_val=(disc_test)**2-4*n*k 
-                            if poly_val%a !=0:
-                                print("super fatal ")
-                                sys.exit()
-                            verify=poly_val//a 
-                            verify_test=math.isqrt(verify)
-                            if verify_test**2 != verify:
-                                print("super fatal ")
-                                sys.exit()                                            
+                       # new_root=math.isqrt(abs(disc))
+                        if b!=original_b and b**2 not in ret_array[1]:
+                            poly_val=(b)**2-4*n*k 
                             local_factors, value = factorise_fast(poly_val,primelist_f)
 
-                            ret_array[1].append((disc_test)**2)
+                            ret_array[1].append((b)**2)
                             ret_array[0].append(poly_val)
                             ret_array[2].append(local_factors)
                             ret_array[3].append([])
                            # debug_blist_otherside,debug_mod=lift_disc_residues(a,k,n,mod_otherside,blist_otherside)
-                                  #      print("lside: "+str(lside)+" b2_temp_list: "+str(b2_temp_list))
-                                 #       print("a*b**2+4*n*k: "+str(a*new_root**2+4*n*k)+" (a*b)**2+4*n*k*a: "+str((a*new_root)**2+4*n*k*a)+" b: "+str(b)+" a: "+str(a)+" k: "+str(k)+" mod_otherside: "+str(mod_otherside)+" new_root: "+str(new_root)+" b**2-4*n*k: "+str(b**2-4*n*k)+" b_temp: "+str(b_temp)+" primes used to mark: "+str(primes_to_mark_debug))
-                            print("[i]Found one with psieve()!!!!!!!!!!!!! b: "+str(b)+" k: "+str(k)+" #smooths: "+str(len(ret_array[0]))+" index: "+str(q)+" interval[q]: "+str(interval[a_mul,b])+" sols in interval: "+str(icounter)+" a_mul: "+str(a_mul)+" kronecker_symbol(a,n*k): "+str(kronecker_symbol(a,n*k))+" "+str(kronecker_symbol(a,k)))#+" interval2: "+str(interval2[q])+" k: "+str(k))
+                            i=0
+                            while i < len(primes_to_mark):
+                                ind=primes_to_mark[i]
+                                prime=sbase[ind]#blist_otherside2[i][0]**blist_otherside2[i][1]
+                                colist=resmaps2[ind][k%prime][1]
+                                sqr=find_roots_poly([1,0,-a], prime) 
+                                disc=b**2-4*n*k
+                                a_inv=modinv(a,prime)
+                                disc=(disc*a_inv)%prime
+
+                                ###Important: This line below will fail for invalid solutions.. this gives a clue on how to solve what I'm trying to do here....
+                                nroots=find_roots_poly([1,0,-disc], prime) 
+                                
+                                sqr=find_roots_poly([1,0,-a], prime) 
+                                if (nroots[0]*sqr[0])%prime not in colist:
+                                    print("fatal error should neer happen. Bear fail: "+str(resmaps2[ind][k%prime])+" prime: "+str(prime)+" new_root: "+str(new_root)+" k: "+str(k)+" sqr: "+str(sqr))
+                                    sys.exit()
+                                i+=1  
+                          #  print("a*b**2+4*n*k: "+str(a*new_root**2+4*n*k)+" (a*b)**2+4*n*k*a: "+str((a*new_root)**2+4*n*k*a)+" b: "+str(b)+" a: "+str(a)+" k: "+str(k)+" mod_otherside: "+str(mod_otherside)+" new_root: "+str(new_root)+" b**2-4*n*k: "+str(b**2-4*n*k)+" b_temp: "+str(b_temp)+" primes used to mark: "+str(primes_to_mark_debug))
+                            print("[i]Found one with psieve()!!!!!!!!!!!!! b: "+str(b)+" k: "+str(k)+" #smooths: "+str(len(ret_array[0]))+" index: "+str(q)+" interval[q]: "+str(interval[q])+" sols in interval: "+str(icounter)+" a_mul: "+str(a_mul)+" kronecker_symbol(a,n*k): "+str(kronecker_symbol(a,n*k))+" "+str(kronecker_symbol(a,k)))#+" interval2: "+str(interval2[q])+" k: "+str(k))
                             if kronecker_symbol(a,n*k) != 1:
                                 print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!THOUSIDOADJOASDHODSA")
                                 sys.exit()
                             found+=1
                             return found
-                    q+=1
+
+
+                        q+=1
             a_mul_ind+=1
  
         if found > 0:
