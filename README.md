@@ -23,7 +23,7 @@ Update: AHA!!!! I got it! Can build separate intervals for both sides. The prime
 
 Update: Wait.. might have it now... will upload soon if this works
 
-Update: Works! Kind of shit still, but we're able to switch to a much larger modulus. Let me think how to better exploit this.
+Update: Works! Kind of shit still, but we're able to switch to a much larger modulus. Let me think how to better exploit this. Probably should also keep the modulus for the primes that divide a... let me see...
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
