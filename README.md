@@ -11,7 +11,7 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 
 #### To run from folder "psieve" WORK IN PROGRES...extremely early version:</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 35 -base 10_000 -debug 0 -lin_size 100 -quad_size 1</br></br>
+To run:  python3 run_qs.py -keysize 60 -base 10_000 -debug 0 -lin_size 100 -quad_size 1</br></br>
 
 This starts with an SIQS variant where the stripped away factors are square to minimize the odd exponent factors in the bsmooth and after that we use the research from the paper in psieve(). This then utilizes a two sided approach and looks for similar b-smooths by calculating quadratic residues and applying hensel's lifting (I need to fix some of that hensel code still, its just bruteforcing roots mod p^e for now). 
 
