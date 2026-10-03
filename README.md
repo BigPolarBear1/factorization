@@ -15,11 +15,10 @@ To run:  python3 run_qs.py -keysize 50 -base 10_000 -debug 0 -lin_size 100 -quad
 
 This starts with an SIQS variant where the stripped away factors are square to minimize the odd exponent factors in the bsmooth and after that we use the research from the paper in psieve(). This then utilizes a two sided approach and looks for similar b-smooths by calculating quadratic residues and applying hensel's lifting (I need to fix some of that hensel code still, its just bruteforcing roots mod p^e for now). 
 
-Update: Reorganized everything. Bit slower again then it was yesterday, but this is on purpose. Approaching it from the ab^2+4Nk side rather then the -4Nk side is the only way we can represent "moduli" as intervals and perform quick linear algera on these 2d intervals. 
+Update: Re-uploaded yesterday's version after fcking around today. Just realized something.
 
-Right now the interval is just set to: interval=np.ones([1_000,10_000],dtype=np.uint8)   ... however, the dimension should be the total modulus of the primes used to mark the interval.. because they just repeat. Then we can have multiple ones of these and find an a_mul parameter that results in a solution in Z.
-
-:) :) :) :) got it.
+1. Should use bit-packing for the interval. Big improvement.
+2. The smaller "a" is ... the more we can add padding with that "a_mul" variable.. and as long as jacobi(-nk,sqrt(a)) is a quadratic residue, we can add more solutions to the interval trivially like this. Seeing something nice here now... time to finish this. Also we can generate a small "a" using linear algebra on multiple b-smooths rather then directly using sieving results from the SIQS variant.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
