@@ -22,6 +22,8 @@ Update: Re-uploaded yesterday's version after fcking around today. Just realized
 
 Anyway, hope the guys at the NSA have a good day, dont blow your brains out. Go to the arctic like a normal person instead.
 
+Update: Added some a_mul optimizer function. Does seem to mostly increase the solutions in the interval. Although it needs a little more research. Good enough for starters. Next I will write an intermediate linear algebra step that will produce nearly square b-smooths. and use that instead of direct sieving results from the SIQS variant. Because we need room to build up that a_mul...
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
