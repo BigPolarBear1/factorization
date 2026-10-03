@@ -11,7 +11,7 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 
 #### To run from folder "psieve" WORK IN PROGRES...extremely early version:</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 70 -base 10_000 -debug 0 -lin_size 100 -quad_size 1</br></br>
+To run:  python3 run_qs.py -keysize 35 -base 10_000 -debug 0 -lin_size 100 -quad_size 1</br></br>
 
 This starts with an SIQS variant where the stripped away factors are square to minimize the odd exponent factors in the bsmooth and after that we use the research from the paper in psieve(). This then utilizes a two sided approach and looks for similar b-smooths by calculating quadratic residues and applying hensel's lifting (I need to fix some of that hensel code still, its just bruteforcing roots mod p^e for now). 
 
@@ -22,6 +22,8 @@ Update: I added a check on resmaps2 for valid solutions... especially note at li
 Update: AHA!!!! I got it! Can build separate intervals for both sides. The primes that we use for marking (those for which "a" is a QR) can be kept few and from valid solutions in both intervals we should be able to figure out how often the modulus needs to be added so that both sides line up (basically a cleaner way to do NFS I guess..)! HAH! It's bit late right now, but I'll do it tomorrow. Shouldn't be too difficult. I can see it now, this should work beautifully... prepare for FUTURE SHOCK. Haahahahahahhaa. 
 
 Update: Wait.. might have it now... will upload soon if this works
+
+Update: Works! Kind of shit still, but we're able to switch to a much larger modulus. Let me think how to better exploit this.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
