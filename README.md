@@ -21,8 +21,6 @@ Update: I added a check on resmaps2 for valid solutions... especially note at li
 
 Update: AHA!!!! I got it! Can build separate intervals for both sides. The primes that we use for marking (those for which "a" is a QR) can be kept few and from valid solutions in both intervals we should be able to figure out how often the modulus needs to be added so that both sides line up (basically a cleaner way to do NFS I guess..)! HAH! It's bit late right now, but I'll do it tomorrow. Shouldn't be too difficult. I can see it now, this should work beautifully... prepare for FUTURE SHOCK. Haahahahahahhaa. 
 
-Update: Previous statement not quite right. Because of how this is calculated.. a valid solution on one side automatically assumes a valid solution on the other side.. there isnt any assymmetry there. Let me think.
-
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
