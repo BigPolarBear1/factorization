@@ -25,6 +25,8 @@ Update: Wait.. might have it now... will upload soon if this works
 
 Update: Works! Kind of shit still, but we're able to switch to a much larger modulus. Let me think how to better exploit this. Probably should also keep the modulus for the primes that divide a... let me see...
 
+Update: PoC is a bit convoluted now. But I do see now how I can optimize that a_mul variable... the primes that are used to mark wether a discriminant is a QR after dividing out a... we can construct multiple small moduli there. For a correct solution there will be one overlapping solution. However with a_mul we can divide out coefficients on the ab^2+4Nk. I see it now. This is about to end very soon... people saw how determined I was, yet I was left to rot in an attic room for year. I have no regrets. 
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
