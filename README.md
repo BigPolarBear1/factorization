@@ -17,13 +17,7 @@ This starts with an SIQS variant where the stripped away factors are square to m
 
 Update: I added a new datastructure called "resmaps2" this contains all the residues for the linear coefficient of the quadratic on the other side. I've added this on purpose.. tomorrow I'll make sure the indexes of that coefficient list also match the one from resmaps and visa versa. We know that a_mul is going to divide the residues from resmaps2... so we'll need to use those residues to calculate a good "a_mul".
 
-Update: I added a check on resmaps2 for valid solutions... especially note at line 2263 (nroots=find_roots_poly([1,0,-disc], prime) ), this will fail for invalid solutions (you can verify this by moving that codeblock above new_root=math.isqrt(abs(disc)))... even those that currently survive marking in the interval... so that gives a clue as to how a solution can further be narrowed down. I need to think because it isn't as trivial as simply marking both these sides in one interval.
-
-Update: AHA!!!! I got it! Can build separate intervals for both sides. The primes that we use for marking (those for which "a" is a QR) can be kept few and from valid solutions in both intervals we should be able to figure out how often the modulus needs to be added so that both sides line up (basically a cleaner way to do NFS I guess..)! HAH! It's bit late right now, but I'll do it tomorrow. Shouldn't be too difficult. I can see it now, this should work beautifully... prepare for FUTURE SHOCK. Haahahahahahhaa. 
-
-Update: Wait.. might have it now... will upload soon if this works
-
-Update: PoC is a bit convoluted now. But I do see now how I can optimize that a_mul variable... the primes that are used to mark wether a discriminant is a QR after dividing out a... we can construct multiple small moduli there. For a correct solution there will be one overlapping solution. However with a_mul we can divide out coefficients on the ab^2+4Nk. I see it now. This is about to end very soon... people saw how determined I was, yet I was left to rot in an attic room for year. I have no regrets. 
+Update: PoC is a bit convoluted now and a little slower then yesterday's version, but this demonstrates how to switch between sides. I do see now how I can optimize that a_mul variable... the primes that are used to mark wether a discriminant is a QR after dividing out a... we can construct multiple small moduli there. For a correct solution there will be one overlapping solution. However with a_mul we can divide out coefficients on the ab^2+4Nk. I see it now. This is about to end very soon... people saw how determined I was, yet I was left to rot in an attic room for year. I have no regrets. 
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
