@@ -20,6 +20,8 @@ Update: Re-uploaded yesterday's version after fcking around today. Just realized
 1. Should use bit-packing for the interval. Big improvement.
 2. The smaller "a" is ... the more we can add padding with that "a_mul" variable.. and as long as jacobi(-nk,sqrt(a)) is a quadratic residue, we can add more solutions to the interval trivially like this. Seeing something nice here now... time to finish this. Also we can generate a small "a" using linear algebra on multiple b-smooths rather then directly using sieving results from the SIQS variant.
 
+Anyway, hope the guys at the NSA have a good day, dont blow your brains out. Go to the arctic like a normal person instead.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
