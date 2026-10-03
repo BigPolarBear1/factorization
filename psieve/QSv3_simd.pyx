@@ -318,7 +318,7 @@ def build_matrix(factor_base, smooth_nums, factors,factor_list2):#,pflist):
 def launch(n,primeslist,primeslist2):
     a_mul=1
     a_mul_list=[]
-    while a_mul< 5:
+    while a_mul< 10_000:
         amul=a_mul
         
         a_mul_factors=[]
@@ -1028,7 +1028,7 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                   #  print("PSIEVE1")
                 local_factors2, value2 = factorise_fast(new_root,primelist_f)
                 #To do: Fix this for when poly_val is smaller then 0... for some reason my calculations dont always hold true in that case
-                if value==1 and div!=1 and div%2!=0 and abs(bitlen(div)-(keysize*0.33))<5 and poly_val >0:# and isPrime(value,5)==1:# and isPrime(div,5)==1:# and value2==1:# and len(div_fac)==1:
+                if value==1 and div!=1 and div%2!=0 and bitlen(div)<(keysize*0.4) and poly_val >0:# and isPrime(value,5)==1:# and isPrime(div,5)==1:# and value2==1:# and len(div_fac)==1:
                     
                     print("[i]Trying psieve b: "+str(2*new_root)+" a: "+str(div)+" bitlen a: "+str(bitlen(div)))
                     psievefound=psieve(n,ret_array,primelist_f,primeslist,div,sbase,2*new_root,resmaps,resmaps2,a_mul_list)
@@ -2111,9 +2111,21 @@ def lift_disc_residues(a,k,n,mod_otherside,blist_otherside):
     #print(new_blist_otherside)
     return new_blist_otherside,new_mod_otherside
 
+gain = lambda p: 2*p/(p-1) if p % 4 == 3 else 2*p/(p+1)
 
-
-
+def best_a_mul(a, n, k, good):          # good = prefiltered odd primes: gcd(k,p)==1 and kronecker(n*k,p)==1
+    #Disclaimer: This is one of the few/only functions generated with claude, as it gave a better implementation of my own which just used random sampling.
+    tb = (n*k).bit_length()
+    tb = tb*0.45
+    best = (0.0, -1)
+    for r in range(1, len(good) + 1):
+        for s in itertools.combinations(good, r):
+            m = math.prod(s)
+            if abs((a*m*m).bit_length() - tb) < 2:
+                g = math.prod(gain(p) for p in s)
+                if g > best[0]:
+                    best = (g, m)
+    return best[1]
    
 def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a_mul_list):#(n,fbase,div,hmap2,ret_array):
     found=0
@@ -2159,13 +2171,20 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
             k+=1
             continue
         a_mul_ind=0
-        while a_mul_ind < len(a_mul_list):  ##To do: We should move a_mul into an optimizer functions thats going to find a good value here...
-            a_mul=a_mul_list[a_mul_ind][0]
+      #  if 1:
+        
+        
+        while a_mul_ind < 1:
+            sbase_temp=[]
+            for prime in sbase:
+                if kronecker_symbol(n*k,prime)==1 and math.gcd(prime,k)==1 and a_o%prime!=0 and kronecker_symbol(a_o, prime) == 1:
+                    sbase_temp.append(prime)
+            a_mul=best_a_mul(a_o,n,k,sbase_temp)
+             #   a_mul=optimize_a_mul(a,n,k,sbase)
+            if a_mul==-1:
+                return found
             skip=0
-            for prime in a_mul_list[a_mul_ind][1]:
-                if kronecker_symbol(4*n*k,prime)==-1:
-                    skip=1            
-                    break
+          #  print("a_mul: "+str(a_mul))
             a=a_o*(a_mul**2)
 
        # print("trying k: "+str(k))
@@ -2216,7 +2235,7 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
                         q+=1
                     q=0
                     ####
-                    #print("sols: "+str(icounter))
+                   # print("sols: "+str(icounter))
 
                     while q < len(interval):
                         if interval[q]==0:
@@ -2273,7 +2292,7 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
                                 print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!THOUSIDOADJOASDHODSA")
                                 sys.exit()
                             found+=1
-                            return found
+                            
 
 
                         q+=1
