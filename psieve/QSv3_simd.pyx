@@ -385,7 +385,7 @@ def launch(n,primeslist,primeslist2):
         factor_ranking=[]
         quad=1
         new_mod,cfact,indexes=generate_modulus(n,primeslist,seen,tnum,close_range,too_close,LOWER_BOUND_SIQS,UPPER_BOUND_SIQS,bitlen(tnum),quad)
-        print("mod: "+str(new_mod)+" cfact: "+str(cfact)+" indexes: "+str(indexes))
+       # print("mod: "+str(new_mod)+" cfact: "+str(cfact)+" indexes: "+str(indexes))
 
 
       #  new_mod=961
@@ -2131,7 +2131,7 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
             sqr_list.append(sqr)
             primes_to_mark_debug.append(prime)
             primes_to_mark_mod*=prime
-            if len(primes_to_mark)==5:
+            if len(primes_to_mark)==7:
                 break
         i+=1
 
@@ -2283,7 +2283,7 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
                             b2_temp_list.append(b2_temp)
 
                             mod_ind=0
-                            while mod_ind < 100: #to do: interval here
+                            while mod_ind < 1: #to do: interval here
                             #print("b2_temp: "+str(b2_temp))
                                 disc2=a*(b2_temp+mod_ind*primes_to_mark_mod)**2+4*n*k 
 
@@ -2293,7 +2293,7 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
                                 #        sys.exit()
                                 new_root2=math.isqrt(disc2)
                                 if new_root2**2 == disc2:
-                                    print("hit: "+str(b2_temp+mod_ind*primes_to_mark_mod))
+                              #      print("hit: "+str(b2_temp+mod_ind*primes_to_mark_mod))
 
                                     if b!=original_b and b**2 not in ret_array[1]:
                                         poly_val=(new_root2)**2-4*n*k 
