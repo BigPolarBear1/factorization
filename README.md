@@ -17,6 +17,8 @@ This starts with an SIQS variant where the stripped away factors are square to m
 
 Update: Getting very close now. There's some additional research to be done still... its almost finished though. One thing I want to research is the commented out code at the bottom of psieve() where it checks roots by CRT. I need to rewrite that into a smart hensel implementation and see if it can find valid solutions that lie outside the bounds of the interval easily somehow. There is also a very deep pattern based on quadratic reciprocity here that dictates when psieve succeeds that needs further exploration. But very happy were its at now.
 
+Note: Aaaalot of dead code that needs to be pruned. Will do it tomorrow.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
