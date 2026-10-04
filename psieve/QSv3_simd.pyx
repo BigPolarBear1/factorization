@@ -2168,7 +2168,7 @@ gain = lambda p: 2*p/(p-1) if p % 4 == 3 else 2*p/(p+1)
 
 def best_a_mul(a, n, k, good):          # good = prefiltered odd primes: gcd(k,p)==1 and kronecker(n*k,p)==1
     #Disclaimer: This is one of the few/only functions generated with claude, as it gave a better implementation of my own which just used random sampling.
-    tb = ((n*k)**0.5 / 100) #to do: euhm best divisor value?
+    tb = ((n*k)**0.5 / 1000) #to do: euhm best divisor value?
     tb= round(tb)
     tb = bitlen(tb)
     #print("aiming for: "+str(tb))
@@ -2184,6 +2184,8 @@ def best_a_mul(a, n, k, good):          # good = prefiltered odd primes: gcd(k,p
     return best[1]
    
 def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a_mul_list):#(n,fbase,div,hmap2,ret_array):
+    #to do: Negative poly_vals are just not working atm...
+  
   #  a_o=3
     found=0
     a=a_o
@@ -2213,7 +2215,7 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
 
 
     k=1
-    while k < 1000: #To do: I know how to calculate possible "k" values for a modulus.. but there seems to be something else also going on.. kronecker(a,-n) must be 1.. but thats still not enough. Investigate later. Can add squares to a instead to optimize the interval.
+    while k < 10_000: #To do: I know how to calculate possible "k" values for a modulus.. but there seems to be something else also going on.. kronecker(a,-n) must be 1.. but thats still not enough. Investigate later. Can add squares to a instead to optimize the interval.
         if isPrime(k,5)!=1 and k != 1:
             k+=1
             continue

@@ -1,3 +1,6 @@
+###DISCLAIMER: I have generated this code with claude because it is well documented linear algebra logic and it saves me time.
+
+
 # cython: language_level=3, boundscheck=False, wraparound=False, cdivision=True, initializedcheck=False
 """
 almostsq -- products of B-smooth numbers with few odd-exponent primes.
