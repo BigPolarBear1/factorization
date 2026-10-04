@@ -30,6 +30,8 @@ I'll go ahead and get bit-packing implemented today for the interval in psieve()
 
 Update: Added the bit packing.. just used claude to generate that code.. easy now. Its very fast now. I also commented out that CRT code at the bottom of psieve().. its for later. First that intermediate linear algebra step now....
 
+ps: the key will be that if we have an almost square bsmooth we can optimize more with best_a_mul()
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
