@@ -11,7 +11,7 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 
 #### To run from folder "psieve" WORK IN PROGRES...extremely early version:</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 50 -base 10_000 -debug 0 -lin_size 100 -quad_size 1</br></br>
+To run:  python3 run_qs.py -keysize 70 -base 10_000 -debug 0 -lin_size 100 -quad_size 1</br></br>
 
 This starts with an SIQS variant where the stripped away factors are square to minimize the odd exponent factors in the bsmooth and after that we use the research from the paper in psieve(). This then utilizes a two sided approach and looks for similar b-smooths by calculating quadratic residues and applying hensel's lifting (I need to fix some of that hensel code still, its just bruteforcing roots mod p^e for now). 
 
@@ -27,6 +27,8 @@ Update: Added some a_mul optimizer function. Does seem to mostly increase the so
 Update: Quickly re-added yesterdays CRT code at the bottom of psieve. This right now is just slowing down the algorithm... instead this should be a single prime that we lift with hensel..... then I should experiment if this can reveal solutions outside of the interval. etc. Just adding it to show how thats done... for now.
 
 I'll go ahead and get bit-packing implemented today for the interval in psieve(). Probably will just use claude generated code for this. It's a well documented thing that I rather not waste time on. But should provide an easy straightforward speed boost.... then next I'll fix the intermediate linear algebra step that's going to do linear algebra to generat near-square b-smooths from a list of b-smooths... so basically just trying to figure out which primes we need to go hunting for to complete our linear algebra... then I'll go back to that crappy CRT code I added at the bottom of psieve.. and switch that to a cleaner hensel-based function.. but I'll need to do some tinkering there.
+
+Update: Added the bit packing.. just used claude to generate that code.. easy now. Its very fast now. I also commented out that CRT code at the bottom of psieve().. its for later. First that intermediate linear algebra step now....
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
