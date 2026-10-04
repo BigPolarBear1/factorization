@@ -13,9 +13,9 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 80 -base 10_000 -debug 0 -lin_size 100 -quad_size 1</br></br>
 
-This starts with an SIQS variant where the stripped away factors are square to minimize the odd exponent factors in the bsmooth and after that we use the research from the paper in psieve(). This then utilizes a two sided approach and looks for similar b-smooths by calculating quadratic residues and applying hensel's lifting (I need to fix some of that hensel code still, its just bruteforcing roots mod p^e for now). 
+This starts with an SIQS variant where the stripped away factors are square to minimize the odd exponent factors in the bsmooth and after that we use the research from the paper in psieve(). This then utilizes a two sided approach and looks for similar b-smooths by calculating quadratic residues.
 
-Update: Getting very close now. There's some additional research to be done still... its almost finished though. One thing I want to research is the commented out code at the bottom of psieve() where it checks roots by CRT. I need to rewrite that into a smart hensel implementation and see if it can find valid solutions that lie outside the bounds of the interval easily somehow. There is also a very deep pattern based on quadratic reciprocity here that dictates when psieve succeeds that needs further exploration. But very happy we're its at now.
+Update: Getting very close now. There's some additional research to be done still... its almost finished though. One thing I want to research is the commented out code at the bottom of psieve() where it checks roots by CRT. I need to rewrite that into a smart hensel implementation and see if it can find valid solutions that lie outside the bounds of the interval easily somehow. There is also a very deep pattern based on quadratic reciprocity here that dictates when psieve succeeds that needs further exploration. But very happy were its at now.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
