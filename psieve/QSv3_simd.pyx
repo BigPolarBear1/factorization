@@ -30,6 +30,7 @@ import os
 from sympy.ntheory.residue_ntheory import jacobi_symbol
 from sympy import kronecker_symbol
 from bitsieve import new_interval, make_pattern, sieve, survivors
+import almostsq
 
 min_lin_sieve_size=10_000
 max_bound=10_000_000
@@ -316,6 +317,7 @@ def build_matrix(factor_base, smooth_nums, factors,factor_list2):#,pflist):
     return M2
 
 def launch(n,primeslist,primeslist2):
+    psieve_seen=[]
     a_mul=1
     a_mul_list=[]
     while a_mul< 10_000:
@@ -427,16 +429,44 @@ def launch(n,primeslist,primeslist2):
                     sys.exit()            
             interval=build_database2interval(primeslist_a,quad,n,lin,new_mod,roots2d,0,factor_ranking)
             found+=process_interval2d(n,ret_array,quad,primelist_f,large_prime_bound,partials,lin,new_mod,factor_ranking,fb_map,0,seen_factors,interval,primeslist,resmaps,resmaps2,valid_quads,valid_quads_factors,qlist,primelist,sbase,a_mul_list)#,lin,new_mod,sum_list)
-           # if found > 100 or len(ret_array[0]) > base+10:
+            if found > 100 or len(ret_array[0]) > base+10:
+                print("[i]#B-smooths: "+str(len(ret_array[0])))
+                almostsq_result=generate_almostsq(ret_array[2],primeslist,ret_array[0])
+                i=0
+                while i < len(almostsq_result) and i < 50:
+                    div=almostsq_result[i][0]
+                    if div in psieve_seen:
+                        i+=1
+                        continue
+                    psieve_seen.append(div)
+                    if div!=1 and div%2!=0 and bitlen(div)<(keysize*0.5) and div > 0: #to do: bug check div < 0 and enable
+            #        if 1:#isPrime(div,5)==1:
+                        print("[i]Trying psieve b: "+str(almostsq_result[i][1])+" a: "+str(div)+" bitlen a: "+str(bitlen(div)))
+                        psievefound=psieve(n,ret_array,primelist_f,primeslist,div,sbase,almostsq_result[i][1],resmaps,resmaps2,a_mul_list)
+                        if psievefound !=0:
+            #                ret_array[1].append(new_root**2)
+            #                ret_array[0].append(poly_val)
+            #                ret_array[2].append(local_factors)
+            #                ret_array[3].append([])
+                            print("[*](Psieve)Trying linear algebra after succesful psieve run")
+                            test,test2=QS(n,primelist,ret_array[0],ret_array[2],ret_array[1],ret_array[3])
+            #        #
+
+             #               if test !=0:
+             #                   print("\n\n\n\nFound at: ",len(ret_array[0]))
+             #                   sys.exit()
+
+                    i+=1
            #     if g_debug ==1:
            #         print("seen_factors: ",seen_factors)
            #     print("[i]Performing linear algebra")
-           #     test,test2=QS(n,primelist,ret_array[0],ret_array[2],ret_array[1],ret_array[3])
+                if len(ret_array[0]) > base+10:
+                    print("[*]Trying linear algebra")
+                    test,test2=QS(n,primelist,ret_array[0],ret_array[2],ret_array[1],ret_array[3])
+                    
       #      test,test2=QS(n,primelist,ret_array[0],ret_array[1],ret_array[2]) 
-           #     found=0 
-           #     if test !=0:
-           #         print("\n\n\n\nFound at: ",len(ret_array[0]))
-           #         return 
+                found=0 
+
 
             poly_ind+=1
       
@@ -906,6 +936,48 @@ def find_roots_poly(f, p):
         del g[-1]
     return r + roots(g, p)
 
+def generate_almostsq(facs, fb, values, keep=10):
+    """All single relations plus the lightest combinations, smallest leftover first.
+
+    Returns a list of (leftover, root, idxs) with
+        prod(values[i] for i in idxs) == leftover * root**2
+    """
+    cols = sorted({p for f in facs for p in f})       # -1 sorts first, an ordinary column
+    col = {p: j for j, p in enumerate(cols)}
+
+    masks = []
+    for f in facs:
+        mask = 0
+        for p in f:
+            mask ^= 1 << col[p]
+        masks.append(mask)
+
+    # every relation on its own, then the combinations from the elimination
+    candidates = [(mask, 1 << i) for i, mask in enumerate(masks)]
+    candidates += almostsq.from_masks(masks, len(cols), keep=keep)
+
+    seen = set()
+    results = []
+    for prime_mask, history_mask in candidates:
+        if history_mask in seen:                      # same set of relations already listed
+            continue
+        seen.add(history_mask)
+        odd  = [cols[j] for j in almostsq.bits(prime_mask)]
+        idxs = almostsq.bits(history_mask)
+        product = math.prod(values[i] for i in idxs)
+        leftover = math.prod(odd)                     # product of the odd primes, sign included
+        square, rem = divmod(product, leftover)
+        root = math.isqrt(square)
+        assert rem == 0 and root * root == square
+        results.append((leftover, root, idxs, odd))
+
+    results.sort(key=lambda r: (sum(1 for p in r[3] if p != -1), abs(r[0])))
+
+    #for res in results:
+   ##     print(str(bitlen(res[0]))+" amount: "+str(len(res[2]))+" total len: "+str(len(values))+" primes: "+str(res[3]))
+   # print(results)
+    return results
+
 cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,partials,lin,cmod,factor_ranking,fb_map,bSeenOnly,seen_factors,interval,primeslist,resmaps,resmaps2,valid_quads,valid_quads_factors,qlist,primelist,sbase,a_mul_list):#,lin,cmod,sum_list):
     linsize=lin_sieve_size
     if bSeenOnly==1:
@@ -941,9 +1013,9 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                 time.sleep(1000)                    
             new_root=quad_can*x
             if quad_sign=="neg":
-                poly_val=new_root**2-n*quad_can
+                poly_val=(2*new_root)**2-4*n*quad_can
             else: 
-                poly_val=new_root**2+n*quad_can
+                poly_val=(2*new_root)**2+4*n*quad_can
             if poly_val%(cmod*quad_can)!=0:
                 print("fatal")
             local_factors, value = factorise_fast(poly_val,primelist_f)
@@ -978,10 +1050,10 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
             #    else:
             #        k+=1 
             #        continue     
-            if value != 1 and isPrime(value,5)==0:#math.isqrt(abs(value))**2 != value:
+            if value != 1:# and isPrime(value,5)==0:#math.isqrt(abs(value))**2 != value:
                 k+=1
                 continue    
-            if new_root not in ret_array[1]:
+            if 2*new_root not in ret_array[1]:
                 factor_ranking.append([])
                 local_factors=list(local_factors)
                 local_factors.sort()
@@ -1001,23 +1073,28 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                 found+=1
 
                 #To do: uncomment later
-                #ret_array[1].append(new_root**2)
-                #ret_array[0].append(poly_val)
-                #ret_array[2].append(local_factors)
-                #ret_array[3].append([])
+                ret_array[1].append((2*new_root)**2)
+                ret_array[0].append(poly_val)
+                ret_array[2].append(local_factors)
+                ret_array[3].append([])
                 div_fac=[]
-                faclist=list(local_factors)
-                faclist.sort()
-                faclist.reverse()
+                
+                
+                
+
+                
+               # faclist=list(local_factors)
+               # faclist.sort()
+               # faclist.reverse()
              
               #  print("faclist: "+str(faclist))
-                div=1
-                for odd_exp_factor in faclist:
-                    if odd_exp_factor < 2:
-                        break
+              #  div=1
+              #  for odd_exp_factor in faclist:
+              #      if odd_exp_factor < 2:
+              #          break
                    # if odd_exp_factor != -1:
-                    div*=odd_exp_factor
-                    div_fac.append(odd_exp_factor)
+              #      div*=odd_exp_factor
+              #      div_fac.append(odd_exp_factor)
                     
                 
                 #div*=-1
@@ -1029,24 +1106,24 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                # print("[*]Smooths: "+str(len(ret_array[0]))+" / "+str(base)+" b: "+str(new_root)+" k: "+str(quad_can))#+" square: "+str((abs(poly_val//div))**0.5))
                # if bitlen(div)<keysize*0.50: ##Dont know if this matters.. another parameter to test with..
                   #  print("PSIEVE1")
-                local_factors2, value2 = factorise_fast(new_root,primelist_f)
-                #To do: Fix this for when poly_val is smaller then 0... for some reason my calculations dont always hold true in that case
-                if value==1 and div!=1 and div%2!=0 and bitlen(div)<(keysize*0.5) and poly_val >0:# and isPrime(value,5)==1:# and isPrime(div,5)==1:# and value2==1:# and len(div_fac)==1:
-                    if 1:#isPrime(div,5)==1:
-                        print("[i]Trying psieve b: "+str(2*new_root)+" a: "+str(div)+" bitlen a: "+str(bitlen(div)))
-                        psievefound=psieve(n,ret_array,primelist_f,primeslist,div,sbase,2*new_root,resmaps,resmaps2,a_mul_list)
-                        if psievefound !=0:
-                            ret_array[1].append(new_root**2)
-                            ret_array[0].append(poly_val)
-                            ret_array[2].append(local_factors)
-                            ret_array[3].append([])
-                            print("[*](Psieve)Trying linear algebra after succesful psieve run")
-                            test,test2=QS(n,primelist,ret_array[0],ret_array[2],ret_array[1],ret_array[3])
-                    
+            #    local_factors2, value2 = factorise_fast(new_root,primelist_f)
+            #    #To do: Fix this for when poly_val is smaller then 0... for some reason my calculations dont always hold true in that case
+            #    if value==1 and div!=1 and div%2!=0 and bitlen(div)<(keysize*0.5) and poly_val >0:# and isPrime(value,5)==1:# and isPrime(div,5)==1:# and value2==1:# and len(div_fac)==1:
+            #        if 1:#isPrime(div,5)==1:
+            #            print("[i]Trying psieve b: "+str(2*new_root)+" a: "+str(div)+" bitlen a: "+str(bitlen(div)))
+            #            psievefound=psieve(n,ret_array,primelist_f,primeslist,div,sbase,2*new_root,resmaps,resmaps2,a_mul_list)
+            #            if psievefound !=0:
+            #                ret_array[1].append(new_root**2)
+            #                ret_array[0].append(poly_val)
+            #                ret_array[2].append(local_factors)
+            #                ret_array[3].append([])
+            #                print("[*](Psieve)Trying linear algebra after succesful psieve run")
+            #                test,test2=QS(n,primelist,ret_array[0],ret_array[2],ret_array[1],ret_array[3])
+            #        #
 
-                            if test !=0:
-                                print("\n\n\n\nFound at: ",len(ret_array[0]))
-                                sys.exit()
+             #               if test !=0:
+             #                   print("\n\n\n\nFound at: ",len(ret_array[0]))
+             #                   sys.exit()
                 #    sys.exit()
                     #break
 
@@ -1867,8 +1944,8 @@ def psieve_build_interval(resmaps,n,k,b_temp,a,sbase,primes_to_mark,sqr_list):
     for ind in primes_to_mark:                 # sols = the valid residues mod p
         p=sbase[ind]
         start=0
-                       # sols=resmaps[ind][k%p][1]
-        sieve(ival,make_pattern(p,resmaps[ind][k%p][1],a),b_temp,a)
+        if a%p != 0:              # sols=resmaps[ind][k%p][1]
+            sieve(ival,make_pattern(p,resmaps[ind][k%p][1],a),b_temp,a)
     return ival
 
 def debug_find_residues3(prime,n,a,exp,k):
@@ -2091,7 +2168,7 @@ gain = lambda p: 2*p/(p-1) if p % 4 == 3 else 2*p/(p+1)
 
 def best_a_mul(a, n, k, good):          # good = prefiltered odd primes: gcd(k,p)==1 and kronecker(n*k,p)==1
     #Disclaimer: This is one of the few/only functions generated with claude, as it gave a better implementation of my own which just used random sampling.
-    tb = ((n*k)**0.5 / 100)
+    tb = ((n*k)**0.5 / 100) #to do: euhm best divisor value?
     tb= round(tb)
     tb = bitlen(tb)
     #print("aiming for: "+str(tb))
@@ -2136,7 +2213,7 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
 
 
     k=1
-    while k < 100: #To do: I know how to calculate possible "k" values for a modulus.. but there seems to be something else also going on.. kronecker(a,-n) must be 1.. but thats still not enough. Investigate later. Can add squares to a instead to optimize the interval.
+    while k < 1000: #To do: I know how to calculate possible "k" values for a modulus.. but there seems to be something else also going on.. kronecker(a,-n) must be 1.. but thats still not enough. Investigate later. Can add squares to a instead to optimize the interval.
         if isPrime(k,5)!=1 and k != 1:
             k+=1
             continue
@@ -2164,7 +2241,7 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
                     sys.exit()
                 if kronecker_symbol(4*n*k,prime)==1 and math.gcd(prime,k)==1 and a_o%prime!=0 and kronecker_symbol(a_o, prime) == 1:
                     sbase_temp.append(prime)
-            if a_mul_ind !=0:
+            if a_mul_ind ==0:
                 a_mul=best_a_mul(a_o,n,k,sbase_temp)
              #   a_mul=optimize_a_mul(a,n,k,sbase)
                 if a_mul==-1:
@@ -2230,7 +2307,7 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
                         i_ind=hits[q]
                   
                         b=b_temp+mod_otherside*i_ind
-                        if b == original_b:
+                        if original_b%b==0:#b == original_b:
                             q+=1
                             continue
 
