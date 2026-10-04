@@ -24,7 +24,9 @@ Anyway, hope the guys at the NSA have a good day, dont blow your brains out. Go 
 
 Update: Added some a_mul optimizer function. Does seem to mostly increase the solutions in the interval. Although it needs a little more research. Good enough for starters. Next I will write an intermediate linear algebra step that will produce nearly square b-smooths. and use that instead of direct sieving results from the SIQS variant. Because we need room to build up that a_mul...
 
-Update: Quickly re-added yesterdays CRT code at the bottom of psieve. This right now is just slowing down the algorithm... instead this should be a single prime that we lift with hensel..... then I should experiment if this can reveal solutions outside of the interval. etc. Just adding it to show how thats done... for now. 
+Update: Quickly re-added yesterdays CRT code at the bottom of psieve. This right now is just slowing down the algorithm... instead this should be a single prime that we lift with hensel..... then I should experiment if this can reveal solutions outside of the interval. etc. Just adding it to show how thats done... for now.
+
+I'll go ahead and get bit-packing implement today for the interval in psieve(). Probably will just use claude generated code for this. It's a well documented thing that I rather not waste time on. But should provide an easy straightforward speed boost.... then next I'll fix the intermediate linear algebra step that's going to do linear algebra to generat near-square b-smooths from a list of b-smooths... so basically just trying to figure out which primes we need to go hunting for to complete our linear algebra... then I'll go back to that crappy CRT code I added at the bottom of psieve.. and switch that to a cleaner hensel-based function.. but I'll need to do some tinkering there.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
