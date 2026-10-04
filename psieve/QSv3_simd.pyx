@@ -1013,7 +1013,7 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
               #  print("faclist: "+str(faclist))
                 div=1
                 for odd_exp_factor in faclist:
-                    if odd_exp_factor < 20:
+                    if odd_exp_factor < 2:
                         break
                    # if odd_exp_factor != -1:
                     div*=odd_exp_factor
@@ -1863,7 +1863,7 @@ def enumerated_product(*args):
 
 
 def psieve_build_interval(resmaps,n,k,b_temp,a,sbase,primes_to_mark,sqr_list):
-    ival = new_interval(50_000)
+    ival = new_interval(100_000)
     for ind in primes_to_mark:                 # sols = the valid residues mod p
         p=sbase[ind]
         start=0
