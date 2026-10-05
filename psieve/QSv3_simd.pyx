@@ -37,7 +37,7 @@ import almostsq
 from quadroots import QuadRoots
 
 
-k_max=100_000
+k_max=500_000
 min_lin_sieve_size=10_000
 max_bound=10_000_000
 key=0                 #Define a custom modulus to factor
@@ -1834,8 +1834,42 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
                           #  dbg_a=[kronecker_symbol(a_o,f) for f in kf]                              # one symbol per factor of k
                           #  dbg_p=[[kronecker_symbol(f,prime) for prime in primes_to_check] for f in kf]   # one row per factor of k
                           #  print("k: "+str(k)+" factors: "+str(kf)+" (a_o|f): "+str(dbg_a)+" (f|p): "+str(dbg_p))
- 
-                          
+                            
+                            new=primes_to_check+a_mul_divs
+                            exp=2
+                            while 1:
+                                new_next=[]
+                                
+                                i=0
+                                while i < len(new):
+
+                                    prime=new[i]
+                                    sqr=find_roots_poly([1,0,-a],prime)
+                                    sqr[0]=lift_root2([1,0,-a],sqr[0],prime,exp)                                
+                                    r=find_roots_poly([1,-b,n*k],prime)
+                                    deriv=get_derivative([1,-b,n*k])
+                                    bn=evaluate(deriv,r[0])
+                                    r=lift_root2([1,bn*sqr[0],-n*k],r[0],prime,exp)
+                                    result=evaluate([1,-b,n*k],r)%prime**exp
+                                    if result == 0:
+                                        new_next.append(prime)
+                                    else:
+                                        if prime in a_mul_divs and exp%2==1:
+                                            print("prime: "+str(prime)+" lifted correctly to a square at exp: "+str(exp-1))
+                                        elif prime in a_mul_divs:
+                                            print("prime: "+str(prime)+" did not lift correctly to a square at exp: "+str(exp-1))
+                                        if prime in primes_to_check and exp%2!=1:
+                                            print("prime: "+str(prime)+" lifted correctly to a non-square at exp: "+str(exp-1))
+                                        elif prime in primes_to_check:
+                                            print("prime: "+str(prime)+" did not lift correctly to a non-square at exp: "+str(exp-1))
+                                  #  print("primes_to_check: "+str(prime)+" r: "+str(r)+" result lifted: "+str(result)+" exp: "+str(exp))
+                                    
+                                
+                                    i+=1
+                                new=new_next
+                                if len(new)==0:
+                                    break
+                                exp+=1
                           #  print("a*b**2+4*n*k: "+str(a*new_root**2+4*n*k)+" (a*b)**2+4*n*k*a: "+str((a*new_root)**2+4*n*k*a)+" b: "+str(b)+" a: "+str(a)+" k: "+str(k)+" mod_otherside: "+str(mod_otherside)+" new_root: "+str(new_root)+" b**2-4*n*k: "+str(b**2-4*n*k)+" b_temp: "+str(b_temp)+" primes used to mark: "+str(primes_to_mark_debug))
                             print("[i]Found one with psieve()!!!!!!!!!!!!! b: "+str(b)+" k: "+str(k)+" #smooths: "+str(len(ret_array[0]))+" index: "+str(i_ind)+" interval[q]: "+str((interval[i_ind >> 6] >> (i_ind & 63)) & 1)+" sols in interval: "+str(icounter)+" a_mul: "+str(a_mul)+" kronecker_symbol(a,n*k): "+str(kronecker_symbol(a,n*k))+" "+str(kronecker_symbol(a,k))+" bitlen polyval: "+str(bitlen(poly_val//a))+" poly_val: "+str(poly_val)+" a_mul: "+str(a_mul)+" primes in a_o: "+str(len(primes_to_check)))#+" interval2: "+str(interval2[q])+" k: "+str(k))
                             if kronecker_symbol(a,n*k) != 1:
