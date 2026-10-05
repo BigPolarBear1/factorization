@@ -11,7 +11,7 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 
 #### To run from folder "psieve" WORK IN PROGRES...extremely early version:</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 90 -base 10_000 -debug 0 -lin_size 100 -quad_size 1</br></br>
+To run: python3 run_qs.py -keysize 100 -base 10_000 -debug 0 -lin_size 100 -quad_size 1</br></br>
 
 Note: For a real world implementation you should have the SIQS variant and Psieve() running in two different threads. SIQS collects b-smooths, Psieve then uses a quadratic residue based approach to try and complete the linear algebra step much sooner. Still a work in progress and a lot still need to be done. Performance of Psieve is still subpar with what I suspect it should be able to achieve. An alternative approach would be to just have Psieve grind B-smooths for arbitrary small 'a' values to reduce the rank of the matrix use for the linear algera step.. since this lets best_a_mul() optimize the interval more.. but there is some quadratic reciprocity related stuff happening that dictates when this will work or not, which I'll need to study a bit deeper.
 
