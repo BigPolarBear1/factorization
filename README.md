@@ -27,8 +27,6 @@ Update: So managed to filter out bad "a_mul" and "k" values with jacobi/kronecke
 
 Going for a run... when I come back I'm going to further eliminate "k" values that cant possibly have a solution by lifting singular roots and seeing how they behave at higher exponents.... easy enough. Just got to keep hammering this now.... almost there.
 
-Update: Fck! I was re-reading my paper and went to take a shower. Rather then feeding the odd exponent part of a b-smooth into psieve()... what if I feed into it the square part instead? I need to test that just incase.........
-
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
