@@ -13,6 +13,8 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 100 -base 10_000 -debug 0 -lin_size 100 -quad_size 1</br></br>
 
+Note: For a real world implementation you should have the SIQS variant and Psieve() running in two different threads. SIQS collects b-smooths, Psieve then uses a quadratic residue based approach to try and complete the linear algebra step much sooner. Still a work in progress and a lot still need to be done. Performance of Psieve is still subpar with what I suspect it should be able to achieve.
+
 This starts with an SIQS variant where the stripped away factors are square to minimize the odd exponent factors in the bsmooth and after that we use the research from the paper in psieve(). This then utilizes a two sided approach and looks for similar b-smooths by calculating quadratic residues.
 
 Update: Getting very close now. There's some additional research to be done still... its almost finished though. One thing I want to research is the commented out code at the bottom of psieve() where it checks roots by CRT. I need to rewrite that into a smart hensel implementation and see if it can find valid solutions that lie outside the bounds of the interval easily somehow. There is also a very deep pattern based on quadratic reciprocity here that dictates when psieve succeeds that needs further exploration. This is why you cannot set "a" as an aribtrary small prime in psieve.. it has to come from existing b-smooths.. I know some of the conditions that must be met but others are still hidden and unless I find them using existing b-smooths is the only way. But very happy were its at now.
