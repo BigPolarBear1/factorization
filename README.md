@@ -23,6 +23,8 @@ Note: Aaaalot of dead code that needs to be pruned. Will do it tomorrow.
 
 Finally hit the 100 bit threshold. Will spent the day optimizing the code.. and after that I'll continue research and improvements (lots of small things to fix still like the code still doesnt work on negative polynomial values in psieve() etc... , I need to fix that so I can also properly optimize the sieve region there)
 
+Update: So managed to filter out bad "a_mul" and "k" values with jacobi symbols as well as possible. Any further filtering likely has to be done now with hensel. I do know that primes that divide the discriminant will have singular roots and they have unique behavior when lifting, and I know how to trivially lift them as non-singular by switching side.. so I think I can crack this problem wide open now. Hensel is the way forward. 
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
