@@ -29,8 +29,6 @@ Going for a run... when I come back I'm going to further eliminate "k" values th
 
 Update: Quickly added some lifting logic when a solution is found. You can see how lifting singular roots work... and that it can be used as a tool to solve this.. 
 
-Got a possible solution... I'll continue tomorrow. So that lifting logic that I added... we can generate possible b's for prime that divide a_o (a without a_mul**2).. then best on the divisibility of the coefficients generated with the derivative, we can select better a_mul values. Something in that direction.. seeing some mental image that just feels right.. will try tomorrow.
-
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
