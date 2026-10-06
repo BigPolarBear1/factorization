@@ -31,7 +31,7 @@ Update: Quickly added some lifting logic when a solution is found. You can see h
 
 I have multiple ideas, most straightforward is to use this to see if a solution exist outside the interval within some larger bound for solutions that survived marking but are not square after dividing out a.
 
-Update: Let me try a more straightforward approach tonight. So with singular root lifting (for primes that divide a) we can generate a much sparser solution set within a bound... so rather then an interval based approach we use these solutions.. and we can filter them with those other primes if needed. Plus if we keep track of the coefficients residues for the other side around (ay^2+4Nk instead of ab^2-4Nk).. we know that a_mul divides out these coefficients.. so I'm sure I can come up with something there and replace that best_a_mul() function with it.
+Update: Let me try a more straightforward approach tonight. So with singular root lifting (for primes that divide a) we can generate a much sparser solution set within a bound... so rather then an interval based approach we use these solutions.. and we can filter them with those other primes if needed. Plus if we keep track of the coefficients residues for the other side around (ay^2+4Nk instead of ab^2-4Nk).. we know that a_mul divides out these coefficients.. so I'm sure I can come up with something there and replace that best_a_mul() function with it. I should also study some abstract algebra, rings and modules specifically.. I havnt yet found much time.. but I'm running out of money so I make a miracle happen now or its over for me.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
