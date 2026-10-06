@@ -29,6 +29,8 @@ Going for a run... when I come back I'm going to further eliminate "k" values th
 
 Update: Quickly added some lifting logic when a solution is found. You can see how lifting singular roots work... and that it can be used as a tool to solve this.. 
 
+I have multiple ideas, most straightforward is to use this to see if a solution exist outside the interval within some larger bound for solutions that survived marking but are not square after dividing out a.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
