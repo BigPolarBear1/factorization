@@ -37,7 +37,7 @@ import almostsq
 from quadroots import QuadRoots
 
 
-k_max=500_000
+k_max=10_000
 min_lin_sieve_size=10_000
 max_bound=10_000_000
 key=0                 #Define a custom modulus to factor
@@ -315,6 +315,7 @@ def build_matrix(factor_base, smooth_nums, factors,factor_list2):#,pflist):
     return M2
 
 def launch(n,primeslist,primeslist2):
+    pat_cache={}
     fb_map = {val: i for i, val in enumerate(primeslist)}
     psieve_seen=[]
     a_mul=1
@@ -431,7 +432,7 @@ def launch(n,primeslist,primeslist2):
             found+=process_interval2d(n,ret_array,quad,primelist_f,large_prime_bound,partials,lin,new_mod,factor_ranking,fb_map,0,seen_factors,interval,primeslist,resmaps,resmaps2,valid_quads,valid_quads_factors,qlist,primelist,sbase,a_mul_list)#,lin,new_mod,sum_list)
             if found > 100 or len(ret_array[0]) > base+10:
                 print("[i]#B-smooths: "+str(len(ret_array[0])))
-                almostsq_result=generate_almostsq(ret_array[2],primeslist,ret_array[0])
+                almostsq_result,leftovers=generate_almostsq(ret_array[2],primeslist,ret_array[0])
              #   almostsq_result=generate_almostsq_smallprimes(ret_array[2],primeslist,ret_array[0])
                 i=0
                 while i < len(almostsq_result) and i < 50:
@@ -443,7 +444,7 @@ def launch(n,primeslist,primeslist2):
                     if div!=1 and div%2!=0 and bitlen(div)<(keysize*0.5):# and div > 0: #to do: bug check div < 0 and enable
             #        if 1:#isPrime(div,5)==1:
                         print("[i]Trying psieve b: "+str(almostsq_result[i][1])+" a: "+str(div)+" bitlen a: "+str(bitlen(div)))
-                        psievefound=psieve(n,ret_array,primelist_f,primeslist,div,sbase,almostsq_result[i][1],resmaps,resmaps2,a_mul_list,qr,fb_map)
+                        psievefound=psieve(n,ret_array,primelist_f,primeslist,div,sbase,almostsq_result[i][1],resmaps,resmaps2,a_mul_list,qr,fb_map,pat_cache,leftovers)
                         if psievefound !=0:
             #                ret_array[1].append(new_root**2)
             #                ret_array[0].append(poly_val)
@@ -800,7 +801,8 @@ def generate_almostsq(facs, fb, values, keep=20):
     #for res in results:
    ##     print(str(bitlen(res[0]))+" amount: "+str(len(res[2]))+" total len: "+str(len(values))+" primes: "+str(res[3]))
    # print(results)
-    return results
+    leftovers=sorted({r[0] for r in results if abs(r[0])!=1},key=abs)   # signed, smallest first
+    return results,leftovers
 
 def generate_almostsq_smallprimes(facs, fb, values, limit=50):
     """Single relations and combinations, ranked by the largest prime left in the
@@ -1416,13 +1418,10 @@ def build_2drootmap(primeslist,hmap,n,qr):
 def enumerated_product(*args):
     yield from itertools.product(*(range(len(x)) for x in args))
 
-def psieve_build_interval(resmaps,n,k,b_temp,a,sbase,primes_to_mark,sqr_list):
-    ival = new_interval(100_000)
-    for ind in primes_to_mark:                 # sols = the valid residues mod p
-        p=sbase[ind]
-        start=0
-        if a%p != 0:              # sols=resmaps[ind][k%p][1]
-            sieve(ival,make_pattern(p,resmaps[ind][k%p][1],a),b_temp,a)
+def psieve_build_interval(pats,b_temp,a):                    # once per b_temp
+    ival = new_interval(400_000)
+    for pat in pats:
+        sieve(ival,pat,b_temp,a)
     return ival
 
 def psieve_padic_solutions(prime,exp,n,k):
@@ -1524,24 +1523,34 @@ def debug_find_residues4(prime,n,exp,k):
         blist[-1].extend(roots)
     return blist
 
-def find_residues4_b(prime,n,exp,k,i,qr):
+def find_residues4_b(prime,n,exp,k,i,qr,u=1):
     blist=[prime**exp,[]]
-    poly=[1,0,-4*n*k]
-    x=qr.root(k,i)                  
-    if x != -1:
-        r=(2*k*x)%prime             
-        roots=[r,prime-r]
-        i=0
-        while i < len(roots):
-            roots[i]=lift_root2(poly, roots[i], prime, exp)
-            if (roots[i]**2-4*n*k)%prime**exp !=0:
-                print("something screwed up: "+str(roots)+" k: "+str(k))
-                sys.exit(0)
-            i+=1
-        blist[-1].extend(roots)
+    poly=[u,0,-4*n*k]
+    if u==1:
+        x=qr.root(k,i)
+        roots=[] if x==-1 else [(2*k*x)%prime,prime-(2*k*x)%prime]
+    else:
+        roots=find_roots_poly([1,0,(-4*n*k*modinv(u,prime))%prime],prime)
+    i=0
+    while i < len(roots):
+        roots[i]=lift_root2(poly, roots[i], prime, exp)
+        if (u*roots[i]**2-4*n*k)%prime**exp !=0:
+            print("something screwed up: "+str(roots)+" k: "+str(k))
+            sys.exit(0)
+        i+=1
+    blist[-1].extend(roots)
     return blist
 
-def build_disc_residues_b(fbase,a,n,k,qr,a_mul_divs,primes_to_check,fbase_index_map):
+def psieve_marks(sbase,A):
+    out=[]
+    for i,prime in enumerate(sbase):
+        if kronecker_symbol(A,prime)==1:
+            out.append(i)
+            if len(out)==8:
+                break
+    return out
+
+def build_disc_residues_b(fbase,a,n,k,qr,a_mul_divs,primes_to_check,fbase_index_map,u=1):
     blist_otherside=[]
     mod_otherside=1
     plist=primes_to_check
@@ -1558,7 +1567,7 @@ def build_disc_residues_b(fbase,a,n,k,qr,a_mul_divs,primes_to_check,fbase_index_
             exp+=1
 
         #print("hit: "+str(prime))
-        temp_blist=find_residues4_b(prime,n,exp,k,i,qr)
+        temp_blist=find_residues4_b(prime,n,exp,k,i,qr,u)
 
         if len(temp_blist)>0:
             if len(temp_blist[-1])==0:
@@ -1594,9 +1603,25 @@ def build_disc_residues(fbase,a,n,k):
 
 gain = lambda p: 2*p/(p-1) if p % 4 == 3 else 2*p/(p+1)
 
-def best_a_mul(a, n, k, good):          # good = prefiltered odd primes: gcd(k,p)==1 and kronecker(n*k,p)==1
+def best_a_mul_few(a, n, k, good, max_r=4):   # same contract as best_a_mul: returns (m, primes) or (-1, [])
+    tb = bitlen(math.isqrt(4*n*k)//200_000)
+    if abs(a.bit_length() - tb) < 2:            # already in the window: no padding needed
+        return 1, []
+    pool = sorted(good, reverse=True)           # largest first
+    for r in range(1, min(max_r, len(pool)) + 1):               # fewest primes first
+        if (a*math.prod(pool[:r])**2).bit_length() < tb - 1:    # even the r largest are too small
+            continue
+        if (a*math.prod(pool[-r:])**2).bit_length() > tb + 1:   # even the r smallest are too big
+            break
+        for s in itertools.combinations(pool, r):               # descending pool: first match is the largest
+            m = math.prod(s)
+            if abs((a*m*m).bit_length() - tb) < 2:
+                return m, list(s)
+    return -1, []
+
+def best_a_mul(a, n, k, good, u=1):     # good = prefiltered odd primes: gcd(k,p)==1 and kronecker(n*k*u,p)==1
     #Disclaimer: This is one of the few/only functions generated with claude, as it gave a better implementation of my own which just used random sampling.
-    tb = math.isqrt(4*n*k)//50_000 #to do: euhm best divisor value?
+    tb = math.isqrt(4*n*k//u)//200_000 #to do: euhm best divisor value?   (crossing is at b=sqrt(4nk/u))
     tb= round(tb)
     tb = bitlen(tb)
     #print("aiming for: "+str(tb))
@@ -1648,7 +1673,15 @@ def all_sqrt_mod(c,prime,m):
             y+=period
     return sorted(set(ylist))
 
-def find_all_b(prime,parity,k,n,a,max_exp,interval,b_temp):
+def lifted_mark(ival, p, a, b_temp, n, k, sign, pats, u=1):
+    #Disclaimer: Had claude optimize my lifting function...
+    c0 = ((u*b_temp*b_temp - 4*n*k)//a) % p
+    slope = (2*u*b_temp if a > 0 else -2*u*b_temp) % p
+    r = (c0*modinv(slope, p)) % p
+    pat = pats[0] if jacobi((sign*slope) % p, p) == 1 else pats[1]
+    sieve(ival, pat, r, 1)
+
+def find_all_b(prime,parity,k,n,a,max_exp):
     
     ea=0                                 
     a_copy=a
@@ -1678,24 +1711,19 @@ def find_all_b(prime,parity,k,n,a,max_exp,interval,b_temp):
             i+=1
         blist=new_blist
         exp+=1
-    mod=prime**max_exp
-    g=gcd(a,mod)
-    step=mod//g
-    for b in blist:
-        if (b-b_temp)%g==0:
-            dist=solve_lin_con(a,b-b_temp,mod)
-            while dist < len(interval):
-                interval[dist]+=1
-                dist+=step
+    blist1=[]
     blist2=[]
     m=max_exp-ea
     for b in blist:
         if m <= 0:
-            blist2.append([])               # y is not constrained at this exponent
+            blist1.append(b)
+            blist2.append(0)               
         else:
             c=((b**2-4*n*k)//prime**ea)*modinv(a_copy,prime**m)
-            blist2.append(all_sqrt_mod(c,prime,m))
-    return blist,blist2
+            for y in all_sqrt_mod(c,prime,m):
+                blist1.append(b)            
+                blist2.append(y)
+    return blist1,blist2
   
 def find_all_b2(prime,parity,k,n,a,b):
     
@@ -1724,8 +1752,23 @@ def find_all_b2(prime,parity,k,n,a,b):
             break                            
                                 
         exp+=1
-   
-def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a_mul_list,qr,fb_map):#(n,fbase,div,hmap2,ret_array):
+
+def psieve_patterns(resmaps,k,a,sbase,primes_to_mark):       # once per (k, a)
+    pats=[]
+    for ind in primes_to_mark:
+        p=sbase[ind]
+        if a%p != 0:
+            pats.append(make_pattern(p,resmaps[ind][k%p][1],a))
+    return pats
+
+def lifted_pats(p):
+    #Disclaimer: Had claude optimize my lifting function...
+    sq = {s*s % p for s in range((p+1)//2)}                  
+    nr = [x for x in range(p) if x == 0 or x not in sq]      
+    return make_pattern(p, sorted(sq), 1), make_pattern(p, nr, 1)
+
+def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a_mul_list,qr,fb_map,pat_cache,leftovers):#(n,fbase,div,hmap2,ret_array):
+  
     #to do: Negative poly_vals are just not working atm...
     if jacobi(a_o%n,n)==-1:
         print("should never fire")
@@ -1734,31 +1777,14 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
   #  a_o=3
     found=0
     a=a_o
-    primes_to_mark=[]
-    primes_to_mark_debug=[]
-    sqr_list=[]
-    primes_to_mark_mod=1
-    i=0 
-    while i < len(sbase):
-        prime=sbase[i]
-        sqr=find_roots_poly([1,0,-a], prime) 
-        if len(sqr)>1: 
-            primes_to_mark.append(i)
-            sqr_list.append(sqr)
-            primes_to_mark_debug.append(prime)
-            primes_to_mark_mod*=prime
-            if len(primes_to_mark)==15:
-                break
-        i+=1
+    marks_cache={}
 
-    primes_to_mark_neg=[]
-    for i,prime in enumerate(sbase):
-        if kronecker_symbol(-a_o,prime)==1:
-            primes_to_mark_neg.append(i)
-            if len(primes_to_mark_neg)==15:
-                break
 
     primes_to_check=[prime for prime in fbase if a_o%prime==0]
+    u_list_all=[1]       
+    for prime in primes_to_check:                       
+        u_list_all+=[d*prime for d in u_list_all]
+    u_list_all.sort()
    # print("primes to check len: "+str(len(primes_to_check)))
     good_primes=[prime for prime in sbase if kronecker_symbol(a_o, prime) == 1]
     n_symbols=[kronecker_symbol(n,prime) for prime in good_primes]
@@ -1770,45 +1796,42 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
         kf=qr.factors(qi)
        # krons=[]
         skip=0
-        for prime in primes_to_check:
-        #    krons.append(jacobi(n*k,prime))
-            if kronecker_symbol(n*k,prime)!=1:
-                skip=1
 
-                       # print("leak: k="+str(k)+" factors with symbol -1: "+str(bad))
-
-        if skip == 1:
-            qi+=1
-            continue
-
-        ok_pos=not (k%2==0 and a_o%8==5) and all(kronecker_symbol(a_o,f)!=-1 for f in kf if f!=2)
-        ok_neg=not (k%2==0 and a_o%8==3) and all(kronecker_symbol(-a_o,f)!=-1 for f in kf if f!=2)
-        if not (ok_pos or ok_neg):
-            qi+=1
-            continue
       #  if jacobi(a_o,n*k) == -1: ##To do: Explore this a bit deeper eventually... does seem to hold true
        #     qi+=1
        #     continue
         a_mul_ind=0
+        u_list=u_list_all
       #  if 1:
         
         
-        while a_mul_ind < 1:
+        while a_mul_ind < len(u_list):
+            u=u_list[a_mul_ind]
+            A=a_o                                  
+            a_base=a_o//u
+            pc=[p for p in primes_to_check if u%p!=0]   
+            uf=[p for p in primes_to_check if u%p==0]   
+            if any(kronecker_symbol(u*n*k,p)!=1 for p in pc) or any(kronecker_symbol(-a_base*n*k,q)!=1 for q in uf):
+                a_mul_ind+=1
+                continue
             sbase_temp=[]
             for j,prime in enumerate(good_primes):
-                if n_symbols[j]*kronecker_symbol(k,prime)==1 and k%prime!=0 and a_o%prime!=0:
+                if n_symbols[j]*kronecker_symbol(k*u,prime)==1 and k%prime!=0 and a_o%prime!=0:
                     sbase_temp.append(prime)
-            if a_mul_ind ==0:
-                a_mul,a_mul_divs=best_a_mul(a_o,n,k,sbase_temp)
-             #   a_mul=optimize_a_mul(a,n,k,sbase)
-                if a_mul==-1:
-                    a_mul=1
-                    #return found
-            else:# a_mul_ind == 0:
+            a_mul,a_mul_divs=best_a_mul(a_base,n,k,sbase_temp,u)
+            if a_mul==-1:
                 a_mul=1
-            skip=0
-           # print("a_mul: "+str(a_mul))
-            a=a_o*(a_mul**2)
+                if u!=1 and abs(bitlen(a_base)-bitlen(math.isqrt(4*n*k//u)//200_000))>=2:
+                    a_mul_ind+=1                   
+                    continue
+            a=a_base*(a_mul**2)
+            ok_pos=not (k%2==0 and A%8==5) and all(kronecker_symbol(A,f)!=-1 for f in kf if f!=2)
+            ok_neg=not (k%2==0 and A%8==3) and all(kronecker_symbol(-A,f)!=-1 for f in kf if f!=2)
+            if u!=1:
+                ok_neg=False                        
+            if not (ok_pos or ok_neg):
+                a_mul_ind+=1
+                continue
 
        # print("trying k: "+str(k))
         
@@ -1816,18 +1839,22 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
                 a_mul_ind+=1
                 continue
 
-
        # print("*trying k: "+str(k))
             if skip == 0:
 
               #  print(a_mul)
               #  blist_otherside,mod_otherside=build_disc_residues(fbase,a,n,k)
-                blist_otherside,mod_otherside=build_disc_residues_b(fbase,a,n,k,qr,a_mul_divs,primes_to_check,fb_map)
+                blist_otherside,mod_otherside=build_disc_residues_b(fbase,a,n,k,qr,a_mul_divs,pc,fb_map,u)
                 if mod_otherside!=abs(a):
                     #print("skipping: "+str(a_mul))
                     a_mul_ind+=1
                     continue
 
+                mkey=(u,a_mul)
+                if mkey not in marks_cache:
+                    marks_cache[mkey]=(psieve_marks(sbase,a*u),psieve_marks(sbase,-a*u))
+                pats_pos=psieve_patterns(resmaps,k*u,u*mod_otherside,sbase,marks_cache[mkey][0]) if ok_pos else None
+                pats_neg=psieve_patterns(resmaps,k*u,u*mod_otherside,sbase,marks_cache[mkey][1]) if ok_neg else None                
                 blist_disc=get_partials(mod_otherside,blist_otherside)            
                 enum=[]            
                 i=0
@@ -1843,19 +1870,36 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
                         b+=enum[i][ind]
                         i+=1
                     b_temp=b%mod_otherside
-
-                    if (b_temp**2-4*n*k)%a != 0:
+                    
+                    if (u*b_temp**2-4*n*k)%a != 0:
                         print("something weird went wrong: "+str(b_temp))
                         sys.exit()
 
-
+                #    new_interval=array.array("i",[0]*100_000)
+                #    blist_mod=1
+                #    primecount=0
+                #    blist_d=[]
+                #    blist_d2=[]
+                    lift_primes=pc+a_mul_divs
                     hits=[]
                     if ok_pos:
-                        interval=psieve_build_interval(resmaps,n,k,b_temp,mod_otherside,sbase,primes_to_mark,sqr_list)
+                        interval=psieve_build_interval(pats_pos,u*b_temp,u*mod_otherside)
+                        for prime in lift_primes:
+
+                            if prime not in pat_cache:
+                                pat_cache[prime]=lifted_pats(prime)
+                            lifted_mark(interval,prime,a,b_temp,n,k,1,pat_cache[prime],u)
+
                         hits+=survivors(interval)
                     if ok_neg:
-                        interval=psieve_build_interval(resmaps,n,k,b_temp,mod_otherside,sbase,primes_to_mark_neg,sqr_list)
-                        hits+=survivors(interval)
+                        interval_neg=psieve_build_interval(pats_neg,u*b_temp,u*mod_otherside)
+                        for prime in lift_primes:
+
+                            if prime not in pat_cache:
+                                pat_cache[prime]=lifted_pats(prime)
+                            lifted_mark(interval_neg,prime,a,b_temp,n,k,-1,pat_cache[prime],u)
+   
+                        hits+=survivors(interval_neg)
                     hits=sorted(set(hits))
                    
                   #  interval=psieve_build_interval(resmaps,n,k,b_temp,a,sbase,primes_to_mark,sqr_list)
@@ -1872,7 +1916,8 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
                         i_ind=hits[q]
                   
                         b=b_temp+mod_otherside*i_ind
-                        if original_b==b:#b == original_b:
+                        X=u*b
+                        if original_b==X:#b == original_b:
                             q+=1
                             continue
 
@@ -1965,28 +2010,46 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
   #                              mod_ind+=1
 
   
+                        
 
-
-                        disc=b**2-4*n*k
+                        disc=u*b**2-4*n*k
                         if disc%a!=0:
                             print("fatal error")
                             sys.exit()
                         disc//=a
- 
+                        do_not_test=1
                         new_root=math.isqrt(abs(disc))
                         if new_root**2!=abs(disc):
+                            if do_not_test==0:
+                                local_factors, value = factorise_fast(disc,primelist_f)
+                                if value==math.isqrt(abs(value))**2 and X!=original_b and X**2 not in ret_array[1]:
+                                    poly_val=X**2-4*n*k*u 
+                                    assert (X**2-poly_val)%n==0
+                                    assert poly_val==u*a*disc
+                                    local_factors, value = factorise_fast(poly_val,primelist_f)
+                                    if poly_val%a!=0:
+                                        print("fatal")
+                                        sys.exit()
+                                    ret_array[1].append(X**2)
+                                    ret_array[0].append(poly_val)
+                                    ret_array[2].append(local_factors)
+                                    ret_array[3].append([]) 
+                                    print("found:"+str(local_factors)+" len(hits): "+str(len(hits)))
+                                    found+=1                               
                             q+=1
                             continue
-
+                        
 
                         new_root=math.isqrt(abs(disc))
-                        if b!=original_b and b**2 not in ret_array[1]:
-                            poly_val=(b)**2-4*n*k 
+                        if X!=original_b and X**2 not in ret_array[1]:
+                            poly_val=X**2-4*n*k*u 
+                            assert (X*X-poly_val)%n==0
+                            assert poly_val==u*a*disc
                             local_factors, value = factorise_fast(poly_val,primelist_f)
                             if poly_val%a!=0:
                                 print("fatal")
                                 sys.exit()
-                            ret_array[1].append((b)**2)
+                            ret_array[1].append(X**2)
                             ret_array[0].append(poly_val)
                             ret_array[2].append(local_factors)
                             ret_array[3].append([])
@@ -2037,18 +2100,21 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
                    #                 newsols+=1
                    #             i+=1
 
-                            for prime in primes_to_check:
-                                find_all_b2(prime,1,k,n,a,b)
+                            if u==1:
+                                for prime in primes_to_check:
+                                    find_all_b2(prime,1,k,n,a,b)
                             
 
-                            for prime in a_mul_divs:
-                                valid_b=find_all_b2(prime,0,k,n,a,b)
+                                for prime in a_mul_divs:
+                                    valid_b=find_all_b2(prime,0,k,n,a,b)
                             
                               #  if b%prime**3 not in valid_b:
                               #      print("super big fail: "+str(prime)+" exp=3")
                          #   print("interval: "+str(new_interval[i_ind])+" primecount: "+str(primecount)+" total interval solutions: "+str(newsols))
                           #  print("a*b**2+4*n*k: "+str(a*new_root**2+4*n*k)+" (a*b)**2+4*n*k*a: "+str((a*new_root)**2+4*n*k*a)+" b: "+str(b)+" a: "+str(a)+" k: "+str(k)+" mod_otherside: "+str(mod_otherside)+" new_root: "+str(new_root)+" b**2-4*n*k: "+str(b**2-4*n*k)+" b_temp: "+str(b_temp)+" primes used to mark: "+str(primes_to_mark_debug))
-                            print("[i]Found one with psieve()!!!!!!!!!!!!! b: "+str(b)+" k: "+str(k)+" #smooths: "+str(len(ret_array[0]))+" index: "+str(i_ind)+" interval[q]: "+str((interval[i_ind >> 6] >> (i_ind & 63)) & 1)+" sols in interval: "+str(icounter)+" a_mul: "+str(a_mul)+" kronecker_symbol(a,n*k): "+str(kronecker_symbol(a,n*k))+" "+str(kronecker_symbol(a,k))+" bitlen polyval: "+str(bitlen(poly_val//a))+" poly_val: "+str(poly_val)+" a_mul: "+str(a_mul)+" primes in a_o: "+str(len(primes_to_check)))#+" interval2: "+str(interval2[q])+" k: "+str(k))
+                            print("[i]Found one with psieve()!!!!!!!!!!!!! u: "+str(u)+" a: "+str(a)+" b: "+str(b)+" k: "+str(k)+" #smooths: "+str(len(ret_array[0]))+" index: "+str(i_ind)+" interval[q]: "+str((interval[i_ind >> 6] >> (i_ind & 63)) & 1)+" interval_neg[q]: "+str((interval_neg[i_ind >> 6] >> (i_ind & 63)) & 1)+" sols in interval: "+str(icounter)+" bitlen polyval: "+str(bitlen(poly_val//a))+" poly_val: "+str(poly_val)+" a_mul: "+str(a_mul))#+" interval2: "+str(interval2[q])+" k: "+str(k))
+                            if found == 10:
+                                return found
                             #if kronecker_symbol(a,n*k) != 1:
                             #    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!THOUSIDOADJOASDHODSA")
                             #    sys.exit()
