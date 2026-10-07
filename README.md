@@ -17,23 +17,7 @@ Note: For a real world implementation you should have the SIQS variant and Psiev
 
 This starts with an SIQS variant where the stripped away factors are square to minimize the odd exponent factors in the bsmooth and after that we use the research from the paper in psieve(). This then utilizes a two sided approach and looks for similar b-smooths by calculating quadratic residues.
 
-Update: Getting very close now. There's some additional research to be done still... its almost finished though. One thing I want to research is the commented out code at the bottom of psieve() where it checks roots by CRT. I need to rewrite that into a smart hensel implementation and see if it can find valid solutions that lie outside the bounds of the interval easily somehow. There is also a very deep pattern based on quadratic reciprocity here that dictates when psieve succeeds that needs further exploration. This is why you cannot set "a" as an aribtrary small prime in psieve.. it has to come from existing b-smooths.. I know some of the conditions that must be met but others are still hidden and unless I find them using existing b-smooths is the only way. But very happy were its at now.
-
-Note: Aaaalot of dead code that needs to be pruned. Will do it tomorrow.
-
-Finally hit the 100 bit threshold. Will spent the day optimizing the code.. and after that I'll continue research and improvements (lots of small things to fix still like the code still doesnt work on negative polynomial values in psieve() etc... , I need to fix that so I can also properly optimize the sieve region there)
-
-Update: So managed to filter out bad "a_mul" and "k" values with jacobi/kronecker symbols as well as possible. Any further filtering likely has to be done now with hensel. I do know that primes that divide the discriminant will have singular roots and they have unique behavior when lifting, and I know how to trivially lift them as non-singular by switching side.. so I think I can crack this problem wide open now. Hensel is the way forward. 
-
-Going for a run... when I come back I'm going to further eliminate "k" values that cant possibly have a solution by lifting singular roots and seeing how they behave at higher exponents.... easy enough. Just got to keep hammering this now.... almost there.
-
-Update: Quickly added some lifting logic when a solution is found. You can see how lifting singular roots work... and that it can be used as a tool to solve this.. 
-
-I have multiple ideas, most straightforward is to use this to see if a solution exist outside the interval within some larger bound for solutions that survived marking but are not square after dividing out a.
-
-Update: Let me try a more straightforward approach tonight. So with singular root lifting (for primes that divide a) we can generate a much sparser solution set within a bound... so rather then an interval based approach we use these solutions.. and we can filter them with those other primes if needed. Plus if we keep track of the coefficients residues for the other side around (ay^2+4Nk instead of ab^2-4Nk).. we know that a_mul divides out these coefficients.. so I'm sure I can come up with something there and replace that best_a_mul() function with it. I should also study some abstract algebra, rings and modules specifically.. I havnt yet found much time.. but I'm running out of money so I make a miracle happen now or its over for me.
-
-If the linear coefficients on both sides divide each other... then we can calculate "a' in Z rather then mod N.. wait a minute... I see something..... let me try something tomorrow...
+Update: It's now splitting the odd exponent factor part of a b-smooth between a and u. Where ay^2+4Nk = ub^2 (and visa versa). Because we can do this: (ay)^2+4Nka = aub^2... hence if the existing of au is proven via the SIQS main logic, then it can be split into a and u in the psieve logic. Now how exactly to split the factors in au and distribute them over a and u is still something I'm looking at. But since (ub)^2-4Nku = uay^2 ..the this means that ku must be a valid multiplier to N. Things whose residues we can compute... etc. I'm still trying to think how to approach all of this in an algorithmic way that actually works rather then just sieving.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
