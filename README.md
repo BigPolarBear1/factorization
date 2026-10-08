@@ -15,7 +15,7 @@ To run: python3 run_qs.py -keysize 100 -base 1000 -lin_size 10_000 -quad_size 1 
 
 This merges SIQS and NFS into an hybrid algorithm. SIQS finds b-smooths with a square.. the larger the square the better NFS will perform. Then NFS runs and feeds b-smooths back to the SIQS algorithm. And we keep repeating this process... my paper also indicates that these number fields should work on quartics. But this has yet to be implemented. 
 
-I have worked on this research project for 3.5, without AI, but after the recent OpenAI math drop, I decided to aggresively push claude to try and finish my project with very specific prompting (prompting it to replace psieve() with an nfs implementation and giving advice on how to do it.. such as re-using the square part of an SIQS generated b-smooth). Uploaded version proves this works. Next support for quartics... 
+I have worked on this research project for 3.5 years, without AI, but after the recent OpenAI math drop, I decided to aggresively push claude to try and finish my project with very specific prompting (prompting it to replace psieve() with an nfs implementation and giving advice on how to do it.. such as re-using the square part of an SIQS generated b-smooth). Uploaded version proves this works. Next support for quartics... 
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
