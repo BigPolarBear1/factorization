@@ -1,4 +1,4 @@
-Note: This project is pro-lgbtq, so fkc off.
+Note: This project is pro-lgbtq, so fck off haters.
 
 Disclaimer: This is a research project I have worked on for 3.5 years. I have not used AI for any of the research in the paper. Trying to merge and SIQS algorithm with NFS is something I have tried for a long time and my own findings indicated that it should be possible. After feeding in code of a nearly finished project and aggressively prompting Claude with specific directions on how to finish it, I did manage to finally achieve this. But none of the research math was done by Claude, I layed down those foundations myself.
 
