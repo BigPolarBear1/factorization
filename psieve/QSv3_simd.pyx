@@ -34,6 +34,7 @@ from sympy.ntheory.residue_ntheory import jacobi_symbol
 from sympy import kronecker_symbol
 from bitsieve import new_interval, make_pattern, sieve, survivors
 import almostsq
+import heapq
 from quadroots import QuadRoots
 
 
@@ -50,6 +51,10 @@ qbase=10
 lin_sieve_size=1
 lin_sieve_size2=10_000_000
 quad_sieve_size=10
+NFS_DONE=[]
+NFS_USED=[]           #X of the SIQS relations already used to seed an NFS run
+NFS_MIX_WANT=600      #-nfs_poly rel_sq_mix: how many b-smooths the NFS should hand to the SIQS matrix
+g_nfs_poly=""       #"rel_sq_mix" when run with -mode nfs
 g_debug=0 #0 = No debug, 1 = Debug, 2 = A lot of debug
 g_lift_lim=0.5
 thresvar=30  ##Log value base 2 for when to check smooths with trial factorization. Eventually when we fix all the bugs we should be able to furhter lower this.
@@ -337,7 +342,7 @@ def launch(n,primeslist,primeslist2):
     ret_array=[[],[],[],[]]
     partials={}
     large_prime_bound = primeslist[-1] ** lp_multiplier
-    sbase=copy.deepcopy(primeslist[0:30])
+    sbase=copy.deepcopy(primeslist[0:50])
     resmaps,resmaps2=build_residues(sbase,n)
    # print("fbase: "+str(fbase))
     print("[i]Building psieve Residue Map (to do: some duplication here from merging two algos, fix later)")
@@ -432,10 +437,41 @@ def launch(n,primeslist,primeslist2):
             found+=process_interval2d(n,ret_array,quad,primelist_f,large_prime_bound,partials,lin,new_mod,factor_ranking,fb_map,0,seen_factors,interval,primeslist,resmaps,resmaps2,valid_quads,valid_quads_factors,qlist,primelist,sbase,a_mul_list)#,lin,new_mod,sum_list)
             if found > 100 or len(ret_array[0]) > base+10:
                 print("[i]#B-smooths: "+str(len(ret_array[0])))
-                almostsq_result,leftovers=generate_almostsq(ret_array[2],primeslist,ret_array[0])
+                if g_nfs_poly=="rel_sq_mix" and len(ret_array[0])<base:# and not NFS_DONE:   # split one SIQS relation into t^2-a (algebraic) and y*t-X (rational)
+                    fbp=2*math.prod(primeslist)
+                    pool=[]
+                    for ri in range(len(ret_array[0])):
+                        rv=ret_array[0][ri]
+                        if bitlen(rv)>2*bitlen(n):              # a row the NFS produced itself: not a seed
+                            continue
+                        rX=math.isqrt(ret_array[1][ri])
+                        if rX in NFS_USED:                      # never run the same relation twice (it would return the same rows)
+                            continue
+                        ra=math.prod(ret_array[2][ri])          # signed odd-exponent part
+                        if (rX*rX-rv)%(4*n)!=0 or ra in (1,-1) or rv%ra!=0:
+                            continue
+                        ry=math.isqrt(rv//ra)
+                        if ry*ry!=rv//ra or ry<2 or math.gcd(ry,n)!=1:
+                            continue
+                        pool.append((nfs_sq_proxy(rX,ra,ry),rX,ra,ry))
+                    pool.sort()                             # cheap size estimate first ...
+                    best=None
+                    for _,rX,ra,ry in pool[:8]:             # ... then sample only the 8 most promising
+                        sc=nfs_sq_yield(rX,ra,ry,fbp,2000,6000)
+                        if best is None or sc>best[0]:
+                            best=(sc,rX,ra,ry)
+                    if best is None or best[0]==0:
+                        print("[i]NFS(sq): no usable relation left to seed another run")
+                    else:
+                        print("[i]NFS(sq): best of "+str(len(pool))+" unused SIQS relations by sample yield: 1 in "+str(round(1/best[0])))
+                        NFS_DONE.append(1)                     # carry-over: NFS relations become b-smooths, SIQS finishes the job
+                        NFS_USED.append(best[1])
+                        nfs_launch_sq(n,primeslist,best[1],best[2],best[3],ret_array,NFS_MIX_WANT)
+                        print("[i]#B-smooths: "+str(len(ret_array[0]))+" (after the NFS carry-over)")
+                almostsq_result,leftovers=generate_almostsq(ret_array[2],primeslist,ret_array[0]) if g_nfs_poly=="" else ([],[])
              #   almostsq_result=generate_almostsq_smallprimes(ret_array[2],primeslist,ret_array[0])
                 i=0
-                while i < len(almostsq_result) and i < 50:
+                while i < len(almostsq_result) and i < 50 and g_nfs_poly=="":
                     div=almostsq_result[i][0]
                     if div in psieve_seen:
                         i+=1
@@ -1544,9 +1580,9 @@ def find_residues4_b(prime,n,exp,k,i,qr,u=1):
 def psieve_marks(sbase,A):
     out=[]
     for i,prime in enumerate(sbase):
-        if kronecker_symbol(A,prime)==1:
+        if jacobi(A%prime,prime)==1:
             out.append(i)
-            if len(out)==8:
+            if len(out)==14:
                 break
     return out
 
@@ -1674,7 +1710,6 @@ def all_sqrt_mod(c,prime,m):
     return sorted(set(ylist))
 
 def lifted_mark(ival, p, a, b_temp, n, k, sign, pats, u=1):
-    #Disclaimer: Had claude optimize my lifting function...
     c0 = ((u*b_temp*b_temp - 4*n*k)//a) % p
     slope = (2*u*b_temp if a > 0 else -2*u*b_temp) % p
     r = (c0*modinv(slope, p)) % p
@@ -1762,13 +1797,100 @@ def psieve_patterns(resmaps,k,a,sbase,primes_to_mark):       # once per (k, a)
     return pats
 
 def lifted_pats(p):
-    #Disclaimer: Had claude optimize my lifting function...
-    sq = {s*s % p for s in range((p+1)//2)}                  
-    nr = [x for x in range(p) if x == 0 or x not in sq]      
+    sq = {s*s % p for s in range((p+1)//2)}                  # squares, including 0
+    nr = [x for x in range(p) if x == 0 or x not in sq]      # non-residues, plus 0
     return make_pattern(p, sorted(sq), 1), make_pattern(p, nr, 1)
 
+cdef int cjac(long long a, long long m):
+    cdef int t=1
+    cdef long long tmp
+    a%=m
+    while a:
+        while (a&1)==0:
+            a>>=1
+            if (m&7)==3 or (m&7)==5:
+                t=-t
+        tmp=a; a=m; m=tmp
+        if (a&3)==3 and (m&3)==3:
+            t=-t
+        a%=m
+    return t if m==1 else 0
+
+CHAR_PRIMES=[]
+def char_primes(t):                     # t odd primes far above the factor base
+    p=CHAR_PRIMES[-1] if CHAR_PRIMES else 1_000_000_007
+    while len(CHAR_PRIMES)<t:
+        p=sympy.nextprime(p)
+        CHAR_PRIMES.append(p)
+    return CHAR_PRIMES[:t]
+
+def char_vec(v,cprimes):                # bit i set <=> v is a non-residue mod cprimes[i]
+    vec=0
+    for i,l in enumerate(cprimes):
+        if cjac(v%l,l)==-1:
+            vec|=1<<i
+    return vec
+
+def char_basis(values,cprimes):         # xor basis of the relations' character vectors
+    basis={}
+    for v in values:
+        vec=char_vec(v,cprimes)
+        while vec:
+            top=vec.bit_length()-1
+            if top in basis:
+                vec^=basis[top]
+            else:
+                basis[top]=vec
+                break
+    return basis
+
+def char_in_span(v,basis,cprimes):      # True <=> v times some subset of the relations passes as a square at every test prime
+    vec=char_vec(v,cprimes)
+    while vec:
+        top=vec.bit_length()-1
+        if top not in basis:
+            return False
+        vec^=basis[top]
+    return True
+
+CHAR_MAX=1000                           # how many candidates one psieve call may admit to the character linear algebra
+
+def char_flush(n,ret_array,cands):      # linear algebra over the character vectors of the relations plus the admitted candidates
+    cand=list({X:pv for _,X,pv in cands}.items())
+    if len(cand)==0:
+        return
+    m=len(ret_array[0])
+    vals=list(ret_array[0])+[pv for _,pv in cand]
+    roots=[math.isqrt(x) for x in ret_array[1]]+[X for X,_ in cand]
+    cprimes=char_primes(len(vals)+32)
+    basis={}                            # top bit -> (vector, which rows were combined)
+    deps=0
+    for i,v in enumerate(vals):
+        vec=char_vec(v,cprimes)
+        mask=1<<i
+        while vec:
+            top=vec.bit_length()-1
+            if top in basis:
+                vec^=basis[top][0]
+                mask^=basis[top][1]
+            else:
+                basis[top]=(vec,mask)
+                break
+        if vec==0 and i>=m:             # a dependency that involves this candidate
+            idx=[j for j in range(i+1) if (mask>>j)&1]
+            P=math.prod(vals[j] for j in idx)
+            if P>0 and math.isqrt(P)**2==P:
+                deps+=1
+                root=math.isqrt(P)
+                X=math.prod(roots[j] for j in idx)%n
+                g=math.gcd(X-root,n)
+                print("[i]Character dependency: "+str(len([j for j in idx if j>=m]))+" candidates + "+str(len([j for j in idx if j<m]))+" relations, gcd: "+str(g))
+                if g!=1 and g!=n:
+                    print("[SUCCESS]Factors are: "+str(g)+" and "+str(n//g))
+                    sys.exit()
+    print("[i]Character linear algebra: "+str(len(cand))+" candidates, "+str(m)+" relations, "+str(deps)+" dependencies")
+
 def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a_mul_list,qr,fb_map,pat_cache,leftovers):#(n,fbase,div,hmap2,ret_array):
-  
     #to do: Negative poly_vals are just not working atm...
     if jacobi(a_o%n,n)==-1:
         print("should never fire")
@@ -1776,18 +1898,19 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
 
   #  a_o=3
     found=0
+    char_cands=[]                           # heap of (-bitlen(quotient), X, poly_val): the CHAR_MAX smallest quotients seen
     a=a_o
     marks_cache={}
 
 
     primes_to_check=[prime for prime in fbase if a_o%prime==0]
-    u_list_all=[1]       
-    for prime in primes_to_check:                       
+    u_list_all=[1]                              
+    for prime in primes_to_check:
         u_list_all+=[d*prime for d in u_list_all]
     u_list_all.sort()
    # print("primes to check len: "+str(len(primes_to_check)))
-    good_primes=[prime for prime in sbase if kronecker_symbol(a_o, prime) == 1]
-    n_symbols=[kronecker_symbol(n,prime) for prime in good_primes]
+    good_primes=[prime for prime in sbase[:30] if jacobi(a_o%prime,prime) == 1]
+    n_symbols=[jacobi(n%prime,prime) for prime in good_primes]
     #print(qr.quads)
     
     qi=0
@@ -1807,16 +1930,16 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
         
         while a_mul_ind < len(u_list):
             u=u_list[a_mul_ind]
-            A=a_o                                  
+            A=a_o
             a_base=a_o//u
             pc=[p for p in primes_to_check if u%p!=0]   
             uf=[p for p in primes_to_check if u%p==0]   
-            if any(kronecker_symbol(u*n*k,p)!=1 for p in pc) or any(kronecker_symbol(-a_base*n*k,q)!=1 for q in uf):
+            if any(jacobi((u*n*k)%p,p)!=1 for p in pc) or any(jacobi((-a_base*n*k)%q,q)!=1 for q in uf):
                 a_mul_ind+=1
                 continue
             sbase_temp=[]
             for j,prime in enumerate(good_primes):
-                if n_symbols[j]*kronecker_symbol(k*u,prime)==1 and k%prime!=0 and a_o%prime!=0:
+                if n_symbols[j]*jacobi((k*u)%prime,prime)==1 and k%prime!=0 and a_o%prime!=0:
                     sbase_temp.append(prime)
             a_mul,a_mul_divs=best_a_mul(a_base,n,k,sbase_temp,u)
             if a_mul==-1:
@@ -1825,8 +1948,8 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
                     a_mul_ind+=1                   
                     continue
             a=a_base*(a_mul**2)
-            ok_pos=not (k%2==0 and A%8==5) and all(kronecker_symbol(A,f)!=-1 for f in kf if f!=2)
-            ok_neg=not (k%2==0 and A%8==3) and all(kronecker_symbol(-A,f)!=-1 for f in kf if f!=2)
+            ok_pos=not (k%2==0 and A%8==5) and all(jacobi(A%f,f)!=-1 for f in kf if f!=2)
+            ok_neg=not (k%2==0 and A%8==3) and all(jacobi((-A)%f,f)!=-1 for f in kf if f!=2)
             if u!=1:
                 ok_neg=False                        
             if not (ok_pos or ok_neg):
@@ -2018,13 +2141,14 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
                             sys.exit()
                         disc//=a
                         do_not_test=1
+                        char_test=1                             # 1 = also accept survivors whose character vector is in the span of the relations
                         new_root=math.isqrt(abs(disc))
                         if new_root**2!=abs(disc):
                             if do_not_test==0:
                                 local_factors, value = factorise_fast(disc,primelist_f)
                                 if value==math.isqrt(abs(value))**2 and X!=original_b and X**2 not in ret_array[1]:
                                     poly_val=X**2-4*n*k*u 
-                                    assert (X**2-poly_val)%n==0
+                                    assert (X*X-poly_val)%n==0
                                     assert poly_val==u*a*disc
                                     local_factors, value = factorise_fast(poly_val,primelist_f)
                                     if poly_val%a!=0:
@@ -2036,6 +2160,12 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
                                     ret_array[3].append([]) 
                                     print("found:"+str(local_factors)+" len(hits): "+str(len(hits)))
                                     found+=1                               
+                            elif char_test==1 and X!=original_b:
+                                cb=-abs(disc).bit_length()
+                                if len(char_cands)<CHAR_MAX:
+                                    heapq.heappush(char_cands,(cb,X,u*a*disc))
+                                elif cb>char_cands[0][0]:
+                                    heapq.heapreplace(char_cands,(cb,X,u*a*disc))
                             q+=1
                             continue
                         
@@ -2112,8 +2242,9 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
                               #      print("super big fail: "+str(prime)+" exp=3")
                          #   print("interval: "+str(new_interval[i_ind])+" primecount: "+str(primecount)+" total interval solutions: "+str(newsols))
                           #  print("a*b**2+4*n*k: "+str(a*new_root**2+4*n*k)+" (a*b)**2+4*n*k*a: "+str((a*new_root)**2+4*n*k*a)+" b: "+str(b)+" a: "+str(a)+" k: "+str(k)+" mod_otherside: "+str(mod_otherside)+" new_root: "+str(new_root)+" b**2-4*n*k: "+str(b**2-4*n*k)+" b_temp: "+str(b_temp)+" primes used to mark: "+str(primes_to_mark_debug))
-                            print("[i]Found one with psieve()!!!!!!!!!!!!! u: "+str(u)+" a: "+str(a)+" b: "+str(b)+" k: "+str(k)+" #smooths: "+str(len(ret_array[0]))+" index: "+str(i_ind)+" interval[q]: "+str((interval[i_ind >> 6] >> (i_ind & 63)) & 1)+" interval_neg[q]: "+str((interval_neg[i_ind >> 6] >> (i_ind & 63)) & 1)+" sols in interval: "+str(icounter)+" bitlen polyval: "+str(bitlen(poly_val//a))+" poly_val: "+str(poly_val)+" a_mul: "+str(a_mul))#+" interval2: "+str(interval2[q])+" k: "+str(k))
+                            print("[i]Found one with psieve()!!!!!!!!!!!!! u: "+str(u)+" b: "+str(b)+" k: "+str(k)+" #smooths: "+str(len(ret_array[0]))+" index: "+str(i_ind)+" interval[q]: "+str((interval[i_ind >> 6] >> (i_ind & 63)) & 1)+" interval_neg[q]: "+str((interval_neg[i_ind >> 6] >> (i_ind & 63)) & 1)+" sols in interval: "+str(icounter)+" a_mul: "+str(a_mul)+" kronecker_symbol(a,n*k): "+str(kronecker_symbol(a,n*k))+" "+str(kronecker_symbol(a,k))+" bitlen polyval: "+str(bitlen(poly_val//a))+" poly_val: "+str(poly_val)+" a_mul: "+str(a_mul)+" primes in a_o: "+str(len(primes_to_check)))#+" interval2: "+str(interval2[q])+" k: "+str(k))
                             if found == 10:
+                                char_flush(n,ret_array,char_cands)
                                 return found
                             #if kronecker_symbol(a,n*k) != 1:
                             #    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!THOUSIDOADJOASDHODSA")
@@ -2131,6 +2262,7 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
         qi+=1
 
 
+    char_flush(n,ret_array,char_cands)
     return found
 
 def get_partials(mod,list1):
@@ -2197,8 +2329,182 @@ def get_primes(start,stop):
     return list(sympy.sieve.primerange(start,stop))
 
 
-def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_size):
-    global key,keysize,workers,g_debug,base,key,lin_sieve_size,quad_sieve_size,max_bound,lin_sieve_size2
+def nfs_sq_proxy(X,a,y,T=2000):
+    # sampling-free estimate: bits of the rational side (y*T) plus bits of the norm near the rational root
+    return bitlen(y*T)+bitlen(abs(X*X-a*y*y)//(y*y)+2*(X//y)*T)
+
+def nfs_sq_yield(X,a,y,fbprod,T,maxpairs):
+    # quick sample: how many pairs near the rational root have both sides smooth
+    def is_smooth(v):
+        v=abs(v)
+        if v<2:
+            return v==1
+        g=math.gcd(v,fbprod%v)
+        while g>1:
+            v//=g
+            g=math.gcd(v,g)
+        return v==1
+    pairs=0
+    rel=0
+    w=0
+    while pairs<maxpairs:
+        w+=1
+        u0=(X*w)//y
+        for u in range(u0-T,u0+T+1):
+            if math.gcd(u,w)!=1:
+                continue
+            pairs+=1
+            G=y*u-X*w
+            if G!=0 and is_smooth(G):
+                Av=u*u-a*w*w
+                if Av!=0 and is_smooth(Av):
+                    rel+=1
+    return rel/pairs
+
+def nfs_launch_sq(n,primeslist,X,a,y,ret_array,want):
+    ##Disclaimer: Generated with claude with very specific prompting.. this is an idea I had for a long time.. but claude managed to close the distance finally.
+    # Number field sieve from one SIQS relation  X^2 - 4nk = a*y^2  (a = odd-exponent part, y^2 = square part).
+    #   algebraic side:  f(t) = t^2 - a          -> elements u - w*sqrt(a), norm u^2 - a*w^2
+    #   rational side:   g(t) = y*t - X          -> integer y*u - X*w
+    # both vanish at t = X/y mod n, which is the square root of a that the relation gives.
+    NFS_MAX_W=100
+    NFS_T=8_000                         # half-width in u around the rational root X*w/y, per line w
+    NFS_CHARS=40
+    fb=[2]+list(primeslist)
+    fbprod=math.prod(fb)
+    primelist_f=copy.copy(primeslist)
+    primelist_f.insert(0,len(primelist_f)+1)
+    primelist_f=array.array('q',primelist_f)
+    def is_smooth(v):
+        v=abs(v)
+        if v<2:
+            return v==1
+        g=math.gcd(v,fbprod%v)
+        while g>1:
+            v//=g
+            g=math.gcd(v,g)
+        return v==1
+    s_root=(X*pow(y,-1,n))%n
+    assert (s_root*s_root-a)%n==0
+    bad=2 if a%4==1 else 1              # Z[sqrt(a)] is not the full ring at 2 when a = 1 mod 4: skip even norms
+    print("[i]NFS(sq): X="+str(X)+" ("+str(bitlen(X))+" bits)  leftover a="+str(a)+" ("+str(bitlen(a))+" bits)  square root y="+str(y)+" ("+str(bitlen(y))+" bits)")
+    cq=[]
+    q=fb[-1]
+    while len(cq)<NFS_CHARS:
+        q=sympy.nextprime(q)
+        if n%q!=0 and a%q!=0 and jacobi(a%q,q)==1:
+            cq.append((q,find_roots_poly([1,0,(-a)%q],q)[0]))
+    rows=[]                             # (u, w, G, norm, set of column keys)
+    cols={}
+    ncand=0
+    w=0
+    while True:
+        w+=1
+        u0=(X*w)//y
+        for u in range(u0-NFS_T,u0+NFS_T+1):
+            if math.gcd(u,w)!=1:
+                continue
+            ncand+=1
+            G=y*u-X*w
+            if G==0 or not is_smooth(G):
+                continue
+            Av=u*u-a*w*w
+            if Av==0 or math.gcd(Av,bad)!=1 or not is_smooth(Av):
+                continue
+            key=set()
+            key.add(('one',))                               # even number of relations, so the powers of y cancel
+            gf,_=factorise_fast(G,primelist_f)
+            for p in gf:
+                key.add(('r',p))                            # rational side: odd-exponent primes of y*u - X*w, and its sign
+            af,_=factorise_fast(Av,primelist_f)
+            for p in af:
+                if p!=-1:
+                    key.add(('a',p,(u*pow(w,-1,p))%p))      # algebraic side: the prime and which square root of a it sits on
+            if a>0:
+                if u<0 or u*u<a*w*w:
+                    key.add(('s',1))                        # sign of u - w*sqrt(a)
+                if u<0 and u*u>a*w*w:
+                    key.add(('s',2))                        # sign of u + w*sqrt(a)
+            for qq,rho in cq:
+                if cjac((u-w*rho)%qq,qq)==-1:
+                    key.add(('c',qq))                       # quadratic character
+            for kk in key:
+                if kk not in cols:
+                    cols[kk]=len(cols)
+            rows.append((u,w,G,Av,key))
+        nalg=sum(1 for kk in cols if kk[0]!='r')
+        if len(rows)-nalg<want+10 and w<NFS_MAX_W:
+            if w%5==0:
+                print("[i]NFS(sq): line w="+str(w)+" relations: "+str(len(rows))+" columns: "+str(len(cols))+"  (1 relation per "+str(ncand//max(1,len(rows)))+" pairs)")
+            continue
+        # Secondary linear algebra on the ALGEBRAIC columns only: each dependency is a set of relations whose
+        # field product is a square gamma^2, while the rational product v = prod(y*u-X*w) is merely smooth.
+        # Then (image of gamma * y^(|S|/2))^2 = v mod n, which is an ordinary b-smooth relation for the SIQS matrix.
+        print("[*]NFS(sq): algebraic-only linear algebra on "+str(len(rows))+" relations ("+str(nalg)+" algebraic columns, "+str(ncand)+" pairs)")
+        acol={}
+        basis={}
+        made=0
+        have=set(ret_array[1])
+        for i,row in enumerate(rows):
+            vec=0
+            for kk in row[4]:
+                if kk[0]!='r':
+                    if kk not in acol:
+                        acol[kk]=len(acol)
+                    vec|=1<<acol[kk]
+            mask=1<<i
+            while vec:
+                top=vec.bit_length()-1
+                if top in basis:
+                    vec^=basis[top][0]
+                    mask^=basis[top][1]
+                else:
+                    basis[top]=(vec,mask)
+                    break
+            if vec!=0:
+                continue
+            idx=[j for j in range(i+1) if (mask>>j)&1]
+            NN=math.prod(rows[j][3] for j in idx)
+            if NN<=0 or len(idx)%2!=0:
+                continue
+            nsq=math.isqrt(NN)
+            if nsq*nsq!=NN:
+                continue
+            PA,PB=1,0
+            for j in idx:
+                uu,ww=rows[j][0],rows[j][1]
+                PA,PB=PA*uu-a*PB*ww,PB*uu-PA*ww
+            for sgn in (1,-1):
+                g2=2*PA+2*sgn*nsq
+                if g2<=0:
+                    continue
+                G2=math.isqrt(g2)
+                if G2*G2!=g2 or G2**4+4*a*PB*PB!=4*PA*g2 or math.gcd(G2,n)!=1:
+                    continue
+                img=((G2+2*PB*pow(G2,-1,n)*s_root)*pow(2,-1,n))%n
+                Xs=(img*pow(y,len(idx)//2,n))%n
+                v=math.prod(rows[j][2] for j in idx)
+                if (Xs*Xs-v)%n!=0:
+                    continue
+                odd=set()
+                for j in idx:
+                    gf,_=factorise_fast(rows[j][2],primelist_f)
+                    odd^=set(gf)
+                if Xs*Xs in have:
+                    break
+                have.add(Xs*Xs)
+                ret_array[1].append(Xs*Xs)
+                ret_array[0].append(v)
+                ret_array[2].append(odd)
+                ret_array[3].append([])
+                made+=1
+                break
+        print("[i]NFS(sq): turned "+str(len(rows))+" NFS relations into "+str(made)+" b-smooths for the SIQS matrix")
+        return made
+
+def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_size,l_mode="psieve"):
+    global key,keysize,workers,g_debug,base,key,lin_sieve_size,quad_sieve_size,max_bound,lin_sieve_size2,g_nfs_poly
+    g_nfs_poly="rel_sq_mix" if l_mode=="nfs" else ""
     key,keysize,workers,g_debug,base,lin_sieve_size,quad_sieve_size=l_key,l_keysize,l_workers,l_debug,l_base,l_lin_sieve_size,l_quad_sieve_size
     lin_sieve_size2=lin_sieve_size
     start = default_timer() 
@@ -2243,6 +2549,8 @@ def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_
         if n%primeslist[i] !=0:
             primeslist2.append(primeslist[i])
         i+=1
+    if l_mode=="nfs":
+        print("[i]Mode: nfs (SIQS relations + number field sieve from the square part of one relation, joined in one matrix)")
     launch(n,primeslist1,primeslist2)     
     duration = default_timer() - start
     print("\nFactorization in total took: "+str(duration))
