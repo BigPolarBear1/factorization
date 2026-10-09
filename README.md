@@ -22,6 +22,8 @@ The thing about nfs_launch_sq() is that it needs to spit back out b-smooths that
 
 Update: I've come up with the following: SIQS style sieve with a large factor base. Then run  NFS (of arbitrary degree) with smaller factor base to achieve a rank reduction of the SIQS matrix. And just keep repeating that. So don't see NFS as a factoring algorithm but rather as a b-smooth finding algorithm... 
 
+Update: I realized that with claude I can quickly iterates strategies that would take me weeks to implement myself... uplaoding a proper SIQS/NFS hybrid soon. Changing my mind on AI now... for research.. i dont know.. but for writing code, even dense math related code... dammmnn its good now.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
