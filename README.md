@@ -11,7 +11,7 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 100 -base 1000 -lin_size 10_000 -quad_size 1 -mode nfs</br></br>
+To run: python3 run_qs.py -keysize 100 -base 2000 -lin_size 100_000 -quad_size 1 -mode nfs</br></br>
 
 This merges SIQS and NFS into an hybrid algorithm. SIQS finds b-smooths with a square.. the larger the square the better NFS will perform. Then NFS runs and feeds b-smooths back to the SIQS algorithm. And we keep repeating this process... my paper also indicates that these number fields should work on quartics. But this has yet to be implemented. 
 
