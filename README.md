@@ -17,6 +17,8 @@ This merges SIQS and NFS into an hybrid algorithm. SIQS finds b-smooths with a s
 
 I have worked on this research project for 3.5 years, without AI, but after the recent OpenAI math drop, I decided to aggresively push claude to try and finish my project with very specific prompting (prompting it to replace the psieve() function with an nfs implementation and giving advice on how to do it.. such as re-using the square part of an SIQS generated b-smooth). Uploaded version proves this works. Next support for quartics... 
 
+Update: I realized that I messed around with exactly this NFS setup in the past... I'll make some modifications tomorrow. I know what to do now :)
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
