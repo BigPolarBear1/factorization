@@ -468,6 +468,10 @@ def launch(n,primeslist,primeslist2):
                         NFS_USED.append(best[1])
                         nfs_launch_sq(n,primeslist,best[1],best[2],best[3],ret_array,NFS_MIX_WANT)
                         print("[i]#B-smooths: "+str(len(ret_array[0]))+" (after the NFS carry-over)")
+                        print("[*]Trying linear algebra")
+                        test,test2=QS(n,primelist,ret_array[0],ret_array[2],ret_array[1],ret_array[3])
+                  
+                
                 almostsq_result,leftovers=generate_almostsq(ret_array[2],primeslist,ret_array[0]) if g_nfs_poly=="" else ([],[])
              #   almostsq_result=generate_almostsq_smallprimes(ret_array[2],primeslist,ret_array[0])
                 i=0
@@ -2362,14 +2366,15 @@ def nfs_sq_yield(X,a,y,fbprod,T,maxpairs):
     return rel/pairs
 
 def nfs_launch_sq(n,primeslist,X,a,y,ret_array,want):
-    ##Disclaimer: Generated with claude with very specific prompting.. this is an idea I had for a long time.. but claude managed to close the distance finally.
     # Number field sieve from one SIQS relation  X^2 - 4nk = a*y^2  (a = odd-exponent part, y^2 = square part).
     #   algebraic side:  f(t) = t^2 - a          -> elements u - w*sqrt(a), norm u^2 - a*w^2
     #   rational side:   g(t) = y*t - X          -> integer y*u - X*w
     # both vanish at t = X/y mod n, which is the square root of a that the relation gives.
-    NFS_MAX_W=100
-    NFS_T=8_000                         # half-width in u around the rational root X*w/y, per line w
+    NFS_MAX_W=10_000
+    NFS_T=20_000                         # half-width in u around the rational root X*w/y, per line w
     NFS_CHARS=40
+    NFS_SLACK=20                        # sieve: verify positions whose logs fall short of the full size by at most this many bits
+    NFS_SMALL=30                        # sieve: primes up to this are not sieved (they are covered by the slack)
     fb=[2]+list(primeslist)
     fbprod=math.prod(fb)
     primelist_f=copy.copy(primeslist)
@@ -2394,17 +2399,64 @@ def nfs_launch_sq(n,primeslist,X,a,y,ret_array,want):
         q=sympy.nextprime(q)
         if n%q!=0 and a%q!=0 and jacobi(a%q,q)==1:
             cq.append((q,find_roots_poly([1,0,(-a)%q],q)[0]))
+    # sieve set-up: for each prime, where it divides the rational side (one root) and the norm (the square roots of a)
+    sv_p=[p for p in fb if p>NFS_SMALL]
+    sv_log=[math.log2(p) for p in sv_p]
+    sv_yinv=[pow(y,-1,p) if y%p!=0 else -1 for p in sv_p]
+    sv_X=[X%p for p in sv_p]
+    sv_aroots=[]
+    for p in sv_p:
+        if a%p==0:
+            sv_aroots.append([0])
+        else:
+            sv_aroots.append(sorted(set(find_roots_poly([1,0,(-a)%p],p))))
+    sv_len=2*NFS_T+1
+    log_y=math.log2(y)
+    sqa=math.sqrt(abs(a))
     rows=[]                             # (u, w, G, norm, set of column keys)
     cols={}
+    for p in fb[1:]:
+        if a%p==0 or n%p==0 or jacobi(a%p,p)!=1:
+            continue
+        key={('one',)}
+        gf,_=factorise_fast(y*p,primelist_f)
+        for q in gf:
+            key.add(('r',q))
+        for rho in set(find_roots_poly([1,0,(-a)%p],p)):
+            key.add(('a',p,rho))
+        for qq,rho in cq:
+            if cjac(p%qq,qq)==-1:
+                key.add(('c',qq))
+        for kk in key:
+            if kk not in cols:
+                cols[kk]=len(cols)
+        rows.append((p,0,y*p,p*p,key))
     ncand=0
     w=0
     while True:
         w+=1
         u0=(X*w)//y
-        for u in range(u0-NFS_T,u0+NFS_T+1):
+        lo=u0-NFS_T
+        sg=np.zeros(sv_len)             # summed log2 of the primes dividing y*u - X*w
+        sa=np.zeros(sv_len)             # summed log2 of the primes dividing u^2 - a*w^2
+        for i in range(len(sv_p)):
+            p=sv_p[i]
+            if sv_yinv[i]>=0:
+                sg[(sv_X[i]*w*sv_yinv[i]-lo)%p::p]+=sv_log[i]
+            if w%p!=0:
+                for rho in sv_aroots[i]:
+                    sa[(rho*w-lo)%p::p]+=sv_log[i]
+        uu=np.arange(lo,lo+sv_len,dtype=np.float64)
+        need_g=log_y+np.log2(np.abs(uu-X*w/y)+0.5)
+        if a>0:
+            need_a=np.log2(np.abs(uu-sqa*w)+1e-9)+np.log2(np.abs(uu+sqa*w)+1e-9)
+        else:
+            need_a=np.log2(uu*uu+sqa*sqa*w*w)
+        ncand+=sv_len
+        for j in np.nonzero((sg>=need_g-NFS_SLACK)&(sa>=need_a-NFS_SLACK))[0]:
+            u=lo+int(j)
             if math.gcd(u,w)!=1:
                 continue
-            ncand+=1
             G=y*u-X*w
             if G==0 or not is_smooth(G):
                 continue
