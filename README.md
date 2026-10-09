@@ -20,6 +20,8 @@ I have worked on this research project for 3.5 years, without AI, but after the 
 Update: I realized that I messed around with exactly this NFS setup in the past... I'll make some modifications tomorrow. I know what to do now :)
 The thing about nfs_launch_sq() is that it needs to spit back out b-smooths that reduce the matrix rank significantly.. similar to what psieve() did... claude doesnt see it, but I experimented with this setup in the past (actually spent weeks messing around with it)... so I can do the edits myself. Will do it tomorrow. 
 
+Update: I've come up with the following: SIQS style sieve with a large factor base. Then run  NFS (of arbitrary degree) with smaller factor base to achieve a rank reduction of the SIQS matrix. And just keep repeating that. So don't see NFS as a factoring algorithm but rather as a b-smooth finding algorithm... 
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
