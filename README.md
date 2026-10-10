@@ -11,13 +11,15 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:python3 run_qs.py -keysize 200 -base 12000 -lin_size 100_000 -quad_size 1 -mode nfs -nfs_degree 4 -nfs_base 6000 -nfs_sing_small 80_000 -nfs_lines 100 -nfs_want 1000 -nfs_lp 26</br></br>
+To run: python3 run_qs.py -keysize 200 -base 12000 -lin_size 100_000 -quad_size 1 -mode nfs -nfs_degree 4 -nfs_base 6000 -nfs_sing_small 80_000 -nfs_lines 25 -nfs_want 1000 -nfs_lp 26</br></br>
 
 Requirements: You should probably pip install gmpy2, not required but will help big num performance
 
 This is a hybrid SIQS / NFS algorithm. Both feed the same matrix but serve a different purpose. SIQS finds b-smooths using a very large factor base while NFS tries to optimize the matrix. This idea is an ongoing area of research I have been working on for years now. I recently discovered that Claude has finally matured enough to rapidly prototype these ideas for me... so that's what I'm doing as I can now do in a day what would otherwise take me weeks of manual coding and labour. I am still skeptical about AI as a research tool, since it lacks creativity.. but for implementing documented things, even complex math code.. it has definitely matured enough now and I'm becoming a convert.
 
 I'll do some more research myself now. I'll also fix the -mode psieve again.. I need to study that to figure out how to optimize the NFS part.... those two modes are in idea somewhat related.. what still has to be done now is making the NFS algorithm better at improving the overall matrix shared between both algorithms. 
+
+On a side note: I've also resumed studying abstract algebra... planned to do it this summer but with my father in the ICU.. I just couldn't focus on it. 
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
