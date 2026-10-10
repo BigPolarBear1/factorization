@@ -1018,6 +1018,60 @@ def _cofactors(vals,fbprod):
             out.append(int(v))
     return out
 
+cdef extern from *:
+    ctypedef unsigned long long u128 "unsigned __int128"
+
+@cython.cdivision(True)
+def _rho(unsigned long long n):
+    # one factor of an odd composite n below 2^63 (Pollard rho, Brent's cycle); 0 if none turns up
+    cdef unsigned long long y,x,ys,q,g,c,t,d
+    cdef int r,k,i,m=64,tries
+    if n%2==0:
+        return 2
+    for tries in range(1,6):
+        c=tries
+        y=2
+        g=1
+        r=1
+        q=1
+        x=y
+        ys=y
+        while g==1:
+            x=y
+            for i in range(r):
+                y=<unsigned long long>((<u128>y*y+c)%n)
+            k=0
+            while k<r and g==1:
+                ys=y
+                for i in range(min(m,r-k)):
+                    y=<unsigned long long>((<u128>y*y+c)%n)
+                    t=x-y if x>y else y-x
+                    q=<unsigned long long>((<u128>q*t)%n)
+                g=q
+                d=n
+                while d:                               # gcd(q, n)
+                    t=g%d
+                    g=d
+                    d=t
+                k+=m
+            r*=2
+            if r>(1<<20):
+                break
+        if g==n:
+            g=1
+            while g==1:
+                ys=<unsigned long long>((<u128>ys*ys+c)%n)
+                t=x-ys if x>ys else ys-x
+                g=t
+                d=n
+                while d:
+                    t=g%d
+                    g=d
+                    d=t
+        if 1<g<n:
+            return g
+    return 0
+
 def _factor_over(v,cand):
     # exponents of v over the primes in cand (ascending); returns ({p: e}, cofactor). A negative v gets {-1: 1}.
     ex={}
@@ -1327,14 +1381,14 @@ cdef list _sieve_seg(unsigned short[::1] sg,unsigned short[::1] sa,Py_ssize_t se
                      long long[::1] pr,long long[::1] st_r,unsigned short[::1] lg_r,
                      long long[::1] pa,long long[::1] st_a,unsigned short[::1] lg_a,
                      double a0,double da,double b0,double db,double m1,double m0,double[::1] f,int d,
-                     int init_g,int slack_g,int slack_a,int slack_lp,int slack_lp2):
+                     int init_g,int slack_g,int slack_a,int slack_lp,int slack_lp2,int slack_one):
     # Sieve one segment of a line, block by block (a block fits the cache). Position j is the pair
     # (a,b) = (a0 + j*da, b0 + j*db). sg / sa collect round(2*log2 p) for the primes dividing the rational value / the
     # norm; each prime's progression starts at st (counted from the start of the segment, st >= seg_len: never) and the
     # arrays st_r / st_a are advanced in place from block to block. A position is reported when both sums reach
     # 2*floor(log2 |value|) minus the slack of its side (slack_g rational, slack_a norm; in half bits). slack_lp is the
-    # extra room for one large prime, granted to one side at a time; slack_lp2 is the (smaller) room each side gets when
-    # both keep a large prime.
+    # slack_one is the room one side gets while the other is complete (one large prime, or two small ones); slack_lp2
+    # is the (smaller) room each side gets when both keep a large prime.
     # The exact test costs a polynomial evaluation, so positions are first screened 32 at a time against a threshold
     # that is a lower bound for the whole group (0 if a value changes sign inside it).
     cdef Py_ssize_t i,j,k,j0,j1,jm,base,blen,n_r=pr.shape[0],n_a=pa.shape[0]
@@ -1377,12 +1431,12 @@ cdef list _sieve_seg(unsigned short[::1] sg,unsigned short[::1] sa,Py_ssize_t se
             Ga=(a0+(base+j0)*da)*m1-(b0+(base+j0)*db)*m0
             Gb=(a0+(base+j1-1)*da)*m1-(b0+(base+j1-1)*db)*m0
             if (Ga<0)!=(Gb<0):
-                tg=-slack_g-slack_lp
+                tg=-slack_g-slack_one
             else:
                 x=fabs(Ga)
                 if fabs(Gb)<x:
                     x=fabs(Gb)
-                tg=2*_ilog2(x)-slack_g-slack_lp
+                tg=2*_ilog2(x)-slack_g-slack_one
             jm=(j0+j1)>>1
             for which in range(3):
                 j=j0 if which==0 else (jm if which==1 else j1-1)
@@ -1400,14 +1454,14 @@ cdef list _sieve_seg(unsigned short[::1] sg,unsigned short[::1] sa,Py_ssize_t se
                 else:
                     F2=F
             if (F0<0)!=(F1<0) or (F1<0)!=(F2<0):
-                ta=-slack_a-slack_lp
+                ta=-slack_a-slack_one
             else:
                 x=fabs(F0)
                 if fabs(F1)<x:
                     x=fabs(F1)
                 if fabs(F2)<x:
                     x=fabs(F2)
-                ta=2*(_ilog2(x)-2)-slack_a-slack_lp          # two bits of room for the variation inside the group
+                ta=2*(_ilog2(x)-2)-slack_a-slack_one         # two bits of room for the variation inside the group
             for j in range(j0,j1):
                 if <int>sg[j]<tg or <int>sa[j]<ta:
                     continue
@@ -1416,7 +1470,7 @@ cdef list _sieve_seg(unsigned short[::1] sg,unsigned short[::1] sa,Py_ssize_t se
                 b=b0+(base+j)*db
                 eg=_ilog2(fabs(a*m1-b*m0))
                 dg=2*eg-<int>sg[j]-slack_g              # how far the rational side is from its threshold (<= 0: reached)
-                if dg>slack_lp:
+                if dg>slack_one:
                     continue
                 F=f[0]
                 bp=1.0
@@ -1425,7 +1479,7 @@ cdef list _sieve_seg(unsigned short[::1] sg,unsigned short[::1] sa,Py_ssize_t se
                     F=F*a+f[t]*bp
                 ef=_ilog2(fabs(F))
                 dn=2*ef-<int>sa[j]-slack_a
-                if dn<=0 or (dn<=slack_lp and dg<=0) or (dn<=slack_lp2 and dg<=slack_lp2):
+                if (dn<=0 and dg<=slack_one) or (dn<=slack_one and dg<=0) or (dn<=slack_lp2 and dg<=slack_lp2):
                     out.append(base+j)
             j0=j1
         base+=blen
@@ -1560,9 +1614,67 @@ def _div_rat(double a,double b,double[::1] p,double[::1] pinv,double[::1] m1p,do
                 m+=1
     return m
 
-def _raw_row(st,a,b,G,Fv,lp_alg=0,lp_rat=0):
+@cython.boundscheck(False)
+@cython.wraparound(False)
+@cython.cdivision(True)
+def _force_t(long long q,long long rho,long long[::1] P,long long[::1] root,long long[::1] t):
+    # t[k] = (root[k] - rho) / q mod P[k], or -1 where q is 0 mod P[k]
+    cdef Py_ssize_t k,n=P.shape[0]
+    cdef long long p,qm,dd,r0,r1,s0,s1,qq,tmp
+    with nogil:
+        for k in range(n):
+            p=P[k]
+            qm=q%p
+            if qm==0:
+                t[k]=-1
+                continue
+            r0=p                                        # inverse of qm mod p by Euclid
+            r1=qm
+            s0=0
+            s1=1
+            while r1:
+                qq=r0/r1
+                tmp=r0-qq*r1
+                r0=r1
+                r1=tmp
+                tmp=s0-qq*s1
+                s0=s1
+                s1=tmp
+            if s0<0:
+                s0+=p
+            dd=(root[k]-rho%p)%p
+            if dd<0:
+                dd+=p
+            t[k]=(dd*s0)%p
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+@cython.cdivision(True)
+def _force_st(long long b,long long s,long long flen,long long[::1] P,long long[::1] t,double[::1] pinv,long long[::1] out,int skipdiv):
+    # start of each prime on line b: (b*t + s) mod p, or flen (never) where t < 0, or where p | b and skipdiv is set
+    cdef Py_ssize_t k,n=P.shape[0]
+    cdef long long p,x
+    with nogil:
+        for k in range(n):
+            if t[k]<0:
+                out[k]=flen
+                continue
+            p=P[k]
+            if skipdiv and p<=b and b%p==0:
+                out[k]=flen
+                continue
+            x=b*t[k]+s
+            x-=(<long long>(x*pinv[k]))*p
+            while x>=p:
+                x-=p
+            while x<0:
+                x+=p
+            out[k]=x
+
+def _raw_row(st,a,b,G,Fv,lp_alg=(),lp_rat=()):
     # One (a,b) pair as a matrix row: (column numbers, character bits), or None if a value does not factor as expected.
-    # lp_alg / lp_rat: a large prime known to divide the norm / the rational value exactly once.
+    # lp_alg / lp_rat: the large primes (a tuple, usually empty or one) known to divide the norm / the rational value
+    # exactly once each.
     leading=st['leading']
     R=st['R']
     nq=len(st['cq'])
@@ -1579,7 +1691,7 @@ def _raw_row(st,a,b,G,Fv,lp_alg=0,lp_rat=0):
         if b%p==0:
             cand.add(p)
     ex,rest=_factor_over(Fv,sorted(cand))
-    if rest!=(lp_alg if lp_alg else 1):
+    if rest!=math.prod(lp_alg):
         return None
     for p,e in ex.items():
         if not e&1:
@@ -1592,10 +1704,10 @@ def _raw_row(st,a,b,G,Fv,lp_alg=0,lp_rat=0):
         for r in R[p]:
             if (a-b*r)%p==0:
                 cols.append(NFS_ALG+(p<<28)+r)          # degree-1 ideal (p, alpha - r)
-    if lp_alg:
-        if b%lp_alg==0:
+    for q in lp_alg:
+        if b%q==0:
             return None
-        cols.append(NFS_ALG+(lp_alg<<28)+(a*pow(b,-1,lp_alg))%lp_alg)
+        cols.append(NFS_ALG+(q<<28)+(a*pow(b,-1,q))%q)
     k=0
     for q,s in st['cq']:
         x=(a-b*s)%q
@@ -1609,13 +1721,12 @@ def _raw_row(st,a,b,G,Fv,lp_alg=0,lp_rat=0):
     else:
         rc=pp[(a%pp*st['m1p']-b%pp*st['m0p'])%pp==0].tolist() if b else pp.tolist()
     rex,rest=_factor_over(G,rc)
-    if rest!=(lp_rat if lp_rat else 1):
+    if rest!=math.prod(lp_rat):
         return None
     for p,e in rex.items():
         if e&1:
             cols.append(1 if p==-1 else p)
-    if lp_rat:
-        cols.append(lp_rat)
+    cols.extend(lp_rat)
     return cols,ch
 
 def nfs_params(n,degree):
@@ -1650,16 +1761,20 @@ def nfs_restore(n,degree,saved,pairs):
     st['rat_sieved']=saved['rat_sieved']
     st['seen'].update((int(a),int(b)) for a,b in pairs)
 
-def nfs_sieve(n,primeslist,fb_keep,picks,degree,lines,T,force_T,force_lines,lp_bits=-1,lp2_bits=0,line_mod=1,line_res=0):
+def nfs_sieve(n,primeslist,fb_keep,picks,degree,lines,T,force_T,force_lines,lp_bits=-1,lp2_bits=0,line_mod=1,line_res=0,lp2_same=0):
     # One round of sieving. primeslist: the algebraic factor base (odd primes not dividing n; fixed after the first call).
     # fb_keep + picks: the rational factor base, any odd primes: they need not be in the algebraic base.
-    # picks: primes forced to divide the rational value on a sub-lattice.
+    # picks: primes outside the rational factor base that are forced to divide the rational value (see below); the rows
+    #   found for one hold it as their rational large prime.
     # lines / T: lines b added to the region by this call, and its half-width in a: max(T, skew * lines so far), with
     #   T = 0 standing for the width the polynomial was tuned for. Lines sieved before are widened when the width grows.
+    # force_lines / force_T: for the forced primes, the number of lines and the half-width in a (0 = ten times the
+    #   current width of the region).
     # line_mod / line_res: this process only sieves the lines b = line_res mod line_mod (several processes share a region).
     # lp_bits: a relation may keep a prime up to 2^lp_bits outside the factor base (never above the square of the
     #   largest base prime, so it is certainly prime; 0 = none; -1 = the module default). lp2_bits: a relation may keep one
-    #   on each side at once if both are below 2^lp2_bits (0 = never both).
+    #   on each side at once if both are below 2^lp2_bits (0 = never both). lp2_same: two of them below 2^lp2_bits may
+    #   also sit on the same side (the cofactor is split), the other side then being complete.
     # Returns the new rows: (pairs as an int64 array [k,2], character bits (list of int), column numbers (int64, all rows
     # one after the other), where each row ends in that array (int64 [k]), number of rows without a large prime), or None.
     st=_STATE.get((n,degree))
@@ -1672,8 +1787,9 @@ def nfs_sieve(n,primeslist,fb_keep,picks,degree,lines,T,force_T,force_lines,lp_b
             return None
     t_start=default_timer()
     d,f_x,m0,m1,leading,primes,R=st['d'],st['f'],st['m0'],st['m1'],st['leading'],st['primes'],st['R']
-    picks=[q for q in picks if q>2 and m1%q!=0 and n%q!=0]
-    rat_primes=sorted(p for p in set(fb_keep)|set(picks) if p>2)
+    fbk=set(fb_keep)
+    picks=[q for q in picks if q>2 and m1%q!=0 and n%q!=0 and q not in fbk]
+    rat_primes=sorted(p for p in fbk if p>2)
     fb_r=[2]+rat_primes
     if not st['rat_all'].issuperset(fb_r):
         st['rat_all'].update(fb_r)
@@ -1716,11 +1832,10 @@ def nfs_sieve(n,primeslist,fb_keep,picks,degree,lines,T,force_T,force_lines,lp_b
                 emit(p,0,row,0)
     # sieve set-up
     # the two sides have their own prime lists: the rational primes need not be in the algebraic base
-    pickset=set(picks)
-    sv_r=[p for p in rat_primes if p>NFS_SMALL and p not in pickset and m1%p!=0]
+    sv_r=[p for p in rat_primes if p>NFS_SMALL and m1%p!=0]
     sv_a=[p for p in primes if p>NFS_SMALL]
     lg2=lambda p:int(round(2*math.log2(p)))                 # logs in half bits
-    key=(len(sv_r),len(picks))
+    key=len(sv_r)
     if st.get('sv_key')!=key:
         st['sv_key']=key
         st['sv']=(np.array(sv_r,dtype=np.int64),
@@ -1744,10 +1859,28 @@ def nfs_sieve(n,primeslist,fb_keep,picks,degree,lines,T,force_T,force_lines,lp_b
     slack_lp=2*(lp_a.bit_length()-1) if lp_a else 0
     lp2=min(1<<lp2_bits,lp_a,lp_r) if lp2_bits>0 else 0
     slack_lp2=2*(lp2.bit_length()-1) if lp2 else -1000000
+    slack_one=max(slack_lp,2*slack_lp2) if (lp2 and lp2_same) else slack_lp
+    lp2sq=lp2*lp2 if (lp2 and lp2_same) else 0
     ncand=0
     nhit=0
     _T.clear()
     seen=st['seen']
+    def lps(c,single):
+        # the large primes of a cofactor: () if it is 1, (c,) if it is one prime within its bound, (p1,p2) if it is the
+        # product of two primes below 2^lp2_bits (only when lp2_same), None otherwise
+        if c==1:
+            return ()
+        if c<=single:
+            return (c,)
+        if c>=lp2sq or pow(2,c-1,c)==1:                 # too large, or (to all appearances) one prime above its bound
+            return None
+        p1=_rho(c)
+        if p1<=1:
+            return None
+        p2=c//p1
+        if p1>=lp2 or p2>=lp2 or p1==p2:
+            return None
+        return (p1,p2) if p1<p2 else (p2,p1)
     def take_many(pairs,kind):
         # the candidates of a line: rational side first, the norm only for those that pass
         c=[]
@@ -1765,27 +1898,30 @@ def nfs_sieve(n,primeslist,fb_keep,picks,degree,lines,T,force_T,force_lines,lp_b
         c2=[]
         fs=[]
         for k in range(len(c)):
-            cg=cgs[k]
-            if cg!=1 and cg>lp_r:
+            lr=lps(cgs[k],lp_r)
+            if lr is None:
                 continue
             a,b=c[k]
             Fv=eval_F(a,b,f_x,d)
             if Fv:
-                c2.append((a,b,gs[k],cg))
+                c2.append((a,b,gs[k],lr))
                 fs.append(Fv)
         if not c2:
             return
         cfs=_cofactors(fs,big_a)
         for k in range(len(c2)):
-            a,b,G,cg=c2[k]
-            cf=cfs[k]
-            if cf!=1 and (cf>lp_a or (cg!=1 and (cf>lp2 or cg>lp2))):
+            a,b,G,lr=c2[k]
+            la=lps(cfs[k],lp_a)
+            if la is None:
                 continue
-            row=_raw_row(st,a,b,G,fs[k],cf if cf!=1 else 0,cg if cg!=1 else 0)
+            nl=len(la)+len(lr)
+            if nl>2 or (nl==2 and (max(la+lr)>=lp2)):
+                continue                                # at most two large primes, and two only if both are small
+            row=_raw_row(st,a,b,G,fs[k],la,lr)
             if row is None:
                 continue
             seen.add((a,b))
-            emit(a,b,row,kind if cf==1 and cg==1 else (3 if cf==1 or cg==1 else 4))
+            emit(a,b,row,kind if nl==0 else (3 if nl==1 else 4))
     # the region: the rectangle |a| <= M, 1 <= b <= L. It grows by `lines` lines per call; M follows skew*L once that
     # exceeds the starting width. Every pair is sieved once: for a line seen before, only the part outside its old width.
     L=st['line']+lines
@@ -1797,7 +1933,6 @@ def nfs_sieve(n,primeslist,fb_keep,picks,degree,lines,T,force_T,force_lines,lp_b
         # of a missing prime are worth another look, so the whole region is sieved again (known pairs are skipped)
         width.clear()
         st['rat_sieved']=len(fb_r)
-    FT=(force_T if force_T>0 else primes[-1]) if len(picks)>0 else 0
     sg=np.zeros(NFS_BLOCK,dtype=np.uint16)
     sa=np.zeros(NFS_BLOCK,dtype=np.uint16)
     order=st.get('order')
@@ -1827,71 +1962,61 @@ def nfs_sieve(n,primeslist,fb_keep,picks,degree,lines,T,force_T,force_lines,lp_b
             ncand+=sv_len
             t1=default_timer()
             hits=_sieve_seg(sg,sa,sv_len,NFS_BLOCK,r_p,(st_r-sh)%r_p,r_lg,a_p,np.where(st_a>=0,(st_a-sh)%a_p,sv_len),a_lg,
-                            float(lo),1.0,float(b),0.0,float(m1),float(m0),f_dbl,d,0,slack_g,slack_a,slack_lp,slack_lp2)
+                            float(lo),1.0,float(b),0.0,float(m1),float(m0),f_dbl,d,0,slack_g,slack_a,slack_lp,slack_lp2,slack_one)
             _tick('sieve',t1)
             t1=default_timer()
             nhit+=len(hits)
             take_many([(lo+j,b) for j in hits],1)
             _tick('candidates',t1)
-    # forced lattice: the pairs with a = b*m0/m1 mod Qf, Qf = product of the picks, so Qf divides a*m1 - b*m0
-    Qf=math.prod(picks)
-    if Qf>1:
-        FL=force_lines
-        mm=(m0*pow(m1,-1,Qf))%Qf
-        # Gauss reduction of the basis (Qf,0), (mm,1) for the norm a^2/s + b^2*s, s = the skew of the polynomial
-        sk=float(st['skew'])
-        nq=lambda v:(v[0]*v[0])/sk+(v[1]*v[1])*sk
-        bq=lambda v,t:(v[0]*t[0])/sk+(v[1]*t[1])*sk
-        b1=(Qf,0)
-        b2=(mm,1)
-        if nq(b1)<nq(b2):
-            b1,b2=b2,b1
-        while True:
-            mu=round(bq(b1,b2)/nq(b2))
-            b1=(b1[0]-mu*b2[0],b1[1]-mu*b2[1])
-            if nq(b1)>=nq(b2):
-                break
-            b1,b2=b2,b1
-        e1,e2=b2,b1
-        G1=e1[0]*m1-e1[1]*m0
-        G2=e2[0]*m1-e2[1]*m0
-        # in lattice coordinates: rational value divisible by p when il = rr*jl, norm when il = t*jl (mod p)
-        l_rp=[]
-        l_rr=[]
-        l_ap=[]
-        l_ar=[]
-        for p in sv_r:
-            if G1%p!=0:
-                l_rp.append(p)
-                l_rr.append((-G2*pow(G1,-1,p))%p)
-        for p in sv_a:
-            for r in R[p]:
-                A1=(e1[0]-r*e1[1])%p
-                A2=(e2[0]-r*e2[1])%p
-                if A1!=0:
-                    l_ap.append(p)
-                    l_ar.append((-A2*pow(A1,-1,p))%p)
-        l_rp=np.array(l_rp,dtype=np.int64)
-        l_rr=np.array(l_rr,dtype=np.int64)
-        l_rlg=np.array([lg2(p) for p in l_rp.tolist()],dtype=np.uint16)
-        l_ap=np.array(l_ap,dtype=np.int64)
-        l_ar=np.array(l_ar,dtype=np.int64)
-        l_alg=np.array([lg2(p) for p in l_ap.tolist()],dtype=np.uint16)
-        fl_len=2*FT+1
-        init_g=int(round(2*math.log2(Qf)))
-        for jl in range(1,FL+1):
-            ncand+=fl_len
-            fp=[]
-            for j in _sieve_seg(sg,sa,fl_len,NFS_BLOCK,l_rp,(l_rr*jl+FT)%l_rp,l_rlg,l_ap,(l_ar*jl+FT)%l_ap,l_alg,
-                                float(-FT*e1[0]+jl*e2[0]),float(e1[0]),float(-FT*e1[1]+jl*e2[1]),float(e1[1]),
-                                float(m1),float(m0),f_dbl,d,init_g,slack_g,slack_a,slack_lp,slack_lp2):
-                il=j-FT
-                a=il*e1[0]+jl*e2[0]
-                b=il*e1[1]+jl*e2[1]
-                if b<0:
-                    a,b=-a,-b
-                fp.append((a,b))
-            take_many(fp,2)
+    # Forced primes: for each one, q, only the pairs with q | a*m1 - b*m0 are looked at: a = b*rho + i*q with
+    # rho = m0/m1 mod q, on the lines b of the region, i in a window of half-width force_T/q around a = 0. On that
+    # progression a prime p of either side divides its value when i = b*t mod p, t = (root - rho)/q mod p, so the start
+    # positions of a line are one multiplication per prime. q itself is not in the factor base: it is the large prime
+    # of the rational side, and every row found holds it. Pairs inside the part of the line already sieved are skipped.
+    if picks:
+        FA=force_T if force_T>0 else 10*M
+        tr=np.zeros(len(r_p),dtype=np.int64)
+        ta=np.zeros(len(a_p),dtype=np.int64)
+        sr=np.zeros(len(r_p),dtype=np.int64)
+        sa_=np.zeros(len(a_p),dtype=np.int64)
+        if st.get('pinv_key')!=(len(r_p),len(a_p)):
+            st['pinv_key']=(len(r_p),len(a_p))
+            st['pinv']=(1.0/r_p.astype(np.float64),1.0/a_p.astype(np.float64))
+        r_pi,a_pi=st['pinv']
+        flines=order[:max(1,force_lines)]
+        for q in picks:
+            rho=(m0*pow(m1,-1,q))%q
+            I=max(1,FA//q)
+            flen=2*I+1
+            if len(sg)<min(flen,NFS_BLOCK):
+                sg=np.zeros(NFS_BLOCK,dtype=np.uint16)
+                sa=np.zeros(NFS_BLOCK,dtype=np.uint16)
+            t1=default_timer()
+            _force_t(q,rho,r_p,r_root,tr)
+            _force_t(q,rho,a_p,a_root,ta)
+            _tick('forced set-up',t1)
+            for b in flines:
+                if b%q==0:
+                    continue
+                c=-((2*b*rho+q)//(2*q))                # the window is centred where a = b*rho + i*q is nearest to 0
+                a_start=(c-I)*q+b*rho
+                t1=default_timer()
+                _force_st(b,I-c,flen,r_p,tr,r_pi,sr,0)
+                _force_st(b,I-c,flen,a_p,ta,a_pi,sa_,1)
+                ncand+=flen
+                hits=_sieve_seg(sg,sa,flen,NFS_BLOCK,r_p,sr,r_lg,a_p,sa_,a_lg,float(a_start),float(q),float(b),0.0,
+                                float(m1),float(m0),f_dbl,d,0,slack_g,slack_a,slack_lp,slack_lp2,slack_one)
+                _tick('forced sieve',t1)
+                t1=default_timer()
+                w=width.get(b,-1)
+                fp=[]
+                for j in hits:
+                    a=a_start+j*q
+                    if a>w or a<-w:
+                        fp.append((a,b))
+                nhit+=len(fp)
+                take_many(fp,2)
+                _tick('forced candidates',t1)
     total=default_timer()-t_start
     tot=st['counts']
     for k in range(5):

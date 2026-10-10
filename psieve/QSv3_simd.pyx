@@ -60,8 +60,11 @@ quad_sieve_size=10
 NFS_DEGREE=3          #degree of the number field sieve polynomial
 NFS_LINES=100         #lines b added to the sieve region by each NFS round (the region is kept between rounds)
 NFS_T=0               #half-width in a of the region to start with (0 = the width the polynomial was tuned for); it follows skew * lines once that is larger
-NFS_FORCE_T=0         #half-width of the strip per line on the forced lattice (0 = the largest factor base prime)
-NFS_FORCE_LINES=1000  #number of lines to sieve on the forced lattice per call
+NFS_POOL=0            #-mode nfs: large primes of SIQS partial relations forced on the NFS per round, smallest first (0 = off)
+NFS_FORCE_T=0         #forced primes: half-width in a of the part of each line that is looked at (0 = ten times the current width of the region)
+NFS_FORCE_LINES=150   #forced primes: number of lines looked at for each
+NFS_SLACK=10          #NFS sieve: a position is checked when its logs fall short of the full size by at most this many bits (plus the room for large primes)
+NFS_LP2_SAME=1        #with NFS_LP2_BITS: two large primes below that bound may also sit on the same side of a relation
 NFS_LP2_BITS=0        #a relation of the NFS may keep a large prime on both sides at once if both are below 2^NFS_LP2_BITS (0 = never both)
 NFS_PROCS=1           #-mode nfs: number of processes that sieve for the NFS (they share the lines of one region)
 NFS_SIQS=1            #-mode nfs: 1 = the SIQS process runs, 0 = NFS only
@@ -74,7 +77,6 @@ NFS_LP_BITS=24        #large primes: a relation of the NFS may keep one prime up
 NFS_BASE=0            #-mode nfs: size of the algebraic factor base of the NFS = the first NFS_BASE primes of the SIQS factor base (0 = all of it)
 LA_EVERY=1000         #-mode nfs: the first matrix job starts after this many complete relations (SIQS and NFS together); later ones are timed by how many rows the last one was short of
 NFS_SHARE_LP=1        #-mode nfs: 1 = the SIQS keeps partial relations (one large prime up to 2^NFS_LP_BITS) and the two sieves share those large primes as columns of the joint matrix; 0 = off
-NFS_SING_FORCE=0      #how many singleton targets the NFS forces per call, largest first (each divides the rational value of every forced pair; each is tried once)
 NFS_SING_SMALL=200    #every prime up to this bound counts as core: it is in the rational factor base, and it never makes a relation a singleton when the targets are chosen
 NFS_SING_QR=-1        #above NFS_SING_SMALL, primes up to this bound join the rational factor base only if n is a square modulo them: no other prime can occur in a SIQS relation, so no other prime is a column the two share (-1 = up to the end of the SIQS factor base, 0 = off)
 g_nfs_poly=""       #"rel_sq_mix" when run with -mode nfs
@@ -2843,8 +2845,8 @@ def nfs_worker(settings,n,primeslist,feed,inbox,stop,wk,nproc):
             nfs_only=sum(1 for p in small[:n_small] if pow(n%p,(p-1)//2,p)!=1)
             print("[NFS] rational base: "+str(n_small)+" primes up to "+str(NFS_SING_SMALL)+" ("+str(nfs_only)+" of them cannot occur in a SIQS relation) + "+str(len(small)-n_small)+" residue primes up to "+str(qr_bound))
             print("[NFS] algebraic factor base "+str(len(nfs_primes))+" primes (largest "+str(nfs_primes[-1])+"), SIQS factor base "+str(len(primeslist))+" primes (largest "+str(primeslist[-1])+")")
-        forcing=wk==0 and NFS_SING_FORCE>0 and len(small)<len(primeslist)
-        flist=[]                                        # copy of the odd-factor lists of the SIQS relations (only kept when forcing)
+        gnfs.NFS_SLACK=NFS_SLACK
+        pool=[]                                         # large primes of SIQS partial relations, smallest first (a heap)
         tried=set()
         poly=None
         saved=None
@@ -2890,19 +2892,20 @@ def nfs_worker(settings,n,primeslist,feed,inbox,stop,wk,nproc):
                     tag,data=feed.get_nowait()
                 except queue.Empty:
                     break
-                if tag=='rel' and forcing:
-                    flist.extend(data)
+                if tag=='lp':
+                    for l_ in data:
+                        if l_ not in tried:
+                            heapq.heappush(pool,l_)
+            # The SIQS drives this part: each round a few large primes of its partial relations are forced on the NFS,
+            # smallest first (the smaller the prime, the more pairs its progression has in reach). A row found for one
+            # holds it, so it completes that partial relation in the matrix.
             picks=[]
             sing_keep=set(small)
-            if forcing or (wk==0 and qr_bound<primeslist[-1] and len(small)<len(primeslist) and flist):
-                targets,core=singleton_targets(flist,NFS_SING_SMALL)
-                sing_keep.update(p for p in core if p in fbset)
-                for lg,p,ti in targets:
-                    if len(picks)>=NFS_SING_FORCE:
-                        break
-                    if p in fbset and p not in tried and p not in picks:
-                        picks.append(p)
-                tried.update(picks)
+            while pool and len(picks)<NFS_POOL:
+                l_=heapq.heappop(pool)
+                if l_ not in tried:
+                    tried.add(l_)
+                    picks.append(l_)
             if first:
                 if not gnfs.nfs_open(n,nfs_primes,NFS_DEGREE,poly):
                     inbox.put(('done','nfs','the NFS could not be set up for this number and degree'))
@@ -2916,7 +2919,7 @@ def nfs_worker(settings,n,primeslist,feed,inbox,stop,wk,nproc):
                     pickle.dump(('poly',n,par['poly']),ck)
                 old=None
                 first=False
-            batch=gnfs.nfs_sieve(n,nfs_primes,sing_keep,picks,NFS_DEGREE,NFS_LINES,NFS_T,NFS_FORCE_T,NFS_FORCE_LINES,NFS_LP_BITS,NFS_LP2_BITS,nproc,wk)
+            batch=gnfs.nfs_sieve(n,nfs_primes,sing_keep,picks,NFS_DEGREE,NFS_LINES,NFS_T,NFS_FORCE_T,NFS_FORCE_LINES,NFS_LP_BITS,NFS_LP2_BITS,nproc,wk,NFS_LP2_SAME)
             if ck is not None:
                 pickle.dump(('rows',batch,gnfs.nfs_state(n,NFS_DEGREE)),ck)
                 ck.flush()
@@ -3162,7 +3165,8 @@ def run_parallel(n,primeslist,primeslist2):
     la_need=None                        # how many more of them the last job asked for (None: LA_EVERY decides)
     shown=0
     result=(0,0)
-    feed_rel=NFS_SING_FORCE>0
+    feed_lp=NFS_POOL>0
+    lp_new=[]
     sq_ck=None
     sq_old=[]
     if NFS_SAVE and NFS_SIQS:
@@ -3208,8 +3212,6 @@ def run_parallel(n,primeslist,primeslist2):
                         xl.append(x2)
                         fl.append(f)
                         new.append(f)
-                    if new and feed_rel:
-                        feeds[0].put(('rel',new))
                 elif kind=='siqsp':
                     for v,x2,f in msg[1]:
                         if x2 in have:
@@ -3218,6 +3220,11 @@ def run_parallel(n,primeslist,primeslist2):
                         pm.append(v)
                         px.append(x2)
                         pf.append(f)
+                        if feed_lp:
+                            lp_new.append(f[-1])
+                    if feed_lp and lp_new:
+                        feeds[0].put(('lp',lp_new))
+                        lp_new=[]
                 elif kind=='nfs':
                     batches.append(msg[2][:4])
                     n_rows+=len(msg[2][1])

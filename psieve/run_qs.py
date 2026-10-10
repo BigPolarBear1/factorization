@@ -58,12 +58,15 @@ def parse_args():
     parser.add_argument('-nfs_lp',type=int,help='nfs mode: large prime bound in bits; a relation may keep one prime up to 2^N outside the factor base (default 24, 0 = off)')
     parser.add_argument('-nfs_base',type=int,help='nfs mode: algebraic factor base of the NFS = the first N primes of the SIQS factor base (default: all of it)')
     parser.add_argument('-la_every',type=int,help='nfs mode: try the matrix each time this many new b-smooths have arrived (default 1000)')
-    parser.add_argument('-nfs_force_t',type=int,help='nfs mode: half-width of the strip per line on the forced lattice (default: the largest factor base prime)')
-    parser.add_argument('-nfs_force_lines',type=int,help='nfs mode: lines to sieve on the forced lattice per call (default 1000)')
+    parser.add_argument('-nfs_force_t',type=int,help='nfs mode, forced primes: half-width in a of the part of each line that is looked at (default 0 = ten times the current width of the region)')
+    parser.add_argument('-nfs_force_lines',type=int,help='nfs mode, forced primes: number of lines looked at for each (default 150)')
     parser.add_argument('-nfs_sing_qr',type=int,help='nfs mode: above -nfs_sing_small, primes up to this bound join the rational factor base only if n is a square modulo them, the only primes a SIQS relation can hold (default -1 = up to the end of the SIQS factor base, 0 = off)')
     parser.add_argument('-nfs_sing_small',type=int,help='nfs mode: every prime up to this bound counts as core: it joins the rational factor base and never makes a relation a singleton when targets are chosen (default 200)')
     parser.add_argument('-nfs_share_lp',type=int,help='nfs mode: 1 = the SIQS keeps partial relations (one large prime up to 2^nfs_lp) and the two sieves share those large primes as matrix columns (default 1), 0 = off')
-    parser.add_argument('-nfs_sing_force',type=int,help='nfs mode: number of singleton targets to force per run (default 0 = no forcing)')
+    parser.add_argument('-nfs_sing_force',type=int,help='no longer used (accepted so that old command lines still run)')
+    parser.add_argument('-nfs_pool',type=int,help='nfs mode: large primes of SIQS partial relations forced on the NFS per round, smallest first (default 0 = off)')
+    parser.add_argument('-nfs_slack',type=int,help='nfs mode: the NFS sieve checks a position when its logs fall short by at most this many bits, plus the room for large primes (default 10)')
+    parser.add_argument('-nfs_lp2_same',type=int,help='nfs mode, with -nfs_lp2: 1 = two large primes below that bound may also sit on the same side of a relation (default), 0 = only one per side')
     args = parser.parse_args()
     if args.keysize != None:    
         keysize = args.keysize
@@ -117,8 +120,12 @@ def parse_args():
         QSv3_simd.NFS_SING_QR=args.nfs_sing_qr
     if args.nfs_share_lp != None:
         QSv3_simd.NFS_SHARE_LP=args.nfs_share_lp
-    if args.nfs_sing_force != None:
-        QSv3_simd.NFS_SING_FORCE=args.nfs_sing_force
+    if args.nfs_pool != None:
+        QSv3_simd.NFS_POOL=args.nfs_pool
+    if args.nfs_slack != None:
+        QSv3_simd.NFS_SLACK=args.nfs_slack
+    if args.nfs_lp2_same != None:
+        QSv3_simd.NFS_LP2_SAME=args.nfs_lp2_same
     return
 
 if __name__ == "__main__":
