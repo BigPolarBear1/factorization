@@ -47,7 +47,13 @@ def parse_args():
     parser.add_argument('-nfs_degree',type=int,help='nfs mode: degree of the number field sieve polynomial (default 3)')
     parser.add_argument('-nfs_lines',type=int,help='nfs mode: lines added to the ordinary sieve region by each NFS call (default 100)')
     parser.add_argument('-nfs_t',type=int,help='nfs mode: half-width of the ordinary region (default: skew of the polynomial * lines so far)')
-    parser.add_argument('-nfs_want',type=int,help='nfs mode: an NFS call stops its ordinary region once it has made this many b-smooths (default 600)')
+    parser.add_argument('-nfs_want',type=int,help='no longer used (accepted so that old command lines still run)')
+    parser.add_argument('-nfs_lp2',type=int,help='nfs mode: an NFS relation may keep a large prime on both sides at once if both are below 2^nfs_lp2 (default 0 = never both)')
+    parser.add_argument('-nfs_procs',type=int,help='nfs mode: number of processes that sieve for the NFS (default 1)')
+    parser.add_argument('-nfs_siqs',type=int,help='nfs mode: 1 = the SIQS process runs (default), 0 = NFS only')
+    parser.add_argument('-nfs_save',type=str,help='nfs mode: directory where the NFS rows are kept after every round; a later run with the same directory goes on from there')
+    parser.add_argument('-la_maxw',type=int,help='nfs mode: ...or until the lightest column left is in more rows than this (default 40)')
+    parser.add_argument('-la_dense',type=int,help='nfs mode: the matrix job eliminates light columns until this many are left, then solves densely (default 3000)')
     parser.add_argument('-nfs_lp',type=int,help='nfs mode: large prime bound in bits; a relation may keep one prime up to 2^N outside the factor base (default 24, 0 = off)')
     parser.add_argument('-nfs_base',type=int,help='nfs mode: algebraic factor base of the NFS = the first N primes of the SIQS factor base (default: all of it)')
     parser.add_argument('-la_every',type=int,help='nfs mode: try the matrix each time this many new b-smooths have arrived (default 1000)')
@@ -80,8 +86,18 @@ def parse_args():
         QSv3_simd.NFS_LINES=args.nfs_lines
     if args.nfs_t != None:
         QSv3_simd.NFS_T=args.nfs_t
-    if args.nfs_want != None:
-        QSv3_simd.NFS_MIX_WANT=args.nfs_want
+    if args.nfs_lp2 != None:
+        QSv3_simd.NFS_LP2_BITS=args.nfs_lp2
+    if args.nfs_procs != None:
+        QSv3_simd.NFS_PROCS=args.nfs_procs
+    if args.nfs_siqs != None:
+        QSv3_simd.NFS_SIQS=args.nfs_siqs
+    if args.nfs_save != None:
+        QSv3_simd.NFS_SAVE=args.nfs_save
+    if args.la_maxw != None:
+        QSv3_simd.LA_MAXW=args.la_maxw
+    if args.la_dense != None:
+        QSv3_simd.LA_DENSE=args.la_dense
     if args.nfs_lp != None:
         QSv3_simd.NFS_LP_BITS=args.nfs_lp
     if args.nfs_base != None:

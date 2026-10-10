@@ -130,9 +130,6 @@ def binom(k, n):
 
     return res
 
-def concatenate(A, B, N):
-    return [(A[i]<<N)^B[i] for i in range(len(A))]
-
 def central(k,x): return pow(x, k/2-1)/(math.exp(x/2)*pow(2, k/2)*math.gamma(k/2))
 
 def non_central(k, l ,x):
@@ -932,17 +929,19 @@ def select_best_poly_candidate(polys, primes):
 
 
 ######################################################################################################################
-# Hybrid driver: degree-d number field sieve that hands b-smooths to the SIQS matrix.
+# Hybrid driver: degree-d number field sieve whose relations go into one matrix with the SIQS relations.
 #
 #   f(x)  degree d, c_d = leading coefficient, f(m0/m1) = 0 mod n        (Kleinjung polynomial search, above)
-#   algebraic side: a - b*alpha, norm F(a,b) = sum f_i a^(d-i) b^i        smooth over the full SIQS factor base
-#   rational side:  G(a,b) = a*m1 - b*m0                                   smooth over fb_keep + picks only
+#   algebraic side: a - b*alpha, norm F(a,b) = sum f_i a^(d-i) b^i        smooth over the algebraic factor base
+#   rational side:  G(a,b) = a*m1 - b*m0                                   smooth over the rational factor base
 #
-# A set S of relations whose algebraic columns cancel has  g'(w)^2 * prod(c_d*a - b*w)  a square in Z[w]
-# (w = c_d*alpha, root of the monic g). Its square root, mapped to Z/n, gives X with
+# nfs_sieve() sieves and hands out every relation as a sparse matrix row: the ideals with odd exponent on the algebraic
+# side, the quadratic characters, and the primes with odd exponent on the rational side. A relation may keep one large
+# prime per side; a large prime is just one more column. Nothing is eliminated here.
+# A set S of rows whose algebraic columns and characters cancel has  g'(w)^2 * prod(c_d*a - b*w)  a square in Z[w]
+# (w = c_d*alpha, root of the monic g). dep_square() takes its square root and maps it to Z/n: X with
 #       X^2 = prod G(a,b)   (mod n)
-# so the product of the rational values is an ordinary b-smooth: only its odd-exponent primes reach the SIQS matrix.
-# The polynomial, the relations and the elimination basis are kept between calls, so the algebraic columns are paid once.
+# The rational primes of S that are left odd are cancelled by SIQS relations (X^2 = smooth mod n) in the same matrix.
 ######################################################################################################################
 
 NFS_NB_ROOTS=3              # Kleinjung: number of primes in m1 (l in the paper)
@@ -953,7 +952,10 @@ NFS_POLY_PRECISE=50         # polynomials kept for the precise ranking
 NFS_CHARS=64                # quadratic characters
 NFS_SLACK=20                # sieve: verify positions whose logs fall short of the full size by at most this many bits
 NFS_SMALL=30                # sieve: primes up to this are not sieved (they are covered by the slack)
-NFS_LP_BITS=0               # large primes: a relation may keep one prime up to 2^NFS_LP_BITS outside the factor base, on one side (0 = off)
+NFS_LP_BITS=0               # large primes: a relation may keep a prime up to 2^NFS_LP_BITS outside the factor base (0 = off)
+NFS_ALG=1<<60               # column numbers: a rational prime p is p (the sign is 1); the ideal (p, alpha - r) is NFS_ALG + (p<<28) + r, r = p at infinity
+NFS_BATCH=2048              # sieve candidates whose smoothness is tested in one go
+NFS_LINE_EXP=100            # order of the lines: b is taken as b * (b/phi(b))^(NFS_LINE_EXP/100), so lines with few pairs coprime to b come later
 NFS_BLOCK=1<<18             # sieve: a line is processed in blocks of this many positions
 
 _STATE={}
@@ -989,6 +991,33 @@ def _cofactor(v,fbprod):
         g=_gcd(v,g)
     return int(v)
 
+def _cofactors(vals,fbprod):
+    # _cofactor for many values at once: the product of a batch is formed pairwise, the factor base product is reduced
+    # modulo it once and then down the same tree, so each value gets fbprod mod itself for a fraction of the cost of
+    # reducing the whole product by every value
+    out=[]
+    for s0 in range(0,len(vals),NFS_BATCH):
+        lv=[_big(abs(v)) for v in vals[s0:s0+NFS_BATCH]]
+        tree=[lv]
+        while len(tree[-1])>1:
+            t=tree[-1]
+            nxt=[t[i]*t[i+1] for i in range(0,len(t)-1,2)]
+            if len(t)&1:
+                nxt.append(t[-1])
+            tree.append(nxt)
+        rem=[fbprod%tree[-1][0]]
+        for lvl in range(len(tree)-2,-1,-1):
+            t=tree[lvl]
+            rem=[rem[i>>1]%t[i] for i in range(len(t))]
+        for v,r in zip(lv,rem):
+            if v>1:
+                g=_gcd(v,r)
+                while g>1:
+                    v//=g
+                    g=_gcd(v,g)
+            out.append(int(v))
+    return out
+
 def _factor_over(v,cand):
     # exponents of v over the primes in cand (ascending); returns ({p: e}, cofactor). A negative v gets {-1: 1}.
     ex={}
@@ -1004,8 +1033,11 @@ def _factor_over(v,cand):
             ex[p]=e
     return ex,v
 
+NFS_ROOTSIEVE_CELLS=1<<22     # root sieve: largest number of (u,v) cells looked at
+
 def root_sieve(f, g, primes, U):
     # Same result as the upstream root_sieve; the innermost loop is one strided numpy add.
+    U = max(1, min(U, NFS_ROOTSIEVE_CELLS>>1))
     array = np.zeros(U<<1)
     for p in primes:
         k = 1
@@ -1028,6 +1060,9 @@ def root_sieve2(f, g, primes, U, V):
     # Same result as the upstream root_sieve2 (same additions in the same order for every cell). For a fixed x each
     # row i of the array belongs to one u = i-U mod P, hence one v. The modular inverse is taken once per x, and the
     # cells are filled with numpy: row by row when the rows are few, otherwise all rows at once per column step.
+    if (U<<1)*(V<<1) > NFS_ROOTSIEVE_CELLS:               # the upstream ranges grow without limit with the size of n
+        U = max(1, min(U, 32))
+        V = max(1, min(V, NFS_ROOTSIEVE_CELLS//(4*U)))
     array = np.zeros((U<<1, V<<1))
     rows_i = np.arange(U<<1)
     for p in primes:
@@ -1292,13 +1327,14 @@ cdef list _sieve_seg(unsigned short[::1] sg,unsigned short[::1] sa,Py_ssize_t se
                      long long[::1] pr,long long[::1] st_r,unsigned short[::1] lg_r,
                      long long[::1] pa,long long[::1] st_a,unsigned short[::1] lg_a,
                      double a0,double da,double b0,double db,double m1,double m0,double[::1] f,int d,
-                     int init_g,int slack_g,int slack_a,int slack_lp):
+                     int init_g,int slack_g,int slack_a,int slack_lp,int slack_lp2):
     # Sieve one segment of a line, block by block (a block fits the cache). Position j is the pair
     # (a,b) = (a0 + j*da, b0 + j*db). sg / sa collect round(2*log2 p) for the primes dividing the rational value / the
     # norm; each prime's progression starts at st (counted from the start of the segment, st >= seg_len: never) and the
     # arrays st_r / st_a are advanced in place from block to block. A position is reported when both sums reach
     # 2*floor(log2 |value|) minus the slack of its side (slack_g rational, slack_a norm; in half bits). slack_lp is the
-    # extra room for one large prime: it is granted to one side at a time, never to both.
+    # extra room for one large prime, granted to one side at a time; slack_lp2 is the (smaller) room each side gets when
+    # both keep a large prime.
     # The exact test costs a polynomial evaluation, so positions are first screened 32 at a time against a threshold
     # that is a lower bound for the whole group (0 if a value changes sign inside it).
     cdef Py_ssize_t i,j,k,j0,j1,jm,base,blen,n_r=pr.shape[0],n_a=pa.shape[0]
@@ -1389,24 +1425,28 @@ cdef list _sieve_seg(unsigned short[::1] sg,unsigned short[::1] sa,Py_ssize_t se
                     F=F*a+f[t]*bp
                 ef=_ilog2(fabs(F))
                 dn=2*ef-<int>sa[j]-slack_a
-                if dn<=0 or (dn<=slack_lp and dg<=0):
+                if dn<=0 or (dn<=slack_lp and dg<=0) or (dn<=slack_lp2 and dg<=slack_lp2):
                     out.append(base+j)
             j0=j1
         base+=blen
     return out
 
 
-def _setup(n,d,alg_primes):
-    # one-time: polynomial, roots, characters, inert prime
+def _setup(n,d,alg_primes,poly=None):
+    # one-time: polynomial, roots, characters, inert prime. poly = (f, m0, m1, characters) of an earlier set-up skips the
+    # search: every process that sieves for the same matrix must use the same polynomial and the same characters
     t0=default_timer()
     primes=[2]+list(alg_primes)
     B=primes[-1]+1
-    res=Kleinjung_poly_search(n,primes,NFS_NB_ROOTS,NFS_PRIME_BOUND,NFS_MULTIPLIER,int(pow(n,1/(d+1))),d,NFS_POLY_COARSE,NFS_POLY_PRECISE,None)
-    if res is None:
-        print("[i]NFS(d="+str(d)+"): the polynomial search found nothing for this degree and size")
-        return None
-    f_x,m0,m1=res[0],res[1],res[2]
-    f_x,m0,M=evaluate_polynomial_quality(f_x,B,m0,m1,primes,None)
+    if poly is None:
+        res=Kleinjung_poly_search(n,primes,NFS_NB_ROOTS,NFS_PRIME_BOUND,NFS_MULTIPLIER,int(pow(n,1/(d+1))),d,NFS_POLY_COARSE,NFS_POLY_PRECISE,None)
+        if res is None:
+            print("[i]NFS(d="+str(d)+"): the polynomial search found nothing for this degree and size")
+            return None
+        f_x,m0,m1=res[0],res[1],res[2]
+        f_x,m0,M=evaluate_polynomial_quality(f_x,B,m0,m1,primes,None)
+    else:
+        f_x,m0,m1=list(poly[0]),poly[1],poly[2]
     assert eval_F(m0,m1,f_x,d)%n==0
     M,skew=get_sieve_region(f_x,B)
     leading=f_x[0]
@@ -1430,11 +1470,15 @@ def _setup(n,d,alg_primes):
     # (prime, root) pairs as arrays: p divides F(a,b) with b != 0 mod p exactly when a = b*r mod p for one of them
     st['ap']=np.array([p for p in primes for r in R[p]],dtype=np.int64)
     st['ar']=np.array([r for p in primes for r in R[p]],dtype=np.int64)
-    st['pp']=np.zeros(0,dtype=np.int64)                # the rational primes used so far (filled by nfs_launch) and m0, m1 mod each
+    st['apd']=st['ap'].astype(np.float64)               # the same in doubles, for _div_alg
+    st['api']=1.0/st['apd']
+    st['ard']=st['ar'].astype(np.float64)
+    st['dbuf']=np.zeros(len(st['ap'])+1,dtype=np.int64)
+    st['pp']=np.zeros(0,dtype=np.int64)                # the rational primes used so far (filled by nfs_sieve) and m0, m1 mod each
     st['div_lead']=[p for p in primes if leading%p==0]
-    cq=[]
+    cq=[] if poly is None else list(poly[3])
     q=primes[-1]
-    while len(cq)<NFS_CHARS:
+    while poly is None and len(cq)<NFS_CHARS:
         q+=2 if q>2 else 1
         if not is_prime(q) or leading%q==0 or n%q==0:
             continue
@@ -1478,22 +1522,59 @@ def _setup(n,d,alg_primes):
         f_norm+=x*x*tmp
         tmp*=leading
     st['f_norm']=int(math.sqrt(f_norm))+1
-    st.update({'rows':[],'acol':{},'basis':{},'seen':set(),'free_done':set(),'line':0,'width':{},'pidx':{},'plist':[],'parr':np.zeros(0,dtype=np.int64),'pc':{},'lp':{},'rat_sieved':0,'intern':{},'rat_all':set([2]),'have':set(),'sqrt_fail':0,'rbit':{},'rprimes':[],'lp_live':set(),'lp_open':set(),'pending':[],'lp_shared':0})
+    st.update({'seen':set(),'free_done':set(),'line':0,'width':{},'rat_sieved':0,'rat_all':set([2]),'nrows':0,'counts':[0,0,0,0,0]})
+    st['cbit']={qs:k for k,qs in enumerate(cq)}        # character -> bit; the two bits above them: sign of the norm, one per relation
     print("[i]NFS(d="+str(d)+"): f = "+str(f_x)+"   g = "+str(m1)+"*x - "+str(m0)+"   skew "+str(skew)+", sieve half-width "+str(M))
     print("[i]NFS(d="+str(d)+"): "+str(len(primes))+" algebraic primes with "+str(sum(len(R[p]) for p in primes))+" degree-1 ideals, "+str(len(cq))+" characters, inert prime "+str(inert)+"  (set-up %.1fs)"%(default_timer()-t0))
     return st
 
-def _columns(st,a,b,G,Fv,elem,lp_alg=0,lp_rat=0):
-    # One (a,b) pair: (algebraic column set, rational exponents, log2 |embeddings|), or None if a value does not
-    # factor as expected. lp_alg / lp_rat: a large prime known to divide the norm / the rational value exactly once.
-    # The ideal of an algebraic large prime gets no column: such a pair is only used together with a second pair that
-    # has the same ideal, where it cancels.
-    key=set()
-    key.add(('one',))                                   # even number of relations in every dependency
+cdef extern from "math.h":
+    double rint(double) nogil
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def _div_alg(double a,double b,double[::1] p,double[::1] pinv,double[::1] r,long long[::1] out):
+    # which (p, r) have a = b*r mod p: the test in doubles (every product stays below 2^53, so it is exact)
+    cdef Py_ssize_t k,m=0,n=p.shape[0]
+    cdef double x
+    with nogil:
+        for k in range(n):
+            x=a-b*r[k]
+            if x-rint(x*pinv[k])*p[k]==0.0:
+                out[m]=k
+                m+=1
+    return m
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def _div_rat(double a,double b,double[::1] p,double[::1] pinv,double[::1] m1p,double[::1] m0p,long long[::1] out):
+    # which p divide a*m1 - b*m0, the same way: a is reduced mod p first so that the products stay exact
+    cdef Py_ssize_t k,m=0,n=p.shape[0]
+    cdef double x
+    with nogil:
+        for k in range(n):
+            x=a-rint(a*pinv[k])*p[k]
+            x=x*m1p[k]-b*m0p[k]
+            if x-rint(x*pinv[k])*p[k]==0.0:
+                out[m]=k
+                m+=1
+    return m
+
+def _raw_row(st,a,b,G,Fv,lp_alg=0,lp_rat=0):
+    # One (a,b) pair as a matrix row: (column numbers, character bits), or None if a value does not factor as expected.
+    # lp_alg / lp_rat: a large prime known to divide the norm / the rational value exactly once.
     leading=st['leading']
     R=st['R']
+    nq=len(st['cq'])
+    ch=1<<(nq+1)                                        # even number of relations in every dependency
+    cols=[]
     # the primes that can divide the norm: a = b*r mod p for a root r, or p | c_d and p | b
-    cand=set(st['ap'][(a-b*st['ar'])%st['ap']==0].tolist())
+    fast=b!=0 and abs(a)<(1<<40) and b<(1<<20)
+    if fast:
+        m=_div_alg(a,b,st['apd'],st['api'],st['ard'],st['dbuf'])
+        cand=set(st['ap'][st['dbuf'][:m]].tolist())
+    else:
+        cand=set(st['ap'][(a-b*st['ar'])%st['ap']==0].tolist())
     for p in st['div_lead']:
         if b%p==0:
             cand.add(p)
@@ -1504,321 +1585,91 @@ def _columns(st,a,b,G,Fv,elem,lp_alg=0,lp_rat=0):
         if not e&1:
             continue
         if p==-1:
-            key.add(('ns',))                            # sign of the norm
+            ch|=1<<nq                                   # sign of the norm
             continue
         if leading%p==0 and b%p==0:
-            key.add(('inf',p))                          # the ideal above p at the projective root (p divides c_d)
+            cols.append(NFS_ALG+(p<<28)+p)              # the ideal above p at the projective root (p divides c_d)
         for r in R[p]:
             if (a-b*r)%p==0:
-                key.add(('a',p,r))                      # degree-1 ideal (p, alpha - r)
+                cols.append(NFS_ALG+(p<<28)+r)          # degree-1 ideal (p, alpha - r)
+    if lp_alg:
+        if b%lp_alg==0:
+            return None
+        cols.append(NFS_ALG+(lp_alg<<28)+(a*pow(b,-1,lp_alg))%lp_alg)
+    k=0
     for q,s in st['cq']:
         x=(a-b*s)%q
         if x and pow(x,(q-1)>>1,q)!=1:
-            key.add(('c',q,s))                          # quadratic character
-    # rational side: full factorisation, kept so a dependency never has to multiply the values out
+            ch|=1<<k                                    # quadratic character
+        k+=1
     pp=st['pp']
-    rex,rest=_factor_over(G,pp[(a%pp*st['m1p']-b%pp*st['m0p'])%pp==0].tolist() if b else pp.tolist())
+    if fast:
+        m=_div_rat(a,b,st['ppd'],st['ppi'],st['m1pd'],st['m0pd'],st['dbuf'])
+        rc=pp[st['dbuf'][:m]].tolist()
+    else:
+        rc=pp[(a%pp*st['m1p']-b%pp*st['m0p'])%pp==0].tolist() if b else pp.tolist()
+    rex,rest=_factor_over(G,rc)
     if rest!=(lp_rat if lp_rat else 1):
         return None
-    if lp_rat:
-        rex[lp_rat]=1
-    # log2 |embedding_i| of the element, for the size of the square root
-    emb=np.log2(np.abs(a*leading-b*st['om'])) if b else np.full(st['d'],math.log2(abs(elem[0])))
-    return key,rex,emb
-
-def _add_row(st,pairs,kind):
-    # pairs: one (a,b,G,F,elem,lp_alg,lp_rat), or two that share a large prime. Their product is one row:
-    # (largest |a|,|b|, number of pairs, rational exponents, embeddings, algebraic columns, kind, element of Z[w]).
-    # Returns the row index in st['rows'], or -1.
-    key=set()
-    rex={}
-    emb=0.0
-    elem=[1]
-    u=1
-    for (a,b,G,Fv,el,lpa,lpr) in pairs:
-        c=_columns(st,a,b,G,Fv,el,lpa,lpr)
-        if c is None:
-            return -1
-        key^=c[0]
-        for p,e in c[1].items():
-            rex[p]=rex.get(p,0)+e
-        emb=emb+c[2]
-        elem=div_poly(poly_prod(elem,el),st['g']) if len(pairs)>1 else el
-        u=max(u,abs(a),abs(b))
-    elem=[_big(x) for x in elem]
-    # parity of the rational exponents as a bit mask (bit j = st['rprimes'][j], numbered as they first turn up odd), and
-    # the exact product of the rational values: what a dependency needs when its square root is left for later
-    rbit=st['rbit']
-    rm=0
-    for q,e in rex.items():
+    for p,e in rex.items():
         if e&1:
-            j=rbit.get(q)
-            if j is None:
-                j=rbit[q]=len(rbit)
-                st['rprimes'].append(q)
-            rm|=1<<j
-    gprod=1
-    for pr_ in pairs:
-        gprod*=pr_[2]
-    # rational exponents as (prime numbers, exponents) arrays; a prime's number is its position in st['plist']
-    pidx=st['pidx']
-    plist=st['plist']
-    for q in rex:
-        if q not in pidx:
-            pidx[q]=len(plist)
-            plist.append(q)
-    rex=(np.array([pidx[q] for q in rex],dtype=np.int64),np.array(list(rex.values()),dtype=np.int64))
-    st['rows'].append((u,len(pairs),rex,emb,key,kind,elem,rm,gprod))
-    return len(st['rows'])-1
+            cols.append(1 if p==-1 else p)
+    if lp_rat:
+        cols.append(lp_rat)
+    return cols,ch
 
-def _reduce(st,i):
-    # add row i to the xor basis of the algebraic columns; returns None, or for a dependency (bit mask of its rows,
-    # parity mask of its rational exponents): both are carried along with the elimination
-    acol=st['acol']
-    basis=st['basis']
-    vec=0
-    for kk in st['rows'][i][4]:
-        if kk not in acol:
-            acol[kk]=len(acol)
-        vec|=1<<acol[kk]
-    mask=1<<i
-    rm=st['rows'][i][7]
-    while vec:
-        top=vec.bit_length()-1
-        bt=basis.get(top)
-        if bt is not None:
-            vec^=bt[0]
-            mask^=bt[1]
-            rm^=bt[2]
-        else:
-            basis[top]=(vec,mask,rm)
-            return None
-    return mask,rm
-
-def _mask_idx(mask):
-    # positions of the set bits
-    by=mask.to_bytes((mask.bit_length()+7)>>3,'little')
-    return np.nonzero(np.unpackbits(np.frombuffer(by,dtype=np.uint8),bitorder='little'))[0].tolist()
-
-def share_large_primes(n,degree,lps):
-    # lps: large primes of partial relations found outside the NFS (values X^2 = smooth * l mod n). A pair waiting here
-    # with the same rational large prime l is worth a row now: its l is cancelled by that partial relation in the joint
-    # matrix instead of by a second NFS pair. Only an l with n a square mod l can ever turn up in such a partial.
-    # The pair stays the mate of later pairs with the same l. Returns how many waiting pairs were released.
+def nfs_params(n,degree):
+    # what dep_square needs, as plain values (and what a second sieving process needs to use the same polynomial)
     st=_STATE.get((n,degree))
     if st is None:
-        return 0
-    live=st['lp_live']
-    lp=st['lp']
-    f_x,d,m0,m1,leading=st['f'],st['d'],st['m0'],st['m1'],st['leading']
-    out=0
-    for l in lps:
-        if l in live:
-            continue
-        live.add(l)
-        mate=lp.get(('r',l))
-        if mate is None or l in st['lp_open']:
-            continue
-        st['lp_open'].add(l)
-        a,b=mate
-        i=_add_row(st,[(a,b,a*m1-b*m0,eval_F(a,b,f_x,d),[-b,a*leading],0,l)],1)
-        if i>=0:
-            st['pending'].append(i)
-            st['lp_shared']+=1
-            out+=1
-    return out
-
-def lazy_export(n,degree,start):
-    # What another process needs to take the square root of a dependency later: the polynomial data (plain values), the
-    # rows from number `start` on as (element, product of the rational values, log2 embeddings, pairs, largest |a|,|b|),
-    # and the primes the bits of a rational parity mask stand for.
-    st=_STATE.get((n,degree))
-    if st is None:
-        return None,[],[]
-    par={k:st[k] for k in ('n','d','leading','m0','m1','inert','lg_gp','lg_L','f_norm')}
+        return None
+    par={k:st[k] for k in ('n','d','leading','m0','m1','inert','lg_gp','lg_L','f_norm','om')}
     par['g']=[int(x) for x in st['g']]
     par['g_prime_sq']=[int(x) for x in st['g_prime_sq']]
     par['g_prime_eval']=int(st['g_prime_eval'])
-    rows=[([int(x) for x in r[6]],int(r[8]),r[3],r[1],r[0]) for r in st['rows'][start:]]
-    return par,rows,list(st['rprimes'])
+    par['poly']=([int(x) for x in st['f']],int(st['m0']),int(st['m1']),list(st['cq']))
+    par['nchar']=len(st['cq'])+2
+    return par
 
-def dep_square(par,rowinfo,mask):
-    # One dependency, given as the bit mask of its rows: returns (P, X) with X^2 = P mod n, P the exact product of the
-    # rational values of its rows, or None. This is the square root _bsmooth takes, done once for a whole combination
-    # of dependencies instead of once for each.
-    n,d,leading,m0,m1=par['n'],par['d'],par['leading'],par['m0'],par['m1']
-    g=[_big(x) for x in par['g']]
-    parts=[rowinfo[j] for j in _mask_idx(mask)]
-    if not parts:
-        return 1,1
-    S=sum(r[3] for r in parts)
-    if S&1:
-        return None
-    xr=par['g_prime_eval']*pow(leading,S>>1,n)%n
-    if math.gcd(xr,n)!=1:
-        return None
-    polys=[[_big(x) for x in r[0]] for r in parts]
-    gs=[_big(r[1]) for r in parts]
-    while len(polys)>1:
-        nxt=[_mulred(polys[i],polys[i+1],g) for i in range(0,len(polys)-1,2)]
-        if len(polys)&1:
-            nxt.append(polys[-1])
-        polys=nxt
-    while len(gs)>1:
-        nxt=[gs[i]*gs[i+1] for i in range(0,len(gs)-1,2)]
-        if len(gs)&1:
-            nxt.append(gs[-1])
-        gs=nxt
-    PG=int(gs[0])
-    gamma=_mulred([_big(x) for x in par['g_prime_sq']],polys[0],g)
-    pin=par['inert']
-    fq=par.get('_fq')
-    if fq is None:
-        fq=par['_fq']=_Fq(par['g'],pin)
-    root0=fq.inv_sqrt([int(x%pin) for x in gamma])
-    if root0 is None:
-        return None
-    lg=par['lg_gp']+0.5*sum(r[2] for r in parts)
-    bits=float(np.max(lg[None,:]+par['lg_L']))+math.log2(d)
-    for attempt in range(2):
-        if attempt==0:
-            bound=1<<max(1,int(bits)+25)
-        else:
-            u=max(r[4] for r in parts)
-            fd=int(pow(d,1.5))+1
-            bound=max(fd*pow(par['f_norm'],d-1-i)*pow(2*abs(leading)*(2*u)*par['f_norm'],S>>1) for i in range(d))
-        root=_lift_sqrt([_big(x) for x in root0],gamma,g,_big(pin),bound)
-        root=[0]*(d-len(root))+root
-        y=eval_F(leading*m0,m1,root,d-1)*pow(m1,S>>1,n)%n
-        X=int(y)*pow(xr,-1,n)%n
-        if (X*X-PG)%n==0:
-            return PG,X
-    return None
+def nfs_open(n,primeslist,degree,poly=None):
+    # set-up without sieving (poly: see _setup); False if it cannot be done
+    if (n,degree) not in _STATE:
+        _STATE[(n,degree)]=_setup(n,degree,primeslist,poly)
+    return _STATE[(n,degree)] is not None
 
-def _bsmooth(st,idx):
-    # dependency -> (v, X^2, odd) with X^2 = v mod n and v = signed product of the odd-exponent rational primes
-    n,d,g,leading,m0,m1=st['n'],st['d'],st['g'],st['leading'],st['m0'],st['m1']
-    rows=st['rows']
-    t0=default_timer()
-    g=[_big(x) for x in g]
-    # The rows are taken in groups of 8 consecutive ones. A dependency uses some subset of each group, and what a
-    # subset contributes is kept: the product of its elements, its rational exponents, its embedding sizes, its number
-    # of pairs. Later dependencies that use the same subset (there are at most 255 per group) reuse all of it, so the
-    # work below is over about a quarter as many, larger, pieces.
-    pat={}
-    for j in idx:
-        pat[j>>3]=pat.get(j>>3,0)|(1<<(j&7))
-    cache=st['pc']
-    parts=[]
-    for gi,bits in pat.items():
-        ck=(gi<<8)|bits
-        pc=cache.get(ck)
-        if pc is None:
-            sel=[rows[(gi<<3)+t] for t in range(8) if (bits>>t)&1]
-            pr=sel[0][6]
-            for r in sel[1:]:
-                pr=_mulred(pr,r[6],g)
-            pc=(pr,np.concatenate([r[2][0] for r in sel]),np.concatenate([r[2][1] for r in sel]),
-                sum(r[3] for r in sel),sum(r[1] for r in sel),max(r[0] for r in sel))
-            cache[ck]=pc
-        parts.append(pc)
-    S=sum(pc[4] for pc in parts)                        # number of (a,b) pairs in the dependency
-    if S&1:
-        return None
-    xr=st['g_prime_eval']*pow(leading,S>>1,n)%n
-    if math.gcd(xr,n)!=1:
-        return None
-    _tick('collect',t0)
-    t0=default_timer()
-    # rational side from the stored factorisations: prod G = v*c^2
-    plist=st['plist']
-    if len(st['parr'])!=len(plist):
-        st['parr']=np.array(plist,dtype=np.int64)       # the same primes as an array (large primes stay below 2^63)
-    parr=st['parr']
-    tot=np.bincount(np.concatenate([pc[1] for pc in parts]),weights=np.concatenate([pc[2] for pc in parts]),minlength=len(plist)).astype(np.int64)
-    nz=np.nonzero(tot)[0]
-    ex=tot[nz]
-    pv=parr[nz]
-    oddl=pv[(ex&1)==1].tolist()
-    odd=set(oddl)
-    v=math.prod(oddl)
-    # c = product of p^(e//2): the primes are grouped by e//2, so there is one modular power per distinct value
-    half=ex>>1
-    keep=(half>0)&(pv>1)
-    half=half[keep]
-    pv=pv[keep]
-    order=np.argsort(half,kind='stable')
-    half=half[order]
-    pv=pv[order].tolist()
-    hv,first=np.unique(half,return_index=True)
-    first=first.tolist()+[len(pv)]
-    c=1
-    for t,hh in enumerate(hv.tolist()):
-        c=c*pow(math.prod(pv[first[t]:first[t+1]])%n,hh,n)%n
-    _tick('rational side',t0)
-    t0=default_timer()
-    # gamma = g'^2 * product of the elements, by a balanced product tree
-    polys=[pc[0] for pc in parts]
-    while len(polys)>1:
-        nxt=[_mulred(polys[i],polys[i+1],g) for i in range(0,len(polys)-1,2)]
-        if len(polys)&1:
-            nxt.append(polys[-1])
-        polys=nxt
-    gamma=_mulred([_big(x) for x in st['g_prime_sq']],polys[0],g)
-    _tick('product',t0)
-    t0=default_timer()
-    pin=st['inert']
-    root0=st['fq'].inv_sqrt([int(x%pin) for x in gamma])
-    if root0 is None:
-        st['sqrt_fail']+=1
-        return None
-    _tick('root mod p',t0)
-    t0=default_timer()
-    # size of sqrt(gamma) from its embeddings (24 bits of margin); if that fails, the coarse coefficient bound
-    lg=st['lg_gp']+0.5*sum(pc[3] for pc in parts)
-    bits=float(np.max(lg[None,:]+st['lg_L']))+math.log2(d)
-    X=0
-    for attempt in range(2):
-        if attempt==0:
-            bound=1<<max(1,int(bits)+25)
-        else:
-            u=max(pc[5] for pc in parts)
-            fd=int(pow(d,1.5))+1
-            bound=max(fd*pow(st['f_norm'],d-1-i)*pow(2*abs(leading)*(2*u)*st['f_norm'],S>>1) for i in range(d))
-        root=_lift_sqrt([_big(x) for x in root0],gamma,g,_big(pin),bound)
-        root=[0]*(d-len(root))+root
-        y=eval_F(leading*m0,m1,root,d-1)*pow(m1,S>>1,n)%n
-        X=int(y)*pow(xr,-1,n)%n
-        if (X*X-v*c*c)%n==0:
-            break
-    else:
-        st['sqrt_fail']+=1
-        return None
-    _tick('lift',t0)
-    X=X*pow(c,-1,n)%n
-    assert (X*X-v)%n==0
-    return v,X*X,odd
+def nfs_state(n,degree):
+    # the part of the sieving state a restart needs: lines done, their widths, the free relations already made
+    st=_STATE[(n,degree)]
+    return {'line':st['line'],'width':dict(st['width']),'free_done':set(st['free_done']),'rat_sieved':st['rat_sieved']}
 
-def nfs_launch(n,primeslist,ret_array,want,fb_keep,picks,degree,lines,T,force_T,force_lines,lp_bits=-1,lazy=False):
-    # One NFS call. primeslist: the algebraic factor base (odd primes not dividing n; fixed after the first call).
+def nfs_restore(n,degree,saved,pairs):
+    st=_STATE[(n,degree)]
+    st['line']=saved['line']
+    st['width']=dict(saved['width'])
+    st['free_done']=set(saved['free_done'])
+    st['rat_sieved']=saved['rat_sieved']
+    st['seen'].update((int(a),int(b)) for a,b in pairs)
+
+def nfs_sieve(n,primeslist,fb_keep,picks,degree,lines,T,force_T,force_lines,lp_bits=-1,lp2_bits=0,line_mod=1,line_res=0):
+    # One round of sieving. primeslist: the algebraic factor base (odd primes not dividing n; fixed after the first call).
     # fb_keep + picks: the rational factor base, any odd primes: they need not be in the algebraic base.
-    # picks: primes forced to divide the rational value on a sub-lattice (the singleton targets).
-    # lines / T: lines b added to the ordinary region by this call, and its half-width in a (T=0: skew * lines so far).
-    # force_lines / force_T: lines and half-width on the forced lattice, in its reduced coordinates
-    #   (force_T=0: the largest factor base prime).
-    # lp_bits: a relation may keep one prime up to 2^lp_bits outside the factor base, on one side (0 = none; never
-    #   above the square of the largest base prime; -1 = the module default NFS_LP_BITS).
-    # lazy: take no square roots. ret_array[0] / ret_array[1] then get, per dependency, the parity mask of its rational
-    #   exponents (bits = the primes of lazy_export) and the bit mask of its rows; see dep_square().
-    # Returns the number of b-smooths appended to ret_array.
+    # picks: primes forced to divide the rational value on a sub-lattice.
+    # lines / T: lines b added to the region by this call, and its half-width in a: max(T, skew * lines so far), with
+    #   T = 0 standing for the width the polynomial was tuned for. Lines sieved before are widened when the width grows.
+    # line_mod / line_res: this process only sieves the lines b = line_res mod line_mod (several processes share a region).
+    # lp_bits: a relation may keep a prime up to 2^lp_bits outside the factor base (never above the square of the
+    #   largest base prime, so it is certainly prime; 0 = none; -1 = the module default). lp2_bits: a relation may keep one
+    #   on each side at once if both are below 2^lp2_bits (0 = never both).
+    # Returns the new rows: (pairs as an int64 array [k,2], character bits (list of int), column numbers (int64, all rows
+    # one after the other), where each row ends in that array (int64 [k]), number of rows without a large prime), or None.
     st=_STATE.get((n,degree))
     if st is None:
         if (n,degree) in _STATE:
-            return 0
+            return None
         st=_setup(n,degree,primeslist)
         _STATE[(n,degree)]=st
         if st is None:
-            return 0
+            return None
     t_start=default_timer()
     d,f_x,m0,m1,leading,primes,R=st['d'],st['f'],st['m0'],st['m1'],st['leading'],st['primes'],st['R']
     picks=[q for q in picks if q>2 and m1%q!=0 and n%q!=0]
@@ -1830,130 +1681,116 @@ def nfs_launch(n,primeslist,ret_array,want,fb_keep,picks,degree,lines,T,force_T,
         st['pp']=np.array(allr,dtype=np.int64)
         st['m0p']=np.array([m0%p for p in allr],dtype=np.int64)
         st['m1p']=np.array([m1%p for p in allr],dtype=np.int64)
-    fbprod_r=math.prod(fb_r)
-    fbprod_a=math.prod(primes)
-    big_r=_big(fbprod_r)
-    big_a=_big(fbprod_a)
+        st['ppd']=st['pp'].astype(np.float64)                # the same in doubles, for _div_rat
+        st['ppi']=1.0/st['ppd']
+        st['m0pd']=st['m0p'].astype(np.float64)
+        st['m1pd']=st['m1p'].astype(np.float64)
+        st['dbuf']=np.zeros(max(len(allr),len(st['ap']))+1,dtype=np.int64)
+        st['big_r']=None
+    if st.get('big_r') is None or st.get('big_r_n')!=len(fb_r):
+        st['big_r']=_big(math.prod(fb_r))
+        st['big_r_n']=len(fb_r)
+        st['big_a']=_big(math.prod(primes))
+    big_r=st['big_r']
+    big_a=st['big_a']
     f_dbl=np.array(f_x,dtype=np.float64)
-    rows=st['rows']
-    new_rows=st['pending']
-    st['pending']=[]
-    counts=[0,0,0,0,0]                  # free, unforced, forced, built from two pairs with a shared large prime, pairs left waiting
+    o_ab=[]
+    o_ch=[]
+    o_cols=[]
+    o_end=[]
+    counts=[0,0,0,0,0]                  # free, unforced, forced, with one large prime, with two
+    def emit(a,b,row,kind):
+        o_ab.append((a,b))
+        o_ch.append(row[1])
+        o_cols.extend(row[0])
+        o_end.append(len(o_cols))
+        counts[kind]+=1
     # free relations: p splits completely, so (p) is the product of its d degree-1 ideals; rational side p*m1
-    if _is_smooth(m1,fbprod_r):
+    if line_res==0 and _is_smooth(m1,math.prod(fb_r)):
         for p in rat_primes:
             if p in st['free_done'] or p not in R or len(R[p])!=d or leading%p==0:
                 continue
             st['free_done'].add(p)
-            i=_add_row(st,[(p,0,p*m1,leading*pow(p,d) if d&1 else leading*p,[leading*p],0,0)],0)
-            if i>=0:
-                new_rows.append(i)
-                counts[0]+=1
+            row=_raw_row(st,p,0,p*m1,leading*pow(p,d) if d&1 else leading*p)
+            if row is not None:
+                emit(p,0,row,0)
     # sieve set-up
     # the two sides have their own prime lists: the rational primes need not be in the algebraic base
     pickset=set(picks)
     sv_r=[p for p in rat_primes if p>NFS_SMALL and p not in pickset and m1%p!=0]
     sv_a=[p for p in primes if p>NFS_SMALL]
     lg2=lambda p:int(round(2*math.log2(p)))                 # logs in half bits
-    r_p=np.array(sv_r,dtype=np.int64)
-    r_root=np.array([(m0*pow(m1,-1,p))%p for p in sv_r],dtype=np.int64)     # a = b*m0/m1 mod p
-    r_lg=np.array([lg2(p) for p in sv_r],dtype=np.uint16)
-    a_p=np.array([p for p in sv_a for r in R[p]],dtype=np.int64)
-    a_root=np.array([r for p in sv_a for r in R[p]],dtype=np.int64)
-    a_lg=np.array([lg2(p) for p in a_p.tolist()],dtype=np.uint16)
-    # one large prime is allowed on either side (not both): the thresholds leave room for it
+    key=(len(sv_r),len(picks))
+    if st.get('sv_key')!=key:
+        st['sv_key']=key
+        st['sv']=(np.array(sv_r,dtype=np.int64),
+                  np.array([(m0*pow(m1,-1,p))%p for p in sv_r],dtype=np.int64),     # a = b*m0/m1 mod p
+                  np.array([lg2(p) for p in sv_r],dtype=np.uint16),
+                  np.array([p for p in sv_a for r in R[p]],dtype=np.int64),
+                  np.array([r for p in sv_a for r in R[p]],dtype=np.int64),
+                  np.array([lg2(p) for p in sv_a for r in R[p]],dtype=np.uint16))
+    r_p,r_root,r_lg,a_p,a_root,a_lg=st['sv']
     if lp_bits<0:
         lp_bits=NFS_LP_BITS
     lp_a=min(1<<lp_bits,primes[-1]*primes[-1]) if lp_bits>0 else 0
-    lp_r=lp_a
+    # a rational cofactor is only certainly prime below the square of the smallest prime the rational base lacks
+    if st.get('miss_n')!=len(fb_r):
+        fbs=set(fb_r)
+        st['miss_n']=len(fb_r)
+        st['miss']=next((p for p in primes if p not in fbs),primes[-1])
+    lp_r=min(lp_a,st['miss']*st['miss'])
     slack_g=2*NFS_SLACK
     slack_a=2*NFS_SLACK
     slack_lp=2*(lp_a.bit_length()-1) if lp_a else 0
+    lp2=min(1<<lp2_bits,lp_a,lp_r) if lp2_bits>0 else 0
+    slack_lp2=2*(lp2.bit_length()-1) if lp2 else -1000000
     ncand=0
     nhit=0
     _T.clear()
-    made=0
-    t_sqrt=0.0
-    lp=st['lp']
-    def take(a,b,kind):
-        if b==0 or math.gcd(a,b)!=1 or (a,b) in st['seen']:
-            return
-        G=a*m1-b*m0
-        if G==0:
-            return
-        cg=_cofactor(G,big_r)
-        if cg>lp_r and cg!=1:
-            return
-        Fv=eval_F(a,b,f_x,d)
-        if Fv==0:
-            return
-        cf=_cofactor(Fv,big_a)
-        if cf!=1 and (cf>lp_a or cg!=1):
-            return
-        st['seen'].add((a,b))
-        me=(a,b,G,Fv,[-b,a*leading],cf if cf!=1 else 0,cg if cg!=1 else 0)
-        if cf==1 and cg==1:
-            i=_add_row(st,[me],kind)
-        else:
-            # one large prime (below the square of the largest base prime, so it is prime). The first pair seen with it
-            # waits; every later pair with the same one is multiplied with that first pair, which removes it.
-            k=('r',cg) if cg!=1 else ('a',cf,(a*pow(b,-1,cf))%cf)
-            mate=lp.get(k)
-            if mate is None:
-                lp[k]=(a,b)
-                counts[4]+=1
-                if cg!=1 and cg in st['lp_live'] and cg not in st['lp_open']:
-                    # the other sieve already holds a relation with this large prime: this pair goes in by itself, the
-                    # large prime as one more rational column that the two share (see share_large_primes)
-                    st['lp_open'].add(cg)
-                    i=_add_row(st,[me],kind)
-                    if i>=0:
-                        new_rows.append(i)
-                        st['lp_shared']+=1
-                return
-            a2,b2=mate
-            i=_add_row(st,[me,(a2,b2,a2*m1-b2*m0,eval_F(a2,b2,f_x,d),[-b2,a2*leading],me[5],me[6])],kind)
-            kind=3
-        if i>=0:
-            new_rows.append(i)
-            counts[kind]+=1
-    intern=st['intern']
-    def flush():
-        nonlocal made,t_sqrt
-        for i in new_rows:
-            t1=default_timer()
-            dep=_reduce(st,i)
-            _tick('elimination',t1)
-            if dep is None:
+    seen=st['seen']
+    def take_many(pairs,kind):
+        # the candidates of a line: rational side first, the norm only for those that pass
+        c=[]
+        gs=[]
+        for a,b in pairs:
+            if b==0 or (a,b) in seen or math.gcd(a,b)!=1:
                 continue
-            if lazy:
-                # no square root now: hand out the dependency itself (its rational parity mask and its row mask).
-                # dep_square() takes one square root for whatever combination of these the final matrix settles on.
-                ret_array[0].append(dep[1])
-                ret_array[1].append(dep[0])
-                made+=1
+            G=a*m1-b*m0
+            if G:
+                c.append((a,b))
+                gs.append(G)
+        if not c:
+            return
+        cgs=_cofactors(gs,big_r)
+        c2=[]
+        fs=[]
+        for k in range(len(c)):
+            cg=cgs[k]
+            if cg!=1 and cg>lp_r:
                 continue
-            t1=default_timer()
-            res=_bsmooth(st,_mask_idx(dep[0]))
-            t_sqrt+=default_timer()-t1
-            if res is None or res[1] in st['have']:
+            a,b=c[k]
+            Fv=eval_F(a,b,f_x,d)
+            if Fv:
+                c2.append((a,b,gs[k],cg))
+                fs.append(Fv)
+        if not c2:
+            return
+        cfs=_cofactors(fs,big_a)
+        for k in range(len(c2)):
+            a,b,G,cg=c2[k]
+            cf=cfs[k]
+            if cf!=1 and (cf>lp_a or (cg!=1 and (cf>lp2 or cg>lp2))):
                 continue
-            t1=default_timer()
-            st['have'].add(res[1])
-            ret_array[0].append(res[0])
-            ret_array[1].append(res[1])
-            ret_array[2].append(tuple(sorted(intern.setdefault(p,p) for p in res[2])))   # a tuple of shared ints: a dependency over thousands of relations has thousands of odd primes
-            ret_array[3].append([])
-            made+=1
-            _tick('store',t1)
-        del new_rows[:]
-    flush()
-    # ordinary region: the rectangle |a| <= M, 1 <= b <= L grows by `lines` lines per call and keeps the shape the
-    # polynomial was tuned for (M = skew*L once that exceeds the tuned width). Every pair is sieved once: for a line
-    # seen before, only the part outside its old width is sieved.
+            row=_raw_row(st,a,b,G,fs[k],cf if cf!=1 else 0,cg if cg!=1 else 0)
+            if row is None:
+                continue
+            seen.add((a,b))
+            emit(a,b,row,kind if cf==1 and cg==1 else (3 if cf==1 or cg==1 else 4))
+    # the region: the rectangle |a| <= M, 1 <= b <= L. It grows by `lines` lines per call; M follows skew*L once that
+    # exceeds the starting width. Every pair is sieved once: for a line seen before, only the part outside its old width.
     L=st['line']+lines
     st['line']=L
-    M=T if T>0 else max(st['M'],st['skew']*L)
+    M=max(T if T>0 else st['M'],st['skew']*L)
     width=st['width']
     if len(fb_r)>1.05*st['rat_sieved']:
         # the rational factor base has grown by more than 5% since the region was sieved: pairs that failed only because
@@ -1961,12 +1798,23 @@ def nfs_launch(n,primeslist,ret_array,want,fb_keep,picks,degree,lines,T,force_T,
         width.clear()
         st['rat_sieved']=len(fb_r)
     FT=(force_T if force_T>0 else primes[-1]) if len(picks)>0 else 0
-    buf_len=NFS_BLOCK
-    sg=np.zeros(buf_len,dtype=np.uint16)
-    sa=np.zeros(buf_len,dtype=np.uint16)
-    for b in range(1,L+1):
-        if made>=want:
-            break
+    sg=np.zeros(NFS_BLOCK,dtype=np.uint16)
+    sa=np.zeros(NFS_BLOCK,dtype=np.uint16)
+    order=st.get('order')
+    if order is None:
+        # the lines in the order they are worth: on line b only the a coprime to b count, and a b with small prime
+        # factors also makes the norm less likely to be smooth, so such lines wait until the others have grown
+        bm=200000
+        phi=np.arange(bm+1,dtype=np.float64)
+        for p in range(2,bm+1):
+            if phi[p]==p:
+                phi[p::p]*=(1.0-1.0/p)
+        bb=np.arange(1,bm+1,dtype=np.float64)
+        order=st['order']=(np.argsort(bb*(bb/phi[1:])**(NFS_LINE_EXP/100.0),kind='stable')+1).tolist()
+    for li in range(L):
+        if li%line_mod!=line_res%line_mod:
+            continue
+        b=order[li]
         w=width.get(b,-1)
         if w>=M:
             continue
@@ -1979,14 +1827,12 @@ def nfs_launch(n,primeslist,ret_array,want,fb_keep,picks,degree,lines,T,force_T,
             ncand+=sv_len
             t1=default_timer()
             hits=_sieve_seg(sg,sa,sv_len,NFS_BLOCK,r_p,(st_r-sh)%r_p,r_lg,a_p,np.where(st_a>=0,(st_a-sh)%a_p,sv_len),a_lg,
-                            float(lo),1.0,float(b),0.0,float(m1),float(m0),f_dbl,d,0,slack_g,slack_a,slack_lp)
+                            float(lo),1.0,float(b),0.0,float(m1),float(m0),f_dbl,d,0,slack_g,slack_a,slack_lp,slack_lp2)
             _tick('sieve',t1)
             t1=default_timer()
             nhit+=len(hits)
-            for j in hits:
-                take(lo+j,b,1)
+            take_many([(lo+j,b) for j in hits],1)
             _tick('candidates',t1)
-        flush()
     # forced lattice: the pairs with a = b*m0/m1 mod Qf, Qf = product of the picks, so Qf divides a*m1 - b*m0
     Qf=math.prod(picks)
     if Qf>1:
@@ -2035,22 +1881,88 @@ def nfs_launch(n,primeslist,ret_array,want,fb_keep,picks,degree,lines,T,force_T,
         init_g=int(round(2*math.log2(Qf)))
         for jl in range(1,FL+1):
             ncand+=fl_len
+            fp=[]
             for j in _sieve_seg(sg,sa,fl_len,NFS_BLOCK,l_rp,(l_rr*jl+FT)%l_rp,l_rlg,l_ap,(l_ar*jl+FT)%l_ap,l_alg,
                                 float(-FT*e1[0]+jl*e2[0]),float(e1[0]),float(-FT*e1[1]+jl*e2[1]),float(e1[1]),
-                                float(m1),float(m0),f_dbl,d,init_g,slack_g,slack_a,slack_lp):
+                                float(m1),float(m0),f_dbl,d,init_g,slack_g,slack_a,slack_lp,slack_lp2):
                 il=j-FT
                 a=il*e1[0]+jl*e2[0]
                 b=il*e1[1]+jl*e2[1]
                 if b<0:
                     a,b=-a,-b
-                take(a,b,2)
-            flush()
+                fp.append((a,b))
+            take_many(fp,2)
     total=default_timer()-t_start
-    print("[i]NFS(d="+str(d)+"): rational side "+str(len(fb_r))+" primes"+(" (forced "+str(picks)+")" if picks else "")+", region |a|<="+str(M)+", b<="+str(L)+", "+str(ncand)+" new pairs")
-    print("[i]NFS(d="+str(d)+"): new relations "+str(counts[0])+" free + "+str(counts[1])+" unforced + "+str(counts[2])+" forced"+(" + "+str(counts[3])+" from large-prime pairs ("+str(len(lp))+" large primes waiting)" if lp_a else "")+"; total "+str(len(rows))+" relations, "+str(len(st['acol']))+" algebraic columns, rank "+str(len(st['basis']))+(", "+str(st['lp_shared'])+" pairs in through a large prime shared with the other sieve" if st['lp_shared'] else ""))
-    print("[i]NFS(d="+str(d)+"): "+str(made)+" b-smooths for the SIQS matrix"+(" ("+str(st['sqrt_fail'])+" square roots failed so far)" if st['sqrt_fail'] else "")+"   time %.1fs, of which square roots %.1fs"%(total,t_sqrt))
-    print("[i]NFS(d="+str(d)+"): "+str(nhit)+" sieve candidates; seconds: "+", ".join(k+" %.1f"%v for k,v in _T.items()))
-    if picks and made and not lazy:
-        newsets=ret_array[2][-made:]
-        print("[i]NFS(d="+str(d)+"): forced primes among the odd-exponent factors of the new b-smooths: "+", ".join(str(q)+" in "+str(sum(1 for s_ in newsets if q in s_))+"/"+str(made) for q in sorted(picks)))
-    return made
+    tot=st['counts']
+    for k in range(5):
+        tot[k]+=counts[k]
+    st['nrows']+=len(o_ab)
+    print("[i]NFS(d="+str(d)+")"+(" #"+str(line_res) if line_mod>1 else "")+": region |a|<="+str(M)+", "+str(L)+" lines (b up to "+str(max(order[:L]))+"), "+str(ncand)+" new pairs, "+str(nhit)+" candidates; rational side "+str(len(fb_r))+" primes"+(" (forced "+str(picks)+")" if picks else "")+"; %.1fs: "%total+", ".join(k+" %.1f"%v for k,v in _T.items()))
+    print("[i]NFS(d="+str(d)+")"+(" #"+str(line_res) if line_mod>1 else "")+": new rows "+str(counts[0])+" free + "+str(counts[1]+counts[2])+" full"+(" ("+str(counts[2])+" forced)" if picks else "")+" + "+str(counts[3])+" with one large prime + "+str(counts[4])+" with two; so far "+str(tot[0]+tot[1]+tot[2])+" + "+str(tot[3])+" + "+str(tot[4]))
+    if not o_ab:
+        return None
+    return (np.array(o_ab,dtype=np.int64),o_ch,np.array(o_cols,dtype=np.int64),np.array(o_end,dtype=np.int64),counts[0]+counts[1]+counts[2])
+
+def dep_square(par,pairs):
+    # A set of (a,b) pairs whose algebraic columns and characters cancel: returns (P, X) with X^2 = P mod n, P the exact
+    # product of their rational values a*m1 - b*m0, or None.
+    n,d,leading,m0,m1=par['n'],par['d'],par['leading'],par['m0'],par['m1']
+    g=[_big(x) for x in par['g']]
+    S=len(pairs)
+    if S==0:
+        return 1,1
+    if S&1:
+        return None
+    xr=par['g_prime_eval']*pow(leading,S>>1,n)%n
+    if math.gcd(xr,n)!=1:
+        return None
+    om=par['om']
+    emb=np.zeros(d)
+    polys=[]
+    gs=[]
+    u=1
+    for a,b in pairs:
+        a=int(a)
+        b=int(b)
+        polys.append([_big(-b),_big(a*leading)] if b else [_big(a*leading)])
+        gs.append(_big(a*m1-b*m0))
+        emb=emb+(np.log2(np.abs(a*leading-b*om)) if b else math.log2(abs(a*leading)))
+        if abs(a)>u:
+            u=abs(a)
+        if b>u:
+            u=b
+    while len(polys)>1:
+        nxt=[_mulred(polys[i],polys[i+1],g) for i in range(0,len(polys)-1,2)]
+        if len(polys)&1:
+            nxt.append(polys[-1])
+        polys=nxt
+    while len(gs)>1:
+        nxt=[gs[i]*gs[i+1] for i in range(0,len(gs)-1,2)]
+        if len(gs)&1:
+            nxt.append(gs[-1])
+        gs=nxt
+    PG=int(gs[0])
+    gamma=_mulred([_big(x) for x in par['g_prime_sq']],polys[0],g)
+    pin=par['inert']
+    fq=par.get('_fq')
+    if fq is None:
+        fq=par['_fq']=_Fq(par['g'],pin)
+    root0=fq.inv_sqrt([int(x%pin) for x in gamma])
+    if root0 is None:
+        return None
+    # size of the square root from its embeddings (24 bits of margin); if that fails, the coarse coefficient bound
+    lg=par['lg_gp']+0.5*emb
+    bits=float(np.max(lg[None,:]+par['lg_L']))+math.log2(d)
+    for attempt in range(2):
+        if attempt==0:
+            bound=1<<max(1,int(bits)+25)
+        else:
+            fd=int(pow(d,1.5))+1
+            bound=max(fd*pow(par['f_norm'],d-1-i)*pow(2*abs(leading)*(2*u)*par['f_norm'],S>>1) for i in range(d))
+        root=_lift_sqrt([_big(x) for x in root0],gamma,g,_big(pin),bound)
+        root=[0]*(d-len(root))+root
+        y=eval_F(leading*m0,m1,root,d-1)*pow(m1,S>>1,n)%n
+        X=int(y)*pow(xr,-1,n)%n
+        if (X*X-PG)%n==0:
+            return PG,X
+    return None

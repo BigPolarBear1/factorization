@@ -41,6 +41,7 @@ import queue
 import io
 import contextlib
 import traceback
+import pickle
 
 
 k_max=10_000
@@ -57,14 +58,19 @@ lin_sieve_size=1
 lin_sieve_size2=10_000_000
 quad_sieve_size=10
 NFS_DEGREE=3          #degree of the number field sieve polynomial
-NFS_LINES=100         #lines b added to the ordinary sieve region by each NFS call (the region is kept between calls)
-NFS_T=0               #half-width in a of the ordinary region (0 = skew of the polynomial * number of lines so far)
+NFS_LINES=100         #lines b added to the sieve region by each NFS round (the region is kept between rounds)
+NFS_T=0               #half-width in a of the region to start with (0 = the width the polynomial was tuned for); it follows skew * lines once that is larger
 NFS_FORCE_T=0         #half-width of the strip per line on the forced lattice (0 = the largest factor base prime)
 NFS_FORCE_LINES=1000  #number of lines to sieve on the forced lattice per call
-NFS_MIX_WANT=600      #how many b-smooths one NFS call should hand to the SIQS matrix at most
-NFS_LP_BITS=24        #large primes in the NFS: a relation may keep one prime up to 2^NFS_LP_BITS outside the factor base (0 = off); two relations with the same one are combined
+NFS_LP2_BITS=0        #a relation of the NFS may keep a large prime on both sides at once if both are below 2^NFS_LP2_BITS (0 = never both)
+NFS_PROCS=1           #-mode nfs: number of processes that sieve for the NFS (they share the lines of one region)
+NFS_SIQS=1            #-mode nfs: 1 = the SIQS process runs, 0 = NFS only
+NFS_SAVE=""           #-mode nfs: directory where the NFS rows are kept after every round; a later run with the same directory goes on from there
+LA_DENSE=3000         #-mode nfs: the matrix job eliminates light columns on the sparse rows until this many columns are left, then solves densely
+LA_MAXW=40            #-mode nfs: ...or until the lightest column left is in more rows than this
+NFS_LP_BITS=24        #large primes: a relation of the NFS may keep one prime up to 2^NFS_LP_BITS outside the factor base (0 = off); it is one more column of the matrix
 NFS_BASE=0            #-mode nfs: size of the algebraic factor base of the NFS = the first NFS_BASE primes of the SIQS factor base (0 = all of it)
-LA_EVERY=1000         #-mode nfs: the matrix is tried each time this many new b-smooths have arrived (from the SIQS or the NFS)
+LA_EVERY=1000         #-mode nfs: the first matrix job starts after this many complete relations (SIQS and NFS together); later ones are timed by how many rows the last one was short of
 NFS_SHARE_LP=1        #-mode nfs: 1 = the SIQS keeps partial relations (one large prime up to 2^NFS_LP_BITS) and the two sieves share those large primes as columns of the joint matrix; 0 = off
 NFS_SING_FORCE=0      #how many singleton targets the NFS forces per call, largest first (each divides the rational value of every forced pair; each is tried once)
 NFS_SING_SMALL=200    #every prime up to this bound counts as core: it is in the rational factor base, and it never makes a relation a singleton when the targets are chosen
@@ -543,8 +549,8 @@ def launch(n,primeslist,primeslist2,out_q=None,stop=None):
     seen_x=set()                        # (2*quad*x)^2 of the relations found so far
     # sieve data as arrays: prime, round(log2), and how many leading primes keep the per-prime code (they are sieved
     # with their powers; the rest only to the first power, with all start positions computed at once)
-    sv_P=np.array(primeslist,dtype=np.int64)
-    sv_lg=np.array([round(math.log2(p)) for p in primeslist],dtype=np.uint16)
+    sv_Pall=np.array(primeslist,dtype=np.int64)
+    sv_lgall=np.array([round(math.log2(p)) for p in primeslist],dtype=np.uint16)
     sv_k0=sum(1 for p in primeslist if p<SIQS_POWER_BOUND)
     small_view=primeslist_a[:sv_k0]
     global SIQS_FBPROD,SIQS_CUR
@@ -585,10 +591,18 @@ def launch(n,primeslist,primeslist2,out_q=None,stop=None):
         retry=0
         lin,lin_parts=get_lin(cfact,new_mod,quad,n,1)
         # per modulus: cmod^-1 mod p for every prime that has a root and does not divide the modulus
+        # Only the primes with a root that do not divide the modulus take part (n is a square mod p): the arrays below
+        # hold just those.
         sv_R=roots2d[quad,:len(primeslist)].astype(np.int64)
-        sv_cinv=np.array([pow(new_mod%p,-1,p) if new_mod%p else 0 for p in primeslist],dtype=np.int64)
-        sv_ok=(sv_R>0)&(sv_cinv>0)
-        sv_small=[int(q) for q in primeslist if q<SIQS_POWER_BOUND]+sv_P[~sv_ok].tolist()   # primes without a root in the arrays: tried by division
+        sv_idx=np.nonzero((sv_R>0)&(bigmod_array(new_mod,sv_Pall)!=0))[0]
+        sv_P=np.ascontiguousarray(sv_Pall[sv_idx])
+        sv_R=sv_R[sv_idx]
+        sv_lg=np.ascontiguousarray(sv_lgall[sv_idx])
+        sv_k0=int(np.searchsorted(sv_P,SIQS_POWER_BOUND))
+        sv_cinv=modinv_array(bigmod_array(new_mod,sv_P),sv_P)
+        # per modulus and Gray-code step: by how much the sieve roots move when the polynomial changes (see below)
+        sv_D=[np.ascontiguousarray((bigmod_array(2*lp_,sv_P)*sv_cinv)%sv_P) for lp_ in lin_parts]
+        sv_small=[int(q) for q in primeslist if q<SIQS_POWER_BOUND]+[math.isqrt(c_) for c_ in cfact]   # primes outside the arrays that can divide a value: tried by division
         z=quad#quadlist[j]
         lin_co_array=[]
         q=0
@@ -600,7 +614,9 @@ def launch(n,primeslist,primeslist2,out_q=None,stop=None):
         while poly_ind < end:
             if poly_ind != 0:
                 v,e=grays[poly_ind]
-                lin=(lin + 2 * e * lin_parts[v])%new_mod
+                lin_t=lin + 2 * e * lin_parts[v]
+                lin=lin_t%new_mod
+                lin_k=(lin_t-lin)//new_mod              # how many times the modulus was taken off
             else:
                 lin=lin2
             if quad_sign == "neg":
@@ -613,9 +629,14 @@ def launch(n,primeslist,primeslist2,out_q=None,stop=None):
                     sys.exit()            
             interval=build_database2interval(small_view,quad,n,lin,new_mod,roots2d,0,factor_ranking)   # small primes and their powers
             # the other primes: quad*x^2 = n mod p at x = +-R, and x = lin + cmod*i, so i = (+-R - lin)/cmod mod p
-            sv_lin=bigmod_array(lin,sv_P)
-            sv_s1=np.where(sv_ok,((sv_R-sv_lin)*sv_cinv)%sv_P,-1)
-            sv_s2=np.where(sv_ok,((sv_P-sv_R-sv_lin)*sv_cinv)%sv_P,-1)
+            if poly_ind==0:
+                sv_lin=bigmod_array(lin,sv_P)
+                sv_s1=np.ascontiguousarray(((sv_R-sv_lin)*sv_cinv)%sv_P)
+                sv_s2=np.ascontiguousarray(((sv_P-sv_R-sv_lin)*sv_cinv)%sv_P)
+            else:
+                # the next polynomial of the same modulus: lin changes by 2*e*lin_parts[v] - lin_k*cmod, so every root
+                # i = (+-R - lin)/cmod moves by -e*sv_D[v] + lin_k. One vector step instead of reducing lin mod every prime.
+                roots_step(sv_P,sv_s1,sv_s2,sv_D[v],e,lin_k)
             sieve_add(interval,sv_P,sv_s1,sv_s2,sv_lg,sv_k0)
             if SIQS_PARTIALS is not None:
                 SIQS_CUR=(sv_P,sv_s1,sv_s2,sv_small)
@@ -1422,6 +1443,24 @@ SIQS_CUR=None          # (primes, the two sieve roots of each for the current po
 SIQS_POWER_BOUND=256    # primes below this are sieved one by one with their powers; the others in one pass, first power only
 SIQS_FBPROD=None        # 2 * product of the factor base (set by launch)
 
+def modinv_array(x,P):
+    # x^-1 mod p for every p of the int64 array P (odd primes below 2^31), 0 where x is 0 mod p: x^(p-2) by squaring,
+    # all primes at once (the products stay below 2^62)
+    x=x%P
+    r=np.ones(len(P),dtype=np.int64)
+    e=P-2
+    b=x.copy()
+    while True:
+        m=(e&1).astype(bool)
+        if m.any():
+            r=np.where(m,(r*b)%P,r)
+        e=e>>1
+        if not e.any():
+            break
+        b=(b*b)%P
+    r[x==0]=0
+    return r
+
 def bigmod_array(x,P):
     # x mod p for every p of the int64 array P (p < 2^31), x a non-negative Python int: 30 bits at a time
     r=np.zeros(len(P),dtype=np.int64)
@@ -1430,6 +1469,32 @@ def bigmod_array(x,P):
         shift-=30
         r=((r<<30)+((x>>shift)&0x3fffffff))%P
     return r
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+cdef void roots_step(long long[::1] P,long long[::1] s1,long long[::1] s2,long long[::1] D,long long e,long long lin_k) noexcept nogil:
+    # s -> s - e*D + lin_k mod p for both roots of every prime, in place (start < 0: no root, left alone). D is already
+    # reduced mod p and lin_k is tiny, so the reduction is a few compare-and-subtract steps, no division.
+    cdef Py_ssize_t k
+    cdef long long p,sh,x
+    for k in range(P.shape[0]):
+        x=s1[k]
+        if x<0:
+            continue
+        p=P[k]
+        sh=(p-D[k] if e>0 else D[k])+lin_k
+        while sh>=p:
+            sh-=p
+        while sh<0:
+            sh+=p
+        x+=sh
+        if x>=p:
+            x-=p
+        s1[k]=x
+        x=s2[k]+sh
+        if x>=p:
+            x-=p
+        s2[k]=x
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -2581,19 +2646,22 @@ def get_primes(start,stop):
 ######################################################################################################################
 # -mode nfs: SIQS, NFS and the matrix in separate processes.
 #
-#   coordinator (run_parallel, the main process): the only owner of the relation list. It reads one queue (inbox) that
-#       all workers write to, drops duplicates, and starts a matrix job every LA_EVERY new b-smooths.
-#   siqs_worker: launch() on the full factor base; sends its new relations after every polynomial.
-#   nfs_worker:  keeps its own copy of the factor lists (the coordinator forwards the SIQS ones on the queue `feed`, the
-#       NFS ones it made itself), derives the core and the singleton targets from it and calls gnfs.nfs_launch.
-#   la_worker:   one process per matrix job, started with a frozen copy of the relations; at most one at a time.
+#   coordinator (run_parallel, the main process): the only owner of the rows. It reads one queue (inbox) that all workers
+#       write to, drops duplicate SIQS relations, and starts the matrix jobs.
+#   siqs_worker: launch() on the full factor base; sends its new relations and partial relations after every polynomial.
+#   nfs_worker:  one or more (NFS_PROCS), each sieving its own lines with the same polynomial; every relation goes out as
+#       a sparse row (gnfs.nfs_sieve). Nothing is eliminated there.
+#   la_worker:   one process per matrix job, started with a frozen copy of the rows; at most one at a time.
 #
-# Nothing is shared between the processes: every list lives in exactly one of them and data only moves through the two
-# queues, each of which has a single reader. A worker's view may lag behind the coordinator's, which costs at most a
-# stale singleton target.
+# The matrix: one row per relation of either kind, one column per rational prime (shared by both kinds: a SIQS relation
+# X^2 = smooth mod n only has those), per ideal and per quadratic character (NFS rows only). Large primes are columns
+# like any other, so a partial SIQS relation and an NFS relation with the same rational large prime complete each other.
+#
+# Nothing is shared between the processes: every list lives in exactly one of them and data only moves through queues
+# with a single reader each.
 ######################################################################################################################
 
-_SHARED_SETTINGS=("key","keysize","workers","g_debug","base","lin_sieve_size","lin_sieve_size2","quad_sieve_size","max_bound","g_nfs_poly","LA_EVERY")
+_SHARED_SETTINGS=("key","keysize","workers","g_debug","base","lin_sieve_size","lin_sieve_size2","quad_sieve_size","max_bound","g_nfs_poly","LA_EVERY","LA_DENSE","LA_MAXW")
 
 def export_settings():
     # the settings a worker needs (under the 'spawn' start method a child does not inherit them)
@@ -2628,9 +2696,9 @@ cdef extern from *:
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def gf2_nullspace(list rows,Py_ssize_t nbits,Py_ssize_t maxvec=40):
-    # The matrix as solve_bits takes it (one integer per factor, bit j = relation j), reduced the same way (each row's
-    # lowest set bit becomes its pivot and is cleared from every other row), on 64-bit words in C.
-    # Returns (up to maxvec dependencies as integers over the relations, number of free relations).
+    # The matrix as solve_bits takes it (one integer per column, bit j = row j), reduced the same way (each integer's
+    # lowest set bit becomes its pivot and is cleared from every other one), on 64-bit words in C.
+    # Returns (up to maxvec dependencies as integers over the rows, number of free rows).
     cdef Py_ssize_t m=len(rows),words=(nbits+63)>>6,r,i,w,w0,lsb
     cdef unsigned long long x,bit
     if m==0 or words==0:
@@ -2671,223 +2739,329 @@ def gf2_nullspace(list rows,Py_ssize_t nbits,Py_ssize_t maxvec=40):
         nulls.append(int.from_bytes(np.packbits(v,bitorder='little').tobytes(),'little'))
     return nulls,len(free)
 
-def prune_singletons(flist,extra):
-    # find_singletons for the SIQS relations when other rows (the NFS dependencies) also hold factors: extra[f] is how
-    # many of those hold f (2 stands for two or more). They are never removed, so a factor they hold twice is safe.
-    # Returns (indices kept, {factor: SIQS relations kept that hold it}).
-    nrel=len(flist)
-    count={}
-    xr={}
-    for i in range(nrel):
-        for c in flist[i]:
-            count[c]=count.get(c,0)+1
-            xr[c]=xr.get(c,0)^i
-    alive=[True]*nrel
-    stack=[c for c in count if count[c]==1 and c not in extra]
-    while stack:
-        c=stack.pop()
-        if count[c]!=1:
-            continue
-        i=xr[c]
-        alive[i]=False
-        for c2 in flist[i]:
-            count[c2]-=1
-            xr[c2]^=i
-            if count[c2]==1 and c2 not in extra:
-                stack.append(c2)
-    return [i for i in range(nrel) if alive[i]],count
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def prune_rows(long long[::1] rowend,int[::1] col,Py_ssize_t ncols):
+    # Sparse rows: row i holds the columns col[rowend[i-1]:rowend[i]]. A row with a column nothing else has cannot be in
+    # a dependency; dropping it can strand another one. Repeated until nothing changes. Returns (row is kept, uint8 per
+    # row; rows kept that hold each column, int32 per column).
+    cdef Py_ssize_t nrows=rowend.shape[0],i,j,lo,hi,changed=1
+    alive_np=np.ones(nrows,dtype=np.uint8)
+    cnt_np=np.zeros(ncols,dtype=np.int32)
+    cdef unsigned char[::1] alive=alive_np
+    cdef int[::1] cnt=cnt_np
+    cdef int dead
+    with nogil:
+        for j in range(col.shape[0]):
+            cnt[col[j]]+=1
+        while changed:
+            changed=0
+            lo=0
+            for i in range(nrows):
+                hi=rowend[i]
+                if alive[i]:
+                    dead=0
+                    for j in range(lo,hi):
+                        if cnt[col[j]]==1:
+                            dead=1
+                            break
+                    if dead:
+                        alive[i]=0
+                        changed=1
+                        for j in range(lo,hi):
+                            cnt[col[j]]-=1
+                lo=hi
+    return alive_np,cnt_np
 
-def nfs_worker(settings,n,primeslist,feed,inbox,stop):
+def _bits(x):
+    # positions of the set bits of an integer
+    by=x.to_bytes((x.bit_length()+7)>>3,'little')
+    return np.nonzero(np.unpackbits(np.frombuffer(by,dtype=np.uint8),bitorder='little'))[0].tolist()
+
+def nfs_worker(settings,n,primeslist,feed,inbox,stop,wk,nproc):
     try:
         worker_init(settings)
         nfs_primes=primeslist[:NFS_BASE] if NFS_BASE>0 else primeslist
         fbset=set(primeslist)
         small=[p for p in primeslist if p<=NFS_SING_SMALL]
         # A prime p with n not a square mod p never divides a SIQS value, so as a rational prime it is a column only the
-        # NFS uses, and the first NFS dependency that holds it is spent on that column. Such primes are only worth having
-        # where they carry the smoothness (the small ones); above the bound the residues alone are taken.
+        # NFS uses. Such primes are only worth having where they carry the smoothness (the small ones); above the bound
+        # the residues alone are taken.
         qr_bound=primeslist[-1] if NFS_SING_QR<0 else NFS_SING_QR
         n_small=len(small)
         small+=[p for p in primeslist if NFS_SING_SMALL<p<=qr_bound and pow(n%p,(p-1)//2,p)==1]
-        nfs_only=sum(1 for p in small[:n_small] if pow(n%p,(p-1)//2,p)!=1)
-        print("[NFS] rational base before the core: "+str(n_small)+" primes up to "+str(NFS_SING_SMALL)+" ("+str(nfs_only)+" of them cannot occur in a SIQS relation) + "+str(len(small)-n_small)+" residue primes up to "+str(qr_bound))
-        all_small=len(small)==len(primeslist)           # every prime counts as core: nothing to prune, no targets
-        flist=[]                                        # this process's copy of the odd-factor lists of the SIQS relations
+        if wk==0:
+            nfs_only=sum(1 for p in small[:n_small] if pow(n%p,(p-1)//2,p)!=1)
+            print("[NFS] rational base: "+str(n_small)+" primes up to "+str(NFS_SING_SMALL)+" ("+str(nfs_only)+" of them cannot occur in a SIQS relation) + "+str(len(small)-n_small)+" residue primes up to "+str(qr_bound))
+            print("[NFS] algebraic factor base "+str(len(nfs_primes))+" primes (largest "+str(nfs_primes[-1])+"), SIQS factor base "+str(len(primeslist))+" primes (largest "+str(primeslist[-1])+")")
+        forcing=wk==0 and NFS_SING_FORCE>0 and len(small)<len(primeslist)
+        flist=[]                                        # copy of the odd-factor lists of the SIQS relations (only kept when forcing)
         tried=set()
-        sent_rows=0
-        sent_par=False
-        started=False
-        new_lp_all=[]
-        print("[NFS] algebraic factor base "+str(len(nfs_primes))+" primes (largest "+str(nfs_primes[-1])+"), SIQS factor base "+str(len(primeslist))+" primes (largest "+str(primeslist[-1])+")")
+        poly=None
+        saved=None
+        ck=None
+        if NFS_SAVE:
+            # the rows of this worker and how far it has sieved are appended to a file after every round; a later run
+            # with the same file takes them back in and goes on from there
+            os.makedirs(NFS_SAVE,exist_ok=True)
+            path=os.path.join(NFS_SAVE,"nfs_%d_of_%d.rows"%(wk,nproc))
+            old=[]
+            if os.path.exists(path):
+                with open(path,'rb') as fh:
+                    try:
+                        while True:
+                            old.append(pickle.load(fh))
+                    except EOFError:
+                        pass
+                    except Exception:
+                        pass                            # a record cut off by the interruption: what came before it counts
+            if old and old[0][0]=='poly' and old[0][1]==n:
+                poly=old[0][2]
+                recs=[r for r in old[1:] if r[0]=='rows']
+                if recs:
+                    saved=recs[-1][2]
+                    for r in recs:
+                        if r[1] is not None:
+                            inbox.put(('nfs',wk,r[1],None))
+                    print("[NFS]"+(" #"+str(wk) if nproc>1 else "")+" taken back in from "+path+": "+str(sum(len(r[1][0]) for r in recs if r[1] is not None))+" rows, "+str(saved['line'])+" lines")
+            else:
+                old=[]
+            ck=open(path,'ab' if old else 'wb')
+        while poly is None and wk>0 and not stop.is_set():
+            try:                                        # the polynomial comes from worker 0, by way of the coordinator
+                tag,data=feed.get(timeout=0.5)
+            except queue.Empty:
+                continue
+            if tag=='poly':
+                poly=data
+        first=True
         while not stop.is_set():
-            new_lp=[]
-            while True:                                 # take in what the SIQS found since the last call
+            while True:                                 # take in what the SIQS found since the last round
                 try:
                     tag,data=feed.get_nowait()
                 except queue.Empty:
                     break
-                if tag=='rel':
+                if tag=='rel' and forcing:
                     flist.extend(data)
-                else:
-                    new_lp.extend(data)
-            if new_lp:
-                if started:
-                    gnfs.share_large_primes(n,NFS_DEGREE,new_lp)
-                else:
-                    new_lp_all.extend(new_lp)
-            t0=default_timer()
-            if all_small or (NFS_SING_FORCE<=0 and qr_bound>=primeslist[-1]):
-                targets=[]                              # nothing to force, and the core adds no prime to the list above
-                sing_keep=set(small)
-            else:
-                targets,core=singleton_targets(flist,NFS_SING_SMALL)
-                sing_keep={p for p in core if p in fbset}
-                sing_keep.update(small)
             picks=[]
-            for lg,p,ti in targets:
-                if len(picks)>=NFS_SING_FORCE:
-                    break
-                if p in fbset and p not in tried and p not in picks:
-                    picks.append(p)
-            tried.update(picks)
-            print("[NFS] matrix copy: "+str(len(flist))+" SIQS relations, "+str(len(targets))+" singleton targets; rational base "+str(len(sing_keep))+" primes (core + the "+str(len(small))+" above), forcing "+(str(picks) if picks else "nothing")+"   (%.1fs)"%(default_timer()-t0))
-            # The NFS hands out dependencies of its algebraic side without taking their square roots: for the matrix only
-            # the odd rational primes of each matter (a bit mask). The matrix job takes one square root for the
-            # combination of them that ends up in a dependency of the whole matrix (gnfs.dep_square).
-            ra=[[],[]]
-            made=gnfs.nfs_launch(n,nfs_primes,ra,NFS_MIX_WANT,sing_keep,picks,NFS_DEGREE,NFS_LINES,NFS_T,NFS_FORCE_T,NFS_FORCE_LINES,NFS_LP_BITS,True)
-            if gnfs._STATE.get((n,NFS_DEGREE)) is None:
-                inbox.put(('done','nfs','the NFS could not be set up for this number and degree'))
-                return
-            par,rows,rpr=gnfs.lazy_export(n,NFS_DEGREE,sent_rows)
-            if made or rows:
-                if not started:
-                    gnfs.share_large_primes(n,NFS_DEGREE,new_lp_all)   # those that arrived before the NFS was set up
-                    started=True
-                inbox.put(('nfs',ra[0],ra[1],rows,rpr,None if sent_par else par))
-                sent_rows+=len(rows)
-                sent_par=True
-            if made:
-                where={q:j for j,q in enumerate(rpr)}
-                for p in picks:
-                    j=where.get(p,-1)
-                    print("[NFS] forced "+str(p)+": odd exponent in "+str(sum(1 for m in ra[0] if j>=0 and (m>>j)&1))+" of "+str(made)+" new dependencies")
+            sing_keep=set(small)
+            if forcing or (wk==0 and qr_bound<primeslist[-1] and len(small)<len(primeslist) and flist):
+                targets,core=singleton_targets(flist,NFS_SING_SMALL)
+                sing_keep.update(p for p in core if p in fbset)
+                for lg,p,ti in targets:
+                    if len(picks)>=NFS_SING_FORCE:
+                        break
+                    if p in fbset and p not in tried and p not in picks:
+                        picks.append(p)
+                tried.update(picks)
+            if first:
+                if not gnfs.nfs_open(n,nfs_primes,NFS_DEGREE,poly):
+                    inbox.put(('done','nfs','the NFS could not be set up for this number and degree'))
+                    return
+                par=gnfs.nfs_params(n,NFS_DEGREE)
+                if wk==0:
+                    inbox.put(('nfspar',par))
+                if saved is not None:
+                    gnfs.nfs_restore(n,NFS_DEGREE,saved,[pr_ for r in old[1:] if r[0]=='rows' and r[1] is not None for pr_ in r[1][0].tolist()])
+                elif ck is not None:
+                    pickle.dump(('poly',n,par['poly']),ck)
+                old=None
+                first=False
+            batch=gnfs.nfs_sieve(n,nfs_primes,sing_keep,picks,NFS_DEGREE,NFS_LINES,NFS_T,NFS_FORCE_T,NFS_FORCE_LINES,NFS_LP_BITS,NFS_LP2_BITS,nproc,wk)
+            if ck is not None:
+                pickle.dump(('rows',batch,gnfs.nfs_state(n,NFS_DEGREE)),ck)
+                ck.flush()
+                os.fsync(ck.fileno())
+            if batch is not None:
+                inbox.put(('nfs',wk,batch,None))
         inbox.put(('done','nfs',None))
     except BaseException:
         inbox.put(('error','nfs',traceback.format_exc()))
 
-def la_worker(settings,n,primelist,sm,xl,fl,part,nfs,inbox,job):
-    # One matrix attempt on a frozen copy: the SIQS relations (value, X^2, odd factors) and the NFS dependencies
-    # (nfs = polynomial data, rows, the primes of the mask bits, rational parity masks, row masks).
-    # SIQS relations that hold a factor nothing else has cannot be in a dependency and are pruned first; factors nobody
-    # uses give no matrix row: the cost follows the core, not the size of the factor base.
+def la_worker(settings,n,sm,xl,fl,part,nfs,inbox,job):
+    # One matrix attempt on a frozen copy: the SIQS relations and partial relations (value, X^2, odd factors) and the NFS
+    # rows (nfs = polynomial data, list of batches as gnfs.nfs_sieve returns them).
+    #   1. rows that hold a column nothing else has are pruned (large primes without a partner go here);
+    #   2. light columns are eliminated on the sparse rows: the lightest row of the column is added to the others;
+    #   3. what is left is solved densely in C;
+    #   4. a dependency is a set of original rows: one square root for its NFS rows, the SIQS ones multiply in.
     try:
         worker_init(settings)
         t0=default_timer()
-        par,rowinfo,rpr,rms,deps=nfs
+        par,batches=nfs
+        if batches:
+            ab=np.concatenate([b[0] for b in batches])
+            chs=[c for b in batches for c in b[1]]
+            cols_n=np.concatenate([b[2] for b in batches])
+            ends=[]
+            off=0
+            for b in batches:
+                ends.append(b[3]+off)
+                off+=len(b[2])
+            ends_n=np.concatenate(ends)
+        else:
+            ab=np.zeros((0,2),dtype=np.int64)
+            chs=[]
+            cols_n=np.zeros(0,dtype=np.int64)
+            ends_n=np.zeros(0,dtype=np.int64)
+        nn=len(chs)
         nfull=len(sm)
-        if part[0]:
-            # the partial relations are rows like any other, their large prime one more column: two with the same one,
-            # or one and an NFS pair with the same one, keep each other alive; the rest is pruned right below
-            sm=sm+part[0]
-            xl=xl+part[1]
-            fl=fl+part[2]
-        any1=0                                          # factors held by one NFS dependency / by two or more
-        any2=0
-        for m in rms:
-            any2|=any1&m
-            any1|=m
-        extra={}
-        for j in gnfs._mask_idx(any1):
-            extra[rpr[j]]=2 if (any2>>j)&1 else 1
-        keep,count=prune_singletons(fl,extra)
-        # an NFS dependency holding a factor that nothing else holds is dead too (one pass, no cascade)
-        bad=0
-        for j in gnfs._mask_idx(any1&~any2):
-            if count.get(rpr[j],0)==0:
-                bad|=1<<j
-        nk=[k for k in range(len(rms)) if not rms[k]&bad] if bad else list(range(len(rms)))
-        ns=int(len(keep))                               # a Python int: it is used as a shift count on big integers
-        nrows=ns+len(nk)
-        cols={c for c in count if count[c]>0}
-        cols.update(q for q in extra if count.get(q,0)>0 or extra[q]>1)
-        keep0,rem0,nc0=find_singletons(fl)              # what the SIQS relations are worth by themselves
-        npk=sum(1 for i in keep if i>=nfull)
-        info="core "+str(ns-npk)+" of "+str(nfull)+" SIQS relations + "+str(npk)+" of "+str(len(fl)-nfull)+" SIQS partials + "+str(len(nk))+" of "+str(len(rms))+" NFS dependencies x "+str(len(cols))+" factors (excess "+str(nrows-len(cols))+"; SIQS alone "+str(len(keep0)-nc0)+")"
-        if nrows<2 or (nrows<len(cols) and len(keep0)<=nc0):
-            # not enough rows yet: say how many are missing, so the next job is not started before they can be there
-            inbox.put(('la',job,0,0,info,(nrows-len(cols)) if nrows>=2 and rms else None))
+        svals=sm+part[0]
+        sxs=xl+part[1]
+        sfl=fl+part[2]
+        scols=np.fromiter((1 if f==-1 else f for t in sfl for f in t),dtype=np.int64)       # the sign is column 1
+        sends=np.cumsum(np.fromiter((len(t) for t in sfl),dtype=np.int64,count=len(sfl)))+len(cols_n)
+        cols=np.concatenate((cols_n,scols))
+        ends=np.ascontiguousarray(np.concatenate((ends_n,sends)))
+        uq,inv=np.unique(cols,return_inverse=True)
+        inv=np.ascontiguousarray(inv.astype(np.int32))
+        alive,cnt=prune_rows(ends,inv,len(uq))
+        keep=np.nonzero(alive)[0]
+        ncol=int((cnt>0).sum())
+        k_nfs=int(alive[:nn].sum())
+        k_full=int(alive[nn:nn+nfull].sum())
+        nchar=par['nchar'] if (par is not None and k_nfs) else 0
+        excess=len(keep)-ncol-nchar
+        info="core "+str(k_nfs)+" of "+str(nn)+" NFS rows + "+str(k_full)+" of "+str(nfull)+" SIQS relations + "+str(len(keep)-k_nfs-k_full)+" of "+str(len(sfl)-nfull)+" SIQS partials x "+str(ncol)+" columns + "+str(nchar)+" characters (excess "+str(excess)+")"
+        if len(keep)<2 or excess<=0:
+            # how many rows are missing; while hardly anything survives the pruning that number says nothing yet
+            inbox.put(('la',job,0,0,info+", %.1fs"%(default_timer()-t0),(excess-5) if ncol>1000 else None))
             return
-        if nrows>len(cols)+300 and len(nk)>nrows-len(cols)-300:
-            # more rows than the elimination can use: the surplus NFS dependencies are left out
-            nk=nk[:len(nk)-(nrows-len(cols)-300)]
-            nrows=ns+len(nk)
-        fb_map={p:i for i,p in enumerate(primelist)}
-        M=[0]*len(primelist)
-        ind=1
-        for i in keep:
-            for f in fl[i]:
-                idx=fb_map.get(f)
-                if idx is None:                         # a large prime
-                    idx=fb_map[f]=len(M)
-                    M.append(0)
-                M[idx]|=ind
-            ind+=ind
-        if nk:
-            # the NFS masks are rows over factors; the matrix wants, per factor, a mask over rows: transposed with numpy
-            nb=(any1.bit_length()+7)>>3
-            arr=np.frombuffer(b''.join(rms[k].to_bytes(nb,'little') for k in nk),dtype=np.uint8).reshape(len(nk),nb)
-            for c0 in range(0,nb,256):
-                packed=np.packbits(np.unpackbits(arr[:,c0:c0+256],axis=1,bitorder='little').T,axis=1,bitorder='little')
-                for j in np.nonzero(packed.any(axis=1))[0].tolist():
-                    q=rpr[c0*8+j]
-                    idx=fb_map.get(q)
-                    if idx is None:
-                        idx=fb_map[q]=len(M)
-                        M.append(0)
-                    M[idx]|=int.from_bytes(packed[j].tobytes(),'little')<<ns
         t1=default_timer()
-        nulls,nfree=gf2_nullspace([r for r in M if r],nrows)
+        # 2. sparse elimination
+        starts=np.concatenate(([0],ends[:-1]))
+        R=len(keep)
+        rows=[None]*R
+        chv=[0]*R
+        hist=[None]*R                                   # original rows a row is the sum of (None: itself only)
+        colrows={}
+        kl=keep.tolist()
+        for k in range(R):
+            i=kl[k]
+            row=set(inv[starts[i]:ends[i]].tolist())
+            rows[k]=row
+            if i<nn:
+                chv[k]=chs[i]
+            for c in row:
+                s=colrows.get(c)
+                if s is None:
+                    colrows[c]=s={k}
+                else:
+                    s.add(k)
+        heap=[(len(s),c) for c,s in colrows.items()]
+        heapq.heapify(heap)
+        nact=R
+        while heap and len(colrows)>LA_DENSE:
+            w,c=heapq.heappop(heap)
+            s=colrows.get(c)
+            if s is None or len(s)!=w:
+                continue                                # an old entry: the column has changed since, or is gone
+            if w>LA_MAXW:
+                heapq.heappush(heap,(w,c))
+                break
+            del colrows[c]
+            if w==0:
+                continue
+            piv=-1
+            pl=0
+            for r in s:
+                lr=len(rows[r])
+                if piv<0 or lr<pl:
+                    piv=r
+                    pl=lr
+            prow=rows[piv]
+            prow.discard(c)
+            pch=chv[piv]
+            ph=hist[piv]
+            if ph is None:
+                ph={piv}
+            for r in s:
+                if r==piv:
+                    continue
+                rr=rows[r]
+                rr.discard(c)
+                for e in prow:
+                    if e in rr:
+                        rr.discard(e)
+                        colrows[e].discard(r)
+                    else:
+                        rr.add(e)
+                        colrows[e].add(r)
+                chv[r]^=pch
+                h=hist[r]
+                hist[r]=ph^({r} if h is None else h)
+            for e in prow:
+                cs=colrows[e]
+                cs.discard(piv)
+                heapq.heappush(heap,(len(cs),e))
+            rows[piv]=None
+            hist[piv]=None
+            nact-=1
+        # 3. dense part: one integer per column (bit = row), the characters as columns of their own
+        act=[r for r in range(R) if rows[r] is not None]
+        pos={r:j for j,r in enumerate(act)}
+        na=len(act)
+        M=[]
+        v=np.zeros(na,dtype=bool)
+        for c,s in colrows.items():
+            if s:
+                v[:]=False
+                v[[pos[r] for r in s]]=True
+                M.append(int.from_bytes(np.packbits(v,bitorder='little').tobytes(),'little'))
+        if nchar:
+            charr=np.array([[(chv[r]>>kk)&1 for kk in range(nchar)] for r in act],dtype=bool)
+            for kk in range(nchar):
+                x=int.from_bytes(np.packbits(charr[:,kk],bitorder='little').tobytes(),'little')
+                if x:
+                    M.append(x)
         t2=default_timer()
+        nulls,nfree=gf2_nullspace(M,na)
+        t3=default_timer()
+        # 4. square roots
         f1=f2=0
-        one=int(1)
-        lowmask=(one<<ns)-1
+        tried=0
         for vec in nulls:
-            s_idx=[keep[i] for i in gnfs._mask_idx(vec&lowmask)]
-            vals=[sm[i] for i in s_idx]
-            xs=[xl[i] for i in s_idx]
-            nvec=vec>>ns
-            if nvec:
-                dm=0
-                for t in gnfs._mask_idx(nvec):
-                    dm^=deps[nk[t]]
-                res=gnfs.dep_square(par,rowinfo,dm)     # one square root for all the NFS dependencies in this vector
+            S=set()
+            for j in _bits(vec):
+                r=act[j]
+                h=hist[r]
+                S^=({r} if h is None else h)
+            orig=sorted(kl[k] for k in S)
+            nidx=[i for i in orig if i<nn]
+            vals=[svals[i-nn] for i in orig if i>=nn]
+            xs=[sxs[i-nn] for i in orig if i>=nn]
+            if nidx:
+                res=gnfs.dep_square(par,ab[nidx])       # one square root for all the NFS rows of this dependency
                 if res is None:
                     continue
                 vals.append(res[0])
                 xs.append(res[1]*res[1])
             if not vals:
                 continue
+            tried+=1
             try:
                 with contextlib.redirect_stdout(io.StringIO()):
-                    f1,f2=extract_factors(n,vals,[(one<<int(len(vals)))-1],xs,None)
+                    f1,f2=extract_factors(n,vals,[(int(1)<<int(len(vals)))-1],xs,None)
             except SystemExit:
                 f1=f2=0
             if f1>1:
                 break
-        inbox.put(('la',job,int(f1),int(f2),info+", "+str(nfree)+" dependencies, %.1fs (elimination %.1fs, square roots and gcds %.1fs)"%(default_timer()-t0,t2-t1,default_timer()-t2),None))
+        inbox.put(('la',job,int(f1),int(f2),info+"; sparse elimination left "+str(na)+" rows x "+str(len(M))+" columns, "+str(nfree)+" dependencies, "+str(tried)+" tried; %.1fs (pruning %.1f, sparse %.1f, dense %.1f, square roots %.1f)"%(default_timer()-t0,t1-t0,t2-t1,t3-t2,default_timer()-t3),None))
     except BaseException:
         inbox.put(('la',job,0,0,"matrix job failed:\n"+traceback.format_exc(),None))
 
 def run_parallel(n,primeslist,primeslist2):
     ctx=multiprocessing.get_context('fork') if 'fork' in multiprocessing.get_all_start_methods() else multiprocessing.get_context()
     inbox=ctx.Queue()                   # workers -> coordinator (the coordinator is the only reader)
-    feed=ctx.Queue()                    # coordinator -> NFS worker (the NFS worker is the only reader)
+    nproc=max(1,NFS_PROCS)
+    feeds=[ctx.Queue() for k in range(nproc)]           # coordinator -> each NFS worker (that worker is the only reader)
     stop=ctx.Event()
     settings=export_settings()
-    primelist=[-1,2]+list(primeslist)
-    procs={'siqs':ctx.Process(target=siqs_worker,args=(settings,n,primeslist,primeslist2,inbox,stop),daemon=True),
-           'nfs':ctx.Process(target=nfs_worker,args=(settings,n,primeslist,feed,inbox,stop),daemon=True)}
+    procs={}
+    if NFS_SIQS:
+        procs['siqs']=ctx.Process(target=siqs_worker,args=(settings,n,primeslist,primeslist2,inbox,stop),daemon=True)
+    for k in range(nproc):
+        procs['nfs'+str(k)]=ctx.Process(target=nfs_worker,args=(settings,n,primeslist,feeds[k],inbox,stop,k,nproc),daemon=True)
     for pr in procs.values():
         pr.start()
     sm=[]                               # the SIQS relations: value, X^2 and odd factors, in arrival order
@@ -2897,26 +3071,52 @@ def run_parallel(n,primeslist,primeslist2):
     px=[]
     pf=[]
     have=set()
-    nfs_rm=[]                           # the NFS dependencies: rational parity mask and row mask of each
-    nfs_dep=[]
-    nfs_rows=[]                         # the NFS rows the row masks refer to, the primes of the parity bits, the polynomial data
-    nfs_rpr=[]
+    batches=[]                          # the NFS rows, as the workers sent them
     nfs_par=None
-    counts={'siqs':0,'nfs':0}
-    running=set(procs)
+    n_rows=0                            # NFS rows in all / without a large prime
+    n_full=0
+    running=len(procs)
     la_proc=None
     la_job=0
-    la_at=0                             # number of b-smooths when the last matrix job was started
+    la_at=0                             # number of complete relations (SIQS and NFS) when the last matrix job was started
     la_dead=0
-    la_need=None                        # rows the last matrix job was short of (None: unknown, LA_EVERY decides)
+    la_need=None                        # how many more of them the last job asked for (None: LA_EVERY decides)
     shown=0
     result=(0,0)
+    feed_rel=NFS_SING_FORCE>0
+    sq_ck=None
+    sq_old=[]
+    if NFS_SAVE and NFS_SIQS:
+        # the SIQS relations and partial relations are kept in a file too, and taken back in by a later run
+        os.makedirs(NFS_SAVE,exist_ok=True)
+        path=os.path.join(NFS_SAVE,"siqs.rows")
+        if os.path.exists(path):
+            with open(path,'rb') as fh:
+                try:
+                    while True:
+                        sq_old.append(pickle.load(fh))
+                except Exception:
+                    pass
+        if not (sq_old and sq_old[0]==('n',n)):
+            sq_old=[]
+        sq_ck=open(path,'ab' if sq_old else 'wb')
+        if not sq_old:
+            pickle.dump(('n',n),sq_ck)
+        sq_old=sq_old[1:]
+        if sq_old:
+            print("[i]SIQS rows taken back in from "+path+": "+str(sum(len(m_[1]) for m_ in sq_old if m_[0]=='siqs'))+" relations, "+str(sum(len(m_[1]) for m_ in sq_old if m_[0]=='siqsp'))+" partials")
     try:
         while True:
-            try:
-                msg=inbox.get(timeout=0.5)
-            except queue.Empty:
-                msg=None
+            if sq_old:
+                msg=sq_old.pop()
+            else:
+                try:
+                    msg=inbox.get(timeout=0.5)
+                except queue.Empty:
+                    msg=None
+                if sq_ck is not None and msg is not None and msg[0] in ('siqs','siqsp'):
+                    pickle.dump(msg,sq_ck)
+                    sq_ck.flush()
             if msg is not None:
                 kind=msg[0]
                 if kind=='siqs':
@@ -2929,11 +3129,9 @@ def run_parallel(n,primeslist,primeslist2):
                         xl.append(x2)
                         fl.append(f)
                         new.append(f)
-                    counts[kind]+=len(new)
-                    if new:
-                        feed.put(('rel',new))
+                    if new and feed_rel:
+                        feeds[0].put(('rel',new))
                 elif kind=='siqsp':
-                    lps=[]
                     for v,x2,f in msg[1]:
                         if x2 in have:
                             continue
@@ -2941,17 +3139,14 @@ def run_parallel(n,primeslist,primeslist2):
                         pm.append(v)
                         px.append(x2)
                         pf.append(f)
-                        lps.append(f[-1])
-                    if lps:
-                        feed.put(('lp',lps))
                 elif kind=='nfs':
-                    nfs_rm.extend(msg[1])
-                    nfs_dep.extend(msg[2])
-                    nfs_rows.extend(msg[3])
-                    nfs_rpr=msg[4]
-                    if msg[5] is not None:
-                        nfs_par=msg[5]
-                    counts[kind]+=len(msg[1])
+                    batches.append(msg[2][:4])
+                    n_rows+=len(msg[2][1])
+                    n_full+=msg[2][4]
+                elif kind=='nfspar':
+                    nfs_par=msg[1]
+                    for k in range(1,nproc):
+                        feeds[k].put(('poly',nfs_par['poly']))
                 elif kind=='la':
                     if msg[1]==la_job and la_proc is not None:
                         la_proc.join()
@@ -2963,52 +3158,52 @@ def run_parallel(n,primeslist,primeslist2):
                             result=(f1,f2)
                             break
                         print("[*]Matrix job "+str(la_job)+": no factor yet; "+msg[4])
-                        # the job said how many rows were missing: the next one waits for about that many new ones
-                        # (a little fewer: partial relations coming alive are not in the count), not for LA_EVERY
-                        la_need=max(50,int(-msg[5]*0.9)) if msg[5] is not None and msg[5]<0 else None
+                        # the job said by how much the rows fell short. Relations with large primes come alive along
+                        # with the complete ones, so a quarter of that many new complete ones is worth the next look.
+                        la_need=max(20,(-msg[5])//4) if msg[5] is not None and msg[5]<0 else None
                 elif kind=='done':
-                    running.discard(msg[1])
+                    running-=1
                     print("[i]The "+msg[1].upper()+" worker has stopped"+(": "+msg[2] if msg[2] else ""))
                 elif kind=='error':
-                    running.discard(msg[1])
+                    running-=1
                     print("[!]The "+msg[1].upper()+" worker failed:\n"+msg[2])
-                total=len(sm)+len(nfs_rm)
-                if (kind=='nfs' and msg[1]) or total-shown>=100:
-                    shown=total
-                    print("[i]#B-smooths: "+str(total)+"  (SIQS "+str(counts['siqs'])+", NFS "+str(counts['nfs'])+(", SIQS partials "+str(len(pm)) if pm else "")+")")
-            total=len(sm)+len(nfs_rm)
+            total=len(sm)+n_full
+            if total-shown>=LA_EVERY//4 or (msg is not None and msg[0]=='nfs' and total>shown):
+                shown=total
+                print("[i]#Rows: SIQS "+str(len(sm))+" relations + "+str(len(pm))+" partials, NFS "+str(n_full)+" complete + "+str(n_rows-n_full)+" with large primes")
             if la_proc is not None and not la_proc.is_alive():
                 la_dead+=1                              # its result may still be in the queue: give it a few rounds
                 if la_dead>6:
                     print("[!]Matrix job "+str(la_job)+" ended without a result")
                     la_proc=None
-            if la_proc is None and (total-la_at>=(LA_EVERY if la_need is None else la_need) or (not running and total>la_at)):
+            if la_proc is None and (total-la_at>=(LA_EVERY if la_need is None else la_need) or (running<=0 and total>la_at)):
                 la_job+=1
                 la_at=total
                 la_dead=0
-                print("[*]Matrix job "+str(la_job)+" started on "+str(total)+" b-smooths (SIQS "+str(counts['siqs'])+", NFS "+str(counts['nfs'])+")")
-                la_proc=ctx.Process(target=la_worker,args=(settings,n,primelist,sm,xl,fl,(pm,px,pf),(nfs_par,nfs_rows,nfs_rpr,nfs_rm,nfs_dep),inbox,la_job),daemon=True)
+                print("[*]Matrix job "+str(la_job)+" started: SIQS "+str(len(sm))+" relations + "+str(len(pm))+" partials, NFS "+str(n_full)+" complete + "+str(n_rows-n_full)+" with large primes")
+                la_proc=ctx.Process(target=la_worker,args=(settings,n,sm,xl,fl,(pm,px,pf),(nfs_par,batches),inbox,la_job),daemon=True)
                 la_proc.start()                         # the child gets its own copy here; later appends do not reach it
-            if not running and la_proc is None and total==la_at:
-                print("[FAILURE]Both workers have stopped and the last matrix job found no factor")
+            if running<=0 and la_proc is None and total==la_at:
+                print("[FAILURE]All workers have stopped and the last matrix job found no factor")
                 break
     finally:
         stop.set()
         # A queue hands its data to a background thread that writes it into a pipe, and the interpreter waits for that
-        # thread at exit. Once the NFS worker is gone nobody reads 'feed', so anything still buffered there would keep
-        # the program alive for ever: drop the buffered data instead of waiting for it.
-        feed.cancel_join_thread()
-        inbox.cancel_join_thread()
-        for pr in list(procs.values())+([la_proc] if la_proc is not None else []):
+        # thread at exit. Once a worker is gone nobody reads its queue, so anything still buffered there would keep the
+        # program alive for ever: drop the buffered data instead of waiting for it.
+        for q_ in feeds+[inbox]:
+            q_.cancel_join_thread()
+        allp=list(procs.values())+([la_proc] if la_proc is not None else [])
+        for pr in allp:
             if pr.is_alive():
                 pr.terminate()
-        for pr in list(procs.values())+([la_proc] if la_proc is not None else []):
+        for pr in allp:
             pr.join(5)
             if pr.is_alive():
                 pr.kill()
                 pr.join(5)
-        feed.close()
-        inbox.close()
+        for q_ in feeds+[inbox]:
+            q_.close()
     return result
 
 def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_size,l_mode="psieve"):
