@@ -55,7 +55,8 @@ def parse_args():
     parser.add_argument('-nfs_force_lines',type=int,help='nfs mode: lines to sieve on the forced lattice per call (default 1000)')
     parser.add_argument('-nfs_sing_qr',type=int,help='nfs mode: above -nfs_sing_small, primes up to this bound join the rational factor base only if n is a square modulo them, the only primes a SIQS relation can hold (default -1 = up to the end of the SIQS factor base, 0 = off)')
     parser.add_argument('-nfs_sing_small',type=int,help='nfs mode: every prime up to this bound counts as core: it joins the rational factor base and never makes a relation a singleton when targets are chosen (default 200)')
-    parser.add_argument('-nfs_sing_force',type=int,help='nfs mode: number of singleton targets to force per run (default 1)')
+    parser.add_argument('-nfs_share_lp',type=int,help='nfs mode: 1 = the SIQS keeps partial relations (one large prime up to 2^nfs_lp) and the two sieves share those large primes as matrix columns (default 1), 0 = off')
+    parser.add_argument('-nfs_sing_force',type=int,help='nfs mode: number of singleton targets to force per run (default 0 = no forcing)')
     args = parser.parse_args()
     if args.keysize != None:    
         keysize = args.keysize
@@ -95,6 +96,8 @@ def parse_args():
         QSv3_simd.NFS_SING_SMALL=args.nfs_sing_small
     if args.nfs_sing_qr != None:
         QSv3_simd.NFS_SING_QR=args.nfs_sing_qr
+    if args.nfs_share_lp != None:
+        QSv3_simd.NFS_SHARE_LP=args.nfs_share_lp
     if args.nfs_sing_force != None:
         QSv3_simd.NFS_SING_FORCE=args.nfs_sing_force
     return

@@ -965,7 +965,6 @@ def _tick(k,t0):
 try:                        # the square roots multiply integers of 10^4..10^6 bits; GMP is 10-50x faster there
     from gmpy2 import mpz as _big, gcd as _gcd
 except ImportError:
-    print("[i]Important... pip install gmpy2 for faster big num performance")
     _big=int
     _gcd=math.gcd
 
@@ -1479,7 +1478,7 @@ def _setup(n,d,alg_primes):
         f_norm+=x*x*tmp
         tmp*=leading
     st['f_norm']=int(math.sqrt(f_norm))+1
-    st.update({'rows':[],'acol':{},'basis':{},'seen':set(),'free_done':set(),'line':0,'width':{},'pidx':{},'plist':[],'parr':np.zeros(0,dtype=np.int64),'pc':{},'lp':{},'rat_sieved':0,'intern':{},'rat_all':set([2]),'have':set(),'sqrt_fail':0})
+    st.update({'rows':[],'acol':{},'basis':{},'seen':set(),'free_done':set(),'line':0,'width':{},'pidx':{},'plist':[],'parr':np.zeros(0,dtype=np.int64),'pc':{},'lp':{},'rat_sieved':0,'intern':{},'rat_all':set([2]),'have':set(),'sqrt_fail':0,'rbit':{},'rprimes':[],'lp_live':set(),'lp_open':set(),'pending':[],'lp_shared':0})
     print("[i]NFS(d="+str(d)+"): f = "+str(f_x)+"   g = "+str(m1)+"*x - "+str(m0)+"   skew "+str(skew)+", sieve half-width "+str(M))
     print("[i]NFS(d="+str(d)+"): "+str(len(primes))+" algebraic primes with "+str(sum(len(R[p]) for p in primes))+" degree-1 ideals, "+str(len(cq))+" characters, inert prime "+str(inert)+"  (set-up %.1fs)"%(default_timer()-t0))
     return st
@@ -1547,6 +1546,20 @@ def _add_row(st,pairs,kind):
         elem=div_poly(poly_prod(elem,el),st['g']) if len(pairs)>1 else el
         u=max(u,abs(a),abs(b))
     elem=[_big(x) for x in elem]
+    # parity of the rational exponents as a bit mask (bit j = st['rprimes'][j], numbered as they first turn up odd), and
+    # the exact product of the rational values: what a dependency needs when its square root is left for later
+    rbit=st['rbit']
+    rm=0
+    for q,e in rex.items():
+        if e&1:
+            j=rbit.get(q)
+            if j is None:
+                j=rbit[q]=len(rbit)
+                st['rprimes'].append(q)
+            rm|=1<<j
+    gprod=1
+    for pr_ in pairs:
+        gprod*=pr_[2]
     # rational exponents as (prime numbers, exponents) arrays; a prime's number is its position in st['plist']
     pidx=st['pidx']
     plist=st['plist']
@@ -1555,11 +1568,12 @@ def _add_row(st,pairs,kind):
             pidx[q]=len(plist)
             plist.append(q)
     rex=(np.array([pidx[q] for q in rex],dtype=np.int64),np.array(list(rex.values()),dtype=np.int64))
-    st['rows'].append((u,len(pairs),rex,emb,key,kind,elem))
+    st['rows'].append((u,len(pairs),rex,emb,key,kind,elem,rm,gprod))
     return len(st['rows'])-1
 
 def _reduce(st,i):
-    # add row i to the xor basis of the algebraic columns; returns the rows of a dependency, or None
+    # add row i to the xor basis of the algebraic columns; returns None, or for a dependency (bit mask of its rows,
+    # parity mask of its rational exponents): both are carried along with the elimination
     acol=st['acol']
     basis=st['basis']
     vec=0
@@ -1568,22 +1582,118 @@ def _reduce(st,i):
             acol[kk]=len(acol)
         vec|=1<<acol[kk]
     mask=1<<i
+    rm=st['rows'][i][7]
     while vec:
         top=vec.bit_length()-1
-        if top in basis:
-            vec^=basis[top][0]
-            mask^=basis[top][1]
+        bt=basis.get(top)
+        if bt is not None:
+            vec^=bt[0]
+            mask^=bt[1]
+            rm^=bt[2]
         else:
-            basis[top]=(vec,mask)
+            basis[top]=(vec,mask,rm)
             return None
-    idx=[]
-    j=0
-    while mask:
-        if mask&1:
-            idx.append(j)
-        mask>>=1
-        j+=1
-    return idx
+    return mask,rm
+
+def _mask_idx(mask):
+    # positions of the set bits
+    by=mask.to_bytes((mask.bit_length()+7)>>3,'little')
+    return np.nonzero(np.unpackbits(np.frombuffer(by,dtype=np.uint8),bitorder='little'))[0].tolist()
+
+def share_large_primes(n,degree,lps):
+    # lps: large primes of partial relations found outside the NFS (values X^2 = smooth * l mod n). A pair waiting here
+    # with the same rational large prime l is worth a row now: its l is cancelled by that partial relation in the joint
+    # matrix instead of by a second NFS pair. Only an l with n a square mod l can ever turn up in such a partial.
+    # The pair stays the mate of later pairs with the same l. Returns how many waiting pairs were released.
+    st=_STATE.get((n,degree))
+    if st is None:
+        return 0
+    live=st['lp_live']
+    lp=st['lp']
+    f_x,d,m0,m1,leading=st['f'],st['d'],st['m0'],st['m1'],st['leading']
+    out=0
+    for l in lps:
+        if l in live:
+            continue
+        live.add(l)
+        mate=lp.get(('r',l))
+        if mate is None or l in st['lp_open']:
+            continue
+        st['lp_open'].add(l)
+        a,b=mate
+        i=_add_row(st,[(a,b,a*m1-b*m0,eval_F(a,b,f_x,d),[-b,a*leading],0,l)],1)
+        if i>=0:
+            st['pending'].append(i)
+            st['lp_shared']+=1
+            out+=1
+    return out
+
+def lazy_export(n,degree,start):
+    # What another process needs to take the square root of a dependency later: the polynomial data (plain values), the
+    # rows from number `start` on as (element, product of the rational values, log2 embeddings, pairs, largest |a|,|b|),
+    # and the primes the bits of a rational parity mask stand for.
+    st=_STATE.get((n,degree))
+    if st is None:
+        return None,[],[]
+    par={k:st[k] for k in ('n','d','leading','m0','m1','inert','lg_gp','lg_L','f_norm')}
+    par['g']=[int(x) for x in st['g']]
+    par['g_prime_sq']=[int(x) for x in st['g_prime_sq']]
+    par['g_prime_eval']=int(st['g_prime_eval'])
+    rows=[([int(x) for x in r[6]],int(r[8]),r[3],r[1],r[0]) for r in st['rows'][start:]]
+    return par,rows,list(st['rprimes'])
+
+def dep_square(par,rowinfo,mask):
+    # One dependency, given as the bit mask of its rows: returns (P, X) with X^2 = P mod n, P the exact product of the
+    # rational values of its rows, or None. This is the square root _bsmooth takes, done once for a whole combination
+    # of dependencies instead of once for each.
+    n,d,leading,m0,m1=par['n'],par['d'],par['leading'],par['m0'],par['m1']
+    g=[_big(x) for x in par['g']]
+    parts=[rowinfo[j] for j in _mask_idx(mask)]
+    if not parts:
+        return 1,1
+    S=sum(r[3] for r in parts)
+    if S&1:
+        return None
+    xr=par['g_prime_eval']*pow(leading,S>>1,n)%n
+    if math.gcd(xr,n)!=1:
+        return None
+    polys=[[_big(x) for x in r[0]] for r in parts]
+    gs=[_big(r[1]) for r in parts]
+    while len(polys)>1:
+        nxt=[_mulred(polys[i],polys[i+1],g) for i in range(0,len(polys)-1,2)]
+        if len(polys)&1:
+            nxt.append(polys[-1])
+        polys=nxt
+    while len(gs)>1:
+        nxt=[gs[i]*gs[i+1] for i in range(0,len(gs)-1,2)]
+        if len(gs)&1:
+            nxt.append(gs[-1])
+        gs=nxt
+    PG=int(gs[0])
+    gamma=_mulred([_big(x) for x in par['g_prime_sq']],polys[0],g)
+    pin=par['inert']
+    fq=par.get('_fq')
+    if fq is None:
+        fq=par['_fq']=_Fq(par['g'],pin)
+    root0=fq.inv_sqrt([int(x%pin) for x in gamma])
+    if root0 is None:
+        return None
+    lg=par['lg_gp']+0.5*sum(r[2] for r in parts)
+    bits=float(np.max(lg[None,:]+par['lg_L']))+math.log2(d)
+    for attempt in range(2):
+        if attempt==0:
+            bound=1<<max(1,int(bits)+25)
+        else:
+            u=max(r[4] for r in parts)
+            fd=int(pow(d,1.5))+1
+            bound=max(fd*pow(par['f_norm'],d-1-i)*pow(2*abs(leading)*(2*u)*par['f_norm'],S>>1) for i in range(d))
+        root=_lift_sqrt([_big(x) for x in root0],gamma,g,_big(pin),bound)
+        root=[0]*(d-len(root))+root
+        y=eval_F(leading*m0,m1,root,d-1)*pow(m1,S>>1,n)%n
+        X=int(y)*pow(xr,-1,n)%n
+        if (X*X-PG)%n==0:
+            return PG,X
+    return None
 
 def _bsmooth(st,idx):
     # dependency -> (v, X^2, odd) with X^2 = v mod n and v = signed product of the odd-exponent rational primes
@@ -1689,7 +1799,7 @@ def _bsmooth(st,idx):
     assert (X*X-v)%n==0
     return v,X*X,odd
 
-def nfs_launch(n,primeslist,ret_array,want,fb_keep,picks,degree,lines,T,force_T,force_lines,lp_bits=-1):
+def nfs_launch(n,primeslist,ret_array,want,fb_keep,picks,degree,lines,T,force_T,force_lines,lp_bits=-1,lazy=False):
     # One NFS call. primeslist: the algebraic factor base (odd primes not dividing n; fixed after the first call).
     # fb_keep + picks: the rational factor base, any odd primes: they need not be in the algebraic base.
     # picks: primes forced to divide the rational value on a sub-lattice (the singleton targets).
@@ -1698,6 +1808,8 @@ def nfs_launch(n,primeslist,ret_array,want,fb_keep,picks,degree,lines,T,force_T,
     #   (force_T=0: the largest factor base prime).
     # lp_bits: a relation may keep one prime up to 2^lp_bits outside the factor base, on one side (0 = none; never
     #   above the square of the largest base prime; -1 = the module default NFS_LP_BITS).
+    # lazy: take no square roots. ret_array[0] / ret_array[1] then get, per dependency, the parity mask of its rational
+    #   exponents (bits = the primes of lazy_export) and the bit mask of its rows; see dep_square().
     # Returns the number of b-smooths appended to ret_array.
     st=_STATE.get((n,degree))
     if st is None:
@@ -1724,7 +1836,8 @@ def nfs_launch(n,primeslist,ret_array,want,fb_keep,picks,degree,lines,T,force_T,
     big_a=_big(fbprod_a)
     f_dbl=np.array(f_x,dtype=np.float64)
     rows=st['rows']
-    new_rows=[]
+    new_rows=st['pending']
+    st['pending']=[]
     counts=[0,0,0,0,0]                  # free, unforced, forced, built from two pairs with a shared large prime, pairs left waiting
     # free relations: p splits completely, so (p) is the product of its d degree-1 ideals; rational side p*m1
     if _is_smooth(m1,fbprod_r):
@@ -1789,6 +1902,14 @@ def nfs_launch(n,primeslist,ret_array,want,fb_keep,picks,degree,lines,T,force_T,
             if mate is None:
                 lp[k]=(a,b)
                 counts[4]+=1
+                if cg!=1 and cg in st['lp_live'] and cg not in st['lp_open']:
+                    # the other sieve already holds a relation with this large prime: this pair goes in by itself, the
+                    # large prime as one more rational column that the two share (see share_large_primes)
+                    st['lp_open'].add(cg)
+                    i=_add_row(st,[me],kind)
+                    if i>=0:
+                        new_rows.append(i)
+                        st['lp_shared']+=1
                 return
             a2,b2=mate
             i=_add_row(st,[me,(a2,b2,a2*m1-b2*m0,eval_F(a2,b2,f_x,d),[-b2,a2*leading],me[5],me[6])],kind)
@@ -1801,12 +1922,19 @@ def nfs_launch(n,primeslist,ret_array,want,fb_keep,picks,degree,lines,T,force_T,
         nonlocal made,t_sqrt
         for i in new_rows:
             t1=default_timer()
-            idx=_reduce(st,i)
+            dep=_reduce(st,i)
             _tick('elimination',t1)
-            if idx is None:
+            if dep is None:
+                continue
+            if lazy:
+                # no square root now: hand out the dependency itself (its rational parity mask and its row mask).
+                # dep_square() takes one square root for whatever combination of these the final matrix settles on.
+                ret_array[0].append(dep[1])
+                ret_array[1].append(dep[0])
+                made+=1
                 continue
             t1=default_timer()
-            res=_bsmooth(st,idx)
+            res=_bsmooth(st,_mask_idx(dep[0]))
             t_sqrt+=default_timer()-t1
             if res is None or res[1] in st['have']:
                 continue
@@ -1919,10 +2047,10 @@ def nfs_launch(n,primeslist,ret_array,want,fb_keep,picks,degree,lines,T,force_T,
             flush()
     total=default_timer()-t_start
     print("[i]NFS(d="+str(d)+"): rational side "+str(len(fb_r))+" primes"+(" (forced "+str(picks)+")" if picks else "")+", region |a|<="+str(M)+", b<="+str(L)+", "+str(ncand)+" new pairs")
-    print("[i]NFS(d="+str(d)+"): new relations "+str(counts[0])+" free + "+str(counts[1])+" unforced + "+str(counts[2])+" forced"+(" + "+str(counts[3])+" from large-prime pairs ("+str(len(lp))+" large primes waiting)" if lp_a else "")+"; total "+str(len(rows))+" relations, "+str(len(st['acol']))+" algebraic columns, rank "+str(len(st['basis'])))
+    print("[i]NFS(d="+str(d)+"): new relations "+str(counts[0])+" free + "+str(counts[1])+" unforced + "+str(counts[2])+" forced"+(" + "+str(counts[3])+" from large-prime pairs ("+str(len(lp))+" large primes waiting)" if lp_a else "")+"; total "+str(len(rows))+" relations, "+str(len(st['acol']))+" algebraic columns, rank "+str(len(st['basis']))+(", "+str(st['lp_shared'])+" pairs in through a large prime shared with the other sieve" if st['lp_shared'] else ""))
     print("[i]NFS(d="+str(d)+"): "+str(made)+" b-smooths for the SIQS matrix"+(" ("+str(st['sqrt_fail'])+" square roots failed so far)" if st['sqrt_fail'] else "")+"   time %.1fs, of which square roots %.1fs"%(total,t_sqrt))
     print("[i]NFS(d="+str(d)+"): "+str(nhit)+" sieve candidates; seconds: "+", ".join(k+" %.1f"%v for k,v in _T.items()))
-    if picks and made:
+    if picks and made and not lazy:
         newsets=ret_array[2][-made:]
         print("[i]NFS(d="+str(d)+"): forced primes among the odd-exponent factors of the new b-smooths: "+", ".join(str(q)+" in "+str(sum(1 for s_ in newsets if q in s_))+"/"+str(made) for q in sorted(picks)))
     return made
