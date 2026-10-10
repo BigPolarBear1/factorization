@@ -17,7 +17,7 @@ Requirements: You should probably pip install gmpy2, not required but will help 
 
 This is a hybrid SIQS / NFS algorithm. Both feed the same matrix but serve a different purpose. SIQS finds b-smooths using a very large factor base while NFS tries to optimize the matrix. This idea is an ongoing area of research I have been working on for years now. I recently discovered that Claude has finally matured enough to rapidly prototype these ideas for me... so that's what I'm doing as I can now do in a day what would otherwise take me weeks of manual coding and labour. I am still skeptical about AI as a research tool, since it lacks creativity.. but for implementing documented things, even complex math code.. it has definitely matured enough now and I'm becoming a convert.
 
-I'll do some more research myself now. I'll also fix the -mode psieve again.. I need to study that to figure out how to optimize the NFS part.... those two modes are in idea somewhat related.. what still has to be done now is making the NFS algorithm better at improving the overall matrix shared between both algorithms. 
+I'll do some more research myself now. I'll also fix the -mode psieve again (most of the bloat comes from having to support psieve and nfs in one project).. I need to study that to figure out how to optimize the NFS part.... those two modes are in idea somewhat related.. what still has to be done now is making the NFS algorithm better at improving the overall matrix shared between both algorithms. 
 
 On a side note: I've also resumed studying abstract algebra... planned to do it this summer but with my father in the ICU.. I just couldn't focus on it. 
 
