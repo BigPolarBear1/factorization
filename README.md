@@ -1,3 +1,5 @@
+Taking parts of my research private. Especially the completely novel directions such as seen in psieve. With the speed AI is moving at, just dumping research online isn't a good choice. Will keep refining the hybrd_sieve for a while though until I hit a ceiling there. If you want access to my more creative work: big_polar_bear1@proton.me
+
 Note: This project is pro-lgbtq, so fck off haters.
 
 Disclaimer: This is a research project I have worked on for 3.5 years. I have not used AI for any of the research in the paper. Trying to merge an SIQS algorithm with NFS is something I have tried for a long time and my own findings indicated that it should be possible. After feeding in code of a nearly finished project and aggressively prompting Claude with specific directions on how to finish it, I did manage to finally achieve this. But none of the research math was done by Claude, I layed down those foundations myself.
