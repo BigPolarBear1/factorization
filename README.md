@@ -15,7 +15,9 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 300 -base 200000 -lin_size 1000000 -quad_size 1 -mode nfs -nfs_degree 4 -nfs_base 60000 -nfs_sing_small 1100000 -nfs_lp 27 -nfs_lp2 24 -nfs_t 200000000 -nfs_lines 4 -la_every 2000</br></br>
 
-Note: 300-bit takes around 1 hour. There is also a lot of bloat that I'll remove eventually. Just presented Claude with unfinished work and been prompting it to finish and optimize it.. aiming for 333-bit or 100 digits next. I'll be implementing some novel strategies too to get better synergy between both NFS and SIQS. Will upload as I get improvements... 
+Note: For my more creative work that relates closer to my paper see psieve. This project is an attempt at implementing a hybrid I've speculated about for a while and using Claude to rapidly prototype and improve it. 
+
+300-bit takes around 1 hour. There is also a lot of bloat that I'll remove eventually. Just presented Claude with unfinished work and been prompting it to finish and optimize it.. aiming for 333-bit or 100 digits next. I'll be implementing some novel strategies too to get better synergy between both NFS and SIQS. Will upload as I get improvements... 
 
 Requirements: You should probably pip install gmpy2, not required but will help big num performance
 
