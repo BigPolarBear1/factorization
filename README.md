@@ -11,7 +11,9 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 200 -base 12000 -lin_size 100_000 -quad_size 1 -mode nfs -nfs_degree 4 -nfs_base 6000 -nfs_lines 25 -nfs_want 1000 -nfs_lp 26 -nfs_sing_small 20000 -la_every 500</br></br>
+To run: python3 run_qs.py -keysize 250 -base 40000 -lin_size 100_000 -quad_size 1 -mode nfs -nfs_degree 4 -nfs_base 30000 -nfs_lines 5 -nfs_want 5000 -nfs_lp 26 -nfs_sing_small 120000 -la_every 2000</br></br>
+
+Note: 250-bit takes around 800 seconds. NFS logic won't kick in until around 3000 SIQS b-smooths.. so warmup takes a while. 
 
 Requirements: You should probably pip install gmpy2, not required but will help big num performance
 
