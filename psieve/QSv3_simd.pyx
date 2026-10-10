@@ -1541,12 +1541,20 @@ def find_residues4_b(prime,n,exp,k,i,qr,u=1):
     blist[-1].extend(roots)
     return blist
 
+psieve_mark_cap=20   # how many sbase primes filter each interval (was 8, residue primes only)
+
+def ksym(a,p):       # Legendre symbol for an odd prime p, without the sympy call overhead
+    return jacobi(a%p,p)
+
 def psieve_marks(sbase,A):
+    # (index, symbol) pairs. Symbol +1: X^2-4nk must be a residue or 0 mod p.
+    # Symbol -1: X^2-4nk must be a non-residue or 0 mod p (same one-bit filter, complement set).
     out=[]
     for i,prime in enumerate(sbase):
-        if kronecker_symbol(A,prime)==1:
-            out.append(i)
-            if len(out)==8:
+        s=ksym(A,prime)
+        if s!=0:
+            out.append((i,s))
+            if len(out)==psieve_mark_cap:
                 break
     return out
 
@@ -1753,12 +1761,16 @@ def find_all_b2(prime,parity,k,n,a,b):
                                 
         exp+=1
 
-def psieve_patterns(resmaps,k,a,sbase,primes_to_mark):       # once per (k, a)
+def psieve_patterns(resmaps,k,a,sbase,primes_to_mark,n):       # once per (k, a)
     pats=[]
-    for ind in primes_to_mark:
+    for ind,sg in primes_to_mark:
         p=sbase[ind]
         if a%p != 0:
-            pats.append(make_pattern(p,resmaps[ind][k%p][1],a))
+            r=resmaps[ind][k%p][1]
+            if sg==-1:
+                rs=set(r)
+                r=[x for x in range(p) if x not in rs or (x*x-4*n*k)%p==0]
+            pats.append(make_pattern(p,r,a))
     return pats
 
 def lifted_pats(p):
@@ -1786,8 +1798,8 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
         u_list_all+=[d*prime for d in u_list_all]
     u_list_all.sort()
    # print("primes to check len: "+str(len(primes_to_check)))
-    good_primes=[prime for prime in sbase if kronecker_symbol(a_o, prime) == 1]
-    n_symbols=[kronecker_symbol(n,prime) for prime in good_primes]
+    good_primes=[prime for prime in sbase if ksym(a_o, prime) == 1]
+    n_symbols=[ksym(n,prime) for prime in good_primes]
     #print(qr.quads)
     
     qi=0
@@ -1811,12 +1823,12 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
             a_base=a_o//u
             pc=[p for p in primes_to_check if u%p!=0]   
             uf=[p for p in primes_to_check if u%p==0]   
-            if any(kronecker_symbol(u*n*k,p)!=1 for p in pc) or any(kronecker_symbol(-a_base*n*k,q)!=1 for q in uf):
+            if any(ksym(u*n*k,p)!=1 for p in pc) or any(ksym(-a_base*n*k,q)!=1 for q in uf):
                 a_mul_ind+=1
                 continue
             sbase_temp=[]
             for j,prime in enumerate(good_primes):
-                if n_symbols[j]*kronecker_symbol(k*u,prime)==1 and k%prime!=0 and a_o%prime!=0:
+                if n_symbols[j]*ksym(k*u,prime)==1 and k%prime!=0 and a_o%prime!=0:
                     sbase_temp.append(prime)
             a_mul,a_mul_divs=best_a_mul(a_base,n,k,sbase_temp,u)
             if a_mul==-1:
@@ -1825,8 +1837,8 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
                     a_mul_ind+=1                   
                     continue
             a=a_base*(a_mul**2)
-            ok_pos=not (k%2==0 and A%8==5) and all(kronecker_symbol(A,f)!=-1 for f in kf if f!=2)
-            ok_neg=not (k%2==0 and A%8==3) and all(kronecker_symbol(-A,f)!=-1 for f in kf if f!=2)
+            ok_pos=not (k%2==0 and A%8==5) and all(ksym(A,f)!=-1 for f in kf if f!=2)
+            ok_neg=not (k%2==0 and A%8==3) and all(ksym(-A,f)!=-1 for f in kf if f!=2)
             if u!=1:
                 ok_neg=False                        
             if not (ok_pos or ok_neg):
@@ -1853,8 +1865,8 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
                 mkey=(u,a_mul)
                 if mkey not in marks_cache:
                     marks_cache[mkey]=(psieve_marks(sbase,a*u),psieve_marks(sbase,-a*u))
-                pats_pos=psieve_patterns(resmaps,k*u,u*mod_otherside,sbase,marks_cache[mkey][0]) if ok_pos else None
-                pats_neg=psieve_patterns(resmaps,k*u,u*mod_otherside,sbase,marks_cache[mkey][1]) if ok_neg else None                
+                pats_pos=psieve_patterns(resmaps,k*u,u*mod_otherside,sbase,marks_cache[mkey][0],n) if ok_pos else None
+                pats_neg=psieve_patterns(resmaps,k*u,u*mod_otherside,sbase,marks_cache[mkey][1],n) if ok_neg else None                
                 blist_disc=get_partials(mod_otherside,blist_otherside)            
                 enum=[]            
                 i=0
