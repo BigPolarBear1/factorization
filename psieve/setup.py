@@ -7,7 +7,8 @@ args=['-O3','-march=native']
 exts = [Extension("QSv3_simd",["QSv3_simd.pyx"],include_dirs=sys.path,extra_compile_args=args),  #libraries=['gmp','mpfr','mpc']
         Extension("bitsieve",["bitsieve.pyx"],extra_compile_args=args),
         Extension("almostsq",["almostsq.pyx"],extra_compile_args=args),
-        Extension("quadroots",["quadroots.pyx"],extra_compile_args=args)]
+        Extension("quadroots",["quadroots.pyx"],extra_compile_args=args),
+        Extension("gnfs",["gnfs.pyx"],extra_compile_args=args)]
 
 for ext in exts:
     ext.cython_directives={'language_level':"3",'profile':False,'linetrace':False}
