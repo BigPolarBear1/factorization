@@ -13,7 +13,7 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 
 #### To run from folder "hybrid_sieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 300 -base 200000 -lin_size 1000000 -quad_size 1 -mode nfs -nfs_degree 4 -nfs_base 60000 -nfs_sing_small 1100000 -nfs_lp 27 -nfs_lp2 24 -nfs_t 200000000 -nfs_lines 4 -la_every 2000</br></br>
+To run: python3 run_qs.py -keysize 300 -base 200000 -lin_size 1000000 -quad_size 1 -mode nfs -nfs_degree 4 -nfs_base 60000 -nfs_sing_small 1100000 -nfs_lp 27 -nfs_lp2 24 -nfs_t 200000000 -nfs_lines 4 -la_every 2000</br>
 
 Note: For my more creative work that relates closer to my paper see psieve below instead. This project is an attempt at implementing a hybrid I've speculated about for a while and using Claude to rapidly prototype and improve it. 
 
@@ -29,7 +29,7 @@ On a side note: I've also resumed studying abstract algebra... planned to do it 
 
 #### To run from folder "psieve":(work in progress)</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 80 -base 5000 -lin_size 100 -quad_size 1</br></br>
+To run: python3 run_qs.py -keysize 80 -base 5000 -lin_size 100 -quad_size 1</br>
 
 Some ongoing experimentation.. this mixes SIQS and Coefficient Sieve. I either find a way to improve this, or take elements from this for my hybrid_sieve.
 I will continue working on this in private while I study abstract algebra... if anyone wants to buy my work.. I'm completely broke and could use the money.
