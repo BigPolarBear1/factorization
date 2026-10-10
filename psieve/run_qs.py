@@ -53,6 +53,7 @@ def parse_args():
     parser.add_argument('-nfs_siqs',type=int,help='nfs mode: 1 = the SIQS process runs (default), 0 = NFS only')
     parser.add_argument('-nfs_save',type=str,help='nfs mode: directory where the NFS rows are kept after every round; a later run with the same directory goes on from there')
     parser.add_argument('-la_maxw',type=int,help='nfs mode: ...or until the lightest column left is in more rows than this (default 40)')
+    parser.add_argument('-la_fill',type=int,help='nfs mode: ...or until the sparse rows hold this many entries in all; bounds the memory of the matrix job (default 20000000, about 4.5 GB at 300 bits)')
     parser.add_argument('-la_dense',type=int,help='nfs mode: the matrix job eliminates light columns until this many are left, then solves densely (default 3000)')
     parser.add_argument('-nfs_lp',type=int,help='nfs mode: large prime bound in bits; a relation may keep one prime up to 2^N outside the factor base (default 24, 0 = off)')
     parser.add_argument('-nfs_base',type=int,help='nfs mode: algebraic factor base of the NFS = the first N primes of the SIQS factor base (default: all of it)')
@@ -96,6 +97,8 @@ def parse_args():
         QSv3_simd.NFS_SAVE=args.nfs_save
     if args.la_maxw != None:
         QSv3_simd.LA_MAXW=args.la_maxw
+    if args.la_fill != None:
+        QSv3_simd.LA_FILL=args.la_fill
     if args.la_dense != None:
         QSv3_simd.LA_DENSE=args.la_dense
     if args.nfs_lp != None:

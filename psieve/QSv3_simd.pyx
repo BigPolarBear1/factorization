@@ -67,6 +67,8 @@ NFS_PROCS=1           #-mode nfs: number of processes that sieve for the NFS (th
 NFS_SIQS=1            #-mode nfs: 1 = the SIQS process runs, 0 = NFS only
 NFS_SAVE=""           #-mode nfs: directory where the NFS rows are kept after every round; a later run with the same directory goes on from there
 LA_DENSE=3000         #-mode nfs: the matrix job eliminates light columns on the sparse rows until this many columns are left, then solves densely
+LA_DEBUG=0            #-mode nfs: 1 = the matrix job prints its memory use at each stage
+LA_FILL=20000000      #-mode nfs: ...or until the rows hold this many entries in all (adding rows to each other fills them up; this bounds the memory)
 LA_MAXW=40            #-mode nfs: ...or until the lightest column left is in more rows than this
 NFS_LP_BITS=24        #large primes: a relation of the NFS may keep one prime up to 2^NFS_LP_BITS outside the factor base (0 = off); it is one more column of the matrix
 NFS_BASE=0            #-mode nfs: size of the algebraic factor base of the NFS = the first NFS_BASE primes of the SIQS factor base (0 = all of it)
@@ -1103,8 +1105,7 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
     u=0
     cdef Py_ssize_t k
         
-    np.putmask(interval, interval<threshold, 0)
-    indexlist=np.nonzero(interval)[0]
+    indexlist=np.flatnonzero(interval>threshold)       # one pass: only these positions are looked at below
     temp=interval
     root=lin
            # print("Checking lin: "+str(lin)+" quad: "+str(quad_can)+" cmod: "+str(cmod)+" u2: "+str(u2)+" u: "+str(u)+" temp: "+str(temp))
@@ -1439,6 +1440,7 @@ def get_lin(cfact,local_mod,k,n,a):
 
 SIQS_PARTIALS=None      # -mode nfs: list that collects the partial relations (one large prime below SIQS_LP_MAX) for the joint matrix
 SIQS_LP_MAX=0
+SIQS_SKIP_BELOW=0       # primes below this are not sieved (the threshold leaves room for them): they cost the most sieve steps
 SIQS_CUR=None          # (primes, the two sieve roots of each for the current polynomial, the primes handled apart)
 SIQS_POWER_BOUND=256    # primes below this are sieved one by one with their powers; the others in one pass, first power only
 SIQS_FBPROD=None        # 2 * product of the factor base (set by launch)
@@ -1534,7 +1536,7 @@ cdef build_database2interval(long long [:] primeslist,quad,n,lin,cmod,roots2d,bS
         prime=primeslist[i]
         log=round(math.log2(prime))
         xc = int(roots2d[quad,i])
-        if xc ==0:
+        if xc ==0 or prime<SIQS_SKIP_BELOW:
             i+=1
             continue
 
@@ -2661,7 +2663,7 @@ def get_primes(start,stop):
 # with a single reader each.
 ######################################################################################################################
 
-_SHARED_SETTINGS=("key","keysize","workers","g_debug","base","lin_sieve_size","lin_sieve_size2","quad_sieve_size","max_bound","g_nfs_poly","LA_EVERY","LA_DENSE","LA_MAXW")
+_SHARED_SETTINGS=("key","keysize","workers","g_debug","base","lin_sieve_size","lin_sieve_size2","quad_sieve_size","max_bound","g_nfs_poly","LA_EVERY","LA_DENSE","LA_MAXW","LA_FILL")
 
 def export_settings():
     # the settings a worker needs (under the 'spawn' start method a child does not inherit them)
@@ -2696,11 +2698,16 @@ cdef extern from *:
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def gf2_nullspace(list rows,Py_ssize_t nbits,Py_ssize_t maxvec=40):
-    # The matrix as solve_bits takes it (one integer per column, bit j = row j), reduced the same way (each integer's
-    # lowest set bit becomes its pivot and is cleared from every other one), on 64-bit words in C.
+    # The matrix as solve_bits takes it (one integer per column, bit j = row j), reduced the same way: each integer's
+    # lowest set bit becomes its pivot and is cleared from every other one. On 64-bit words in C, eight pivots at a
+    # time: the eight pivot integers are first cleared of each other's pivot bits, all 256 sums of them are tabulated,
+    # and every other integer then takes the one sum picked by its eight pivot bits (one pass instead of up to eight).
     # Returns (up to maxvec dependencies as integers over the rows, number of free rows).
-    cdef Py_ssize_t m=len(rows),words=(nbits+63)>>6,r,i,w,w0,lsb
-    cdef unsigned long long x,bit
+    cdef Py_ssize_t m=len(rows),words=(nbits+63)>>6,r,i,w,lsb,nb,j,x,t,wmin,nxt
+    cdef unsigned long long v
+    cdef Py_ssize_t prow[8]
+    cdef Py_ssize_t pw[8]
+    cdef unsigned long long pbit[8]
     if m==0 or words==0:
         return [int(1)<<int(j) for j in range(min(nbits,maxvec))],nbits
     buf=bytearray(m*words*8)
@@ -2708,35 +2715,77 @@ def gf2_nullspace(list rows,Py_ssize_t nbits,Py_ssize_t maxvec=40):
         buf[r*words*8:(r+1)*words*8]=rows[r].to_bytes(words*8,'little')
     Anp=np.frombuffer(buf,dtype=np.uint64).reshape(m,words)
     pivnp=np.full(m,-1,dtype=np.int64)
+    Tnp=np.zeros((256,words),dtype=np.uint64)
+    isp_np=np.zeros(m,dtype=np.uint8)
     cdef unsigned long long[:, ::1] A=Anp
+    cdef unsigned long long[:, ::1] T=Tnp
     cdef long long[::1] piv=pivnp
+    cdef unsigned char[::1] inblock=isp_np
     with nogil:
-        for r in range(m):
-            lsb=-1
-            for w in range(words):
-                x=A[r,w]
-                if x:
-                    lsb=w*64+__builtin_ctzll(x)
-                    break
-            if lsb<0:
+        nxt=0
+        while nxt<m:
+            # the next (up to) eight pivots
+            nb=0
+            wmin=words
+            while nxt<m and nb<8:
+                r=nxt
+                nxt+=1
+                for j in range(nb):                     # the pivots of this group have not been applied to r yet
+                    if A[r,pw[j]]&pbit[j]:
+                        for w in range(pw[j],words):
+                            A[r,w]^=A[prow[j],w]
+                lsb=-1
+                for w in range(words):
+                    v=A[r,w]
+                    if v:
+                        lsb=w*64+__builtin_ctzll(v)
+                        break
+                if lsb<0:
+                    continue
+                piv[r]=lsb
+                prow[nb]=r
+                pw[nb]=lsb>>6
+                pbit[nb]=1ULL<<(lsb&63)
+                for j in range(nb):                     # and r's pivot bit goes out of the earlier ones of the group
+                    if A[prow[j],pw[nb]]&pbit[nb]:
+                        for w in range(pw[nb],words):
+                            A[prow[j],w]^=A[r,w]
+                if pw[nb]<wmin:
+                    wmin=pw[nb]
+                inblock[r]=1
+                nb+=1
+            if nb==0:
                 continue
-            piv[r]=lsb
-            w0=lsb>>6
-            bit=1ULL<<(lsb&63)
+            # all sums of the group's integers
+            for x in range(1,1<<nb):
+                t=x&(x-1)                               # x without its lowest set bit
+                j=0
+                while not (x>>j)&1:
+                    j+=1
+                for w in range(wmin,words):
+                    T[x,w]=T[t,w]^A[prow[j],w]
             for i in range(m):
-                if i!=r and (A[i,w0]&bit):
-                    for w in range(w0,words):
-                        A[i,w]^=A[r,w]
+                if inblock[i]:
+                    continue
+                x=0
+                for j in range(nb):
+                    if A[i,pw[j]]&pbit[j]:
+                        x|=1<<j
+                if x:
+                    for w in range(wmin,words):
+                        A[i,w]^=T[x,w]
+            for j in range(nb):
+                inblock[prow[j]]=0
     used=np.zeros(words*64,dtype=bool)
     used[pivnp[pivnp>=0]]=True
     free=np.nonzero(~used[:nbits])[0]
     nulls=[]
     for c in free[:maxvec].tolist():
         sel=((Anp[:,c>>6]>>np.uint64(c&63))&np.uint64(1)).astype(bool)&(pivnp>=0)
-        v=np.zeros(words*64,dtype=np.uint8)
-        v[pivnp[sel]]=1
-        v[c]=1
-        nulls.append(int.from_bytes(np.packbits(v,bitorder='little').tobytes(),'little'))
+        v_=np.zeros(words*64,dtype=np.uint8)
+        v_[pivnp[sel]]=1
+        v_[c]=1
+        nulls.append(int.from_bytes(np.packbits(v_,bitorder='little').tobytes(),'little'))
     return nulls,len(free)
 
 @cython.boundscheck(False)
@@ -2878,6 +2927,13 @@ def nfs_worker(settings,n,primeslist,feed,inbox,stop,wk,nproc):
     except BaseException:
         inbox.put(('error','nfs',traceback.format_exc()))
 
+def _la_mem(tag):
+    if LA_DEBUG:
+        import resource
+        with open('/proc/self/statm') as fh:
+            cur=int(fh.read().split()[1])*4096/1e9
+        print("   [matrix job] %-20s now %.2f GB, peak %.2f GB"%(tag,cur,resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1e6),flush=True)
+
 def la_worker(settings,n,sm,xl,fl,part,nfs,inbox,job):
     # One matrix attempt on a frozen copy: the SIQS relations and partial relations (value, X^2, odd factors) and the NFS
     # rows (nfs = polynomial data, list of batches as gnfs.nfs_sieve returns them).
@@ -2916,6 +2972,7 @@ def la_worker(settings,n,sm,xl,fl,part,nfs,inbox,job):
         uq,inv=np.unique(cols,return_inverse=True)
         inv=np.ascontiguousarray(inv.astype(np.int32))
         alive,cnt=prune_rows(ends,inv,len(uq))
+        _la_mem("pruned")
         keep=np.nonzero(alive)[0]
         ncol=int((cnt>0).sum())
         k_nfs=int(alive[:nn].sum())
@@ -2933,7 +2990,7 @@ def la_worker(settings,n,sm,xl,fl,part,nfs,inbox,job):
         R=len(keep)
         rows=[None]*R
         chv=[0]*R
-        hist=[None]*R                                   # original rows a row is the sum of (None: itself only)
+        ops=[]                                          # the row additions done, in order: (row added, rows it was added to)
         colrows={}
         kl=keep.tolist()
         for k in range(R):
@@ -2948,18 +3005,25 @@ def la_worker(settings,n,sm,xl,fl,part,nfs,inbox,job):
                     colrows[c]=s={k}
                 else:
                     s.add(k)
-        heap=[(len(s),c) for c,s in colrows.items()]
-        heapq.heapify(heap)
+        _la_mem("rows built")
+        # the columns by weight: one set per weight up to LA_MAXW, heavier ones together in the last
+        top=LA_MAXW+1
+        byw=[set() for k in range(top+1)]
+        for c,s in colrows.items():
+            byw[min(len(s),top)].add(c)
+        del cols,uq,cnt,alive
+        wlow=0
         nact=R
-        while heap and len(colrows)>LA_DENSE:
-            w,c=heapq.heappop(heap)
-            s=colrows.get(c)
-            if s is None or len(s)!=w:
-                continue                                # an old entry: the column has changed since, or is gone
-            if w>LA_MAXW:
-                heapq.heappush(heap,(w,c))
-                break
-            del colrows[c]
+        tw=sum(len(row) for row in rows)                # entries in all rows: grows as rows are added to each other
+        tw0=tw
+        while len(colrows)>LA_DENSE and tw<LA_FILL:
+            while wlow<top and not byw[wlow]:
+                wlow+=1
+            if wlow>=top:
+                break                                   # only heavy columns are left
+            w=wlow
+            c=byw[w].pop()
+            s=colrows.pop(c)
             if w==0:
                 continue
             piv=-1
@@ -2972,14 +3036,17 @@ def la_worker(settings,n,sm,xl,fl,part,nfs,inbox,job):
             prow=rows[piv]
             prow.discard(c)
             pch=chv[piv]
-            ph=hist[piv]
-            if ph is None:
-                ph={piv}
+            if w>1:
+                ops.append((piv,[r for r in s if r!=piv]))
+            tw-=len(prow)+w
+            for e in prow:                              # their weights are about to change: out of their sets for now
+                byw[min(len(colrows[e]),top)].discard(e)
             for r in s:
                 if r==piv:
                     continue
                 rr=rows[r]
                 rr.discard(c)
+                tw-=len(rr)
                 for e in prow:
                     if e in rr:
                         rr.discard(e)
@@ -2988,17 +3055,20 @@ def la_worker(settings,n,sm,xl,fl,part,nfs,inbox,job):
                         rr.add(e)
                         colrows[e].add(r)
                 chv[r]^=pch
-                h=hist[r]
-                hist[r]=ph^({r} if h is None else h)
+                tw+=len(rr)
             for e in prow:
                 cs=colrows[e]
                 cs.discard(piv)
-                heapq.heappush(heap,(len(cs),e))
+                k=min(len(cs),top)
+                byw[k].add(e)
+                if k<wlow:
+                    wlow=k
             rows[piv]=None
-            hist[piv]=None
             nact-=1
+        _la_mem("sparse done")
         # 3. dense part: one integer per column (bit = row), the characters as columns of their own
         act=[r for r in range(R) if rows[r] is not None]
+        del rows,byw
         pos={r:j for j,r in enumerate(act)}
         na=len(act)
         M=[]
@@ -3008,25 +3078,34 @@ def la_worker(settings,n,sm,xl,fl,part,nfs,inbox,job):
                 v[:]=False
                 v[[pos[r] for r in s]]=True
                 M.append(int.from_bytes(np.packbits(v,bitorder='little').tobytes(),'little'))
+        del colrows
         if nchar:
             charr=np.array([[(chv[r]>>kk)&1 for kk in range(nchar)] for r in act],dtype=bool)
             for kk in range(nchar):
                 x=int.from_bytes(np.packbits(charr[:,kk],bitorder='little').tobytes(),'little')
                 if x:
                     M.append(x)
+        _la_mem("dense matrix built")
         t2=default_timer()
         nulls,nfree=gf2_nullspace(M,na)
         t3=default_timer()
-        # 4. square roots
+        _la_mem("dense done")
+        # 4. square roots. A dependency is a set of the rows that are left; which original rows that is follows by
+        # undoing the additions from the last one back: a row that was added to others is in the sum once for each of
+        # them that is. All dependencies are carried along at once, one bit each.
         f1=f2=0
         tried=0
-        for vec in nulls:
-            S=set()
+        coef=[0]*R
+        for vi,vec in enumerate(nulls):
             for j in _bits(vec):
-                r=act[j]
-                h=hist[r]
-                S^=({r} if h is None else h)
-            orig=sorted(kl[k] for k in S)
+                coef[act[j]]|=int(1)<<int(vi)
+        for piv,targets in reversed(ops):
+            x=coef[piv]
+            for r in targets:
+                x^=coef[r]
+            coef[piv]=x
+        for vi in range(len(nulls)):
+            orig=[kl[k] for k in range(R) if (coef[k]>>vi)&1]
             nidx=[i for i in orig if i<nn]
             vals=[svals[i-nn] for i in orig if i>=nn]
             xs=[sxs[i-nn] for i in orig if i>=nn]
@@ -3046,7 +3125,7 @@ def la_worker(settings,n,sm,xl,fl,part,nfs,inbox,job):
                 f1=f2=0
             if f1>1:
                 break
-        inbox.put(('la',job,int(f1),int(f2),info+"; sparse elimination left "+str(na)+" rows x "+str(len(M))+" columns, "+str(nfree)+" dependencies, "+str(tried)+" tried; %.1fs (pruning %.1f, sparse %.1f, dense %.1f, square roots %.1f)"%(default_timer()-t0,t1-t0,t2-t1,t3-t2,default_timer()-t3),None))
+        inbox.put(('la',job,int(f1),int(f2),info+"; sparse elimination left "+str(na)+" rows x "+str(len(M))+" columns ("+str(tw0)+" -> "+str(tw)+" entries), "+str(nfree)+" dependencies, "+str(tried)+" tried; %.1fs (pruning %.1f, sparse %.1f, dense %.1f, square roots %.1f)"%(default_timer()-t0,t1-t0,t2-t1,t3-t2,default_timer()-t3),None))
     except BaseException:
         inbox.put(('la',job,0,0,"matrix job failed:\n"+traceback.format_exc(),None))
 
