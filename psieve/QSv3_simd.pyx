@@ -67,6 +67,7 @@ NFS_BASE=0            #-mode nfs: size of the algebraic factor base of the NFS =
 LA_EVERY=1000         #-mode nfs: the matrix is tried each time this many new b-smooths have arrived (from the SIQS or the NFS)
 NFS_SING_FORCE=1      #how many singleton targets the NFS forces per call, largest first (each divides the rational value of every forced pair; each is tried once)
 NFS_SING_SMALL=200    #every prime up to this bound counts as core: it is in the rational factor base, and it never makes a relation a singleton when the targets are chosen
+NFS_SING_QR=-1        #above NFS_SING_SMALL, primes up to this bound join the rational factor base only if n is a square modulo them: no other prime can occur in a SIQS relation, so no other prime is a column the two share (-1 = up to the end of the SIQS factor base, 0 = off)
 g_nfs_poly=""       #"rel_sq_mix" when run with -mode nfs
 g_debug=0 #0 = No debug, 1 = Debug, 2 = A lot of debug
 g_lift_lim=0.5
@@ -2590,6 +2591,14 @@ def nfs_worker(settings,n,primeslist,feed,inbox,stop):
         nfs_primes=primeslist[:NFS_BASE] if NFS_BASE>0 else primeslist
         fbset=set(primeslist)
         small=[p for p in primeslist if p<=NFS_SING_SMALL]
+        # A prime p with n not a square mod p never divides a SIQS value, so as a rational prime it is a column only the
+        # NFS uses, and the first NFS b-smooth that holds it is spent on that column. Such primes are only worth having
+        # where they carry the smoothness (the small ones); above the bound the residues alone are taken.
+        qr_bound=primeslist[-1] if NFS_SING_QR<0 else NFS_SING_QR
+        n_small=len(small)
+        small+=[p for p in primeslist if NFS_SING_SMALL<p<=qr_bound and pow(n%p,(p-1)//2,p)==1]
+        nfs_only=sum(1 for p in small[:n_small] if pow(n%p,(p-1)//2,p)!=1)
+        print("[NFS] rational base before the core: "+str(n_small)+" primes up to "+str(NFS_SING_SMALL)+" ("+str(nfs_only)+" of them cannot occur in a SIQS relation) + "+str(len(small)-n_small)+" residue primes up to "+str(qr_bound))
         all_small=len(small)==len(primeslist)           # every prime counts as core: nothing to prune, no targets
         flist=[]                                        # this process's copy of the odd-factor lists of the matrix
         tried=set()
@@ -2615,7 +2624,7 @@ def nfs_worker(settings,n,primeslist,feed,inbox,stop):
                 if p in fbset and p not in tried and p not in picks:
                     picks.append(p)
             tried.update(picks)
-            print("[NFS] matrix copy: "+str(len(flist))+" relations, "+str(len(targets))+" singleton targets; rational base "+str(len(sing_keep))+" primes (core + primes up to "+str(NFS_SING_SMALL)+"), forcing "+(str(picks) if picks else "nothing")+"   (%.1fs)"%(default_timer()-t0))
+            print("[NFS] matrix copy: "+str(len(flist))+" relations, "+str(len(targets))+" singleton targets; rational base "+str(len(sing_keep))+" primes (core + the "+str(len(small))+" above), forcing "+(str(picks) if picks else "nothing")+"   (%.1fs)"%(default_timer()-t0))
             ra=[[],[],[],[]]
             made=gnfs.nfs_launch(n,nfs_primes,ra,NFS_MIX_WANT,sing_keep,picks,NFS_DEGREE,NFS_LINES,NFS_T,NFS_FORCE_T,NFS_FORCE_LINES,NFS_LP_BITS)
             if gnfs._STATE.get((n,NFS_DEGREE)) is None:
