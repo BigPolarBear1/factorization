@@ -23,6 +23,12 @@ I'll do some more research myself now. I'll also fix the -mode psieve again (mos
 
 On a side note: I've also resumed studying abstract algebra... planned to do it this summer but with my father in the ICU.. I just couldn't focus on it. 
 
+#### To run from folder "psieve":(work in progress)</br>
+To build: python3 setup.py build_ext --inplace</br>
+To run: python3 run_qs.py -keysize 80 -base 5000 -lin_size 100 -quad_size 1</br></br>
+
+Some ongoing experimentation.. this mixes SIQS and Coefficient Sieve. I either find a way to improve this, or take elements from this for my hybrid_sieve.
+
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
