@@ -27,7 +27,7 @@ On a side note: I've also resumed studying abstract algebra... planned to do it 
 
 #### To run from folder "psieve":(work in progress)</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 80 -base 5000 -lin_size 100 -quad_size 1</br>
+To run: python3 run_qs.py -keysize 90 -base 5000 -lin_size 100 -quad_size 1</br>
 
 Some ongoing experimentation.. this mixes SIQS and Coefficient Sieve. I either find a way to improve this, or take elements from this for my hybrid_sieve.
 I will continue working on this in private while I study abstract algebra... if anyone wants to buy my work.. I'm completely broke and could use the money.
