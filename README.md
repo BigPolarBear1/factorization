@@ -9,7 +9,7 @@ https://github.com/basilegithub/General-number-field-sieve-Python
 #### About the paper
 Math paper is a work in progress. Ignore the final chapter for now.. that one I'll rewrite if and when I can get "psieve" below working correctly.
 
-#### To run from folder "psieve":</br>
+#### To run from folder "hybrid_sieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 300 -base 200000 -lin_size 1000000 -quad_size 1 -mode nfs -nfs_degree 4 -nfs_base 60000 -nfs_sing_small 1100000 -nfs_lp 27 -nfs_lp2 24 -nfs_t 200000000 -nfs_lines 4 -la_every 2000</br></br>
 
