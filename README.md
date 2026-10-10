@@ -11,18 +11,13 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 100 -base 2000 -lin_size 100_000 -quad_size 1 -mode nfs</br></br>
+To run:python3 run_qs.py -keysize 200 -base 12000 -lin_size 100_000 -quad_size 1 -mode nfs -nfs_degree 4 -nfs_base 6000 -nfs_sing_small 80_000 -nfs_lines 100 -nfs_want 1000 -nfs_lp 26</br></br>
 
-This merges SIQS and NFS into an hybrid algorithm. SIQS finds b-smooths with a square.. the larger the square the better NFS will perform. Then NFS runs and feeds b-smooths back to the SIQS algorithm. And we keep repeating this process... my paper also indicates that these number fields should work on quartics. But this has yet to be implemented. 
+Requirements: You should probably pip install gmpy2, not required but will help big num performance
 
-I have worked on this research project for 3.5 years, without AI, but after the recent OpenAI math drop, I decided to aggresively push claude to try and finish my project with very specific prompting (prompting it to replace the psieve() function with an nfs implementation and giving advice on how to do it.. such as re-using the square part of an SIQS generated b-smooth). Uploaded version proves this works. Next support for quartics... 
+This is a hybrid SIQS / NFS algorithm. Both feed the same matrix but serve a different purpose. SIQS finds b-smooths using a very large factor base while NFS tries to optimize the matrix. This idea is an ongoing area of research I have been working on for years now. I recently discovered that Claude has finally matured enough to rapidly prototype these ideas for me... so that's what I'm doing as I can now do in a day what would otherwise take me weeks of manual coding and labour. I am still skeptical about AI as a research tool, since it lacks creativity.. but for implementing documented things, even complex math code.. it has definitely matured enough now and I'm becoming a convert.
 
-Update: I realized that I messed around with exactly this NFS setup in the past... I'll make some modifications tomorrow. I know what to do now :)
-The thing about nfs_launch_sq() is that it needs to spit back out b-smooths that reduce the matrix rank significantly.. similar to what psieve() did... claude doesnt see it, but I experimented with this setup in the past (actually spent weeks messing around with it)... so I can do the edits myself. Will do it tomorrow. 
-
-Update: I've come up with the following: SIQS style sieve with a large factor base. Then run  NFS (of arbitrary degree) with smaller factor base to achieve a rank reduction of the SIQS matrix. And just keep repeating that. So don't see NFS as a factoring algorithm but rather as a b-smooth finding algorithm... 
-
-Update: I realized that with claude I can quickly iterates strategies that would take me weeks to implement myself... uplaoding a proper SIQS/NFS hybrid soon. Changing my mind on AI now... for research.. i dont know.. but for writing code, even dense math related code... dammmnn its good now.
+I'll do some more research myself now. I'll also fix the -mode psieve again.. I need to study that to figure out how to optimize the NFS part.... those two modes are in idea somewhat related.. what still has to be done now is making the NFS algorithm better at improving to overall matrix shared between both algorithms. 
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
