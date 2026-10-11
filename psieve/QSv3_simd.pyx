@@ -34,7 +34,7 @@ import os
 from sympy.ntheory.residue_ntheory import jacobi_symbol
 import almostsq
 from quadroots import QuadRoots
-from psievecore import PSieveCore, KOrder, odd_part
+from psievecore import PSieveCore, KOrder, odd_part, set_two_large
 
 
 k_max=10_000
@@ -42,13 +42,16 @@ psieve_trigger=20           # psieve gets a turn after this many new SIQS relati
 psieve_interval=0.5         # ... or after this many seconds of SIQS (0 = off)
 psieve_share=8.0            # psieve may then use this much time relative to the SIQS time since its last turn ...
 psieve_min_budget=1.0       # ... but at least this many seconds
-psieve_skim_k=500           # multipliers K looked at per leftover (its best ones; a leftover is used once and dropped)
+psieve_skim_k=2000          # multipliers K looked at per leftover: at least this many, its best ones (a leftover is used once and dropped)
 psieve_skim_fmax=1000       # those K are built from primes below this
+psieve_skim_cap=4000        # the tree walk that finds those K usually finds more: up to this many are used (engine 2)
+psieve_engine=2             # 2: the vectorised search (psk.h); 1: the older routine (same hits)
 psieve_fed_k=20000          # the same when psieve_direct=0 (only leftovers from the sieve, which are scarce)
 psieve_lp_bound=1<<21       # a sieve candidate whose cofactor is one prime below this is kept as a psieve leftover (0 = off)
 psieve_multipliers=[1,3,1,5,1,7,1,11,1,13]   # the directly made leftovers come from m*n for these m in turn (half of them from n itself)
 psieve_direct=1             # 1: leftovers are also made directly, without the sieve (see psieve_feed); psieve then starts at once
-psieve_window=4096          # positions sieved per root class, starting at the crossing X = sqrt(4nK) (at most 8192)
+psieve_two_large=0          # 1: a directly made leftover may hold two primes above 2^16 (six times more leftovers per try, but fewer root classes each)
+psieve_window=2048          # positions sieved per root class, starting at the crossing X = sqrt(4nK) (engine 2: at most 4096; above that the older routine runs)
 psieve_sieve_primes=32      # small primes filtering each window (a mod-64 condition is applied on top)
 min_lin_sieve_size=10_000
 max_bound=10_000_000
@@ -455,7 +458,7 @@ def launch(n,primeslist,primeslist2):
                     ret_array[0].append(poly_val)
                     ret_array[2].append(local_factors)
                     ret_array[3].append([])
-                    print("[i]psieve2 hit: a: "+str(a)+" K: "+str(K)+" square part bits: "+str(bitlen(y*y))+" of "+str(bitlen(poly_val))+" (sqrt(n): "+str(bitlen(math.isqrt(n)))+" bits) odd factors: "+str(sorted(local_factors))+" | leftovers looked at: "+str(g_skim_count[0]))
+                    print("[i]psieve2 hit: a: "+str(a)+" K: "+str(K)+" square part bits: "+str(bitlen(y*y))+" of "+str(bitlen(poly_val))+" (sqrt(n): "+str(bitlen(math.isqrt(n)))+" bits) primes of a: "+str(([-1] if a<0 else [])+list((odd_part(a) or ([],1))[0]))+" | leftovers looked at: "+str(g_skim_count[0]))
                     print("[SUCCESS]Factors are: "+str(g)+" and "+str(n//g))
                     sys.exit()
                 siqs_clock=default_timer()
@@ -1435,7 +1438,7 @@ def psieve_feed(n,want,partials,tried):
     # polynomial with a square leading coefficient evaluated at one point. g does not have to be smooth: psieve only
     # needs its odd part a (g = a * r^2) with known prime factors, which gives the relation B^2 = a*(d*r)^2 mod n in
     # exactly the form of a relation with a large prime. g is trial divided up to 2^16; what is left must be 1 or one
-    # prime below 2^31. Fills `partials` with up to `want` new entries a -> (root0, X0, odd primes); every a is also
+    # prime below 2^31 (with psieve_two_large=1 also two such primes, split with Pollard rho). Fills `partials` with up to `want` new entries a -> (root0, X0, odd primes); every a is also
     # added to `tried` so it is never made twice. When the choices of (d, B) run out, roots further from sqrt(n) are used.
     global g_feed,g_feed_turn
     # The relations are taken from m*n for a small multiplier m, a different one on every call: the fields that come
@@ -1448,6 +1451,7 @@ def psieve_feed(n,want,partials,tried):
     n=n0*mult
     g_feed=g_feeds.get(mult)
     if g_feed is None:
+        set_two_large(psieve_two_large)
         rt=math.isqrt(n)
         k=3 if bitlen(n)<96 else 4
         p0=int(round(math.isqrt(rt)**(1.0/k)))
@@ -1530,11 +1534,17 @@ def _skim_one(n,a,root0,X0,odd):
     core=PSieveCore(n,a,primes,psieve_sieve_primes)
     if psieve_direct:
         order=KOrder(a,psieve_skim_fmax,0.05,primes,n)
-        ks=order.top(psieve_skim_k)
+        if psieve_engine==2:
+            ks,codes=order.above(psieve_skim_k,max(psieve_skim_k,psieve_skim_cap))
+            core.set_code_primes(order.primes)
+            hits=core.run2(ks,psieve_window,1<<30,codes)
+        else:
+            hits=core.run_fast(order.top(psieve_skim_k),psieve_window)
     else:                                                # only leftovers from the sieve: they are scarce, go deeper into each
         order=KOrder(a,100*psieve_skim_fmax,0.05,primes,n)
         ks=order.top(psieve_fed_k)
-    for K,X,y in core.run_fast(ks,psieve_window):
+        hits=core.run2(ks,psieve_window) if psieve_engine==2 else core.run_fast(ks,psieve_window)
+    for K,X,y in hits:
         if math.gcd(X,y)>2:                              # scaled copy of a hit at a smaller K
             continue
         g=math.gcd((X0*y-X*root0)%n,n)
@@ -1677,4 +1687,4 @@ def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_
         i+=1
     launch(n,primeslist1,primeslist2)     
     duration = default_timer() - start
-    print("\nFactorization in total took: "+str(duration))
+    print("\nFactorization in total took: "+str(duration))

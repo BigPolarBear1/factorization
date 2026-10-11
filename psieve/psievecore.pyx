@@ -16,13 +16,22 @@ A multiplier K is used only if
     order = KOrder(a, 100000, 0.05, a_primes, n)          # usable K, best first
     hits  = core.run_fast(order.take(16384), 4096)        ->  [(K, X, y), ...]
 
-run_fast() is the search used by QSv3_simd: everything per multiplier is machine arithmetic, |a| may be up to 96 bits.
-run() is the older, slower routine; it is kept because it can also walk a plain range of K (|a| < 2^62 only).
+run2() is the search used by QSv3_simd (C code in psk.h): per multiplier and per class everything "mod a sieve prime"
+is done for all sieve primes at once in 16-bit lanes, and with codes from KOrder.above() the square roots of 4nK are
+multiplied together from a table instead of being taken. Same hits as run_fast().
+run_fast(): the routine before it (one prime at a time), kept as the reference and for windows above 4096.
+run() is the oldest routine; it is kept because it can also walk a plain range of K (|a| < 2^62 only).
+
+    order = KOrder(a, 1000, 0.05, a_primes, n)
+    ks, codes = order.above(2000, 4000)
+    core.set_code_primes(order.primes)
+    hits = core.run2(ks, 2048, 1 << 30, codes)
 """
 from libc.stdlib cimport malloc, calloc, free
 from libc.string cimport memset
-from libc.stdint cimport uint64_t, int64_t, uint8_t, int32_t, uint32_t
+from libc.stdint cimport uint64_t, int64_t, uint8_t, int32_t, uint32_t, uint16_t
 from math import isqrt
+import array as _array
 
 cdef extern from *:
     """
@@ -33,6 +42,57 @@ cdef extern from *:
     ctypedef long long i128_t
     int __builtin_ctzll(unsigned long long) nogil
 from libc.math cimport sqrtl
+
+cdef extern from "psk.h":
+    ctypedef struct PskCtx:
+        int w, nsp, sgn
+        u128_t ua
+        long double uaf
+        uint64_t aq[12]
+        uint64_t aqbm[12]
+        uint64_t cj[12]
+        u128_t Aj[12]
+        uint16_t p[32]
+        uint16_t m16[32]
+        uint16_t c16[32]
+        uint16_t c32[32]
+        uint16_t c48[32]
+        uint16_t one[32]
+        uint16_t beta[3][32]
+        uint16_t beta16[3][32]
+        uint16_t nb[3][3][32]
+        uint16_t alpha[3][12][32]
+        uint16_t alpha16[3][12][32]
+        uint16_t tcoef[3][32]
+        uint16_t kg[3][4][32]
+        uint64_t** pat[32]
+        int stp_of[16]
+        int res_of[16]
+        const uint64_t* mask2
+        u128_t n4lo
+        long double n4f
+        long long kfast
+        long long kwide
+        uint64_t n4hi
+        const uint32_t* sg
+        const uint64_t* nrp
+        const uint16_t* ramj
+        uint32_t s4n[12]
+        uint64_t nr4n
+        uint32_t sg2[12]
+        uint64_t nr2
+        uint32_t gip[12][8]
+        long long intervals, multipliers, skipped
+        unsigned long long tsc[4]
+    ctypedef struct PskHit:
+        int32_t kidx, wd
+        uint64_t bits, dlo, dhi, crlo, crhi
+        int32_t stp, pad
+    unsigned long long __rdtsc() nogil
+    uint32_t psk_tdp[6560]
+    int psk_divscan(u128_t v, uint16_t* out, int maxout) nogil
+    uint64_t psk_rho(uint64_t c, long maxit) nogil
+    long psk_run(PskCtx* c, const long long* kl, const uint64_t* codes, const int32_t* roots, long nk, int window, PskHit* out, long maxout, long* done) nogil
 
 cdef inline int bmod(uint64_t x, uint64_t m, int p) noexcept nogil:
     # x mod p with a precomputed m = (2^64-1)//p
@@ -237,6 +297,11 @@ cdef class PSieveCore:
     cdef long double n4f
     cdef public int t1
     cdef long long kfast             # K up to here: sqrt(4nK) is taken in machine arithmetic
+    cdef PskCtx ctx
+    cdef bint ctx_ready
+    cdef uint32_t* sgt
+    cdef uint64_t* nrpt
+    cdef uint16_t* ramt
     cdef readonly object sieve_primes
 
     def __init__(self, n, a, a_primes, int nsieve=18):
@@ -414,6 +479,8 @@ cdef class PSieveCore:
         return sqrtmod(<uint64_t> t, <int> self.aq[j], self.tsq[j], self.tss[j], self.tsc[j], self.tbm[j])
 
     def __dealloc__(self):
+        if self.sgt != NULL:
+            free(self.sgt); free(self.nrpt); free(self.ramt)
         if self.smallp != NULL:
             free(self.smallp)
             free(self.smallbad)
@@ -738,6 +805,233 @@ cdef class PSieveCore:
         free(bad); free(remv); free(iv)
         return hits
 
+    cdef void _prep2(self):
+        """Constants of the leftover for psk_run (see psk.h)."""
+        cdef int j, i, si, g, p, b, e, c16
+        cdef PskCtx* c = &self.ctx
+        cdef int64_t q
+        absa = self.absa
+        c.w = self.w; c.nsp = self.nsp if self.nsp <= 32 else 32; c.sgn = self.sgn
+        c.ua = self.ua2
+        c.uaf = <long double> (<uint64_t> (absa >> 64)) * 18446744073709551616.0 + <long double> (<uint64_t> (absa & 0xFFFFFFFFFFFFFFFF))
+        for j in range(self.w):
+            q = self.aq[j]
+            mq = absa // q
+            c.aq[j] = <uint64_t> q
+            c.aqbm[j] = <uint64_t> (((1 << 64) - 1) // q)
+            c.cj[j] = <uint64_t> pow(mq % q, -1, q)
+            c.Aj[j] = (<u128_t> (<uint64_t> (mq >> 64)) << 64) | <u128_t> (<uint64_t> (mq & 0xFFFFFFFFFFFFFFFF))
+        for i in range(32):
+            if i < c.nsp:
+                p = self.sp[i]
+                c16 = 65536 % p
+                c.p[i] = p; c.m16[i] = 65536 // p; c.c16[i] = c16; c.c32[i] = (c16 * c16) % p; c.c48[i] = (c16 * c16 * c16) % p; c.one[i] = 1
+                c.pat[i] = _gpat[self.gchi[i]][self.gidx[i]]
+                for si in range(3):
+                    b = <int> ((absa % p) * self.inv[si][i] % p)
+                    c.beta[si][i] = b
+                    c.beta16[si][i] = (b * c16) % p
+                    for e in range(3):
+                        c.nb[si][e][i] = p - (e * b) % p
+                    c.tcoef[si][i] = (self.n4p[i] * self.usq[si][i]) % p
+                    for j in range(self.w):
+                        g = (b * <int> _ginv[self.gidx[i]][self.aq[j] % p]) % p
+                        c.alpha[si][j][i] = g
+                        c.alpha16[si][j][i] = (g * c16) % p
+                    for g in range(4):
+                        c.kg[si][g][i] = (g * b) % p if self.sgn > 0 else (p - (g * b) % p) % p
+            else:
+                c.p[i] = 3; c.m16[i] = 21845; c.c16[i] = 1; c.c32[i] = 1; c.c48[i] = 1; c.one[i] = 1
+                c.pat[i] = NULL
+                for si in range(3):
+                    c.beta[si][i] = 0; c.beta16[si][i] = 0; c.tcoef[si][i] = 0
+                    for e in range(3):
+                        c.nb[si][e][i] = 3
+                    for j in range(self.w):
+                        c.alpha[si][j][i] = 0; c.alpha16[si][j][i] = 0
+                    for g in range(4):
+                        c.kg[si][g][i] = 0
+        for i in range(16):
+            c.stp_of[i] = self.stp_of[i]; c.res_of[i] = self.res_of[i]
+        c.mask2 = &self.mask2[0][0]
+        kf2 = (1 << 189) // self.T4 if self.T4 < (1 << 190) else 0
+        kf3 = (1 << 248) // self.T4 if self.T4 < (1 << 190) else 0
+        c.n4lo = self.n4lo; c.n4f = self.n4f; c.kfast = kf2 if kf2 < (1 << 62) else (1 << 62)
+        c.kwide = kf3 if kf3 < (1 << 62) else (1 << 62)
+        c.n4hi = <uint64_t> ((self.T4 >> 128) & ((1 << 64) - 1))
+        c.sg = NULL; c.nrp = NULL; c.ramj = NULL
+        c.intervals = 0; c.multipliers = 0; c.skipped = 0
+        c.tsc[0] = 0; c.tsc[1] = 0; c.tsc[2] = 0; c.tsc[3] = 0
+        self.ctx_ready = True
+
+    def set_code_primes(self, primes):
+        """Square roots mod the primes of a for every prime that can appear in a multiplier code (primes: the
+        prime list of the KOrder that makes the codes). After this run2(..., codes=...) takes no square roots."""
+        cdef int nf = len(primes), fi, j, w = self.w, t, k
+        cdef int64_t q, g, r, f, x
+        cdef PskCtx* c = &self.ctx
+        if not self.ctx_ready:
+            self._prep2()
+        if nf > 255:
+            return False
+        if self.sgt != NULL:
+            free(self.sgt); free(self.nrpt); free(self.ramt)
+        self.sgt = <uint32_t*> malloc(max(nf, 1) * w * sizeof(uint32_t))
+        self.nrpt = <uint64_t*> calloc(max(nf, 1), sizeof(uint64_t))
+        self.ramt = <uint16_t*> calloc(max(nf, 1), sizeof(uint16_t))
+        cdef int64_t gq[MAXW]
+        c.nr4n = 0; c.nr2 = 0
+        for j in range(w):
+            q = self.aq[j]
+            g = 2
+            while jac(g, q) != -1:
+                g += 1
+            gq[j] = g
+            x = pow(g, -1, q)
+            r = 1
+            for k in range(8):
+                c.gip[j][k] = <uint32_t> r
+                r = (r * x) % q
+            r = self.rootq(j, self.n4q[j])
+            if r <= 0:
+                r = self.rootq(j, (self.n4q[j] * g) % q)
+                c.nr4n |= (<uint64_t> 1) << (4 * j)
+            c.s4n[j] = <uint32_t> ((r * <int64_t> c.cj[j]) % q)
+            r = self.rootq(j, 2 % q)
+            if r <= 0:
+                r = self.rootq(j, (2 * g) % q)
+                c.nr2 |= (<uint64_t> 1) << (4 * j)
+            c.sg2[j] = <uint32_t> r
+        for fi in range(nf):
+            f = primes[fi]
+            for j in range(w):
+                q = self.aq[j]
+                if f == q:
+                    self.sgt[fi * w + j] = 1
+                    self.ramt[fi] = j + 1
+                    continue
+                x = f % q
+                r = self.rootq(j, x)
+                if r <= 0:
+                    r = self.rootq(j, (x * gq[j]) % q)
+                    self.nrpt[fi] |= (<uint64_t> 1) << (4 * j)
+                self.sgt[fi * w + j] = <uint32_t> r
+        c.sg = self.sgt; c.nrp = self.nrpt; c.ramj = self.ramt
+        return True
+
+    def prof(self):
+        return (self.ctx.tsc[0], self.ctx.tsc[1], self.ctx.tsc[2], self.ctx.tsc[3])
+
+    def run2(self, klist, int window, int max_hits=1 << 30, codes=None):
+        """Same search and same hits as run_fast(), with the per-multiplier and per-class work done for all sieve
+        primes at once (psk.h). codes: per multiplier, its odd prime factors as indices into the table set with
+        set_code_primes() (0 = none); with a code the square roots of 4nK are multiplied together from the table."""
+        cdef int nw = (window + 63) >> 6
+        cdef long long[::1] kl = klist
+        cdef Py_ssize_t nk = kl.shape[0], m
+        if nw > 64 or nw < 1 or self.nsp < 24 or nk == 0:      # (with few sieve primes too many positions survive the one pass)
+            return self.run_fast(klist, window, max_hits)
+        if not self.ctx_ready:
+            self._prep2()
+        cdef int w = self.w, j, good, bitpos, e, sgn = self.sgn
+        cdef long long K, kq, kmax = 0
+        cdef unsigned long long[::1] cd
+        cdef const uint64_t* cdp = NULL
+        cdef int32_t* roots = NULL
+        cdef PskHit hb[1024]
+        cdef long nout, done = 0, pos = 0, i
+        cdef uint64_t x
+        cdef PskCtx* c = &self.ctx
+        cdef object T, X, cc, y, a = self.a, T4 = self.T4, absa = self.absa, crpy, dpy, stepX
+        cdef unsigned long long t_r = __rdtsc()
+        cdef long long klim = c.kwide
+        slow = None
+        for m in range(nk):
+            K = kl[m]
+            if K > klim:                              # (a multiplier that holds a large prime of a) -> older routine
+                if slow is None:
+                    slow = _array.array('q')
+                slow.append(K)
+            elif K > kmax:
+                kmax = K
+        if kmax == 0 or isqrt(T4 * kmax) // absa >= (1 << 31):
+            return self.run_fast(klist, window, max_hits)
+        hits = []
+        cdef bint need_roots = True
+        if codes is not None and c.sg != NULL:
+            cd = codes
+            cdp = <const uint64_t*> &cd[0]
+            need_roots = False
+            for m in range(nk):
+                if cdp[m] == 0 and kl[m] <= klim:
+                    need_roots = True
+                    break
+        if need_roots:
+            roots = <int32_t*> malloc(nk * w * sizeof(int32_t))
+            for m in range(nk):
+                K = kl[m]
+                if cdp != NULL and cdp[m] != 0:
+                    continue
+                good = 1
+                if self.stp_of[K & 15] == 0 or K > klim:
+                    good = 0
+                else:
+                    for j in range(w):
+                        kq = K % self.aq[j]
+                        if kq == 0:
+                            kq = (K // self.aq[j]) % self.aq[j]
+                            if kq == 0 or self.rootq(j, (self.anq[j] * kq) % self.aq[j]) <= 0:
+                                good = 0
+                                break
+                            roots[m * w + j] = 0
+                            continue
+                        kq = self.rootq(j, (self.n4q[j] * kq) % self.aq[j])
+                        if kq <= 0:
+                            good = 0
+                            break
+                        roots[m * w + j] = <int32_t> kq
+                if not good:
+                    roots[m * w] = -1
+        c.intervals = 0; c.multipliers = 0; c.skipped = 0
+        c.tsc[0] += __rdtsc() - t_r
+        while pos < nk and len(hits) < max_hits:
+            with nogil:
+                nout = psk_run(c, &kl[pos], cdp + pos if cdp != NULL else NULL, roots + pos * w if roots != NULL else NULL, nk - pos, window, hb, 1024, &done)
+            for i in range(nout):
+                K = kl[pos + hb[i].kidx]
+                T = T4 * K
+                crpy = (<object> hb[i].crhi << 64) | <object> hb[i].crlo
+                dpy = (<object> hb[i].dhi << 64) | <object> hb[i].dlo
+                stepX = absa * hb[i].stp
+                x = hb[i].bits
+                while x:
+                    bitpos = __builtin_ctzll(x)
+                    x &= x - 1
+                    e = (hb[i].wd << 6) + bitpos
+                    if e >= window:
+                        continue
+                    self.survivors += 1
+                    if sgn > 0:
+                        X = crpy + 1 + dpy + stepX * e
+                    else:
+                        X = crpy - dpy - stepX * e
+                        if X <= 0:
+                            continue
+                    cc = (X * X - T) // a
+                    if cc <= 0:
+                        continue
+                    y = isqrt(cc)
+                    if y * y == cc:
+                        hits.append((K, X, y))
+            pos += done
+        self.intervals += c.intervals
+        self.multipliers += c.multipliers
+        if roots != NULL:
+            free(roots)
+        if slow is not None and len(hits) < max_hits:
+            hits.extend(self.run_fast(slow, window, max_hits - len(hits)))
+        return hits
+
     def run_fast(self, klist, int window, int max_hits=1 << 30):
         """List mode of run() with every per-multiplier step in machine arithmetic (no big numbers until a
         position survives the whole sieve). Same hits as run(0, 0, window, max_hits, 0, 0, klist)."""
@@ -1049,19 +1343,30 @@ from libc.stdlib cimport realloc
 import array as _array
 
 cdef int _opt_pow = 1, _opt_stp = 1
+# value(K) = (number of prime factors)*log(2) - _kb*log(K). _kb = 1/4 is the hit density right at the crossing
+# (short window); with a long window the density depends less on K and a smaller exponent orders the K better.
+cdef double _kb = 0.25, _kf0 = 16.0
+def set_k_exponent(double b):
+    global _kb, _kf0
+    from math import exp, log
+    _kb = b
+    _kf0 = exp(log(2.0) / b)
 def set_opts(int p, int st):
     global _opt_pow, _opt_stp
     _opt_pow = p; _opt_stp = st
 
 cdef struct KBucket:
     long long* v
+    uint64_t* c          # per multiplier: its odd prime factors as indices (+1) into the prime list, 8 bits each (0 = none)
     Py_ssize_t n, cap
 
-cdef inline void _kb_add(KBucket* b, long long K) noexcept nogil:
+cdef inline void _kb_add(KBucket* b, long long K, uint64_t code) noexcept nogil:
     if b.n == b.cap:
         b.cap = b.cap * 2 if b.cap else 256
         b.v = <long long*> realloc(b.v, b.cap * sizeof(long long))
+        b.c = <uint64_t*> realloc(b.c, b.cap * sizeof(uint64_t))
     b.v[b.n] = K
+    b.c[b.n] = code
     b.n += 1
 
 cdef struct KGen:
@@ -1076,7 +1381,7 @@ cdef struct KGen:
     uint32_t vec2
     KBucket* bk
 
-cdef inline void _kemit(KGen* g, long long K, double v, uint32_t need) noexcept nogil:
+cdef inline void _kemit(KGen* g, long long K, double v, uint32_t need, uint64_t code) noexcept nogil:
     # the prime 2 and the step in X it allows (a wider step is a longer window for the same work: +log(step)/2)
     #   a = 1 mod 8: 2 splits.  K odd or 2 mod 4 -> step 2, K = 0 mod 4 -> step 1
     #   a = 3 mod 4: 2 ramifies. K odd -> step 2, K = 2 mod 4 -> step 4
@@ -1089,64 +1394,73 @@ cdef inline void _kemit(KGen* g, long long K, double v, uint32_t need) noexcept 
     cdef KBucket* bk = g.bk
     if not _opt_stp:
         if vlo <= v < vhi and need == 0:
-            _kb_add(&bk[<int> ((vhi - v) / step)], K)
+            _kb_add(&bk[<int> ((vhi - v) / step)], K, code)
         if a8 == 1 or a8 == 3 or a8 == 7:
-            ve = v + (0.5198603854199589 if a8 == 1 else -0.17328679513998632)
+            ve = v + (0.6931471805599453 * (1.0 - _kb) if a8 == 1 else -0.6931471805599453 * _kb)
             if vlo <= ve < vhi and K < (<long long> 1 << 60) and need == g.vec2:
-                _kb_add(&bk[<int> ((vhi - ve) / step)], 2 * K)
+                _kb_add(&bk[<int> ((vhi - ve) / step)], 2 * K, code)
     elif a8 == 1:
         ve = v + 0.34657359027997264
         if vlo <= ve < vhi and need == 0:
-            _kb_add(&bk[<int> ((vhi - ve) / step)], K)
+            _kb_add(&bk[<int> ((vhi - ve) / step)], K, code)
         Ke = K
         for e in range(1, 5):
             if Ke > (<long long> 1 << 60):
                 break
             Ke *= 2
-            ve = v + 0.6931471805599453 - 0.17328679513998632 * e + (0.34657359027997264 if e == 1 else 0.0)
+            ve = v + 0.6931471805599453 - 0.6931471805599453 * _kb * e + (0.34657359027997264 if e == 1 else 0.0)
             if vlo <= ve < vhi and need == (g.vec2 if e & 1 else 0):
-                _kb_add(&bk[<int> ((vhi - ve) / step)], Ke)
+                _kb_add(&bk[<int> ((vhi - ve) / step)], Ke, code)
     elif a8 == 5:
         if vlo <= v < vhi and need == 0:
-            _kb_add(&bk[<int> ((vhi - v) / step)], K)
+            _kb_add(&bk[<int> ((vhi - v) / step)], K, code)
     else:
         ve = v + 0.34657359027997264
         if vlo <= ve < vhi and need == 0:
-            _kb_add(&bk[<int> ((vhi - ve) / step)], K)
-        ve = v + 0.6931471805599453 - 0.17328679513998632
+            _kb_add(&bk[<int> ((vhi - ve) / step)], K, code)
+        ve = v + 0.6931471805599453 * (1.0 - _kb)
         if vlo <= ve < vhi and K < (<long long> 1 << 60) and need == g.vec2:
-            _kb_add(&bk[<int> ((vhi - ve) / step)], 2 * K)
+            _kb_add(&bk[<int> ((vhi - ve) / step)], 2 * K, code)
 
-cdef void _kdfs(KGen* g, int i, long long K, double v, uint32_t need) noexcept nogil:
+cdef void _kdfs(KGen* g, int i, long long K, double v, uint32_t need, uint64_t code, int depth) noexcept nogil:
     cdef int j, lo, hi, mid, c, pos, leaf = -1, ngood = g.ngood
     cdef double v2, ve, vlo = g.vlo, slack = g.slack
     cdef long long f, Ke
     cdef uint32_t nd, cc
+    cdef uint64_t cd
+    cdef int dp
     cdef double* lg = g.lg
     cdef int* good = g.good
-    _kemit(g, K, v, need)
+    _kemit(g, K, v, need, code if depth <= 8 else 0)
     for j in range(i, ngood):
         f = good[j]
-        v2 = v + 0.6931471805599453 - 0.25 * lg[j]
-        if f > 16 and v2 + slack < vlo:      # larger primes only lower the value further (slack = the most the prime 2 can add)
+        v2 = v + 0.6931471805599453 - _kb * lg[j]
+        if f > _kf0 and v2 + slack < vlo:      # larger primes only lower the value further (slack = the most the prime 2 can add)
             break
         if K > (<long long> 1 << 60) // f:
             break
         # From some prime on, K*f can take no further factor (neither a larger prime nor f again). Those children
         # are leaves, and only the primes with the right character can be usable: they are read from the lists.
-        if f > 16 and v2 - 0.25 * lg[j] + slack < vlo and (j + 1 == ngood or v2 + 0.6931471805599453 - 0.25 * lg[j + 1] + slack < vlo):
+        if f > _kf0 and v2 - _kb * lg[j] + slack < vlo and (j + 1 == ngood or v2 + 0.6931471805599453 - _kb * lg[j + 1] + slack < vlo):
             leaf = j
             break
         Ke = K * f
         ve = v2
         nd = need ^ g.vec[j]
+        cd = code
+        dp = depth
         while True:                          # f, f^2, f^3 ...: a higher power keeps the two ideals but costs size
-            _kdfs(g, j + 1, Ke, ve, nd)
+            if dp < 8 and j < 255:
+                cd |= (<uint64_t> (j + 1)) << (8 * dp)
+                dp += 1
+            else:
+                dp = 9
+            _kdfs(g, j + 1, Ke, ve, nd, cd, dp)
             if g.ram[j] or not _opt_pow or Ke > (<long long> 1 << 60) // f:      # a prime of a may divide K only once
                 break
             Ke *= f
             nd ^= g.vec[j]
-            ve -= 0.25 * lg[j]
+            ve -= _kb * lg[j]
             if ve + slack < vlo:
                 break
     if leaf < 0:
@@ -1169,13 +1483,13 @@ cdef void _kdfs(KGen* g, int i, long long K, double v, uint32_t need) noexcept n
         while pos < hi:
             j = g.byc[pos]
             f = good[j]
-            v2 = v + 0.6931471805599453 - 0.25 * lg[j]
+            v2 = v + 0.6931471805599453 - _kb * lg[j]
             if v2 + slack < vlo or K > (<long long> 1 << 60) // f:
                 break
-            _kemit(g, K * f, v2, need ^ g.vec[j])
+            _kemit(g, K * f, v2, need ^ g.vec[j], (code | ((<uint64_t> (j + 1)) << (8 * depth))) if (depth < 8 and j < 255) else 0)
             pos += 1
 
-def multipliers_by_value(good_primes, int a8, double vhi, double vlo, double step, ramified=(), chars=None):
+def multipliers_by_value(good_primes, int a8, double vhi, double vlo, double step, ramified=(), chars=None, bint with_codes=False):
     """All products K of powers of good_primes (ascending odd primes) with vlo <= value(K) < vhi,
     returned as a list of array('q'), one per value band of width step, best band first.
     Primes listed in `ramified` (the primes of the leftover) are used at most once.
@@ -1224,20 +1538,31 @@ def multipliers_by_value(good_primes, int a8, double vhi, double vlo, double ste
     free(fill)
     if _opt_stp:
         g.slack = 0.0 if a8 == 5 else (0.8665 if a8 == 1 else 0.52)
+        if _kb != 0.25:
+            g.slack = 0.0 if a8 == 5 else ((0.6931471805599453 * (1.0 - _kb) + 0.3467) if a8 == 1 else max(0.3467, 0.6931471805599453 * (1.0 - _kb) + 1e-4))
     else:
-        g.slack = 0.52 if a8 == 1 else 0.0
+        g.slack = (0.52 if _kb == 0.25 else 0.6931471805599453 * (1.0 - _kb) + 1e-4) if a8 == 1 else 0.0
     g.slack += 1e-6
     g.ngood = ngood; g.a8 = a8; g.nb = nb; g.vhi = vhi; g.vlo = vlo; g.step = step
     with nogil:
-        _kdfs(&g, 0, 1, 0.0, tgt)
+        _kdfs(&g, 0, 1, 0.0, tgt, 0, 0)
     out = []
+    outc = []
     for j in range(nb):
         arr = _array.array('q')
         if g.bk[j].n:
             arr.frombytes((<char*> g.bk[j].v)[:g.bk[j].n * sizeof(long long)])
+        if with_codes:
+            arc = _array.array('Q')
+            if g.bk[j].n:
+                arc.frombytes((<char*> g.bk[j].c)[:g.bk[j].n * sizeof(uint64_t)])
+            outc.append(arc)
         free(g.bk[j].v)
+        free(g.bk[j].c)
         out.append(arr)
     free(g.good); free(g.lg); free(g.ram); free(g.bk); free(g.vec); free(g.byc); free(g.cstart)
+    if with_codes:
+        return out, outc
     return out
 
 def genus_chars(n, a, a_primes, good):
@@ -1306,7 +1631,67 @@ cdef bint _prp2(uint64_t v) noexcept nogil:
 
 def odd_part(g):
     """g = sign * a * r^2 with a odd and squarefree: returns (primes of a ascending, r), or None when g is even to an
-    odd power, or when what is left after dividing out the primes below 65536 is not 1 or a single prime below 2^31."""
+    odd power, or when what is left after dividing out the primes below 65536 is not 1 or a single prime below 2^31.
+    The primes below 65536 that divide g are found in one vectorised pass (psk_divscan)."""
+    cdef int i, j, e, nh
+    cdef u128_t v
+    cdef uint64_t v64, r = 1, q
+    cdef uint16_t hk[64]
+    if g < 0:
+        g = -g
+    if g == 0 or (g >> 126):
+        return None
+    v = (<u128_t> (<uint64_t> (g >> 64)) << 64) | <u128_t> (<uint64_t> (g & 0xFFFFFFFFFFFFFFFF))
+    e = 0
+    while (<uint64_t> v & 1) == 0:
+        v >>= 1
+        e += 1
+    if e & 1:
+        return None
+    r <<= e >> 1
+    odd = []
+    nh = psk_divscan(v, hk, 64)
+    for i in range(nh):
+        q = psk_tdp[hk[i]]
+        e = 0
+        while v % q == 0:
+            v = v / <u128_t> q                       # both operands 128-bit: with a 64-bit divisor Cython narrows v first
+            e += 1
+        if e & 1:
+            odd.append(q)
+        for j in range(e >> 1):
+            r *= q
+    if (v >> 64) != 0:
+        return None
+    v64 = <uint64_t> v
+    if v64 > 1:
+        if v64 < (<uint64_t> 1 << 31):
+            odd.append(v64)                          # no factor below 65536 and below 2^32: a prime
+        elif not _two_large or v64 >= (<uint64_t> 1 << 62) or _prp2(v64):
+            return None
+        else:
+            # two primes above 65536: accepted when both are below 2^31
+            q = <uint64_t> isqrt(v64)
+            if q * q == v64:
+                r *= q
+            else:
+                q = psk_rho(v64, 200000)
+                if q == 0 or q >= (<uint64_t> 1 << 31) or v64 // q >= (<uint64_t> 1 << 31):
+                    return None
+                if q > v64 // q:
+                    q = v64 // q
+                odd.append(q)
+                odd.append(v64 // q)
+    return odd, r
+
+cdef bint _two_large = False
+def set_two_large(bint on):
+    """odd_part: also accept a cofactor that is a product of two primes below 2^31 (default off)."""
+    global _two_large
+    _two_large = on
+
+def odd_part_old(g):
+    """The earlier odd_part (one prime at a time); kept to check the new one against."""
     global _ntd
     cdef int i, j, e, isp
     cdef u128_t v
@@ -1402,6 +1787,7 @@ def good_primes(a, int fmax):
     return out
 
 cdef double _topw = 3.0
+_topws = {}
 
 cdef class KOrder:
     """Hands out multipliers K for one leftover a in decreasing value, a chunk at a time.
@@ -1423,9 +1809,9 @@ cdef class KOrder:
         self.chars = genus_chars(n, a, a_primes, self.good) if (n is not None and a_primes) else None
         self.a8 = a % 8
         for f in self.good:
-            if f < 16:
-                top += 0.6931471805599453 - 0.25 * clog(<double> f)
-        self.hi = top + 0.87 + 1e-9
+            if f < _kf0:
+                top += 0.6931471805599453 - _kb * clog(<double> f)
+        self.hi = top + (0.87 if _kb == 0.25 else 0.6931471805599453 * (1.0 - _kb) + 0.3502) + 1e-9
         self.step = step; self.block = 0.5
         self.bands = None; self.block_hi = self.hi; self.band = 0; self.pos = 0; self.used = 0
     def take(self, Py_ssize_t count):
@@ -1448,22 +1834,59 @@ cdef class KOrder:
         self.pos += len(out)
         self.used += len(out)
         return out
-    def top(self, Py_ssize_t count):
-        """The best `count` multipliers in one go (for a leftover that is looked at once and dropped)."""
+    def top(self, Py_ssize_t count, bint codes=False):
+        """The best `count` multipliers in one go (for a leftover that is looked at once and dropped).
+        codes=True: returns (multipliers, codes), the codes naming each multiplier's odd prime factors as
+        indices into self.primes (for PSieveCore.set_code_primes / run2)."""
         global _topw
         cdef double width = _topw - 0.5 if _topw > 1.5 else 1.0     # start a little above where the last leftover ended
         while True:
-            bands = multipliers_by_value(self.good, self.a8, self.hi, self.hi - width, self.step, self.ram, self.chars)
+            bands, cb = multipliers_by_value(self.good, self.a8, self.hi, self.hi - width, self.step, self.ram, self.chars, True)
             if sum(len(b) for b in bands) >= count or width > 14.0:
                 break
             width += 0.5
         _topw = width
         out = _array.array('q')
-        for b in bands:
+        outc = _array.array('Q')
+        for b, c in zip(bands, cb):
             out.extend(b)
+            outc.extend(c)
             if len(out) >= count:
                 break
+        if codes:
+            return out[:count], outc[:count]
         return out[:count]
+    def above(self, Py_ssize_t count, Py_ssize_t cap):
+        """Like top(count, True), but hands out everything the last walk of the tree found (it is already paid
+        for), up to `cap` multipliers: at least `count` unless the tree is exhausted.
+        The walk is first done with a narrow band of values (cheap), and the count it finds says how wide the
+        band has to be: the number of multipliers grows about like exp(3.3 * width)."""
+        cdef int nq = len(self.ram)
+        cdef double width = _topws.get(nq, 2.0) - 0.75
+        cdef Py_ssize_t total
+        if width < 0.75:
+            width = 0.75
+        while True:
+            bands, cb = multipliers_by_value(self.good, self.a8, self.hi, self.hi - width, self.step, self.ram, self.chars, True)
+            total = sum(len(b) for b in bands)
+            if total >= count or width > 14.0:
+                break
+            if total == 0:
+                width += 1.0
+            else:
+                width += min(2.0, max(0.2, clog(1.4 * count / total) / 3.3))
+        _topws[nq] = 0.9 * _topws.get(nq, width) + 0.1 * width
+        out = _array.array('q')
+        outc = _array.array('Q')
+        for b, c in zip(bands, cb):
+            out.extend(b)
+            outc.extend(c)
+            if len(out) >= cap:
+                break
+        return out[:cap], outc[:cap]
+    @property
+    def primes(self):
+        return self.good
     def save(self):
         """Position in the ordering, to continue later with a new KOrder for the same leftover."""
         return (self.block_hi, self.block, self.band, self.pos, self.used)
