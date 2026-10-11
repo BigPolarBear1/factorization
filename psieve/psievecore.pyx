@@ -51,23 +51,32 @@ cdef class PSieveCore:
     cdef int32_t* sq[MAXW]           # sq[j][t] = a square root of t mod aq[j], -1 if none
     cdef int sp[MAXSP]
     cdef int n4p[MAXSP]              # 4n mod p
-    cdef int inv[MAXSP]              # 1/(a*64) mod p
-    cdef uint64_t** pat[MAXSP]       # pat[s][t] -> p words
+    cdef int inv[3][MAXSP]           # 1/(a*step*64) mod p for step 1, 2, 4
+    cdef uint64_t** pat[3][MAXSP]    # pat[step index][s][t] -> p words
+    cdef int stp_of[16]              # per K mod 16: X must lie in one class mod 1, 2 or 4 (0 = no X can work)
+    cdef int res_of[16]
+    cdef uint64_t mask2[16][64]      # per K mod 16 and X0 mod 64: positions whose quotient is a square mod 64
     cdef int32_t* smallp
     cdef uint8_t* smallbad
     cdef int nsmall
     cdef uint64_t ua
-    cdef int a8
+    cdef int a8, two_mode
+    cdef int64_t a_c
+    cdef int64_t n4q[MAXW]           # 4n mod each prime of a
     cdef readonly long long next_k, intervals, multipliers, survivors
     cdef readonly object sieve_primes
 
     def __init__(self, n, a, a_primes, int nsieve=18):
-        cdef int j, p, t, x, s, i, o, kk, sh, np_ = 0, s64
+        cdef int j, p, t, x, s, i, o, kk, sh, np_ = 0, s64, cnt
         cdef int64_t q
         cdef uint64_t* base
         cdef uint64_t* wv
         cdef uint8_t* chi
-        cdef int ainv, stepinv, nb, r
+        cdef int ainv, stepinv, nb, r, si, k16, e, cls8
+        cdef uint8_t sq64[64]
+        cdef uint8_t al[64]
+        cdef int a64inv
+        cdef uint64_t mk
         self.n = n; self.a = a; self.absa = abs(a); self.T4 = 4 * n
         self.sgn = 1 if a > 0 else -1
         self.w = len(a_primes)
@@ -79,6 +88,7 @@ cdef class PSieveCore:
         if prod != self.absa:
             raise ValueError("a must be squarefree and equal to the product of a_primes")
         self.ua = <uint64_t> self.absa
+        self.a_c = <int64_t> a
         self.a8 = self.absa % 8 if a > 0 else (8 - self.absa % 8) % 8
         self.M = []
         for j in range(self.w):
@@ -86,6 +96,7 @@ cdef class PSieveCore:
             if q > 50_000_000:
                 raise ValueError("prime of a too large for a root table")
             self.aq[j] = q
+            self.n4q[j] = (4 * n) % q
             self.sq[j] = <int32_t*> malloc(q * sizeof(int32_t))
             for t in range(q):
                 self.sq[j][t] = -1
@@ -104,6 +115,8 @@ cdef class PSieveCore:
             if not comp[i]:
                 self.smallp[self.nsmall] = i
                 if i == 2:
+                    # parity of K:  a = 1 mod 8: any K ; a = 5 mod 8: K odd ; a = 3 mod 4: K odd or K = 2 mod 4
+                    self.two_mode = 0 if self.a8 == 1 else (1 if self.a8 == 5 else 2)
                     self.smallbad[self.nsmall] = 0 if self.a8 == 1 else 1
                 else:
                     self.smallbad[self.nsmall] = 0 if jac(<int64_t> (a % i), i) == 1 else 1
@@ -124,50 +137,94 @@ cdef class PSieveCore:
             self.sieve_primes.append(p)
             self.n4p[np_] = (4 * n) % p
             ainv = pow(a % p, -1, p)
-            self.inv[np_] = pow((a * 64) % p, -1, p)
-            stepinv = ainv                       # residue x sits at position x/a
             chi = <uint8_t*> calloc(p, 1)        # 1 for squares and 0
             for x in range(p):
                 chi[(x * x) % p] = 1
-            self.pat[np_] = <uint64_t**> malloc(p * sizeof(uint64_t*))
             nb = p + 64
             base = <uint64_t*> malloc(((nb >> 6) + 2) * sizeof(uint64_t))
             s64 = 64 % p
-            for t in range(p):
-                memset(base, 0, ((nb >> 6) + 2) * sizeof(uint64_t))
-                for x in range(p):
-                    r = ((x * x - t) % p + p) % p
-                    if chi[(r * ainv) % p]:
-                        o = (x * stepinv) % p
-                        while o < nb:
-                            base[o >> 6] |= (<uint64_t> 1) << (o & 63)
-                            o += p
-                wv = <uint64_t*> malloc(p * sizeof(uint64_t))
-                o = 0
-                for j in range(p):
-                    kk = o >> 6
-                    sh = o & 63
-                    wv[j] = (base[kk] >> sh) | ((base[kk + 1] << 1) << (63 - sh))
-                    o += s64
-                    if o >= p:
-                        o -= p
-                self.pat[np_][t] = wv
+            for si in range(3):
+                self.inv[si][np_] = pow((a * (1 << si) * 64) % p, -1, p)
+                stepinv = pow((a * (1 << si)) % p, -1, p)       # residue x sits at position x/(a*step)
+                self.pat[si][np_] = <uint64_t**> malloc(p * sizeof(uint64_t*))
+                for t in range(p):
+                    memset(base, 0, ((nb >> 6) + 2) * sizeof(uint64_t))
+                    for x in range(p):
+                        r = ((x * x - t) % p + p) % p
+                        if chi[(r * ainv) % p]:
+                            o = (x * stepinv) % p
+                            while o < nb:
+                                base[o >> 6] |= (<uint64_t> 1) << (o & 63)
+                                o += p
+                    wv = <uint64_t*> malloc(p * sizeof(uint64_t))
+                    o = 0
+                    for j in range(p):
+                        kk = o >> 6
+                        sh = o & 63
+                        wv[j] = (base[kk] >> sh) | ((base[kk + 1] << 1) << (63 - sh))
+                        o += s64
+                        if o >= p:
+                            o -= p
+                    self.pat[si][np_][t] = wv
             free(base); free(chi)
             np_ += 1
         self.nsp = np_
         free(comp)
+        # 2-adic conditions: (X^2-4nK)/a must be a square mod 64. Depends on K mod 16 and X mod 64.
+        for x in range(64):
+            sq64[x] = 0
+        for x in range(64):
+            sq64[(x * x) & 63] = 1
+        a64inv = pow(a % 64, -1, 64)
+        for k16 in range(16):
+            t = (4 * (n % 16) * k16) % 64
+            cnt = 0
+            for x in range(64):
+                al[x] = sq64[(((x * x - t) % 64 + 64) % 64 * a64inv) % 64]
+                cnt += al[x]
+            if cnt == 0:
+                self.stp_of[k16] = 0
+                self.res_of[k16] = 0
+                continue
+            si = 0
+            for j in (2, 1):                          # all live X in one class mod 4, else mod 2
+                cls8 = -1
+                r = 1
+                for x in range(64):
+                    if al[x]:
+                        if cls8 < 0:
+                            cls8 = x & ((1 << j) - 1)
+                        elif cls8 != (x & ((1 << j) - 1)):
+                            r = 0
+                if r:
+                    si = j
+                    break
+            self.stp_of[k16] = 1 << si
+            self.res_of[k16] = 0
+            if si:
+                for x in range(64):
+                    if al[x]:
+                        self.res_of[k16] = x & ((1 << si) - 1)
+                        break
+            for x in range(64):
+                mk = 0
+                for e in range(64):
+                    if al[(x + (self.absa % 64) * (1 << si) * e * (1 if a > 0 else 63)) % 64]:
+                        mk |= (<uint64_t> 1) << e
+                self.mask2[k16][x] = mk
         self.next_k = 1
         self.intervals = 0; self.multipliers = 0; self.survivors = 0
 
     def __dealloc__(self):
-        cdef int j, t
+        cdef int j, t, si
         for j in range(self.w):
             free(self.sq[j])
-        for j in range(self.nsp):
-            if self.pat[j] != NULL:
-                for t in range(self.sp[j]):
-                    free(self.pat[j][t])
-                free(self.pat[j])
+        for si in range(3):
+            for j in range(self.nsp):
+                if self.pat[si][j] != NULL:
+                    for t in range(self.sp[j]):
+                        free(self.pat[si][j][t])
+                    free(self.pat[si][j])
         free(self.smallp); free(self.smallbad)
 
     def run(self, long long k_start, long long k_stop, int window, int max_hits=1, long long max_multipliers=0, long long offset=0):
@@ -181,23 +238,24 @@ cdef class PSieveCore:
         cdef int64_t* remv = <int64_t*> malloc(CH * sizeof(int64_t))
         cdef uint64_t* iv = <uint64_t*> malloc(nw * sizeof(uint64_t))
         cdef uint64_t term[MAXW]
+        cdef int sroot[MAXW]
+        cdef long long nh = 0
         cdef uint64_t nterm[MAXW]
         cdef uint64_t ua = self.ua, bt, d, crm, x
         cdef uint64_t* pp[MAXSP]
         cdef int crp[MAXSP]
         cdef int aoff[MAXSP]
         cdef object offX
-        cdef int k0, idx, lim, seg
+        cdef int k0, idx, lim, seg, stp, si, res, cr64, cr4, guard
         cdef uint64_t* pw
+        cdef uint64_t m2, stepu
+        cdef object stepX
         cdef uint64_t acc, lastmask
         cdef object T, cr, X, c, y, a = self.a, T4 = self.T4, absa = self.absa, M = self.M
         cdef long long nmult = 0
         hits = []
-        offX = absa * offset
-        for j in range(nsp):
-            aoff[j] = <int> ((absa % self.sp[j]) * (offset % self.sp[j]) % self.sp[j])
         lo = k_start
-        while lo < k_stop and len(hits) < max_hits:
+        while lo < k_stop and nh < max_hits:
             hi = lo + CH
             if hi > k_stop:
                 hi = k_stop
@@ -210,7 +268,14 @@ cdef class PSieveCore:
                 if f > hi:
                     break
                 m = ((lo + f - 1) // f) * f - lo
-                if self.smallbad[i]:
+                if i == 0 and self.two_mode == 2:
+                    while m < hi - lo:
+                        if ((lo + m) & 3) == 0:
+                            bad[m] = 1
+                        else:
+                            remv[m] >>= 1
+                        m += 2
+                elif self.smallbad[i]:
                     while m < hi - lo:
                         bad[m] = 1
                         m += f
@@ -227,38 +292,51 @@ cdef class PSieveCore:
                     bad[m] = 1
                     m += self.aq[j]
             for m in range(hi - lo):
-                if len(hits) >= max_hits or (max_multipliers and nmult >= max_multipliers):
+                if nh >= max_hits or (max_multipliers and nmult >= max_multipliers):
                     break
                 if bad[m]:
                     continue
                 K = lo + m
+                stp = self.stp_of[K & 15]
+                if stp == 0:                         # no X can make the quotient a 2-adic square
+                    continue
+                good = 1
+                for j in range(w):                   # 4nK must be a square mod every prime of a (all in C)
+                    s = self.sq[j][(self.n4q[j] * (K % self.aq[j])) % self.aq[j]]
+                    if s <= 0:
+                        good = 0
+                        break
+                    sroot[j] = s
+                if not good:
+                    continue
                 rem = remv[m]
                 if rem > 1:                          # one large prime factor left (or a product of two: skip)
                     if rem > <long long> SMALL * SMALL:
                         continue
-                    if jac(<int64_t> (a % rem), rem) != 1:
+                    if jac(self.a_c % rem, rem) != 1:
                         continue
                 T = T4 * K
-                good = 1
                 for j in range(w):
-                    s = self.sq[j][<long long> (T % self.aq[j])]
-                    if s <= 0:                       # non-residue, or K shares the prime (excluded above)
-                        good = 0
-                        break
-                    term[j] = <uint64_t> (s * M[j] % absa)
+                    term[j] = <uint64_t> (sroot[j] * M[j] % absa)
                     nterm[j] = (ua - term[j]) % ua
-                if not good:
-                    continue
                 nmult += 1
                 cr = isqrt(T)
                 crm = <uint64_t> (cr % absa)
+                si = 0 if stp == 1 else (1 if stp == 2 else 2)
+                res = self.res_of[K & 15]
+                stepu = ua * stp
+                stepX = absa * stp
+                offX = stepX * offset
+                cr64 = <int> (cr % 64)
+                cr4 = cr64 & 3
                 for j in range(nsp):
                     p = self.sp[j]
-                    pp[j] = self.pat[j][(self.n4p[j] * (K % p)) % p]
+                    pp[j] = self.pat[si][j][(self.n4p[j] * (K % p)) % p]
                     crp[j] = <int> (cr % p)
+                    aoff[j] = <int> (((stepu % p) * (offset % p)) % p)
                 lim = window
                 if self.sgn < 0:                     # definite side: X runs from the crossing down to 0
-                    c = cr // absa + 1 - offset
+                    c = cr // stepX + 1 - offset
                     if c <= 0:
                         continue
                     if c < lim:
@@ -271,18 +349,28 @@ cdef class PSieveCore:
                             bt -= ua
                     if self.sgn > 0:
                         d = (bt + ua - (crm + 1) % ua) % ua          # X0 = cr + 1 + d
+                        guard = 0
+                        while stp > 1 and ((cr4 + 1 + <int> (d & 3)) & (stp - 1)) != res and guard < 4:
+                            d += ua                                  # move to the X of this class with the right residue mod step
+                            guard += 1
+                        m2 = self.mask2[K & 15][(cr64 + 1 + <int> (d & 63) + <int> ((stepu & 63) * (offset & 63))) & 63]
                     else:
                         d = (crm + ua - bt) % ua                     # X0 = cr - d
+                        guard = 0
+                        while stp > 1 and ((cr4 + 4 - <int> (d & 3)) & (stp - 1)) != res and guard < 4:
+                            d += ua
+                            guard += 1
+                        m2 = self.mask2[K & 15][(cr64 + 128 - <int> (d & 63) - <int> (((stepu & 63) * (offset & 63)) & 63)) & 63]
                     acc = 0
                     for wd in range(nw):
-                        iv[wd] = ~(<uint64_t> 0)
+                        iv[wd] = m2
                     for j in range(nsp):
                         p = self.sp[j]
                         if self.sgn > 0:
                             idx = <int> ((crp[j] + 1 + d % p + aoff[j]) % p)
                         else:
                             idx = <int> ((crp[j] + 2 * p - <int> (d % p) - aoff[j]) % p)
-                        k0 = (idx * self.inv[j]) % p
+                        k0 = (idx * self.inv[si][j]) % p
                         pw = pp[j]
                         wd = 0
                         while wd < nw:                       # straight runs between wrap-arounds, so the compiler can vectorise
@@ -304,9 +392,9 @@ cdef class PSieveCore:
                                 continue
                             self.survivors += 1
                             if self.sgn > 0:
-                                X = cr + 1 + d + offX + absa * e
+                                X = cr + 1 + d + offX + stepX * e
                             else:
-                                X = cr - d - offX - absa * e
+                                X = cr - d - offX - stepX * e
                                 if X <= 0:
                                     continue
                             c = (X * X - T) // a
@@ -315,7 +403,8 @@ cdef class PSieveCore:
                             y = isqrt(c)
                             if y * y == c:
                                 hits.append((K, X, y))
-            lo = lo + m if (len(hits) >= max_hits or (max_multipliers and nmult >= max_multipliers)) else hi
+                                nh += 1
+            lo = lo + m if (nh >= max_hits or (max_multipliers and nmult >= max_multipliers)) else hi
             if max_multipliers and nmult >= max_multipliers:
                 break
         self.next_k = lo
