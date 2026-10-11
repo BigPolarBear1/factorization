@@ -46,6 +46,11 @@ psieve_window=4096          # (mode 2) positions sieved per root class, starting
 psieve_sieve_primes=18      # (mode 2) small primes filtering each window
 psieve_share=1.0            # (mode 2) psieve may use this much time relative to the SIQS time since the last attempt ...
 psieve_min_budget=1.0       # (mode 2) ... but at least this many seconds per attempt
+psieve_rank_leftovers=0     # (mode 2) 1: among the usable leftovers pick the one that is a non-residue at the most small primes (measured: higher hit rate)
+psieve_slack=1              # (mode 2) 1: also search leftover*m for small odd squarefree m (not an exact match of the SIQS leftover)
+psieve_slack_prime_bound=7  # (mode 2) m is built from the odd primes up to this bound
+psieve_slack_share=0.2      # (mode 2) share of each psieve attempt spent on the slack multipliers
+psieve_slack_margin=0       # (mode 2) a slack relation is kept only if its square part has more bits than sqrt(n) plus this margin
 psieve_direct_gcd=1         # (mode 2) 1: a hit is combined with its SIQS relation straight away (gcd), 0: only add it to the matrix
 psieve_amul_search=1        # 1: accept (u*b^2-4nk)/a = m*y^2 for any small factor-base-smooth m (signature table), 0: only m=1 (bit sieve)
 psieve_amul_limit=1<<20     # |m| below this
@@ -458,13 +463,28 @@ def launch(n,primeslist,primeslist2):
                 if psieve_mode==2:
                     # one candidate per attempt: the first usable leftover in almostsq order; its K progress is resumed next time
                     budget=max(psieve_min_budget,psieve_share*(default_timer()-siqs_clock))
+                    # pick the usable leftover whose K range is least explored (small K give the most hits); ties go to
+                    # almostsq order, or to the better score with psieve_rank_leftovers
+                    best=-1
+                    bestkey=None
+                    cnt=0
+                    while i < len(almostsq_result) and cnt < 40:
+                        div=almostsq_result[i][0]
+                        if div!=1 and div%2!=0 and bitlen(div)<(keysize*0.5) and abs(div)<(1<<62) and 2 not in almostsq_result[i][3]:
+                            cnt+=1
+                            key=(psieve_cores[div]['cores'][1].next_k if div in psieve_cores else 0, leftover_score(div) if psieve_rank_leftovers==1 else 0, cnt)
+                            if best==-1 or key<bestkey:
+                                best=i
+                                bestkey=key
+                        i+=1
+                    i=best if best!=-1 else len(almostsq_result)
                     while i < len(almostsq_result):
                         div=almostsq_result[i][0]
                         if div!=1 and div%2!=0 and bitlen(div)<(keysize*0.5):
                             X0=1
                             for j in almostsq_result[i][2]:
                                 X0=(X0*math.isqrt(ret_array[1][j]))%n
-                            print("[i]Trying psieve2 a: "+str(div)+" bitlen a: "+str(bitlen(div))+" primes in a: "+str(len([p for p in almostsq_result[i][3] if p!=-1]))+" budget: "+str(round(budget,2))+"s")
+                            print("[i]Trying psieve2 a: "+str(div)+" score: "+str(round(leftover_score(div),2))+" bitlen a: "+str(bitlen(div))+" primes in a: "+str(len([p for p in almostsq_result[i][3] if p!=-1]))+" budget: "+str(round(budget,2))+"s resuming at K: "+str(psieve_cores[div]['cores'][1].next_k if div in psieve_cores else 1))
                             psievefound,factors=psieve2(n,ret_array,primelist_f,div,almostsq_result[i][3],almostsq_result[i][1],X0,budget,psieve_cores)
                             if factors is not None:
                                 print("[SUCCESS]Factors are: "+str(factors[0])+" and "+str(factors[1]))
@@ -2224,45 +2244,123 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
 
     return found
 
-def psieve2(n,ret_array,primelist_f,a,odd,root0,X0,budget,cores):
-    # Looks for X^2 - a*y^2 = 4nK, where a is the leftover of an SIQS relation (or combination): prod(values) = a*root0^2
-    # and X0^2 = prod(values) mod n. Such a hit has exactly the odd factors of that relation, so the pair is a dependency.
-    # Returns (relations added, (f1,f2) or None). Progress through K is kept in cores[a] between calls.
+g_small_primes=None
+g_leftover_score={}
+def leftover_score(a):
+    # prod over small odd primes f of 1/(1-(a|f)/f). Smaller is better for psieve2: fewer multipliers K are usable,
+    # but each usable one is more likely to hold a solution.
+    global g_small_primes
+    if g_small_primes is None:
+        g_small_primes=get_primes(3,2000)
+    if a not in g_leftover_score:
+        v=1.0
+        for f in g_small_primes:
+            if a%f!=0:
+                v/=(1-jacobi(a%f,f)/f)
+        g_leftover_score[a]=v
+    return g_leftover_score[a]
+
+def psieve_rel_reduce(st,n,a,rel):
+    # rel = [mask, X, exponent of a, {small prime: exponent}, Y] with X^2 = a^ea * prod(p^e) * Y^2 (mod n).
+    # GF(2) elimination on the odd exponents. Returns None when the relation joins the basis,
+    # otherwise the gcd from the dependency it closes (1 or n when that dependency is trivial).
+    basis=st['basis']
+    while rel[0]:
+        low=rel[0]&(-rel[0])
+        if low not in basis:
+            basis[low]=rel
+            return None
+        b=basis[low]
+        ex=dict(rel[3])
+        for p,e in b[3].items():
+            ex[p]=ex.get(p,0)+e
+        rel=[rel[0]^b[0],(rel[1]*b[1])%n,rel[2]+b[2],ex,(rel[4]*b[4])%n]
+    s=(pow(a,rel[2]//2,n)*rel[4])%n
+    for p,e in rel[3].items():
+        s=(s*pow(p,e//2,n))%n
+    return math.gcd((rel[1]-s)%n,n)
+
+def psieve2(n,ret_array,primelist_f,a,odd,root0,X0,budget,state):
+    # Looks for X^2 - (a*m)*y^2 = 4nK, where a is the leftover of an SIQS relation (or combination): prod(values) = a*root0^2
+    # and X0^2 = prod(values) mod n.  m = 1 is an exact match of the leftover; with psieve_slack, m also runs over a few
+    # small odd squarefree numbers. Every hit goes through a small GF(2) elimination together with the SIQS relation,
+    # so an exact hit, or a set of slack hits whose m multiply to a square, closes a dependency straight away.
+    # Returns (relations added, (f1,f2) or None). Progress through K is kept in state[a] between calls.
     primes=[p for p in odd if p!=-1]
     if len(primes)==0 or len(primes)>12 or 2 in primes or math.prod(primes)!=abs(a) or abs(a)>=(1<<62) or max(primes)>50_000_000:
         return 0,None
-    if a not in cores:
-        cores[a]=PSieveCore(n,a,primes,psieve_sieve_primes)
-    core=cores[a]
-    direct=psieve_direct_gcd==1 and (X0*X0-a*root0*root0)%n==0
+    if a not in state:
+        st={'cores':{1:PSieveCore(n,a,primes,psieve_sieve_primes)},'basis':{},'bit':{},'seen':set(),'t':[0.0,0.0],'same':0,'slack':0,'live':set(),'turn':0}
+        if (X0*X0-a*root0*root0)%n==0:
+            st['basis'][1]=[1,X0%n,1,{},root0%n]           # the SIQS relation itself: bit 0 stands for the leftover a
+        if psieve_slack==1:
+            sp=[p for p in get_primes(3,psieve_slack_prime_bound+1) if a%p!=0 and n%p!=0]
+            for r in range(1,len(sp)+1):
+                for c in itertools.combinations(sp,r):
+                    m=math.prod(c)
+                    if abs(a*m)<(1<<62) and jacobi(m%n,n)==1:    # (m|n) = -1: a*m is a non-residue mod one prime of n, no solution exists
+                        st['cores'][m]=None                   # built on first use
+                        st.setdefault('mprimes',{})[m]=list(c)
+            for idx,p in enumerate(sp):
+                st['bit'][p]=1<<(idx+1)
+        state[a]=st
+    st=state[a]
+    thr=bitlen(math.isqrt(n))+psieve_slack_margin
+    slack_ms=[m for m in st['cores'] if m!=1]
     start=default_timer()
     found=0
-    same=0
     while default_timer()-start < budget:
+        # exact search first in line; the slack multipliers get psieve_slack_share of the time, least explored first
+        m=1
+        if slack_ms and st['t'][1]*(1-psieve_slack_share) < st['t'][0]*psieve_slack_share:
+            # a multiplier that has produced a hit is proven usable (a*m is a square mod both primes of n); the others
+            # may never hit, so proven ones get two slack turns out of three
+            st['turn']+=1
+            pool=[q for q in slack_ms if q in st['live']] if (st['live'] and st['turn']%3!=0) else [q for q in slack_ms if q not in st['live']]
+            if not pool:
+                pool=slack_ms
+            m=min(pool,key=lambda q:(st['cores'][q].next_k if st['cores'][q] is not None else 0))
+            if st['cores'][m] is None:
+                st['cores'][m]=PSieveCore(n,a*m,primes+st['mprimes'][m],psieve_sieve_primes)
+        core=st['cores'][m]
+        t0=default_timer()
         k=core.next_k
-        hits=core.run(k,k+(1<<15),psieve_window,1<<30)
+        hits=core.run(k,k+(1<<14),psieve_window,1<<30)
+        st['t'][0 if m==1 else 1]+=default_timer()-t0
         for K,X,y in hits:
-            if math.gcd(X,y)>2:                         # scaled copy of a hit at a smaller K
+            if math.gcd(X,y)>2 or X in st['seen']:           # scaled copy of a hit at a smaller K, or seen before
                 continue
+            st['seen'].add(X)
+            if m!=1:
+                st['live'].add(m)
             poly_val=X*X-4*n*K
-            assert poly_val==a*y*y
-            if direct:
-                g=math.gcd((X0*y-X*root0)%n,n)
-                if g==1 or g==n:                        # same square root of a mod n as the SIQS relation: nothing new
-                    same+=1
+            assert poly_val==a*m*y*y
+            mask=1
+            ex={}
+            if m!=1:
+                for p in st['mprimes'][m]:
+                    mask|=st['bit'][p]
+                    ex[p]=1
+            g=psieve_rel_reduce(st,n,a,[mask,X%n,1,ex,y%n]) if psieve_direct_gcd==1 else None
+            if g is not None and (g==1 or g==n):
+                st['same']+=1                                # closes a dependency that says nothing new
+                if m==1:
                     continue
-            if X*X in ret_array[1]:
-                continue
-            local_factors, value = factorise_fast(poly_val,primelist_f)
-            ret_array[1].append(X*X)
-            ret_array[0].append(poly_val)
-            ret_array[2].append(local_factors)
-            ret_array[3].append([])
-            found+=1
-            print("[i]psieve2 hit: a: "+str(a)+" K: "+str(K)+" X: "+str(X)+" y: "+str(y)+" square part bits: "+str(bitlen(y*y))+" of "+str(bitlen(poly_val))+" | multipliers used: "+str(core.multipliers)+" intervals: "+str(core.intervals)+" hits on the known root (skipped): "+str(same))
-            if direct:
+            keep=(m==1) or bitlen(y*y)>thr
+            if keep and X*X not in ret_array[1]:
+                local_factors, value = factorise_fast(poly_val,primelist_f)
+                ret_array[1].append(X*X)
+                ret_array[0].append(poly_val)
+                ret_array[2].append(local_factors)
+                ret_array[3].append([])
+                found+=1
+                if m!=1:
+                    st['slack']+=1
+                print("[i]psieve2 "+("exact hit" if m==1 else "slack hit")+": a: "+str(a)+" m: "+str(m)+" K: "+str(K)+" square part bits: "+str(bitlen(y*y))+" of "+str(bitlen(poly_val))+" (sqrt(n): "+str(bitlen(math.isqrt(n)))+" bits) odd factors: "+str(sorted(local_factors))+" | exact K reached: "+str(st['cores'][1].next_k)+" slack relations for this a: "+str(st['slack'])+" trivial dependencies: "+str(st['same']))
+            if g is not None and g!=1 and g!=n:
                 return found,(g,n//g)
-            return found,None
+            if psieve_direct_gcd!=1 and m==1:
+                return found,None
     return found,None
 
 def get_partials(mod,list1):
