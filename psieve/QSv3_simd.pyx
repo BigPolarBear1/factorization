@@ -33,13 +33,13 @@ import os
 from sympy.ntheory.residue_ntheory import jacobi_symbol
 import almostsq
 from quadroots import QuadRoots
-from psievecore import PSieveCore
+from psievecore import PSieveCore, KOrder
 
 
 k_max=10_000
 psieve_trigger=20           # try psieve after this many new SIQS relations
-psieve_window=4096          # positions sieved per root class, starting at the crossing X = sqrt(4nK)
-psieve_sieve_primes=16      # small primes filtering each window (a mod-64 condition is applied on top)
+psieve_window=8192          # positions sieved per root class, starting at the crossing X = sqrt(4nK)
+psieve_sieve_primes=24      # small primes filtering each window (a mod-64 condition is applied on top)
 psieve_share=1.0            # psieve may use this much time relative to the SIQS time since the last attempt ...
 psieve_min_budget=1.0       # ... but at least this many seconds per attempt
 min_lin_sieve_size=10_000
@@ -433,7 +433,7 @@ def launch(n,primeslist,primeslist2):
                     X0=1
                     for j in pick[2]:
                         X0=(X0*math.isqrt(ret_array[1][j]))%n
-                    print("[i]psieve2 on a: "+str(div)+" (bits: "+str(bitlen(div))+", primes: "+str(len([p for p in pick[3] if p!=-1]))+") from K: "+str(psieve_cores[div]['k'] if div in psieve_cores else 1)+" | leftovers tried so far: "+str(len(psieve_cores)))
+                    print("[i]psieve2 on a: "+str(div)+" (bits: "+str(bitlen(div))+", primes: "+str(len([p for p in pick[3] if p!=-1]))+") multipliers tried so far: "+str(psieve_cores[div]['k'] if div in psieve_cores else 0)+" | leftovers tried so far: "+str(len(psieve_cores)))
                     factors=psieve2(n,ret_array,primelist_f,div,pick[3],pick[1],X0,budget-(default_timer()-pstart),psieve_cores)
                     if factors is not None:
                         print("[SUCCESS]Factors are: "+str(factors[0])+" and "+str(factors[1]))
@@ -1403,44 +1403,42 @@ g_psieve_pool=None
 g_psieve_wcores={}
 def _psieve_task(args):
     # runs in a worker process: one slice of K for one leftover
-    n,a,primes,nsieve,k0,k1,window=args
+    n,a,primes,nsieve,ks,window=args
     key=(n,a)
     if key not in g_psieve_wcores:
         if len(g_psieve_wcores)>8:
             g_psieve_wcores.clear()
         g_psieve_wcores[key]=PSieveCore(n,a,primes,nsieve)
-    return g_psieve_wcores[key].run(k0,k1,window,1<<30)
+    return g_psieve_wcores[key].run(0,0,window,1<<30,0,0,ks)
 
 def psieve2(n,ret_array,primelist_f,a,odd,root0,X0,budget,state):
     # Looks for X^2 - a*y^2 = 4nK over all multipliers K, where a is the leftover of an SIQS relation (or combination):
     # prod(values) = a*root0^2 and X0^2 = prod(values) mod n. A hit has exactly the odd factors of that relation, so the
-    # pair is a dependency and is tried with a gcd straight away. K has no upper limit: a leading coefficient z on the
-    # quadratic only ever appears as the product z*k, and K runs over all of those.
+    # pair is a dependency and is tried with a gcd straight away. K is not taken in ascending order: KOrder hands out
+    # squarefree K whose prime factors all split, best value first (value = 2^(number of prime factors) / K^(1/4)),
+    # because such a K carries 2^w ideals and so 2^w chances of a solution for the same sieving cost.
     # Always runs at least one slice. Returns (f1,f2) or None. Progress through K is kept in state[a] between calls.
     global g_psieve_pool
     primes=[p for p in odd if p!=-1]
     if len(primes)==0 or len(primes)>12 or 2 in primes or math.prod(primes)!=abs(a) or abs(a)>=(1<<62) or max(primes)>50_000_000 or (X0*X0-a*root0*root0)%n!=0:
         return None
     if a not in state:
-        state[a]={'core':PSieveCore(n,a,primes,psieve_sieve_primes),'seen':set(),'same':0,'k':1}
+        state[a]={'core':PSieveCore(n,a,primes,psieve_sieve_primes),'order':KOrder(a),'seen':set(),'same':0,'k':0}
     st=state[a]
     start=default_timer()
     first=True
     while first or default_timer()-start < budget:
         first=False
-        k=st['k']
         if workers>1:
             if g_psieve_pool is None:
                 g_psieve_pool=multiprocessing.Pool(workers)
                 import atexit
                 atexit.register(g_psieve_pool.terminate)   # so the worker processes are gone before the interpreter shuts down
-            sl=1<<16
-            parts=g_psieve_pool.map(_psieve_task,[(n,a,primes,psieve_sieve_primes,k+w*sl,k+(w+1)*sl,psieve_window) for w in range(workers)])
+            parts=g_psieve_pool.map(_psieve_task,[(n,a,primes,psieve_sieve_primes,st['order'].take(1<<17),psieve_window) for w in range(workers)])
             hits=[h for part in parts for h in part]
-            st['k']=k+workers*sl
         else:
-            hits=st['core'].run(k,k+(1<<14),psieve_window,1<<30)
-            st['k']=k+(1<<14)
+            hits=st['core'].run(0,0,psieve_window,1<<30,0,0,st['order'].take(1<<15))
+        st['k']=st['order'].used
         for K,X,y in hits:
             if math.gcd(X,y)>2 or X in st['seen']:           # scaled copy of a hit at a smaller K, or seen before
                 continue
@@ -1456,8 +1454,9 @@ def psieve2(n,ret_array,primelist_f,a,odd,root0,X0,budget,state):
             ret_array[0].append(poly_val)
             ret_array[2].append(local_factors)
             ret_array[3].append([])
-            print("[i]psieve2 hit: a: "+str(a)+" K: "+str(K)+" square part bits: "+str(bitlen(y*y))+" of "+str(bitlen(poly_val))+" (sqrt(n): "+str(bitlen(math.isqrt(n)))+" bits) odd factors: "+str(sorted(local_factors))+" | K reached: "+str(st['k'])+" hits on the known root (skipped): "+str(st['same']))
+            print("[i]psieve2 hit: a: "+str(a)+" K: "+str(K)+" square part bits: "+str(bitlen(y*y))+" of "+str(bitlen(poly_val))+" (sqrt(n): "+str(bitlen(math.isqrt(n)))+" bits) odd factors: "+str(sorted(local_factors))+" | multipliers tried: "+str(st['k'])+" hits on the known root (skipped): "+str(st['same']))
             return (g,n//g)
+    st['order'].park()                                  # keep memory flat while other leftovers get their turn
     return None
 
 def get_derivative(f):
