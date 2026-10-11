@@ -37,11 +37,19 @@ from psievecore import PSieveCore, KOrder
 
 
 k_max=10_000
-psieve_trigger=20           # try psieve after this many new SIQS relations
-psieve_window=8192          # positions sieved per root class, starting at the crossing X = sqrt(4nK)
-psieve_sieve_primes=24      # small primes filtering each window (a mod-64 condition is applied on top)
-psieve_share=1.0            # psieve may use this much time relative to the SIQS time since the last attempt ...
-psieve_min_budget=1.0       # ... but at least this many seconds per attempt
+psieve_trigger=20           # psieve gets a turn after this many new SIQS relations ...
+psieve_interval=0.5         # ... or after this many seconds of SIQS, if it produced any new leftover (0 = off)
+psieve_share=4.0            # psieve may then use this much time relative to the SIQS time since its last turn ...
+psieve_min_budget=1.0       # ... but at least this many seconds
+psieve_slice=0.25           # longest time (seconds) one leftover is worked on before the next one: its first multipliers are its best
+psieve_slice_min=0.1        # shortest: below this the setup of a leftover costs too much
+psieve_lp_bound=1<<21       # a sieve candidate whose cofactor is one prime below this is kept as a psieve leftover (0 = off)
+psieve_direct=1             # 1: when the sieve has not produced enough fresh leftovers, make them directly (see psieve_feed)
+psieve_max_partials=20000   # at most this many of those are kept (the smallest odd parts)
+psieve_window=4096          # positions sieved per root class, starting at the crossing X = sqrt(4nK) (at most 8192)
+psieve_sieve_primes=32      # small primes filtering each window (a mod-64 condition is applied on top)
+psieve_fmax=100_000         # multipliers K are built from primes below this (larger primes only matter very deep into a leftover)
+psieve_keep=32              # leftovers whose tables and multiplier lists stay in memory between turns
 min_lin_sieve_size=10_000
 max_bound=10_000_000
 key=0                 #Define a custom modulus to factor
@@ -321,6 +329,8 @@ def build_matrix(factor_base, smooth_nums, factors,factor_list2):#,pflist):
 def launch(n,primeslist,primeslist2):
     fb_map = {val: i for i, val in enumerate(primeslist)}
     psieve_cores={}
+    psieve_live=[]
+    partials_seen=0
     siqs_clock=default_timer()
     hmap=create_hashmap(n,primeslist)
     ret_array=[[],[],[],[]]
@@ -358,7 +368,7 @@ def launch(n,primeslist,primeslist2):
    # tnum=int(((n)**0.5) /(lin_sieve_size))
     tnum=int(((n)**0.5) / 1)
     seen=[]
-    qr=QuadRoots(primeslist,hmap,100_000,k_max)
+    qr=QuadRoots(primeslist,hmap,2,k_max)   # only the first quad (k = 1) is used below: no need for root tables up to 100000
     print("[i]Building 2d root map")
     roots2d=build_2drootmap(primeslist_a,hmap,n,qr)
     print("[i]Entering attack loop")
@@ -415,7 +425,11 @@ def launch(n,primeslist,primeslist2):
                     sys.exit()            
             interval=build_database2interval(primeslist_a,quad,n,lin,new_mod,roots2d,0,factor_ranking)
             found+=process_interval2d(n,ret_array,quad,primelist_f,large_prime_bound,partials,lin,new_mod,factor_ranking,fb_map,0,seen_factors,interval,primeslist,[],[],valid_quads,valid_quads_factors,qlist,primelist,[],[])#,lin,new_mod,sum_list)
-            if found > psieve_trigger or len(ret_array[0]) > base+10:
+            if found > psieve_trigger or len(ret_array[0]) > base+10 or (psieve_interval>0 and default_timer()-siqs_clock >= psieve_interval and (found>0 or len(partials)>partials_seen)):
+                if len(partials)>psieve_max_partials:           # keep the smallest odd parts that have not had a turn yet
+                    for pa in sorted(partials,key=lambda v:(v in psieve_cores,bitlen(v)))[psieve_max_partials//2:]:
+                        del partials[pa]
+                partials_seen=len(partials)
                 print("[i]#B-smooths: "+str(len(ret_array[0])))
                 almostsq_result,leftovers=generate_almostsq(ret_array[2],primeslist,ret_array[0])
              #   almostsq_result=generate_almostsq_smallprimes(ret_array[2],primeslist,ret_array[0])
@@ -425,23 +439,63 @@ def launch(n,primeslist,primeslist2):
                 usable=[]
                 for res in almostsq_result:
                     div=res[0]
-                    if div!=1 and div%2!=0 and bitlen(div)<(keysize*0.5) and abs(div)<(1<<62) and 2 not in res[3] and len(usable)<400:
+                    if div!=1 and div%2!=0 and abs(div)<(1<<96) and 2 not in res[3]:
                         usable.append(res)
+                if psieve_direct:                               # enough untouched leftovers for every turn of this attempt
+                    turns=int(budget/psieve_slice_min)+max(1,workers)
+                    fresh=sum(1 for pa in partials if pa not in psieve_cores and bitlen(pa)<=keysize*0.5)
+                    if fresh<turns:
+                        psieve_feed(n,turns-fresh,partials,psieve_cores)
+                have=set(r[0] for r in usable)
+                for pa in partials:                             # relations with one large prime: (a, root0, [], odd primes, X0)
+                    if pa not in have:
+                        usable.append((pa,partials[pa][0],[],partials[pa][2],partials[pa][1]))
+                usable.sort(key=lambda r:bitlen(r[0]))
+                # Order of work: the leftover with the highest expected hit rate first. The rate of a leftover falls like
+                # (multipliers used)^(-1/4), so its first multipliers are its best, and a leftover above half the key size
+                # starts lower (measured factors). The budget of this attempt is shared out over the leftovers that have
+                # not been touched yet, so each gets a short turn while it is fresh.
+                def prio(r):
+                    return (-psieve_size_weight(r[0])*((psieve_cores[r[0]]['k'] if r[0] in psieve_cores else 0)+20000)**-0.25, bitlen(r[0]))
+                usable.sort(key=prio)
+                nfresh=sum(1 for r in usable if r[0] not in psieve_cores and psieve_size_weight(r[0])>=1.0)
+                turn=min(psieve_slice,max(psieve_slice_min,budget/max(1,nfresh)))
+                idx=0
                 while len(usable)>0 and default_timer()-pstart < budget:
-                    pick=min(usable,key=lambda r:(psieve_cores[r[0]]['k'] if r[0] in psieve_cores else 0, leftover_L(r[0])))   # least explored first, then smallest L(1,chi)
-                    div=pick[0]
-                    X0=1
-                    for j in pick[2]:
-                        X0=(X0*math.isqrt(ret_array[1][j]))%n
-                    print("[i]psieve2 on a: "+str(div)+" (bits: "+str(bitlen(div))+", primes: "+str(len([p for p in pick[3] if p!=-1]))+") multipliers tried so far: "+str(psieve_cores[div]['k'] if div in psieve_cores else 0)+" | leftovers tried so far: "+str(len(psieve_cores)))
-                    factors=psieve2(n,ret_array,primelist_f,div,pick[3],pick[1],X0,budget-(default_timer()-pstart),psieve_cores)
+                    if idx>=len(usable):
+                        usable.sort(key=prio)
+                        idx=0
+                    batch=[]
+                    while idx<len(usable) and len(batch)<max(1,workers):
+                        pick=usable[idx]
+                        idx+=1
+                        div=pick[0]
+                        X0=1
+                        for j in pick[2]:
+                            X0=(X0*math.isqrt(ret_array[1][j]))%n
+                        if len(pick)>4:
+                            X0=pick[4]%n
+                        if psieve_state(n,div,pick[3],pick[1],X0,psieve_cores) is None:
+                            continue
+                        batch.append((pick,X0))
+                    if len(batch)==0:
+                        break
+                    print("[i]psieve2 on a: "+", ".join(str(p[0][0])+" ("+str(bitlen(p[0][0]))+" bits, "+str(psieve_cores[p[0][0]]['k'])+" multipliers so far)" for p in batch)+" | leftovers tried so far: "+str(len(psieve_cores)))
+                    factors=psieve_turn(n,ret_array,primelist_f,batch,min(turn,max(0.02,budget-(default_timer()-pstart))),psieve_cores)
                     if factors is not None:
                         print("[SUCCESS]Factors are: "+str(factors[0])+" and "+str(factors[1]))
                         sys.exit()
-                    if div not in psieve_cores:                 # psieve2 refused it
-                        usable.remove(pick)
-                        continue
-                    break
+                    for pick,X0 in batch:
+                        div=pick[0]
+                        if div in psieve_live:
+                            psieve_live.remove(div)
+                        psieve_live.append(div)
+                    while len(psieve_live)>psieve_keep:         # keep memory flat: the oldest leftover gives up its tables (rebuilt on its next turn)
+                        old=psieve_cores[psieve_live.pop(0)]
+                        if old['order'] is not None:
+                            old['pos']=old['order'].save()
+                        old['order']=None
+                        old['core']=None
                 siqs_clock=default_timer()
            #     if g_debug ==1:
            #         print("seen_factors: ",seen_factors)
@@ -910,6 +964,17 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
             #        k+=1 
             #        continue     
             if value != 1:# and isPrime(value,5)==0:#math.isqrt(abs(value))**2 != value:
+                # Not smooth, but if what is left is a single prime below psieve_lp_bound the relation still has a
+                # known square root and an odd part: psieve can look for a second relation with the same odd part
+                # (the large prime included), which closes the pair without waiting for a matching partial.
+                if 1 < value < psieve_lp_bound and value < primelist_f[primelist_f[0]-1]**2 and 2 not in local_factors:
+                    pa=value
+                    for fac in local_factors:
+                        pa*=fac
+                    if pa not in partials and bitlen(pa) <= keysize*0.5+9:
+                        r0=math.isqrt(poly_val//pa)
+                        if r0*r0*pa==poly_val:
+                            partials[pa]=(r0,2*new_root,sorted(local_factors)+[value])
                 k+=1
                 continue    
             if 2*new_root not in ret_array[1]:
@@ -1399,64 +1464,169 @@ def build_2drootmap(primeslist,hmap,n,qr):
 #
 #    return blist
 
-g_small_primes=None
-g_leftover_L={}
-def leftover_L(a):
-    # L(1,chi) of Q(sqrt(a)) from the primes below 3000. The expected number of psieve hits for a multiplier K is
-    #   2^(primes of K) * (number of genera) * window / (sqrt(discriminant) * L(1,chi)),
-    # which is the class number formula read backwards; measured hit counts follow it, so a small L is better.
-    global g_small_primes
-    if g_small_primes is None:
-        g_small_primes=get_primes(3,3000)
-    if a not in g_leftover_L:
-        v=1.0/(1-(1 if a%8 in (1,7) else -1)/2) if a%4==1 else 1.0
-        for f in g_small_primes:
-            if a%f!=0:
-                v/=(1-jacobi(a%f,f)/f)
-        g_leftover_L[a]=v
-    return g_leftover_L[a]
+g_feed=None
+def psieve_feed(n,want,partials,tried):
+    # Leftovers made directly, without the sieve. Take d = a product of a few primes p with n a square mod p, and the
+    # root B of n mod d^2 that lies nearest to sqrt(n). Then B^2 - n = d^2 * g with |g| about sqrt(n), i.e. this is an
+    # SIQS polynomial with a square leading coefficient evaluated at one point. g does not have to be smooth: psieve
+    # only needs its odd part a (g = a * r^2) with known prime factors, which gives the relation B^2 = a*(d*r)^2 mod n
+    # in exactly the form of a relation with a large prime. g is trial divided up to 2^16; what is left must be 1 or
+    # one prime below 2^31. Fills `partials` with up to `want` new entries a -> (root0, X0, odd primes).
+    global g_feed
+    if g_feed is None:
+        rt=math.isqrt(n)
+        k=3 if bitlen(n)<96 else 4
+        p0=int(round(math.isqrt(rt)**(1.0/k)))
+        pool=[]
+        for p in sympy.primerange(max(3,p0//3),p0*3+60):
+            if n%p==0 or jacobi_symbol(n%p,p)!=1:
+                continue
+            b=0
+            for x in range(1,p):
+                if (x*x-n)%p==0:
+                    b=x
+                    break
+            b=(b+p*((((n-b*b)//p)*pow(2*b,-1,p))%p))%(p*p)      # lifted to a root mod p^2
+            pool.append((p,b))
+        g_feed={'rt':rt,'k':k,'pool':pool,'small':list(sympy.primerange(3,1<<16)),'rng':random.Random(n)}
+    f=g_feed
+    if len(f['pool'])<f['k']:
+        return 0
+    made=0
+    tries=0
+    while made<want and tries<want*50+200:
+        tries+=1
+        A=1
+        B=0
+        for p,b in f['rng'].sample(f['pool'],f['k']):
+            m=p*p
+            if f['rng'].random()<0.5:
+                b=m-b
+            B=B+A*(((b-B)*pow(A,-1,m))%m)
+            A*=m
+        B+=A*((f['rt']-B+A//2)//A)
+        g=(B*B-n)//A
+        v=abs(g)
+        if v==0:
+            continue
+        r=math.isqrt(A)
+        e=0
+        while v%2==0:
+            v//=2
+            e+=1
+        if e&1:
+            continue                                   # the odd part must be odd
+        r<<=e//2
+        odd=[]
+        for s in f['small']:
+            if s*s>v:
+                break
+            if v%s==0:
+                e=0
+                while v%s==0:
+                    v//=s
+                    e+=1
+                if e&1:
+                    odd.append(s)
+                r*=s**(e//2)
+        if v>1:
+            if v>=(1<<31):
+                continue
+            odd.append(v)
+        if len(odd)==0 or len(odd)>12:
+            continue
+        a=math.prod(odd)*(-1 if g<0 else 1)
+        if a in partials or a in tried or bitlen(a)>keysize*0.5:
+            continue
+        if B*B-a*r*r!=n:
+            continue
+        partials[a]=(r,B,([-1] if g<0 else [])+sorted(odd))
+        made+=1
+    return made
+
+def psieve_size_weight(a):
+    # hit rate of a fresh leftover relative to one below half the key size (100-bit measurements: 51-56 bits 0.7,
+    # 57-59 bits 0.5, 60-62 bits 0.3): above that size the window is no longer short compared to the crossing
+    e=bitlen(a)-keysize*0.5
+    return 1.0 if e<=0 else (0.7 if e<=6 else (0.5 if e<=9 else 0.3))
 
 g_psieve_pool=None
-g_psieve_wcores={}
-def _psieve_task(args):
-    # runs in a worker process: one slice of K for one leftover
-    n,a,primes,nsieve,ks,window=args
-    key=(n,a)
-    if key not in g_psieve_wcores:
-        if len(g_psieve_wcores)>8:
-            g_psieve_wcores.clear()
-        g_psieve_wcores[key]=PSieveCore(n,a,primes,nsieve)
-    return g_psieve_wcores[key].run(0,0,window,1<<30,0,0,ks)
-
-def psieve2(n,ret_array,primelist_f,a,odd,root0,X0,budget,state):
-    # Looks for X^2 - a*y^2 = 4nK over all multipliers K, where a is the leftover of an SIQS relation (or combination):
-    # prod(values) = a*root0^2 and X0^2 = prod(values) mod n. A hit has exactly the odd factors of that relation, so the
-    # pair is a dependency and is tried with a gcd straight away. K is not taken in ascending order: KOrder hands out
-    # K built from primes that split in Q(sqrt(a)) and from the primes of a itself, best value first
-    # (value = 2^(number of prime factors) / K^(1/4)): a split prime doubles the ideals of norm K, a prime of a
-    # halves the root classes to sieve (its root is the single root X = 0), so both double the hits per unit of work.
-    # Always runs at least one slice. Returns (f1,f2) or None. Progress through K is kept in state[a] between calls.
-    global g_psieve_pool
-    primes=[p for p in odd if p!=-1]
-    if len(primes)==0 or len(primes)>12 or 2 in primes or math.prod(primes)!=abs(a) or abs(a)>=(1<<62) or max(primes)>50_000_000 or (X0*X0-a*root0*root0)%n!=0:
-        return None
-    if a not in state:
-        state[a]={'core':PSieveCore(n,a,primes,psieve_sieve_primes),'order':KOrder(a,1_000_000,0.05,primes),'seen':set(),'same':0,'k':0}
-    st=state[a]
+def _psieve_turn_task(args):
+    # one turn on one leftover in a worker process: returns the hits and where the multiplier order stopped
+    n,a,primes,pos,seconds,window,nsieve,fmax=args
+    core=PSieveCore(n,a,primes,nsieve)
+    order=KOrder(a,fmax,0.05,primes,n)
+    if pos is not None:
+        order.load(pos)
     start=default_timer()
-    first=True
-    while first or default_timer()-start < budget:
-        first=False
-        if workers>1:
-            if g_psieve_pool is None:
-                g_psieve_pool=multiprocessing.Pool(workers)
-                import atexit
-                atexit.register(g_psieve_pool.terminate)   # so the worker processes are gone before the interpreter shuts down
-            parts=g_psieve_pool.map(_psieve_task,[(n,a,primes,psieve_sieve_primes,st['order'].take(1<<17),psieve_window) for w in range(workers)])
-            hits=[h for part in parts for h in part]
-        else:
-            hits=st['core'].run(0,0,psieve_window,1<<30,0,0,st['order'].take(1<<15))
-        st['k']=st['order'].used
+    hits=[]
+    while True:
+        hits.extend(core.run_fast(order.take(1<<14),window))
+        if default_timer()-start>=seconds:
+            break
+    return hits,order.save(),order.used
+
+def psieve_state(n,a,odd,root0,X0,state):
+    # state[a] for a usable leftover (created on first use), None if psieve cannot work on it
+    if a in state:
+        return state[a]
+    primes=[p for p in odd if p!=-1]
+    if len(primes)==0 or len(primes)>12 or 2 in primes or math.prod(primes)!=abs(a) or abs(a)>=(1<<96) or max(primes)>=(1<<31) or (X0*X0-a*root0*root0)%n!=0:
+        return None
+    state[a]={'core':None,'order':None,'pos':None,'seen':set(),'same':0,'k':0,'primes':primes,'root0':root0}
+    return state[a]
+
+def psieve_turn(n,ret_array,primelist_f,batch,seconds,state):
+    # Looks for X^2 - a*y^2 = 4nK, where a is the odd part of an SIQS relation (full, or with one large prime):
+    # value = a*root0^2 and X0^2 = value mod n. A hit has exactly the odd part of that relation, so the pair is a
+    # dependency and is tried with a gcd straight away. K is not taken in ascending order: KOrder hands out K built
+    # from primes that split in Q(sqrt(a)) and from the primes of a itself, best value first
+    # (value = 2^(number of prime factors) / K^(1/4)), and only K for which 4nK is a square at every prime of a.
+    # batch = [(leftover entry, X0)]: with one process they are worked on one after the other for `seconds` each,
+    # with several workers each worker takes one of them. Returns (f1,f2) or None; progress is kept in state[a].
+    global g_psieve_pool
+    results=[]
+    if workers>1 and len(batch)>1:
+        if g_psieve_pool is None:
+            g_psieve_pool=multiprocessing.Pool(workers)
+            import atexit
+            atexit.register(g_psieve_pool.terminate)   # so the worker processes are gone before the interpreter shuts down
+        tasks=[]
+        for pick,X0 in batch:
+            st=state[pick[0]]
+            if st['order'] is not None:                # worked on in this process before: hand its position over
+                st['pos']=st['order'].save()
+                st['order']=None
+                st['core']=None
+            tasks.append((n,pick[0],st['primes'],st['pos'],seconds,psieve_window,psieve_sieve_primes,psieve_fmax))
+        parts=g_psieve_pool.map(_psieve_turn_task,tasks)
+        for (pick,X0),(hits,pos,used) in zip(batch,parts):
+            st=state[pick[0]]
+            st['pos']=pos
+            st['k']=used
+            results.append((pick,X0,hits))
+    else:
+        for pick,X0 in batch:
+            a=pick[0]
+            st=state[a]
+            if st['order'] is None:
+                st['order']=KOrder(a,psieve_fmax,0.05,st['primes'],n)
+                if st['pos'] is not None:
+                    st['order'].load(st['pos'])
+            if st['core'] is None:
+                st['core']=PSieveCore(n,a,st['primes'],psieve_sieve_primes)
+            start=default_timer()
+            hits=[]
+            while True:
+                hits.extend(st['core'].run_fast(st['order'].take(1<<14),psieve_window))
+                if default_timer()-start>=seconds:
+                    break
+            st['k']=st['order'].used
+            results.append((pick,X0,hits))
+    for pick,X0,hits in results:
+        a=pick[0]
+        st=state[a]
+        root0=st['root0']
         for K,X,y in hits:
             if math.gcd(X,y)>2 or X in st['seen']:           # scaled copy of a hit at a smaller K, or seen before
                 continue
@@ -1474,7 +1644,6 @@ def psieve2(n,ret_array,primelist_f,a,odd,root0,X0,budget,state):
             ret_array[3].append([])
             print("[i]psieve2 hit: a: "+str(a)+" K: "+str(K)+" square part bits: "+str(bitlen(y*y))+" of "+str(bitlen(poly_val))+" (sqrt(n): "+str(bitlen(math.isqrt(n)))+" bits) odd factors: "+str(sorted(local_factors))+" | multipliers tried: "+str(st['k'])+" hits on the known root (skipped): "+str(st['same']))
             return (g,n//g)
-    st['order'].park()                                  # keep memory flat while other leftovers get their turn
     return None
 
 def get_derivative(f):
@@ -1551,7 +1720,12 @@ def main(l_keysize,l_workers,l_debug,l_base,l_key,l_lin_sieve_size,l_quad_sieve_
         count+=1
     print("[i]Number of digits: ",count)
     print("[i]Gathering prime numbers..")
-    primeslist.extend(get_primes(3,20000000))
+    # only the first `base` primes (plus the few that divide n) are ever used: sieve just far enough for them
+    pbound=max(2000,int((base+200)*(math.log(base+200)+math.log(math.log(base+200))+2)))
+    primeslist.extend(get_primes(3,pbound))
+    while len(primeslist) < base+200:
+        pbound*=2
+        primeslist[:]=get_primes(3,pbound)
     i=0
     while len(primeslist1) < base:
         if n%primeslist[i] !=0:
