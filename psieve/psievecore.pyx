@@ -132,6 +132,7 @@ cdef class PSieveCore:
     cdef int a8, two_mode
     cdef int64_t a_c
     cdef int64_t n4q[MAXW]           # 4n mod each prime of a
+    cdef int64_t anq[MAXW]           # -n*(a/q) mod q: decides a multiplier K that shares the prime q with a
     cdef readonly long long next_k, intervals, multipliers, survivors
     cdef readonly object sieve_primes
 
@@ -166,6 +167,7 @@ cdef class PSieveCore:
                 raise ValueError("prime of a too large for a root table")
             self.aq[j] = q
             self.n4q[j] = (4 * n) % q
+            self.anq[j] = (-n * (a // q)) % q
             self.sq[j] = <int32_t*> malloc(q * sizeof(int32_t))
             for t in range(q):
                 self.sq[j][t] = -1
@@ -308,6 +310,9 @@ cdef class PSieveCore:
         cdef int q, gray
         cdef bint up, wrap
         cdef int sroot[MAXW]
+        cdef int act[MAXW]
+        cdef int nact
+        cdef long long kq
         cdef long long nh = 0
         cdef uint64_t nterm[MAXW]
         cdef uint64_t ua = self.ua, bt, d, crm, x
@@ -379,14 +384,28 @@ cdef class PSieveCore:
                 if stp == 0:                         # no X can make the quotient a 2-adic square
                     continue
                 good = 1
+                nact = 0
                 for j in range(w):                   # 4nK must be a square mod every prime of a (all in C)
-                    s = self.sq[j][(self.n4q[j] * (K % self.aq[j])) % self.aq[j]]
+                    kq = K % self.aq[j]
+                    if kq == 0:
+                        # K shares the prime q with a: X = 0 mod q is the only root (no sign choice for this prime),
+                        # and (X^2-4nK)/a = -4n(K/q)/(a/q) mod q must itself be a square mod q
+                        kq = (K // self.aq[j]) % self.aq[j]
+                        if kq == 0 or self.sq[j][(self.anq[j] * kq) % self.aq[j]] <= 0:
+                            good = 0
+                            break
+                        sroot[j] = 0
+                        continue
+                    s = self.sq[j][(self.n4q[j] * kq) % self.aq[j]]
                     if s <= 0:
                         good = 0
                         break
                     sroot[j] = s
+                    act[nact] = j
+                    nact += 1
                 if not good:
                     continue
+                ncls = 1 << nact
                 rem = remv[m] if not uselist else 1
                 if rem > 1:                          # one large prime factor left (or a product of two: skip)
                     if rem > <long long> SMALL * SMALL:
@@ -394,8 +413,8 @@ cdef class PSieveCore:
                     if jac(self.a_c % rem, rem) != 1:
                         continue
                 T = T4 * K
-                for j in range(w):
-                    term[j] = <uint64_t> (sroot[j] * M[j] % absa)
+                for j in range(nact):                # only the primes with a sign choice
+                    term[j] = <uint64_t> (sroot[act[j]] * M[act[j]] % absa)
                     nterm[j] = (ua - term[j]) % ua
                 nmult += 1
                 cr = isqrt(T)
@@ -424,7 +443,7 @@ cdef class PSieveCore:
                 # Classes are walked in Gray-code order, so each one differs from the last in the sign of one root
                 # and every residue is updated by an addition instead of being recomputed.
                 bt = 0
-                for j in range(w):
+                for j in range(nact):
                     bt += nterm[j]
                     if bt >= ua:
                         bt -= ua
@@ -440,7 +459,7 @@ cdef class PSieveCore:
                         baseq[q] = (crp[q] + 1 + aoff[q]) % p
                     else:
                         baseq[q] = (crp[q] + 2 * p - aoff[q]) % p
-                    for j in range(w):
+                    for j in range(nact):
                         tmq[j][q] = <int> (tm2[j] % p)
                 cls = 0
                 for gray in range(ncls):
@@ -558,6 +577,11 @@ from libc.math cimport log as clog
 from libc.stdlib cimport realloc
 import array as _array
 
+cdef int _opt_pow = 1, _opt_stp = 1
+def set_opts(int p, int st):
+    global _opt_pow, _opt_stp
+    _opt_pow = p; _opt_stp = st
+
 cdef struct KBucket:
     long long* v
     Py_ssize_t n, cap
@@ -569,42 +593,84 @@ cdef inline void _kb_add(KBucket* b, long long K) noexcept nogil:
     b.v[b.n] = K
     b.n += 1
 
-cdef void _kdfs(int* good, double* lg, int ngood, int i, long long K, double v, double vhi, double vlo, double step,
-                int a8, KBucket* bk, int nb) noexcept nogil:
-    cdef int j, b
-    cdef double v2
-    cdef long long f
-    if vlo <= v < vhi:
-        b = <int> ((vhi - v) / step)
-        if b < nb:
-            _kb_add(&bk[b], K)
-    if a8 == 1 or a8 == 3 or a8 == 7:        # the prime 2: splits (a = 1 mod 8) or ramifies (a = 3 mod 4)
-        v2 = v + (0.5198603854199589 if a8 == 1 else -0.17328679513998632)
-        if vlo <= v2 < vhi and K < (<long long> 1 << 61):
-            b = <int> ((vhi - v2) / step)
-            if b < nb:
-                _kb_add(&bk[b], 2 * K)
+cdef void _kdfs(int* good, double* lg, uint8_t* ram, int ngood, int i, long long K, double v, double vhi, double vlo, double step,
+                int a8, KBucket* bk, int nb, double slack) noexcept nogil:
+    cdef int j, b, e
+    cdef double v2, ve
+    cdef long long f, Ke
+    # the prime 2 and the step in X it allows (a wider step is a longer window for the same work: +log(step)/2)
+    #   a = 1 mod 8: 2 splits.  K odd or 2 mod 4 -> step 2, K = 0 mod 4 -> step 1
+    #   a = 3 mod 4: 2 ramifies. K odd -> step 2, K = 2 mod 4 -> step 4
+    #   a = 5 mod 8: K odd only, step 1
+    if not _opt_stp:
+        if vlo <= v < vhi:
+            _kb_add(&bk[<int> ((vhi - v) / step)], K)
+        if a8 == 1 or a8 == 3 or a8 == 7:
+            ve = v + (0.5198603854199589 if a8 == 1 else -0.17328679513998632)
+            if vlo <= ve < vhi and K < (<long long> 1 << 60):
+                _kb_add(&bk[<int> ((vhi - ve) / step)], 2 * K)
+    elif a8 == 1:
+        ve = v + 0.34657359027997264
+        if vlo <= ve < vhi:
+            _kb_add(&bk[<int> ((vhi - ve) / step)], K)
+        Ke = K
+        for e in range(1, 5):
+            if Ke > (<long long> 1 << 60):
+                break
+            Ke *= 2
+            ve = v + 0.6931471805599453 - 0.17328679513998632 * e + (0.34657359027997264 if e == 1 else 0.0)
+            if vlo <= ve < vhi:
+                _kb_add(&bk[<int> ((vhi - ve) / step)], Ke)
+    elif a8 == 5:
+        if vlo <= v < vhi:
+            _kb_add(&bk[<int> ((vhi - v) / step)], K)
+    else:
+        ve = v + 0.34657359027997264
+        if vlo <= ve < vhi:
+            _kb_add(&bk[<int> ((vhi - ve) / step)], K)
+        ve = v + 0.6931471805599453 - 0.17328679513998632
+        if vlo <= ve < vhi and K < (<long long> 1 << 60):
+            _kb_add(&bk[<int> ((vhi - ve) / step)], 2 * K)
     for j in range(i, ngood):
         f = good[j]
         v2 = v + 0.6931471805599453 - 0.25 * lg[j]
-        if f > 16 and v2 + 0.52 < vlo:       # larger primes only lower the value further
+        if f > 16 and v2 + slack < vlo:      # larger primes only lower the value further (slack = the most the prime 2 can add)
             break
-        if K > (<long long> 1 << 61) // f:
+        if K > (<long long> 1 << 60) // f:
             break
-        _kdfs(good, lg, ngood, j + 1, K * f, v2, vhi, vlo, step, a8, bk, nb)
+        Ke = K * f
+        ve = v2
+        while True:                          # f, f^2, f^3 ...: a higher power keeps the two ideals but costs size
+            _kdfs(good, lg, ram, ngood, j + 1, Ke, ve, vhi, vlo, step, a8, bk, nb, slack)
+            if ram[j] or not _opt_pow or Ke > (<long long> 1 << 60) // f:      # a prime of a may divide K only once
+                break
+            Ke *= f
+            ve -= 0.25 * lg[j]
+            if ve + slack < vlo:
+                break
 
-def multipliers_by_value(good_primes, int a8, double vhi, double vlo, double step):
-    """All squarefree products K of good_primes (ascending odd primes) with vlo <= value(K) < vhi,
-    returned as a list of array('q'), one per value band of width step, best band first."""
-    cdef int ngood = len(good_primes), j, nb = <int> ((vhi - vlo) / step) + 1
+def multipliers_by_value(good_primes, int a8, double vhi, double vlo, double step, ramified=()):
+    """All products K of powers of good_primes (ascending odd primes) with vlo <= value(K) < vhi,
+    returned as a list of array('q'), one per value band of width step, best band first.
+    Primes listed in `ramified` (the primes of the leftover) are used at most once."""
+    cdef int ngood = len(good_primes), j, nb = <int> ((vhi - vlo) / step) + 2
     cdef int* good = <int*> malloc(max(ngood, 1) * sizeof(int))
     cdef double* lg = <double*> malloc(max(ngood, 1) * sizeof(double))
+    cdef uint8_t* ram = <uint8_t*> calloc(max(ngood, 1), 1)
     cdef KBucket* bk = <KBucket*> calloc(nb, sizeof(KBucket))
+    rs = set(ramified)
     for j in range(ngood):
         good[j] = good_primes[j]
         lg[j] = clog(<double> good[j])
+        ram[j] = 1 if good[j] in rs else 0
+    cdef double slack
+    if _opt_stp:
+        slack = 0.0 if a8 == 5 else (0.8665 if a8 == 1 else 0.52)
+    else:
+        slack = 0.52 if a8 == 1 else 0.0
+    slack += 1e-6
     with nogil:
-        _kdfs(good, lg, ngood, 0, 1, 0.0, vhi, vlo, step, a8, bk, nb)
+        _kdfs(good, lg, ram, ngood, 0, 1, 0.0, vhi, vlo, step, a8, bk, nb, slack)
     out = []
     for j in range(nb):
         arr = _array.array('q')
@@ -612,7 +678,7 @@ def multipliers_by_value(good_primes, int a8, double vhi, double vlo, double ste
             arr.frombytes((<char*> bk[j].v)[:bk[j].n * sizeof(long long)])
         free(bk[j].v)
         out.append(arr)
-    free(good); free(lg); free(bk)
+    free(good); free(lg); free(ram); free(bk)
     return out
 
 def good_primes(a, int fmax):
@@ -640,41 +706,49 @@ def good_primes(a, int fmax):
 
 cdef class KOrder:
     """Hands out multipliers K for one leftover a in decreasing value, a chunk at a time.
-    Only one value band is held in memory; park() drops even that (it is rebuilt on the next take)."""
-    cdef object good, cur
+    The tree of products is walked once per block of value bands; park() frees the block (it is rebuilt on demand)."""
+    cdef object good, bands, ram
     cdef int a8
-    cdef double hi, cur_hi, step
-    cdef Py_ssize_t pos
+    cdef double hi, block_hi, step, block
+    cdef Py_ssize_t pos, band
     cdef readonly long long used
-    def __init__(self, a, int fmax=1_000_000, double step=0.05):
+    def __init__(self, a, int fmax=1_000_000, double step=0.05, a_primes=None):
         cdef double top = 0.0
         self.good = good_primes(a, fmax)
+        self.ram = tuple(int(q) for q in a_primes if q > 2) if a_primes else ()
+        if a_primes:
+            # a prime of a may divide K once: it halves the number of root classes instead of doubling the ideals,
+            # so per unit of sieving it is worth exactly as much as a split prime
+            merged = sorted(set(self.good) | set(int(q) for q in a_primes if q > 2 and q < (1 << 30)))
+            self.good = _array.array('i', merged)
         self.a8 = a % 8
         for f in self.good:
             if f < 16:
                 top += 0.6931471805599453 - 0.25 * clog(<double> f)
-        self.hi = top + (0.52 if self.a8 == 1 else 0.0) + 1e-9
-        self.step = step
-        self.cur = _array.array('q'); self.cur_hi = self.hi; self.pos = 0; self.used = 0
-    cdef object _band(self, double vhi):
-        out = _array.array('q')
-        for part in multipliers_by_value(self.good, self.a8, vhi, vhi - self.step, self.step):
-            out.extend(part)
-        return out
+        self.hi = top + 0.87 + 1e-9
+        self.step = step; self.block = 0.5
+        self.bands = None; self.block_hi = self.hi; self.band = 0; self.pos = 0; self.used = 0
     def take(self, Py_ssize_t count):
         """Next `count` multipliers (fewer only if a band ends), as array('q')."""
-        if self.cur is None:                      # parked: rebuild the band we were in
-            self.cur = self._band(self.cur_hi)
-        while self.pos >= len(self.cur):
-            self.cur_hi = self.hi
-            self.cur = self._band(self.hi)
-            self.hi -= self.step
+        if self.bands is None:                    # first use, or parked: rebuild the block we were in
+            self.bands = multipliers_by_value(self.good, self.a8, self.block_hi, self.block_hi - self.block, self.step, self.ram)
+        while self.band >= len(self.bands) or self.pos >= len(self.bands[self.band]):
+            if self.band < len(self.bands):
+                self.band += 1
+                self.pos = 0
+                continue
+            total = sum(len(b) for b in self.bands)
+            self.block_hi -= self.block
+            if total > 3_000_000 and self.block > self.step * 1.5:
+                self.block /= 2                   # keep a block to a few million multipliers
+            self.bands = multipliers_by_value(self.good, self.a8, self.block_hi, self.block_hi - self.block, self.step, self.ram)
+            self.band = 0
             self.pos = 0
-        out = self.cur[self.pos:self.pos + count]
+        out = self.bands[self.band][self.pos:self.pos + count]
         self.pos += len(out)
         self.used += len(out)
         return out
     def park(self):
-        """Free the current band; the position in it is remembered."""
-        if self.cur is not None and len(self.cur) > 4096:
-            self.cur = None
+        """Free the current block; the position in it is remembered."""
+        if self.bands is not None and sum(len(b) for b in self.bands) > 4096:
+            self.bands = None

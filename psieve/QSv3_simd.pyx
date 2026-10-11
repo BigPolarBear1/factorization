@@ -1432,15 +1432,16 @@ def psieve2(n,ret_array,primelist_f,a,odd,root0,X0,budget,state):
     # Looks for X^2 - a*y^2 = 4nK over all multipliers K, where a is the leftover of an SIQS relation (or combination):
     # prod(values) = a*root0^2 and X0^2 = prod(values) mod n. A hit has exactly the odd factors of that relation, so the
     # pair is a dependency and is tried with a gcd straight away. K is not taken in ascending order: KOrder hands out
-    # squarefree K whose prime factors all split, best value first (value = 2^(number of prime factors) / K^(1/4)),
-    # because such a K carries 2^w ideals and so 2^w chances of a solution for the same sieving cost.
+    # K built from primes that split in Q(sqrt(a)) and from the primes of a itself, best value first
+    # (value = 2^(number of prime factors) / K^(1/4)): a split prime doubles the ideals of norm K, a prime of a
+    # halves the root classes to sieve (its root is the single root X = 0), so both double the hits per unit of work.
     # Always runs at least one slice. Returns (f1,f2) or None. Progress through K is kept in state[a] between calls.
     global g_psieve_pool
     primes=[p for p in odd if p!=-1]
     if len(primes)==0 or len(primes)>12 or 2 in primes or math.prod(primes)!=abs(a) or abs(a)>=(1<<62) or max(primes)>50_000_000 or (X0*X0-a*root0*root0)%n!=0:
         return None
     if a not in state:
-        state[a]={'core':PSieveCore(n,a,primes,psieve_sieve_primes),'order':KOrder(a),'seen':set(),'same':0,'k':0}
+        state[a]={'core':PSieveCore(n,a,primes,psieve_sieve_primes),'order':KOrder(a,1_000_000,0.05,primes),'seen':set(),'same':0,'k':0}
     st=state[a]
     start=default_timer()
     first=True
