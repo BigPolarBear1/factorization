@@ -35,9 +35,25 @@ from sympy import kronecker_symbol
 from bitsieve import new_interval, make_pattern, sieve, survivors
 import almostsq
 from quadroots import QuadRoots
+from amulsearch import AMulSearch
+from psievecore import PSieveCore
 
 
 k_max=10_000
+psieve_mode=2               # 2: psieve2() - C search over many multipliers K that matches an SIQS leftover exactly ; 1: the older psieve()
+psieve_trigger=20           # (mode 2) try psieve after this many new SIQS relations
+psieve_window=4096          # (mode 2) positions sieved per root class, starting at the crossing X = sqrt(4nK)
+psieve_sieve_primes=18      # (mode 2) small primes filtering each window
+psieve_share=1.0            # (mode 2) psieve may use this much time relative to the SIQS time since the last attempt ...
+psieve_min_budget=1.0       # (mode 2) ... but at least this many seconds per attempt
+psieve_direct_gcd=1         # (mode 2) 1: a hit is combined with its SIQS relation straight away (gcd), 0: only add it to the matrix
+psieve_amul_search=1        # 1: accept (u*b^2-4nk)/a = m*y^2 for any small factor-base-smooth m (signature table), 0: only m=1 (bit sieve)
+psieve_amul_limit=1<<20     # |m| below this
+psieve_amul_sig_primes=44   # number of signature primes; false candidates per interval ~ 2*limit*400000/2^this
+psieve_amul_stop=10         # leave psieve() after this many new relations
+psieve_amul_nopad=1         # 1: no a_mul^2 padding in the multiplier search (a stays the SIQS leftover / u)
+psieve_amul_center=1        # 1: centre each interval on the crossing b = sqrt(4nk/u), where (u*b^2-4nk)/a is smallest
+g_amul=None
 min_lin_sieve_size=10_000
 max_bound=10_000_000
 key=0                 #Define a custom modulus to factor
@@ -320,7 +336,9 @@ def launch(n,primeslist,primeslist2):
     psieve_seen=[]
     a_mul=1
     a_mul_list=[]
-    while a_mul< 10_000:
+    psieve_cores={}
+    siqs_clock=default_timer()
+    while a_mul< 10_000 and psieve_mode!=2:
         amul=a_mul
         
         a_mul_factors=[]
@@ -333,12 +351,13 @@ def launch(n,primeslist,primeslist2):
             a_mul_list.append([a_mul,a_mul_factors])
         a_mul+=2
     hmap=create_hashmap(n,primeslist)
-    qr = QuadRoots(primeslist, hmap, 1000, k_max) 
+    if psieve_mode!=2:
+        qr = QuadRoots(primeslist, hmap, 1000, k_max) 
     ret_array=[[],[],[],[]]
     partials={}
     large_prime_bound = primeslist[-1] ** lp_multiplier
     sbase=copy.deepcopy(primeslist[0:30])
-    resmaps,resmaps2=build_residues(sbase,n)
+    resmaps,resmaps2=build_residues(sbase,n) if psieve_mode!=2 else ([],[])
    # print("fbase: "+str(fbase))
     print("[i]Building psieve Residue Map (to do: some duplication here from merging two algos, fix later)")
 
@@ -378,6 +397,7 @@ def launch(n,primeslist,primeslist2):
     print("[i]Building 2d root map")
     roots2d=build_2drootmap(primeslist_a,hmap,n,qr)
     print("[i]Entering attack loop")
+    siqs_clock=default_timer()
     valid_quads,valid_quads_factors=filter_quads(qlist,n)
     fb_map = {val: i for i, val in enumerate(primeslist)}
    # print("fb_map: ",fb_map)
@@ -430,11 +450,32 @@ def launch(n,primeslist,primeslist2):
                     sys.exit()            
             interval=build_database2interval(primeslist_a,quad,n,lin,new_mod,roots2d,0,factor_ranking)
             found+=process_interval2d(n,ret_array,quad,primelist_f,large_prime_bound,partials,lin,new_mod,factor_ranking,fb_map,0,seen_factors,interval,primeslist,resmaps,resmaps2,valid_quads,valid_quads_factors,qlist,primelist,sbase,a_mul_list)#,lin,new_mod,sum_list)
-            if found > 100 or len(ret_array[0]) > base+10:
+            if found > (psieve_trigger if psieve_mode==2 else 100) or len(ret_array[0]) > base+10:
                 print("[i]#B-smooths: "+str(len(ret_array[0])))
                 almostsq_result,leftovers=generate_almostsq(ret_array[2],primeslist,ret_array[0])
              #   almostsq_result=generate_almostsq_smallprimes(ret_array[2],primeslist,ret_array[0])
                 i=0
+                if psieve_mode==2:
+                    # one candidate per attempt: the first usable leftover in almostsq order; its K progress is resumed next time
+                    budget=max(psieve_min_budget,psieve_share*(default_timer()-siqs_clock))
+                    while i < len(almostsq_result):
+                        div=almostsq_result[i][0]
+                        if div!=1 and div%2!=0 and bitlen(div)<(keysize*0.5):
+                            X0=1
+                            for j in almostsq_result[i][2]:
+                                X0=(X0*math.isqrt(ret_array[1][j]))%n
+                            print("[i]Trying psieve2 a: "+str(div)+" bitlen a: "+str(bitlen(div))+" primes in a: "+str(len([p for p in almostsq_result[i][3] if p!=-1]))+" budget: "+str(round(budget,2))+"s")
+                            psievefound,factors=psieve2(n,ret_array,primelist_f,div,almostsq_result[i][3],almostsq_result[i][1],X0,budget,psieve_cores)
+                            if factors is not None:
+                                print("[SUCCESS]Factors are: "+str(factors[0])+" and "+str(factors[1]))
+                                sys.exit()
+                            if psievefound!=0:
+                                print("[*](Psieve)Trying linear algebra after succesful psieve run")
+                                test,test2=QS(n,primelist,ret_array[0],ret_array[2],ret_array[1],ret_array[3])
+                            break
+                        i+=1
+                    i=len(almostsq_result)
+                    siqs_clock=default_timer()
                 while i < len(almostsq_result) and i < 50:
                     div=almostsq_result[i][0]
                     if div in psieve_seen:
@@ -1787,6 +1828,10 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
         sys.exit()
 
   #  a_o=3
+    global g_amul
+    if psieve_amul_search and g_amul is None:
+        sig_primes=[p for p in get_primes(1009,4000) if n%p!=0][:psieve_amul_sig_primes]
+        g_amul=AMulSearch(sig_primes,list(fbase),psieve_amul_limit)
     found=0
     a=a_o
     marks_cache={}
@@ -1830,7 +1875,10 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
             for j,prime in enumerate(good_primes):
                 if n_symbols[j]*ksym(k*u,prime)==1 and k%prime!=0 and a_o%prime!=0:
                     sbase_temp.append(prime)
-            a_mul,a_mul_divs=best_a_mul(a_base,n,k,sbase_temp,u)
+            if psieve_amul_search and psieve_amul_nopad:
+                a_mul,a_mul_divs=1,[]
+            else:
+                a_mul,a_mul_divs=best_a_mul(a_base,n,k,sbase_temp,u)
             if a_mul==-1:
                 a_mul=1
                 if u!=1 and abs(bitlen(a_base)-bitlen(math.isqrt(4*n*k//u)//200_000))>=2:
@@ -1841,7 +1889,7 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
             ok_neg=not (k%2==0 and A%8==3) and all(ksym(-A,f)!=-1 for f in kf if f!=2)
             if u!=1:
                 ok_neg=False                        
-            if not (ok_pos or ok_neg):
+            if not (ok_pos or ok_neg or psieve_amul_search):   # with a multiplier m the symbol tests on k's factors no longer apply
                 a_mul_ind+=1
                 continue
 
@@ -1865,8 +1913,8 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
                 mkey=(u,a_mul)
                 if mkey not in marks_cache:
                     marks_cache[mkey]=(psieve_marks(sbase,a*u),psieve_marks(sbase,-a*u))
-                pats_pos=psieve_patterns(resmaps,k*u,u*mod_otherside,sbase,marks_cache[mkey][0],n) if ok_pos else None
-                pats_neg=psieve_patterns(resmaps,k*u,u*mod_otherside,sbase,marks_cache[mkey][1],n) if ok_neg else None                
+                pats_pos=psieve_patterns(resmaps,k*u,u*mod_otherside,sbase,marks_cache[mkey][0],n) if ok_pos and not psieve_amul_search else None
+                pats_neg=psieve_patterns(resmaps,k*u,u*mod_otherside,sbase,marks_cache[mkey][1],n) if ok_neg and not psieve_amul_search else None                
                 blist_disc=get_partials(mod_otherside,blist_otherside)            
                 enum=[]            
                 i=0
@@ -1892,6 +1940,37 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
                 #    primecount=0
                 #    blist_d=[]
                 #    blist_d2=[]
+                    if psieve_amul_search:
+                        # c(i) = (u*(b_temp+|a|*i)^2 - 4nk)/a ; look for c(i) = m*y^2, both signs of m
+                        sgn=1 if a>0 else -1
+                        b_start=b_temp
+                        if psieve_amul_center:
+                            b_start=b_temp+mod_otherside*((math.isqrt(4*n*k//u)-b_temp)//mod_otherside-200_000)
+                        c0=(u*b_start*b_start-4*n*k)//a
+                        for i_ind,m in g_amul.scan(c0,2*u*b_start*sgn,u*a,400_000):
+                            b=b_start+mod_otherside*i_ind
+                            X=u*b
+                            c=(u*b*b-4*n*k)//a
+                            if c%m!=0:
+                                continue
+                            y2=c//m
+                            if y2<=0:
+                                continue
+                            y=math.isqrt(y2)
+                            if y*y!=y2 or X==original_b or X*X in ret_array[1]:
+                                continue
+                            poly_val=X*X-4*n*k*u
+                            assert poly_val==u*a*m*y2
+                            local_factors, value = factorise_fast(poly_val,primelist_f)
+                            ret_array[1].append(X*X)
+                            ret_array[0].append(poly_val)
+                            ret_array[2].append(local_factors)
+                            ret_array[3].append([])
+                            found+=1
+                            print("[i]Found one with psieve() multiplier search: u: "+str(u)+" a: "+str(a)+" m: "+str(m)+" b: "+str(b)+" k: "+str(k)+" index: "+str(i_ind)+" odd factors: "+str(sorted(local_factors))+" #smooths: "+str(len(ret_array[0])))
+                            if found>=psieve_amul_stop:
+                                return found
+                        continue
                     lift_primes=pc+a_mul_divs
                     hits=[]
                     if ok_pos:
@@ -2144,6 +2223,47 @@ def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a
 
 
     return found
+
+def psieve2(n,ret_array,primelist_f,a,odd,root0,X0,budget,cores):
+    # Looks for X^2 - a*y^2 = 4nK, where a is the leftover of an SIQS relation (or combination): prod(values) = a*root0^2
+    # and X0^2 = prod(values) mod n. Such a hit has exactly the odd factors of that relation, so the pair is a dependency.
+    # Returns (relations added, (f1,f2) or None). Progress through K is kept in cores[a] between calls.
+    primes=[p for p in odd if p!=-1]
+    if len(primes)==0 or len(primes)>12 or 2 in primes or math.prod(primes)!=abs(a) or abs(a)>=(1<<62) or max(primes)>50_000_000:
+        return 0,None
+    if a not in cores:
+        cores[a]=PSieveCore(n,a,primes,psieve_sieve_primes)
+    core=cores[a]
+    direct=psieve_direct_gcd==1 and (X0*X0-a*root0*root0)%n==0
+    start=default_timer()
+    found=0
+    same=0
+    while default_timer()-start < budget:
+        k=core.next_k
+        hits=core.run(k,k+(1<<15),psieve_window,1<<30)
+        for K,X,y in hits:
+            if math.gcd(X,y)>2:                         # scaled copy of a hit at a smaller K
+                continue
+            poly_val=X*X-4*n*K
+            assert poly_val==a*y*y
+            if direct:
+                g=math.gcd((X0*y-X*root0)%n,n)
+                if g==1 or g==n:                        # same square root of a mod n as the SIQS relation: nothing new
+                    same+=1
+                    continue
+            if X*X in ret_array[1]:
+                continue
+            local_factors, value = factorise_fast(poly_val,primelist_f)
+            ret_array[1].append(X*X)
+            ret_array[0].append(poly_val)
+            ret_array[2].append(local_factors)
+            ret_array[3].append([])
+            found+=1
+            print("[i]psieve2 hit: a: "+str(a)+" K: "+str(K)+" X: "+str(X)+" y: "+str(y)+" square part bits: "+str(bitlen(y*y))+" of "+str(bitlen(poly_val))+" | multipliers used: "+str(core.multipliers)+" intervals: "+str(core.intervals)+" hits on the known root (skipped): "+str(same))
+            if direct:
+                return found,(g,n//g)
+            return found,None
+    return found,None
 
 def get_partials(mod,list1):
     i=0
