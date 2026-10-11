@@ -13,7 +13,7 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 
 #### To run from folder "psieve":(work in progress)</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run:  python3 run_qs.py -keysize 140 -base 5000 -lin_size 100 -quad_size 1</br>
+To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size </br>
 
 note: Up to 120-bit is near instant now.
 
