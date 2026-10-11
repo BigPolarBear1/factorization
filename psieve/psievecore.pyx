@@ -43,6 +43,8 @@ cdef inline int bmod(uint64_t x, uint64_t m, int p) noexcept nogil:
 
 cdef inline int bmod2(u128_t x, uint64_t m, int c64, int p) noexcept nogil:
     # the same for a 128-bit x (c64 = 2^64 mod p)
+    if (x >> 64) == 0:
+        return bmod(<uint64_t> x, m, p)
     return bmod(<uint64_t> (bmod(<uint64_t> (x >> 64), m, p) * c64 + bmod(<uint64_t> x, m, p)), m, p)
 
 cdef int jac(int64_t a, int64_t m) noexcept nogil:
@@ -72,33 +74,45 @@ cdef inline uint64_t powmod(uint64_t a, uint64_t e, uint64_t m) noexcept nogil:
         e >>= 1
     return r
 
-cdef int64_t sqrtmod(uint64_t a, uint64_t p, uint64_t q, int s, uint64_t c) noexcept nogil:
-    # Tonelli-Shanks for a prime p < 2^32: a is a nonzero residue, p - 1 = q * 2^s, c = g^q for a non-residue g
+cdef inline uint64_t powb(uint64_t a, uint64_t e, int p, uint64_t m) noexcept nogil:
+    # a^e mod p for p < 2^31, with m = (2^64-1)//p (no division)
+    cdef uint64_t r = 1
+    while e:
+        if e & 1:
+            r = <uint64_t> bmod(r * a, m, p)
+        a = <uint64_t> bmod(a * a, m, p)
+        e >>= 1
+    return r
+
+cdef int64_t sqrtmod(uint64_t a, int p, uint64_t q, int s, uint64_t c, uint64_t bm) noexcept nogil:
+    # Square root of a mod a prime p < 2^31, -1 if a is not a square. Tonelli-Shanks: p - 1 = q * 2^s,
+    # c = g^q for a non-residue g, bm = (2^64-1)//p.
     cdef uint64_t r, t, t2, b
     cdef int m = s, i, k
     if s == 1:
-        return <int64_t> powmod(a, (p + 1) >> 2, p)
-    r = powmod(a, (q + 1) >> 1, p)
-    t = powmod(a, q, p)
+        r = powb(a, (<uint64_t> p + 1) >> 2, p, bm)
+        return <int64_t> r if <uint64_t> bmod(r * r, bm, p) == a else -1
+    r = powb(a, (q + 1) >> 1, p, bm)
+    t = powb(a, q, p, bm)
     while t != 1:
         i = 0
         t2 = t
         while t2 != 1:
-            t2 = t2 * t2 % p
+            t2 = <uint64_t> bmod(t2 * t2, bm, p)
             i += 1
             if i == m:
                 return -1
         b = c
         for k in range(m - i - 1):
-            b = b * b % p
-        r = r * b % p
-        c = b * b % p
-        t = t * c % p
+            b = <uint64_t> bmod(b * b, bm, p)
+        r = <uint64_t> bmod(r * b, bm, p)
+        c = <uint64_t> bmod(b * b, bm, p)
+        t = <uint64_t> bmod(t * c, bm, p)
         m = i
     return <int64_t> r
 
 DEF MAXW = 12          # primes in a
-DEF TABMAX = 2097152   # primes of a up to here get a table of square roots; larger ones are computed per multiplier
+DEF TABMAX = 8192      # primes of a up to here get a table of square roots (shared by all leftovers); larger ones are computed per multiplier
 DEF NGP = 32           # sieve primes available (the first NGP odd primes)
 DEF NWMAX = 128        # a pattern is stored with NWMAX extra words so a window can be read in one straight run
 
@@ -107,6 +121,12 @@ DEF NWMAX = 128        # a pattern is stored with NWMAX extra words so a window 
 # condition "(X^2 - 4nK)/a is a square or 0 mod p" becomes exactly this with t = 4nK/u^2 and chi from (a|p),
 # so one table serves every leftover.
 cdef int _gp[NGP]
+cdef uint8_t** _gmul[NGP]          # _gmul[i][m][x] = x*m mod p: every per-leftover table of residues is one of these
+cdef uint8_t* _ginv[NGP]           # inverses mod p
+cdef uint64_t _gbm[NGP]
+cdef int _gc64[NGP]
+cdef int32_t* _sqtab[TABMAX + 1]   # _sqtab[q][t] = a square root of t mod q, -1 if none (built on first use)
+_m2cache = {}
 cdef uint64_t** _gpat[2][NGP]
 cdef bint _gp_ready = False
 
@@ -160,6 +180,16 @@ cdef void _gp_build():
                     wv[j] = wv[j - p]
                 _gpat[chi][c][t] = wv
         free(q); free(base)
+        _gmul[c] = <uint8_t**> malloc(p * sizeof(uint8_t*))
+        _ginv[c] = <uint8_t*> calloc(p, 1)
+        for t in range(p):
+            _gmul[c][t] = <uint8_t*> malloc(p)
+            for i in range(p):
+                _gmul[c][t][i] = (i * t) % p
+                if (i * t) % p == 1:
+                    _ginv[c][t] = i
+        _gbm[c] = <uint64_t> 18446744073709551615 // <uint64_t> p
+        _gc64[c] = <int> ((<uint64_t> 18446744073709551615 % <uint64_t> p + 1) % p)
     _gp_ready = True
 DEF MAXSP = 40         # sieve primes
 DEF SMALL = 65536      # trial division bound for the K filter
@@ -171,6 +201,7 @@ cdef class PSieveCore:
     cdef int32_t* sq[MAXW]           # sq[j][t] = a square root of t mod aq[j], -1 if none (NULL for a prime above TABMAX)
     cdef uint64_t tsq[MAXW]          # Tonelli-Shanks constants for those primes: aq - 1 = tsq * 2^tss, tsc = g^tsq
     cdef uint64_t tsc[MAXW]
+    cdef uint64_t tbm[MAXW]
     cdef int tss[MAXW]
     cdef int sp[MAXSP]
     cdef int n4p[MAXSP]              # 4n mod p
@@ -215,6 +246,7 @@ cdef class PSieveCore:
         cdef uint64_t* wv
         cdef uint8_t* chi
         cdef int ainv, stepinv, nb, r, si, k16, e, cls8, u
+        cdef int am, nm, absm, a64, sg63
         cdef uint8_t sq64[64]
         cdef uint8_t al[64]
         cdef int a64inv
@@ -254,36 +286,24 @@ cdef class PSieveCore:
                 while jac(t, q) != -1:
                     t += 1
                 self.tsc[j] = pow(t, x, q)
+                self.tbm[j] = <uint64_t> (((1 << 64) - 1) // q)
             else:
-                self.sq[j] = <int32_t*> malloc(q * sizeof(int32_t))
-                for t in range(q):
-                    self.sq[j][t] = -1
-                for x in range(q):
-                    t = <int> ((<int64_t> x * x) % q)
-                    if self.sq[j][t] < 0:
-                        self.sq[j][t] = x
+                if _sqtab[q] == NULL:
+                    _sqtab[q] = <int32_t*> malloc(q * sizeof(int32_t))
+                    for t in range(q):
+                        _sqtab[q][t] = -1
+                    for x in range(q):
+                        t = <int> ((<int64_t> x * x) % q)
+                        if _sqtab[q][t] < 0:
+                            _sqtab[q][t] = x
+                self.sq[j] = _sqtab[q]
             mq = self.absa // q
             self.M.append(mq * pow(mq, -1, q) % self.absa)
-        # small primes for the K filter
-        cdef uint8_t* comp = <uint8_t*> calloc(SMALL, 1)
-        self.smallp = <int32_t*> malloc(7000 * sizeof(int32_t))
-        self.smallbad = <uint8_t*> malloc(7000)
+        self.smallp = NULL
+        self.smallbad = NULL
         self.nsmall = 0
-        for i in range(2, SMALL):
-            if not comp[i]:
-                self.smallp[self.nsmall] = i
-                if i == 2:
-                    # parity of K:  a = 1 mod 8: any K ; a = 5 mod 8: K odd ; a = 3 mod 4: K odd or K = 2 mod 4
-                    self.two_mode = 0 if self.a8 == 1 else (1 if self.a8 == 5 else 2)
-                    self.smallbad[self.nsmall] = 0 if self.a8 == 1 else 1
-                else:
-                    self.smallbad[self.nsmall] = 0 if jac(<int64_t> (a % i), i) == 1 else 1
-                self.nsmall += 1
-                o = i * 2
-                while o < SMALL:
-                    comp[o] = 1
-                    o += i
-        # sieve primes: taken from the shared table, skipping primes of n or a
+        self.two_mode = 0 if self.a8 == 1 else (1 if self.a8 == 5 else 2)
+        # sieve primes: taken from the shared tables, skipping primes of n or a
         if not _gp_ready:
             _gp_build()
         self.sieve_primes = []
@@ -291,89 +311,89 @@ cdef class PSieveCore:
             p = _gp[i]
             if np_ == nsieve or np_ == MAXSP:
                 break
-            if n % p == 0 or a % p == 0:
+            am = a % p
+            nm = n % p
+            if nm == 0 or am == 0:
                 continue
             self.sp[np_] = p
             self.gidx[np_] = i
-            self.gchi[np_] = 0 if jac(<int64_t> (a % p), p) == 1 else 1
+            self.gchi[np_] = 0 if jac(am, p) == 1 else 1
             self.sieve_primes.append(p)
-            self.n4p[np_] = (4 * n) % p
+            self.n4p[np_] = (4 * nm) % p
+            absm = am if self.sgn > 0 else p - am
             for si in range(3):
-                u = (a * (1 << si)) % p
-                self.inv[si][np_] = pow((u * 64) % p, -1, p)
-                self.usq[si][np_] = pow((u * u) % p, -1, p)
-                self.ktab[si][np_] = <uint8_t*> malloc(p)
-                for x in range(p):
-                    self.ktab[si][np_][x] = (x * self.inv[si][np_]) % p
+                u = (am << si) % p
+                self.inv[si][np_] = _ginv[i][(u * 64) % p]
+                self.usq[si][np_] = _ginv[i][(u * u) % p]
+                self.ktab[si][np_] = _gmul[i][self.inv[si][np_]]
+                self.tix[si][np_] = _gmul[i][(self.n4p[np_] * self.usq[si][np_]) % p]
             for x in range(4):
-                self.gu[x][np_] = (x * (self.absa % p)) % p
+                self.gu[x][np_] = (x * absm) % p
+                for si in range(3):
+                    self.kgc[si][x][np_] = self.ktab[si][np_][self.gu[x][np_]]
+            self.bm[np_] = _gbm[i]
+            self.c64[np_] = _gc64[i]
             np_ += 1
         self.nsp = np_
-        self.grp = []
-        prodg = 1
-        for j in range(np_):
-            if prodg * self.sp[j] >= (1 << 62):
-                self.grp.append(prodg)
-                prodg = 1
-            prodg *= self.sp[j]
-            self.grp_of[j] = len(self.grp)
-        self.grp.append(prodg)
-        self.ngrp = len(self.grp)
-        free(comp)
-        # 2-adic conditions: (X^2-4nK)/a must be a square mod 64. Depends on K mod 16 and X mod 64.
-        for x in range(64):
-            sq64[x] = 0
-        for x in range(64):
-            sq64[(x * x) & 63] = 1
-        a64inv = pow(a % 64, -1, 64)
-        for k16 in range(16):
-            t = (4 * (n % 16) * k16) % 64
-            cnt = 0
+        self.grp = None
+        # 2-adic conditions: (X^2-4nK)/a must be a square mod 64. Depends on K mod 16 and X mod 64
+        # (and only on a mod 64, its sign and n mod 16: computed once per combination).
+        a64 = self.absa % 64
+        sg63 = 1 if a > 0 else 63
+        key = (a64, sg63, n % 16)
+        if key in _m2cache:
+            ent = _m2cache[key]
+            for k16 in range(16):
+                self.stp_of[k16] = ent[0][k16]
+                self.res_of[k16] = ent[1][k16]
+                for x in range(64):
+                    self.mask2[k16][x] = ent[2][k16 * 64 + x]
+        else:
             for x in range(64):
-                al[x] = sq64[(((x * x - t) % 64 + 64) % 64 * a64inv) % 64]
-                cnt += al[x]
-            if cnt == 0:
-                self.stp_of[k16] = 0
-                self.res_of[k16] = 0
-                continue
-            si = 0
-            for j in (2, 1):                          # all live X in one class mod 4, else mod 2
-                cls8 = -1
-                r = 1
+                sq64[x] = 0
+            for x in range(64):
+                sq64[(x * x) & 63] = 1
+            a64inv = pow(a % 64, -1, 64)
+            for k16 in range(16):
+                t = (4 * (n % 16) * k16) % 64
+                cnt = 0
                 for x in range(64):
-                    if al[x]:
-                        if cls8 < 0:
-                            cls8 = x & ((1 << j) - 1)
-                        elif cls8 != (x & ((1 << j) - 1)):
-                            r = 0
-                if r:
-                    si = j
-                    break
-            self.stp_of[k16] = 1 << si
-            self.res_of[k16] = 0
-            if si:
-                for x in range(64):
-                    if al[x]:
-                        self.res_of[k16] = x & ((1 << si) - 1)
+                    al[x] = sq64[(((x * x - t) % 64 + 64) % 64 * a64inv) % 64]
+                    cnt += al[x]
+                if cnt == 0:
+                    self.stp_of[k16] = 0
+                    self.res_of[k16] = 0
+                    continue
+                si = 0
+                for j in (2, 1):                          # all live X in one class mod 4, else mod 2
+                    cls8 = -1
+                    r = 1
+                    for x in range(64):
+                        if al[x]:
+                            if cls8 < 0:
+                                cls8 = x & ((1 << j) - 1)
+                            elif cls8 != (x & ((1 << j) - 1)):
+                                r = 0
+                    if r:
+                        si = j
                         break
-            for x in range(64):
-                mk = 0
-                for e in range(64):
-                    if al[(x + (self.absa % 64) * (1 << si) * e * (1 if a > 0 else 63)) % 64]:
-                        mk |= (<uint64_t> 1) << e
-                self.mask2[k16][x] = mk
+                self.stp_of[k16] = 1 << si
+                self.res_of[k16] = 0
+                if si:
+                    for x in range(64):
+                        if al[x]:
+                            self.res_of[k16] = x & ((1 << si) - 1)
+                            break
+                for x in range(64):
+                    mk = 0
+                    for e in range(64):
+                        if al[(x + a64 * (1 << si) * e * sg63) % 64]:
+                            mk |= (<uint64_t> 1) << e
+                    self.mask2[k16][x] = mk
+            _m2cache[key] = ([self.stp_of[k16] for k16 in range(16)], [self.res_of[k16] for k16 in range(16)],
+                             [self.mask2[k16][x] for k16 in range(16) for x in range(64)])
         self.next_k = 1
         self.intervals = 0; self.multipliers = 0; self.survivors = 0
-        for j in range(self.nsp):
-            p = self.sp[j]
-            self.bm[j] = <uint64_t> (((1 << 64) - 1) // p)
-            self.c64[j] = (1 << 64) % p
-            for si in range(3):
-                self.tix[si][j] = <uint8_t*> malloc(p)
-                for x in range(p):
-                    self.tix[si][j][x] = (((self.n4p[j] * x) % p) * self.usq[si][j]) % p
-                for x in range(4):
-                    self.kgc[si][x][j] = self.ktab[si][j][self.gu[x][j]]
         for j in range(self.w):
             mj = self.M[j]
             self.Mc2[j] = (<u128_t> (<uint64_t> (mj >> 64)) << 64) | <u128_t> (<uint64_t> (mj & 0xFFFFFFFFFFFFFFFF))
@@ -391,19 +411,47 @@ cdef class PSieveCore:
             return self.sq[j][t]
         if t == 0:
             return 0
-        if jac(t, self.aq[j]) != 1:
-            return -1
-        return sqrtmod(<uint64_t> t, <uint64_t> self.aq[j], self.tsq[j], self.tss[j], self.tsc[j])
+        return sqrtmod(<uint64_t> t, <int> self.aq[j], self.tsq[j], self.tss[j], self.tsc[j], self.tbm[j])
 
     def __dealloc__(self):
-        cdef int j, t, si
-        for j in range(self.w):
-            free(self.sq[j])
-        for si in range(3):
-            for j in range(self.nsp):
-                free(self.ktab[si][j])
-                free(self.tix[si][j])
-        free(self.smallp); free(self.smallbad)
+        if self.smallp != NULL:
+            free(self.smallp)
+            free(self.smallbad)
+
+    cdef _prep_run(self):
+        # tables only the older run() needs
+        cdef int i, o, j
+        cdef uint8_t* comp
+        if self.grp is not None:
+            return
+        comp = <uint8_t*> calloc(SMALL, 1)
+        self.smallp = <int32_t*> malloc(7000 * sizeof(int32_t))
+        self.smallbad = <uint8_t*> malloc(7000)
+        self.nsmall = 0
+        a = self.a
+        for i in range(2, SMALL):
+            if not comp[i]:
+                self.smallp[self.nsmall] = i
+                if i == 2:
+                    self.smallbad[self.nsmall] = 0 if self.a8 == 1 else 1
+                else:
+                    self.smallbad[self.nsmall] = 0 if jac(<int64_t> (a % i), i) == 1 else 1
+                self.nsmall += 1
+                o = i * 2
+                while o < SMALL:
+                    comp[o] = 1
+                    o += i
+        free(comp)
+        self.grp = []
+        prodg = 1
+        for j in range(self.nsp):
+            if prodg * self.sp[j] >= (1 << 62):
+                self.grp.append(prodg)
+                prodg = 1
+            prodg *= self.sp[j]
+            self.grp_of[j] = len(self.grp)
+        self.grp.append(prodg)
+        self.ngrp = len(self.grp)
 
     def run(self, long long k_start, long long k_stop, int window, int max_hits=1, long long max_multipliers=0, long long offset=0, klist=None):
         """Search K in [k_start, k_stop). Stops early after max_hits hits (or max_multipliers usable K);
@@ -415,6 +463,7 @@ cdef class PSieveCore:
             if klist is None or window > 64 * NWMAX or offset:
                 raise ValueError("|a| >= 2^62: only run_fast(klist, window <= %d) is available" % (64 * NWMAX))
             return self.run_fast(klist, window, max_hits)
+        self._prep_run()
         cdef long long lo, hi, K, CH = 1 << 16, m, rem
         cdef int nw = (window + 63) >> 6, i, j, s, f, cls, ncls = 1 << self.w, wd, bitpos, e
         cdef int w = self.w, nsp = self.nsp, p, good
@@ -1217,6 +1266,118 @@ def genus_chars(n, a, a_primes, good):
             vv[i] |= b << j
     return vec, v2, t
 
+cdef uint32_t _tdp[6600]
+cdef uint64_t _tdm[6600]
+cdef int _ntd = 0
+
+cdef bint _isprime32(uint64_t v) noexcept nogil:
+    # deterministic Miller-Rabin for v < 4759123141 (bases 2, 7, 61); v odd and > 61
+    cdef uint64_t d = v - 1, x, b
+    cdef int s = 0, i, j
+    cdef bint comp
+    while (d & 1) == 0:
+        d >>= 1
+        s += 1
+    for i in range(3):
+        b = 2 if i == 0 else (7 if i == 1 else 61)
+        x = powmod(b, d, v)
+        if x == 1 or x == v - 1:
+            continue
+        comp = True
+        for j in range(s - 1):
+            x = x * x % v
+            if x == v - 1:
+                comp = False
+                break
+        if comp:
+            return False
+    return True
+
+cdef bint _prp2(uint64_t v) noexcept nogil:
+    # base-2 Fermat test for odd v < 2^64 (only used to give up early on a large prime cofactor)
+    cdef u128_t r = 1, b = 2
+    cdef uint64_t e = v - 1
+    while e:
+        if e & 1:
+            r = r * b % v
+        b = b * b % v
+        e >>= 1
+    return r == 1
+
+def odd_part(g):
+    """g = sign * a * r^2 with a odd and squarefree: returns (primes of a ascending, r), or None when g is even to an
+    odd power, or when what is left after dividing out the primes below 65536 is not 1 or a single prime below 2^31."""
+    global _ntd
+    cdef int i, j, e, isp
+    cdef u128_t v
+    cdef uint64_t v64, r = 1, q
+    if _ntd == 0:
+        i = 3
+        while i < 65536:
+            isp = 1
+            j = 3
+            while j * j <= i:
+                if i % j == 0:
+                    isp = 0
+                    break
+                j += 2
+            if isp:
+                _tdp[_ntd] = i
+                _tdm[_ntd] = <uint64_t> 18446744073709551615 // <uint64_t> i
+                _ntd += 1
+            i += 2
+    if g < 0:
+        g = -g
+    if g == 0 or (g >> 126):
+        return None
+    v = (<u128_t> (<uint64_t> (g >> 64)) << 64) | <u128_t> (<uint64_t> (g & 0xFFFFFFFFFFFFFFFF))
+    e = 0
+    while (<uint64_t> v & 1) == 0:
+        v >>= 1
+        e += 1
+    if e & 1:
+        return None
+    r <<= e >> 1
+    odd = []
+    i = 0
+    while i < _ntd and (v >> 64) != 0:
+        q = _tdp[i]
+        if v % q == 0:
+            e = 0
+            while v % q == 0:
+                v = v / <u128_t> q                   # both operands 128-bit: with a 64-bit divisor Cython narrows v first
+                e += 1
+            if e & 1:
+                odd.append(q)
+            for j in range(e >> 1):
+                r *= q
+        i += 1
+    if (v >> 64) != 0:
+        return None
+    v64 = <uint64_t> v
+    while i < _ntd:
+        q = _tdp[i]
+        if q * q > v64:
+            break
+        if i == 1027 and v64 >= (<uint64_t> 1 << 31) and _prp2(v64):
+            return None                              # what is left is one prime, and it is too large
+        j = bmod(v64, _tdm[i], <int> q)              # may be off by one multiple of q for v64 near 2^64
+        if j == 0 or j == <int> q:
+            e = 0
+            while v64 % q == 0:
+                v64 //= q
+                e += 1
+            if e & 1:
+                odd.append(q)
+            for j in range(e >> 1):
+                r *= q
+        i += 1
+    if v64 > 1:
+        if v64 >= (<uint64_t> 1 << 31):
+            return None
+        odd.append(v64)
+    return odd, r
+
 def good_primes(a, int fmax):
     """Odd primes f < fmax with a a nonzero square mod f, ascending, as array('i')."""
     cdef int i, j
@@ -1239,6 +1400,8 @@ def good_primes(a, int fmax):
     free(comp)
     out.extend(tmp)
     return out
+
+cdef double _topw = 3.0
 
 cdef class KOrder:
     """Hands out multipliers K for one leftover a in decreasing value, a chunk at a time.
@@ -1285,6 +1448,22 @@ cdef class KOrder:
         self.pos += len(out)
         self.used += len(out)
         return out
+    def top(self, Py_ssize_t count):
+        """The best `count` multipliers in one go (for a leftover that is looked at once and dropped)."""
+        global _topw
+        cdef double width = _topw - 0.5 if _topw > 1.5 else 1.0     # start a little above where the last leftover ended
+        while True:
+            bands = multipliers_by_value(self.good, self.a8, self.hi, self.hi - width, self.step, self.ram, self.chars)
+            if sum(len(b) for b in bands) >= count or width > 14.0:
+                break
+            width += 0.5
+        _topw = width
+        out = _array.array('q')
+        for b in bands:
+            out.extend(b)
+            if len(out) >= count:
+                break
+        return out[:count]
     def save(self):
         """Position in the ordering, to continue later with a new KOrder for the same leftover."""
         return (self.block_hi, self.block, self.band, self.pos, self.used)
