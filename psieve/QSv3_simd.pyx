@@ -428,7 +428,7 @@ def launch(n,primeslist,primeslist2):
                     if div!=1 and div%2!=0 and bitlen(div)<(keysize*0.5) and abs(div)<(1<<62) and 2 not in res[3] and len(usable)<400:
                         usable.append(res)
                 while len(usable)>0 and default_timer()-pstart < budget:
-                    pick=min(usable,key=lambda r:(psieve_cores[r[0]]['k'] if r[0] in psieve_cores else 0))
+                    pick=min(usable,key=lambda r:(psieve_cores[r[0]]['k'] if r[0] in psieve_cores else 0, leftover_L(r[0])))   # least explored first, then smallest L(1,chi)
                     div=pick[0]
                     X0=1
                     for j in pick[2]:
@@ -1398,6 +1398,23 @@ def build_2drootmap(primeslist,hmap,n,qr):
 #    #print("solutions len: "+str(len(blist[-1]))+" k: "+str(k))
 #
 #    return blist
+
+g_small_primes=None
+g_leftover_L={}
+def leftover_L(a):
+    # L(1,chi) of Q(sqrt(a)) from the primes below 3000. The expected number of psieve hits for a multiplier K is
+    #   2^(primes of K) * (number of genera) * window / (sqrt(discriminant) * L(1,chi)),
+    # which is the class number formula read backwards; measured hit counts follow it, so a small L is better.
+    global g_small_primes
+    if g_small_primes is None:
+        g_small_primes=get_primes(3,3000)
+    if a not in g_leftover_L:
+        v=1.0/(1-(1 if a%8 in (1,7) else -1)/2) if a%4==1 else 1.0
+        for f in g_small_primes:
+            if a%f!=0:
+                v/=(1-jacobi(a%f,f)/f)
+        g_leftover_L[a]=v
+    return g_leftover_L[a]
 
 g_psieve_pool=None
 g_psieve_wcores={}
