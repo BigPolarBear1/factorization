@@ -13,7 +13,7 @@ Math paper is a work in progress. Ignore the final chapter for now.. that one I'
 
 #### To run from folder "psieve":(work in progress)</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 120 -base 5000 -lin_size 100 -quad_size 1</br>
+To run:  python3 run_qs.py -keysize 130 -base 5000 -lin_size 100 -quad_size 1</br>
 
 Some ongoing experimentation.. this mixes SIQS and Coefficient Sieve. I either find a way to improve this, or take elements from this for my hybrid_sieve.
 This is my main research project, trying to open up a completely new way of achieving factorization following the literature from my paper.
