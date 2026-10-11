@@ -11,28 +11,18 @@ https://github.com/basilegithub/General-number-field-sieve-Python
 #### About the paper
 Math paper is a work in progress. Ignore the final chapter for now.. that one I'll rewrite if and when I can get "psieve" below working correctly.
 
-#### To run from folder "hybrid_sieve":</br>
-To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 300 -base 200000 -lin_size 1000000 -quad_size 1 -mode nfs -nfs_degree 4 -nfs_base 60000 -nfs_sing_small 1100000 -nfs_lp 27 -nfs_lp2 24 -nfs_t 200000000 -nfs_lines 4 -la_every 2000</br>
-
-Note: For my more creative work that relates closer to my paper see psieve below instead. This project is an attempt at implementing a hybrid I've speculated about for a while and using Claude to rapidly prototype and improve it. 
-
-300-bit takes around 1 hour. There is also a lot of bloat that I'll remove eventually. Just presented Claude with unfinished work and been prompting it to finish and optimize it.. aiming for 333-bit or 100 digits next. I'll be implementing some novel strategies too to get better synergy between both NFS and SIQS. Will upload as I get improvements... 
-
-Requirements: You should probably pip install gmpy2, not required but will help big num performance
-
-This is a hybrid SIQS / NFS algorithm. Both feed the same matrix but serve a different purpose. SIQS finds b-smooths using a very large factor base while NFS tries to optimize the matrix. This idea is an ongoing area of research I have been working on for years now. I recently discovered that Claude has finally matured enough to rapidly prototype these ideas for me... so that's what I'm doing as I can now do in a day what would otherwise take me weeks of manual coding and labour. I am still skeptical about AI as a research tool, since it lacks creativity.. but for implementing documented things, even complex math code.. it has definitely matured enough now and I'm becoming a convert.
-
-On a side note: I've also resumed studying abstract algebra... planned to do it this summer but with my father in the ICU.. I just couldn't focus on it. 
-
 #### To run from folder "psieve":(work in progress)</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 120 -base 5000 -lin_size 100 -quad_size 1</br>
 
 Some ongoing experimentation.. this mixes SIQS and Coefficient Sieve. I either find a way to improve this, or take elements from this for my hybrid_sieve.
-I will continue working on this in private while I study abstract algebra... if anyone wants to buy my work.. I'm completely broke and could use the money.
+This is my main research project, trying to open up a completely new way of achieving factorization following the literature from my paper.
 
-Update: Actually let me try something quickly.. may have this solved already with quartics potentially... 
+#### To run from folder "hybrid_sieve":</br>
+To build: python3 setup.py build_ext --inplace</br>
+To run: python3 run_qs.py -keysize 300 -base 200000 -lin_size 1000000 -quad_size 1 -mode nfs -nfs_degree 4 -nfs_base 60000 -nfs_sing_small 1100000 -nfs_lp 27 -nfs_lp2 24 -nfs_t 200000000 -nfs_lines 4 -la_every 2000</br>
+
+Some experimentation using claude to quickly test and implement ideas for a hybrid implementation. However the only way this will actually work as an hybrid algorithm is if we can make NFS spit out b-smooths with a more targeted factorization. I'm also diving deeper into abstract algebra literature to see if I can figure out a breakthrough on that front.  300-bit takes about an hour right now.
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
