@@ -24,8 +24,6 @@ Will try and accelerate this research with Claude while I spent time studying ab
 
 Update: Managed to push it to 140-bit now... 
 
-One positive that may come out of this atleast is that if I cant atleast get it to work for large numbers.. I could probably speed up factorization of small numbers over existing algorithms. Lets see... this will take some cleaning up and minimizing and benchmarking though...
-
 #### To run from folder "hybrid_sieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run: python3 run_qs.py -keysize 300 -base 200000 -lin_size 1000000 -quad_size 1 -mode nfs -nfs_degree 4 -nfs_base 60000 -nfs_sing_small 1100000 -nfs_lp 27 -nfs_lp2 24 -nfs_t 200000000 -nfs_lines 4 -la_every 2000</br>
