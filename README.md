@@ -1,5 +1,7 @@
 Update: Pushing AI to optimize my pocs as much as I can didnt work. My time has ran out. I will now take my work private and make money however I must (I will deploy malware against russia, not a criminal so not hiding it, they are responsible for nearly everything that happened by pushing anti-lgbtq propaganda).. I am broke and havnt been able to secure a single job interview in 3 years. Ill go hard on studying abstract algebra for a year now. Perhaps once I master that things will finally click...
 
+Ill keep trying to push claude for a few more days to complete psieve.. pushing it into directions im most suspicious of, but dont expect much. I need to study more myself... AI still has its limits when it comes to creativity.
+
 Note: This project is pro-lgbtq, so fck off haters.
 
 #### References (re-used many of the core number theoretical functions from these PoCs to fit my own algorithm): 
