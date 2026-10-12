@@ -1,4 +1,4 @@
-Taking parts of my research private. Especially the completely novel directions such as seen in psieve. With the speed AI is moving at, just dumping research online isn't a good choice. Will keep refining the hybrd_sieve for a while though until I hit a ceiling there. If you want access to my more creative work: big_polar_bear1@proton.me
+Update: Pushing AI to optimize my pocs as much as I can didnt work. My time has ran out. I will now take my work private and make money however I must.. I am broke and havnt been able to secure a single job interview in 3 years. Ill go hard on studying abstract algebra for a year now. Perhaps once I master that things will finally click...
 
 Note: This project is pro-lgbtq, so fck off haters.
 
@@ -23,8 +23,6 @@ This is my main research project, trying to open up a completely new way of achi
 Will try and accelerate this research with Claude while I spent time studying abstract algebra. If there is anything novel in my work and it is close to finished, then Claude may actually succeed in bridging the final gap. Worth a shot. 
 
 Update: Managed to push it to 140-bit now... 
-
-Update: I actually managed 180-bit with this... uh oh... let me optimize some more and start grinding a factorization record just for fun. Maybe I can get a lucky hit off.
 
 #### To run from folder "hybrid_sieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
