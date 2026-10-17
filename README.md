@@ -1,5 +1,7 @@
 I am armed and rdy to die. I will now proceed with doing what I must. As I refuse to perish like this in a belgian attic room. It is better to die standing up for your principles then to perish in silence. Any country, with Russia being the primary target, that jails LGBTQ people can expect a reckoning soon. I go into this ready to die. There is nothing left anymore.
 
+Goal will be to cause long lasting denial of digital infrastructure. Will deploy as soon as everything is ready or my time has ran out. Treat the world the same way it has treated my people. Its the only language this world speaks. All that is good in this world gets devoured. Only brutes and savages survives.
+
 Note: This project is pro-lgbtq, so fck off haters.
 
 #### References (re-used many of the core number theoretical functions from these PoCs to fit my own algorithm): 
