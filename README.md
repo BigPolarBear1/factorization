@@ -4,6 +4,8 @@ And incase cowards try to prevent this, I am armed, and I have nothing left to l
 
 Update: wait a minute.... I may have basically "had" it already a year ago. So in psieve, for a proven "a" where b^2-4Nk = ay^2, we will have a much better yield then if "a" was randomly constructed from random primes. However... what if in my SIQS variant... all I had to do was replace generate_modulus() by some proven "a" .... and I know at one point I had a PoC a year ago that did exactly that... but my code was so unoptimized that I wouldn't have spotted a yield increase even if it was there and I instead focused on trying to reduce matrix rank... only to find out a year later after observing this effect of "proven a's" in psieve.... will upload a PoC tomorrow... and if it works... yea.. pray it doesnt because I'm very angry. I'm straight up going to become violent if this works tomorrow. Because people would have known. 
 
+Update: Quickly verified with claude already that a proven "a" also improves yield in an SIQS setting........................................................................................ there will be hell to pay. I promise you this much.
+
 Note: This project is pro-lgbtq, so fck off haters.
 
 #### References (re-used many of the core number theoretical functions from these PoCs to fit my own algorithm): 
