@@ -1,4 +1,4 @@
-I am armed and rdy to die. I will now proceed with doing what I must. As I refuse to perish like this in a belgian attic room. It is better to die standing up for your principles tben to perish in silence. Any country, with Russia being the primary target, that jails LGBTQ people can expect a reckoning soon. I go into this ready to die. There is nothing left anymore.
+I am armed and rdy to die. I will now proceed with doing what I must. As I refuse to perish like this in a belgian attic room. It is better to die standing up for your principles then to perish in silence. Any country, with Russia being the primary target, that jails LGBTQ people can expect a reckoning soon. I go into this ready to die. There is nothing left anymore.
 
 Note: This project is pro-lgbtq, so fck off haters.
 
