@@ -1,10 +1,12 @@
+I am armed and rdy to die. I will now proceed with doing what I must. As I refuse to perish like this in a belgian attic room. It is better to die standing up for your principles tbem to perish in silence. Any country, with Russia being the primary target, that jails LGBTQ people can expect a reckoning soon. I go into this ready to die. There is nothing left anymore.
+
 Note: This project is pro-lgbtq, so fck off haters.
 
 #### References (re-used many of the core number theoretical functions from these PoCs to fit my own algorithm): 
 https://stackoverflow.com/questions/79330304/optimizing-sieving-code-in-the-self-initializing-quadratic-sieve-for-pypy
 https://github.com/basilegithub/General-number-field-sieve-Python 
 
-#### About the paper
+#### Paper
 Math paper is a work in progress. Ignore the final chapter for now.. that one I'll rewrite if and when I can get "psieve" below working correctly.
 
 #### To run from folder "psieve":(work in progress)</br>
