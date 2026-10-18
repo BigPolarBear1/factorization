@@ -24,11 +24,7 @@ Will try and accelerate this research with Claude while I spent time studying ab
 
 Update: Managed to push it to 140-bit now... 
 
-#### To run from folder "hybrid_sieve":</br>
-To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 300 -base 200000 -lin_size 1000000 -quad_size 1 -mode nfs -nfs_degree 4 -nfs_base 60000 -nfs_sing_small 1100000 -nfs_lp 27 -nfs_lp2 24 -nfs_t 200000000 -nfs_lines 4 -la_every 2000</br>
-
-Some experimentation using claude to quickly test and implement ideas for a hybrid implementation. However the only way this will actually work as an hybrid algorithm is if we can make NFS spit out b-smooths with a more targeted factorization. I'm also diving deeper into abstract algebra literature to see if I can figure out a breakthrough on that front.  300-bit takes about an hour right now.
+Update: Figured it out... you dont use psieve() as an algorithm to complete an existing SIQS b-smooth... you instead replace SIQS's sieve with it. So your sieve becomes a question of what to divide the discriminant by, such that what remains is square. (which "a" to choose).. and then you use all these optimizations for it.... 
 
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
