@@ -2,10 +2,6 @@ Taking a break from math (to focus on mastering abstract algebra) unless I can p
 
 And incase cowards try to prevent this, I am armed, and I have nothing left to lose. I have made my peace already. 
 
-Update: wait a minute.... I may have basically "had" it already a year ago. So in psieve, for a proven "a" where b^2-4Nk = ay^2, we will have a much better yield then if "a" was randomly constructed from random primes. However... what if in my SIQS variant... all I had to do was replace generate_modulus() by some proven "a" .... and I know at one point I had a PoC a year ago that did exactly that... but my code was so unoptimized that I wouldn't have spotted a yield increase even if it was there and I instead focused on trying to reduce matrix rank... only to find out a year later after observing this effect of "proven a's" in psieve.... will upload a PoC tomorrow... and if it works... yea.. pray it doesnt because I'm very angry. I'm straight up going to become violent if this works tomorrow. Because people would have known. 
-
-Update: Quickly verified with claude already that a proven "a" also improves yield in an SIQS setting........................................................................................ there will be hell to pay. I promise you this much. I'm going to sleep now. I'm going to get up tomorrow. I'm going to change a few lines of code in my existing SIQS PoC, I'm going to have claude quickly optimize it so it isn't unoptimized garbage.. and then I'm going to upload it. And then I'm going to be very angry for a very long time. Kut hoeren.
-
 Note: This project is pro-lgbtq, so fck off haters.
 
 #### References (re-used many of the core number theoretical functions from these PoCs to fit my own algorithm): 
@@ -15,7 +11,13 @@ https://github.com/basilegithub/General-number-field-sieve-Python
 #### Paper
 Math paper is a work in progress. Ignore the final chapter for now.. that one I'll rewrite if and when I can get "psieve" below working correctly.
 
-#### To run from folder "psieve":(work in progress)</br>
+#### To run from folder "FUSieve":(work in progress)</br>
+To build: python3 setup.py build_ext --inplace</br>
+To run:  python3 run_qs.py -keysize 150 -base 2000 -lin_size 200_000 -quad_size 1 </br>
+
+This is the fuck you sieve. A work in progress. Will improve shortly... needs some scoring for leftovers etc...
+
+#### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size </br>
 
