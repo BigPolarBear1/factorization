@@ -24,10 +24,6 @@ Will try and accelerate this research with Claude while I spent time studying ab
 
 Update: Managed to push it to 140-bit now... 
 
-Update: Figured it out... you dont use psieve() as an algorithm to complete an existing SIQS b-smooth... you instead replace SIQS's sieve with it. So your sieve becomes a question of what to divide the discriminant by, such that what remains is square. (which "a" to choose).. and then you use all these optimizations for it.... 
-
-Update: Time's up. PoC will come online tonight. 
-
 #### To run from folder "Coefficient_Sieve" (For use with the paper):</br></br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 40 -base 50 -debug 1 -lin_size 10_000 -quad_size 100</br>
