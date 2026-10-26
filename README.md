@@ -1,6 +1,6 @@
 Update: One sec, added a few new lines to the final chapter of the paper. I just realized something that I basically already have all the pieces now. We can actually trivially alter the "k" at which a sibling solution in the psieve algorithm is found. That together with my precalculated residue maps... I think I can do it now... let me check.
 
-Update: Boom... I got it.... let me formalize this now....
+Update: Boom... I got it.... let me formalize this now.... in some cases you can actually construct a quadratic and based on its roots you can deduce the residue for the multiplier/neutral root (where x^2=1 mod n) ... although there are some conditions that must be met so you can't just use any B-smooth to pull it off. Give me a few things.. this looks like it's finally about to come to an end now... fuck it all.
 
 Note: This project is pro-lgbtq, so fck off haters.
 
