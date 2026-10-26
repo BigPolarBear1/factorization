@@ -1,3 +1,5 @@
+Update: One sec, added a few new lines to the final chapter of the paper. I just realized something that I basically already have all the pieces now. We can actually trivially alter the "k" at which a sibling solution in the psieve algorithm is found. That together with my precalculated residue maps... I think I can do it now... let me check.
+
 Note: This project is pro-lgbtq, so fck off haters.
 
 #### References (re-used many of the core number theoretical functions from these PoCs to fit my own algorithm): 
