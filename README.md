@@ -1,3 +1,5 @@
+Update: Trying some stuff.. and added a few sentences to the final chapter of the paper. Have an idea... let me see first if it works then ill finish fhe paper and code...
+
 Note: This project is pro-lgbtq, so fck off haters.
 
 #### References (re-used many of the core number theoretical functions from these PoCs to fit my own algorithm): 
