@@ -12,14 +12,13 @@ https://github.com/basilegithub/General-number-field-sieve-Python
 Math paper is a work in progress.
 Note: This paper was written at different stages in my  research project, and as such I will need to go back to refactor some of the older chapter as I now have a better understanding of the entire structure.
 
-#### To run from folder "psieve_old":</br>
+#### To run from folder "fu_algo":</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 60 -base 10_000 -debug 0 -lin_size 100 -quad_size 1</br>
+To run: python3 run_qs.py -keysize 25 -base 5000 -debug 0 -lin_size 100 -quad_size 1
 
-Just re-uploading the older version without claude generated optimizations such as bit-packed sieving. 
-There is a very high chance I wont be around to finish this project myself. After some thinking.. you should look at how resmaps and resmaps2 are build... basically we sieve for ay^2+4Nk = b^2 .. were resmaps and resmaps2 represent the quadratic polynomial representations of these discriminants (meaning that if it has a root solution then the discriminant is a QR)... now changing "a" changes the mapping mod p in resmaps2 by multiplying the linear coefficient with the square root of a mod p (see line 2284, for a solution in Z this will have a valid mapping modulo every prime). Rather then using some SIQS variant to find an initial b-smooth.. what you want to do is use "a" as starting point.. then find a case where "two sibling solutions" end up within some tiny sieve region. Where sibling solutions are two distinct y and b solutions for the same a in ay^2+4Nk = b^2. The highly optimized PoC below, which beats any known algorithm in that specific complexity class (its in the same one as SQUFOF), it's very close.. but rather then starting from a known ay^2+4Nk = b^2 and then searching for a sibling solution.. we need to find an 'a' where a solution pair ends up in the same region. I believe it can be done just using residue maps and hensel. Even as if, there is probably novelty enough in the PoC below, it beating SQUFOF by a big margin.. to publish a proper paper around... but I still think there is something bigger hiding in the shadows and that I almost got it. Time has sadly ran out for me.
+Pronounced the fuck you algorithm
 
-Its really a geometric problem created by Nk**0.5 .... where if you iterate "a" it reshuffles points across this geometry. And you got to find an "a" where a pair of sibling solutions end up at a predictable region of this geometry. So close, I can nearly fully see it now.
+This will be my final iteration.. reworking psieve so it works purely with residues and direct computation of solutions inside a modulus.
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
