@@ -23,6 +23,8 @@ I've added some code to the bottom of process_interval2d(), which replaces the p
 
 So there is these two conditions that I talk about in the paper. First is two sibling roots both yielding the same value for x^2-4Nk = s ... If we find a b-smooth with SIQS.. on the right hand side we can factor out any squares to get the form x^2-4Nk = s, then we need to find a second sibling root. We can calculate residues inside a modulus. Next, knowing that both roots are also a difference of square itself (the one fermat's factorization algorithm looks for, lets start calling these fermat squares) and thus there must exist some "k" where they have a shared root.. we can then use those residues to figure out how often we need to add the modulus.. this last part I still need to implement but all the math is already in the code.. let me see if I can get it done soon.. very tired after running a 100k ultra marathon last weekend. I know I'm right. I know I almost got it. I'm not going to give up on this until I get it to work, even if it takes the rest of my life. And I know people know this, but they are all just a bunch of fcking cowards and treating me this way is very deliberate. And if I ever meet one of the people behind this, I will become extremely violent, so you better fucking start hiding already you fcking cowards.
 
+I've often skimmed very close to this solution in the last year... guess it just took a little more mathematical growth.. only have been doing math for 3.5 starting from nothing as a highschool dropout.
+
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size 1</br>
