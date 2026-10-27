@@ -10,6 +10,7 @@ https://github.com/basilegithub/General-number-field-sieve-Python
 
 #### Paper
 Math paper is a work in progress. Ignore the final chapter for now.. that one I'll rewrite if and when I can get "psieve" below working correctly.
+Note: This paper was written at different stages in my  research project, and as such I will need to go back to refactor some of the older chapter as I now have a better understanding of the entire structure.
 
 #### To run from folder "psieve_old":</br>
 To build: python3 setup.py build_ext --inplace</br>
