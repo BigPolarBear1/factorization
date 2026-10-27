@@ -19,6 +19,7 @@ To run: python3 run_qs.py -keysize 25 -base 5000 -debug 0 -lin_size 100 -quad_si
 Pronounced the fuck you algorithm
 
 This will be my final iteration.. reworking psieve so it works purely with residues and direct computation of solutions inside a modulus.
+I've added some code to the bottom of process_interval2d(), which replaces the psieve() function. Just showcases the math I recently added to the paper. I need to re-org that code a little bit now though. 
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
