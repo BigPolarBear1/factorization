@@ -1,7 +1,3 @@
-Update: Trying some stuff.. and added a few sentences to the final chapter of the paper. Have an idea... let me see first if it works then ill finish fhe paper and code...
-
-Update: Bah close... very close... let me look at the roots of the quadratic representations of these discriminants.. there should be a shared root or something for these sibling solutions since they can also be re-ordered as a difference of squares.... that might help me drive an algorithm to pull these cases from a residue map.... fck it man, let me try for one more week.
-
 Note: This project is pro-lgbtq, so fck off haters.
 
 #### References (re-used many of the core number theoretical functions from these PoCs to fit my own algorithm): 
@@ -21,9 +17,9 @@ Pronounced the fuck you algorithm
 This will be my final iteration.. reworking psieve so it works purely with residues and direct computation of solutions inside a modulus.
 I've added some code to the bottom of process_interval2d(), which replaces the psieve() function. Just showcases the math I recently added to the paper. I need to re-org that code a little bit now though. 
 
-So there is these two conditions that I talk about in the paper. First is two sibling roots both yielding the same value for x^2-4Nk = s ... If we find a b-smooth with SIQS.. on the right hand side we can factor out any squares to get the form x^2-4Nk = s, then we need to find a second sibling root. We can calculate residues inside a modulus. Next, knowing that both roots are also a difference of square itself (the one fermat's factorization algorithm looks for, lets start calling these fermat squares) and thus there must exist some "k" where they have a shared root.. we can then use those residues to figure out how often we need to add the modulus.. this last part I still need to implement but all the math is already in the code.. let me see if I can get it done soon.. very tired after running a 100k ultra marathon last weekend. I know I'm right. I know I almost got it. I'm not going to give up on this until I get it to work, even if it takes the rest of my life. And I know people know this, but they are all just a bunch of fcking cowards and treating me this way is very deliberate. And if I ever meet one of the people behind this, I will become extremely violent, so you better fucking start hiding already you fcking cowards.
+So there is these two conditions that I talk about in the paper. First is two sibling roots both yielding the same value for x^2-4Nk = s ... If we find a b-smooth with SIQS.. on the right hand side we can factor out any squares to get the form x^2-4Nk = s, then we need to find a second sibling root. We can calculate residues inside a modulus. Next, knowing that both roots are also a difference of square itself (the one fermat's factorization algorithm looks for, lets start calling these fermat squares) and thus there must exist some "k" where they have a shared root.. we can then use those residues to figure out how often we need to add the modulus.. this last part I still need to implement but all the math is already in the code.. let me see if I can get it done soon.. very tired after running a 100k ultra marathon last weekend. 
 
-I've often skimmed very close to this solution in the last year... guess it just took a little more mathematical growth.. only have been doing math for 3.5 years starting from nothing as a highschool dropout.
+Update: Will fix this PoC soon. Its kind of broken an not really doing what its supposed to do. I'll fix it somewhere this week. Got a bit ill and been doing other things.
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
