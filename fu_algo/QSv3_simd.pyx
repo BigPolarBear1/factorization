@@ -1076,8 +1076,9 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                         fail=0
                         co2=[]
                         klist=[]
+                        lmod=1
                         i=0 
-                        while i < len(sbase):
+                        while i < len(sbase) and bitlen(lmod)<14:
                             
                             prime=sbase[i]
 
@@ -1086,6 +1087,7 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                             sqr=find_roots_poly([1,0,-div], prime) 
 
                             if len(sqr)>1: 
+                                lmod*=prime
                                 klist.append(prime)
                                 klist.append([])
                                 co2.append(prime)
@@ -1111,51 +1113,55 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                                     break
                             if fail == 1:
                                 break
-                            i+=1    
+                            i+=1 
                         if fail == 0:
-                           # print("found one at k: "+str(temp_k))
-                            disc=div*2**2+4*n*temp_k
-                            test=math.isqrt(disc)
-                            if test**2 == disc:
-                                if test**2%n != (new_r*2)**2%n:
-                                    print("fatal error occured")
-                                gcdtest=math.gcd(test+(new_r*2),n)
-                                if test > new_r*2:
-                                    big_root=test
-                                    small_root=new_r*2
-                                else:
-                                    big_root=new_r*2
-                                    small_root=test
-                                fin_k=(big_root**2-small_root**2)//n
-                                if big_root**2-n*fin_k != small_root**2:
-                                    print("sdasdsad")
-                                    sys.exit()
-                                i=0 
-                                while i < len(sbase):
+                            g=1
+                            while g < 10000:
+                                temp_kt=temp_k+lmod*g
+                               # print("found one at k: "+str(temp_k)+" lmod: "+str(lmod))
+                                disc=div*2**2+4*n*temp_kt
+                                test=math.isqrt(disc)
+                                if test**2 == disc:
+                                    if test**2%n != (new_r*2)**2%n:
+                                        print("fatal error occured")
+                                    gcdtest=math.gcd(test+(new_r*2),n)
+                                    if test > new_r*2:
+                                        big_root=test
+                                        small_root=new_r*2
+                                    else:
+                                        big_root=new_r*2
+                                        small_root=test
+                                    fin_k=(big_root**2-small_root**2)//n
+                                    if big_root**2-n*fin_k != small_root**2:
+                                        print("sdasdsad")
+                                        sys.exit()
+                                    i=0 
+                                    while i < len(sbase):
                         
-                                    prime=sbase[i]
-                                    colist=resmaps2[i][fin_k%prime][1]
-                                    colist2=resmaps[i][fin_k%prime][1]
-                                    #sqr=find_roots_poly([1,0,-div], prime) 
-                                    if (small_root*2)%prime not in colist:
-                                        print("fatal error")
-                                        sys.exit()
-                                    if (big_root*2)%prime not in colist2:
-                                        print("fatal error")
-                                        sys.exit()
+                                        prime=sbase[i]
+                                        colist=resmaps2[i][fin_k%prime][1]
+                                        colist2=resmaps[i][fin_k%prime][1]
+                                        #sqr=find_roots_poly([1,0,-div], prime) 
+                                        if (small_root*2)%prime not in colist:
+                                            print("fatal error")
+                                            sys.exit()
+                                        if (big_root*2)%prime not in colist2:
+                                            print("fatal error")
+                                            sys.exit()
 
-                                    i+=1
-                                i=0
-                                while i < len(klist):
-                                    if (fin_k//4)%klist[i] not in klist[i+1]:
-                                        print("fatal error k")
+                                        i+=1
+                                    i=0
+                                    while i < len(klist):
+                                        if (fin_k//4)%klist[i] not in klist[i+1]:
+                                            print("fatal error k")
 
-                                    i+=2
+                                        i+=2
                              #   print("gcdtest: "+str(gcdtest))
-                                if gcdtest!=1 and gcdtest!=n:
+                                    if gcdtest!=1 and gcdtest!=n:
                                     #print("co2: "+str(co2)+" klist: "+str(klist))
-                                    print("[i]Found with psieve, factors of N are: "+str(gcdtest)+" and "+str(n//gcdtest)+" test: "+str(test)+" fin_k: "+str(fin_k//4))
-                                    sys.exit()
+                                        print("[i]Found with psieve, factors of N are: "+str(gcdtest)+" and "+str(n//gcdtest)+" test: "+str(test)+" fin_k: "+str(fin_k//4))
+                                        sys.exit()
+                                g+=1
                         temp_k+=1                
                  #   psievefound=psieve(n,ret_array,primelist_f,primeslist,div,sbase,2*new_root,resmaps,resmaps2,a_mul_list)
                  #   if psievefound !=0:
