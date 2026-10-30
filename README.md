@@ -21,7 +21,7 @@ So there is these two conditions that I talk about in the paper. First is two si
 
 Update: Will fix this PoC soon. Its kind of broken an not really doing what its supposed to do. I'll fix it somewhere this week. Got a bit ill and been doing other things.
 
-Update: fix the PoC a little.. that previous version was broken. Atleast the math now works (mostly) .. let me think now how to exploit this... I have some ideas.. I'll try something out this weekend.
+Update: fixed the PoC a little.. that previous version was broken. Atleast the math now works (mostly) .. let me think now how to exploit this... I have some ideas.. I'll try something out this weekend.
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
