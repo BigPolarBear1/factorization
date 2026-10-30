@@ -922,11 +922,11 @@ def check_possible_k(resmaps,resmaps2,prime,n,b1,b2,found):
                  #   print("hit")
                     if k not in found:
                         found.append(k)
-            if colist[j]==b2%prime:
-                if colist2[j]==b1%prime:
-                  #  print("hit")
-                    if k not in found:
-                        found.append(k)
+           # if colist[j]==b2%prime:
+           #     if colist2[j]==b1%prime:
+           #       #  print("hit")
+           #         if k not in found:
+           #             found.append(k)
             j+=1
 
         k+=1
@@ -1055,132 +1055,191 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                   #  print("PSIEVE1")
                 local_factors2, value2 = factorise_fast(new_root,primelist_f)
                 #To do: Fix this for when poly_val is smaller then 0... for some reason my calculations dont always hold true in that case
+                keysize=bitlen(n)
                 if value==1 and div!=1 and div%2!=0 and bitlen(div)<(keysize*0.5):# and poly_val >0:# and isPrime(value,5)==1:# and isPrime(div,5)==1:# and value2==1:# and len(div_fac)==1:
-                    
                     print("[i]Trying psieve b: "+str(2*new_root)+" a: "+str(div)+" bitlen a: "+str(bitlen(div)))
                     
-                    poly_val
+
                     inv_n=modinv(math.isqrt(poly_val//div),n)
                     new_r=(new_root*inv_n)%n
-                    new_k=(new_r**2-div)//n
+                    new_r=new_r*2
+               
+                    
+                    div=div*4
+    #sys.exit()              
+    #poly_val
+    #inv_n=modinv(math.isqrt(poly_val//div),n)
+    #new_r=(new_root*inv_n)%n
+                    new_k=(new_r**2-div)//(n*4)
                     if (new_r**2-div)%n !=0:
-                        print("fatal errosddsdr: "+str(poly_val)+" odd: "+str(div))
+                        print("fatal errosddsdr: "+" odd: "+str(div))
                         sys.exit()
                     
                     print("new_r: "+str(new_r)+" new_k: "+str(new_k))
-                    if div*1**2+n*new_k != new_r**2:
+                    if div*1**2+4*n*new_k != new_r**2:
                         print("well this shouldnt happen really")
-                        sys.exit()                 
-                    temp_k=1
-                    while temp_k < 10_000_000:
-                        fail=0
-                        co2=[]
-                        klist=[]
-                        lmod=1
-                        i=0 
-                        while i < len(sbase) and bitlen(lmod)<14:
+                        sys.exit()          
+                    
+                    lmod=1
+                    lmod_primes_ind=[]
+                    coefficients=[]
+                    possible_k=[]
+                    i=0 
+                    while i < len(sbase) and bitlen(lmod)<(keysize*0.5):
                             
-                            prime=sbase[i]
+                        prime=sbase[i]
+                        sqr=find_roots_poly([1,0,-div], prime) 
 
-                            colist=resmaps2[i][temp_k%prime][1]
-                            colist2=resmaps[i][temp_k%prime][1]
-                            sqr=find_roots_poly([1,0,-div], prime) 
-
-                            if len(sqr)>1: 
-                                lmod*=prime
-                                klist.append(prime)
-                                klist.append([])
-                                co2.append(prime)
-                                co2.append([])
-                              #  print("prime: "+str(prime)+" sqr: "+str(sqr))
-                                #for sq in sqr:
-                                sq=sqr[0]
-                                hit=0
+                        if len(sqr)>1:  #to do: Check that both sqr roots are yielding the same k's
+                            possible_k.append(prime)
+                            possible_k.append([])
+                            coefficients.append(prime)
+                            coefficients.append([])
+                            lmod*=prime
+                            lmod_primes_ind.append(i)
+                            kt=0
+                            while kt < prime:
+                                colist=resmaps2[i][kt%prime][1]
+                                colist2=resmaps[i][kt%prime][1]
                                 j=0
                                 while j < len(colist):
-                                    if (2*sq)%prime == colist[j]:
-                                        if colist2[j] not in co2[-1]:
-                                            co2[-1].append(colist2[j])
-                                            check_possible_k(resmaps[i],resmaps2[i],prime,n,colist2[j],(new_r*2)%prime,klist[-1])
-                                        hit=1
-                                        #break
+                                    if (1*sqr[0])%prime == colist[j]:
+                                        if colist2[j] not in coefficients[-1]:
+                                            possible_k[-1].append(kt)
+                                            if (div*1**2+4*n*kt)%prime != (colist2[j]**2)%prime:
+                                                print("bleep blaap")
+                                                sys.exit()
+                                            coefficients[-1].append(colist2[j])
+                       # break
                                     j+=1
-                                if hit==0:
-                                       # print("not found: "+str(prime)+" (1*sq)%prime: "+str((1*sq)%prime))
-                                  #  print("fatal error should neer happen. Bear fail: "+str(resmaps2[ind][k%prime])+" prime: "+str(prime)+" new_root: "+str(new_root)+" k: "+str(k)+" sqr: "+str(sqr))
-                                  #  sys.exit()  
-                                    fail=1
-                                    break
-                            if fail == 1:
-                                break
-                            i+=1 
-                        if fail == 0:
-                            g=1
-                            while g < 10000:
-                                temp_kt=temp_k+lmod*g
-                               # print("found one at k: "+str(temp_k)+" lmod: "+str(lmod))
-                                disc=div*2**2+4*n*temp_kt
-                                test=math.isqrt(disc)
-                                if test**2 == disc:
-                                    if test**2%n != (new_r*2)**2%n:
-                                        print("fatal error occured")
-                                    gcdtest=math.gcd(test+(new_r*2),n)
-                                    if test > new_r*2:
-                                        big_root=test
-                                        small_root=new_r*2
-                                    else:
-                                        big_root=new_r*2
-                                        small_root=test
-                                    fin_k=(big_root**2-small_root**2)//n
-                                    if big_root**2-n*fin_k != small_root**2:
-                                        print("sdasdsad")
-                                        sys.exit()
-                                    i=0 
-                                    while i < len(sbase):
-                        
-                                        prime=sbase[i]
-                                        colist=resmaps2[i][fin_k%prime][1]
-                                        colist2=resmaps[i][fin_k%prime][1]
-                                        #sqr=find_roots_poly([1,0,-div], prime) 
-                                        if (small_root*2)%prime not in colist:
-                                            print("fatal error")
-                                            sys.exit()
-                                        if (big_root*2)%prime not in colist2:
-                                            print("fatal error")
-                                            sys.exit()
-
-                                        i+=1
-                                    i=0
-                                    while i < len(klist):
-                                        if (fin_k//4)%klist[i] not in klist[i+1]:
-                                            print("fatal error k")
-
-                                        i+=2
-                             #   print("gcdtest: "+str(gcdtest))
-                                    if gcdtest!=1 and gcdtest!=n:
-                                    #print("co2: "+str(co2)+" klist: "+str(klist))
-                                        print("[i]Found with psieve, factors of N are: "+str(gcdtest)+" and "+str(n//gcdtest)+" test: "+str(test)+" fin_k: "+str(fin_k//4))
-                                        sys.exit()
-                                g+=1
-                        temp_k+=1                
-                 #   psievefound=psieve(n,ret_array,primelist_f,primeslist,div,sbase,2*new_root,resmaps,resmaps2,a_mul_list)
-                 #   if psievefound !=0:
-                 #       ret_array[1].append(new_root**2)
-                 #       ret_array[0].append(poly_val)
-                 #       ret_array[2].append(local_factors)
-                 #       ret_array[3].append([])
-                 #       print("[*](Psieve)Trying linear algebra after succesful psieve run")
-                 #       test,test2=QS(n,primelist,ret_array[0],ret_array[2],ret_array[1],ret_array[3])
-                    
-
-                 #       if test !=0:
-                 #           print("\n\n\n\nFound at: ",len(ret_array[0]))
-                 #           sys.exit()
-                 #   sys.exit()
-                    #break
 
 
+                                kt+=1
+                        i+=1 
+ #   print("lmod: "+str(lmod)+" lmod_primes_ind: "+str(lmod_primes_ind)+" possible_k: "+str(possible_k)+" coefficients: "+str(coefficients))
+    
+                  #  i=0
+                  #  while i < len(possible_k):
+                  #      print("prime: "+str(possible_k[i])+" "+str(possible_k[i+1]))
+                  #      print("prime: "+str(coefficients[i])+" "+str(coefficients[i+1]))
+        #print(coefficients[-1])
+                   #     i+=2
+   # print(possible_k[-1])
+   # print(coefficients[-1])
+   # sys.exit()
+                    possible_k=get_partials(lmod,possible_k)
+                    coefficients=get_partials(lmod,coefficients)
+                    kenum=[]
+                    cenum=[]
+                    i=0
+                    while i < len(possible_k):
+                        kenum.append(possible_k[i+1])
+                        cenum.append(coefficients[i+1])
+                        i+=2
 
+
+                    for idx in enumerated_product(*kenum):
+                        ktf=0
+                        coefft=0
+                        i=0
+                        while i < len(idx):
+                            ind=idx[i]
+                            ktf+=kenum[i][ind]
+                            coefft+=cenum[i][ind]
+                            i+=1
+                        ktf=ktf%lmod
+                        if ktf ==0:
+                            continue
+                        coefft=coefft%lmod
+                       # print("ktf: "+str(ktf)+" coefft: "+str(coefft))
+
+                        mod_ind=0
+                        while mod_ind < 1_000:
+                            coeff=coefft+mod_ind*lmod
+                            
+                            if (div*1**2+4*n*ktf)%lmod != (coeff**2)%lmod:
+                                print("fatal error.. should always hold true: "+str((div*1**2+4*n*ktf)%lmod)+" "+str((coeff**2)%lmod)+" lmod: "+str(lmod))
+                                print("k: "+str(possible_k))
+                                print("c: "+str(coefficients))
+                                sys.exit()
+                            klist=[]
+                            co2=[]
+                            gmod=1
+                            gmod_primes=[]
+                            i=0 
+                            while i < len(sbase) and bitlen(gmod)<keysize*0.5:
+                            
+                                prime=sbase[i]
+
+                                colist=resmaps2[i][ktf%prime][1]
+                                colist2=resmaps[i][ktf%prime][1]
+
+
+                            
+                                tempklist=[]
+                                check_possible_k(resmaps[i],resmaps2[i],prime,n,coeff%prime,(new_r)%prime,tempklist)
+                                if tempklist!=[0]:
+                                    klist.append(prime)
+                                    klist.append(tempklist)
+                                    gmod*=prime
+                                    gmod_primes.append(prime)
+
+
+                                
+                                  #  te=0
+                                  #  while te < len(klist[-1]):
+                                  #      if ((coeff**2)%n)%prime != (((new_r*2)**2)%n)%prime:
+                                  #          print("fasdasd")
+                                  #          sys.exit()
+                                  #      te+=1
+                                i+=1 
+                           # if ktf == 665:
+                           #     print("klist: "+str(klist))#+" "
+                            #    print("coeff: "+str(coeff))
+             #   time.sleep(5)
+                            klist=get_partials(gmod,klist)
+                       # print("klist: "+str(klist)+" gmod: "+str(gmod))
+                            kenum2=[]
+     
+                            i=0
+                            while i < len(klist):
+                                kenum2.append(klist[i+1])
+ 
+                                i+=2
+
+
+                            for idx2 in enumerated_product(*kenum2):
+                                k_fin=0
+             
+                                i=0
+                                while i < len(idx2):
+                                    ind=idx2[i]
+                                    k_fin+=kenum2[i][ind]
+            
+                                    i+=1
+                                k_fin=k_fin%gmod
+                            #for p in gmod_primes:
+                                if (coeff**2-4*n*k_fin)%gmod != ((new_r)**2)%gmod:
+                                    print("this should not happen: "+str(k_fin%gmod))
+                                    sys.exit()
+                                if (coeff**2-4*n*ktf)%lmod != (div*1**2)%lmod:
+                                    print("super fatal error should never happen")
+                                    sys.exit()
+                            ####TO DO: How do I fix this now????????????????????????????????? Thats the big question that remains..
+                                disc=coeff**2-4*n*k_fin
+                                #if ktf == 665:
+                                #    print(str(disc)+" lmod: "+str(lmod)+" coeff: "+str(coeff)+" k_fin: "+str(k_fin))
+                                if disc > 0:
+                                    test=math.isqrt(disc)
+                                    if test**2 == disc:
+                                        gcdtest=math.gcd(test+(coeff),n)
+                                        if gcdtest!=1 and gcdtest!=n:
+                                            print("[i]Found with psieve, factors of N are: "+str(gcdtest)+" and "+str(n//gcdtest))#+" test: "+str(test)+" fin_k: "+str(fin_k//4))
+         
+                                            sys.exit()       
+
+
+                            mod_ind+=1
                   #  sys.exit()
             #    print("***seen_primes: "+str(local_factors)+" cmod: "+str(cmod)+" root: "+str(new_root)+" polyval: "+str(poly_val))
                 if len(ret_array[0])>(base+10):
