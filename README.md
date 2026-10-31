@@ -1,4 +1,4 @@
-Update: My father is about to die. Everyone is talking about giving up on him now. He was healthy and fine. And now he's gone. For a misdiagnosed tumor that didnt need this type of surgery. And Im broke. All the people that seemed to give a damn about me are dissappearing from my life. My father never even got to know that I ran 100k last weekend. He was supposed to wait for me at the finish line, like he always. I feel like my existence has become a fight I cannot win.
+Update: My father is about to die. Everyone is talking about giving up on him now. He was healthy and fine. And now he's gone. For a misdiagnosed tumor that didnt need this type of surgery. And Im broke. All the people that seemed to give a damn about me are dissappearing from my life. My father never even got to know that I ran 100k last weekend. He was supposed to wait for me at the finish line, like he always did. I feel like my existence has become a fight I cannot win.
 
 Note: This project is pro-lgbtq, so fck off haters.
 
