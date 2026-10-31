@@ -1,5 +1,7 @@
 Update: My father is about to die. Everyone is talking about giving up on him now. He was healthy and fine. And now he's gone. For a misdiagnosed tumor that didnt need this type of surgery. And Im broke. All the people that seemed to give a damn about me are dissappearing from my life. My father never even got to know that I ran 100k last weekend. He was supposed to wait for me at the finish line, like he always did. I feel like my existence has become a fight I cannot win.
 
+Update: how does my father, who was perfectly healthy and up bleeding out with multiple strokes in the ICU? I shouldnt have been broke. I could have gotten him a proper surgeon outside this belgian clown country. Belgium took my father from me. This country has taken everything from me. I hope belgium gets destroyed in nuclear hellfire and everyone dies.
+
 Note: This project is pro-lgbtq, so fck off haters.
 
 #### References (re-used many of the core number theoretical functions from these PoCs to fit my own algorithm): 
