@@ -28,7 +28,7 @@ So there is these two conditions that I talk about in the paper. First is two si
 
 Update: Will fix this PoC soon. Its kind of broken an not really doing what its supposed to do. I'll fix it somewhere this week. Got a bit ill and been doing other things.
 
-Update: Still doing some thinking..
+Update: OH! This is it! I already got it! a similar thing to psieve is going on here, but better and much stronger. I just need to optimize the PoC now. Add hensel to the lmod modulus and add sieving intervals. Damnit, should have hit me sooner.
 
 
 
