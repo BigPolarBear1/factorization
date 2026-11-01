@@ -337,7 +337,7 @@ def launch(n,primeslist,primeslist2):
     primelist_f=copy.copy(primeslist)
     primelist_f.insert(0,len(primelist_f)+1)
     primelist_f=array.array('q',primelist_f)
-    sbase=copy.deepcopy(primeslist[0:40])
+    sbase=copy.deepcopy(primeslist[0:30])
     print("[i]Building psieve Residue Map (to do: some duplication here from merging two algos, fix later)")
     resmaps,resmaps2=build_residues(sbase,n)
     print("[i]Finished building... ")
@@ -1073,7 +1073,7 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                         print("fatal errosddsdr: "+" odd: "+str(div))
                         sys.exit()
                     
-                    print("new_r: "+str(new_r)+" new_k: "+str(new_k))
+                  #  print("new_r: "+str(new_r)+" new_k: "+str(new_k))
                     if div*1**2+4*n*new_k != new_r**2:
                         print("well this shouldnt happen really")
                         sys.exit()          
@@ -1136,12 +1136,10 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                             coefft+=cenum[i][ind]
                             i+=1
                         ktf=ktf%lmod
-       # if ktf ==0:
-        #    continue
                         coefft=coefft%lmod
    
                         mod_ind=0
-                        while mod_ind < 1_000:
+                        while mod_ind < 1000:
                             coeff=coefft+mod_ind*lmod
                             
                             if (div*1**2+4*n*ktf)%lmod != (coeff**2)%lmod:
@@ -1155,9 +1153,12 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                             gmod_primes=[]
                             i=0 
                             while i < len(sbase):
-                                if i not in lmod_primes_ind:
+                                if gmod > keysize:# and i not in lmod_primes_ind:
                                     i+=1
                                     continue
+                                #if i not in lmod_primes_ind:
+                                #    i+=1
+                                 #   continue
                                 prime=sbase[i]
 
                                 colist=resmaps2[i][ktf%prime][1]
@@ -1167,20 +1168,11 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                             
                                 tempklist=[]
                                 check_possible_k(resmaps[i],resmaps2[i],prime,n,coeff%prime,(new_r)%prime,tempklist)
-                                if tempklist!=[0]:
-                                    klist.append(prime)
-                                    klist.append(tempklist)
-                                    gmod*=prime
-                                    gmod_primes.append(prime)
-
-
-                                
-                                  #  te=0
-                                  #  while te < len(klist[-1]):
-                                  #      if ((coeff**2)%n)%prime != (((new_r*2)**2)%n)%prime:
-                                  #          print("fasdasd")
-                                  #          sys.exit()
-                                  #      te+=1
+                              #  if tempklist!=[0]:
+                                klist.append(prime)
+                                klist.append(tempklist)
+                                gmod*=prime
+                                gmod_primes.append(prime)
                                 i+=1 
 
                             #("ktf: "+str(ktf)+" coeff: "+str(coeff)+" lmod: "+str(lmod)+" gmod: "+str(gmod))
@@ -1208,14 +1200,31 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                                 k_fint=k_fin%gmod
 
                                 k_fin_ind = 0
-                                while k_fin_ind < 1_000:
+                                while k_fin_ind < 1: ##note to self: dont need this loop
                                     k_fin=k_fint+k_fin_ind*gmod
 
                                     if (coeff**2-4*n*ktf)%lmod != (div*1**2)%lmod:
                                         print("super fatal error should never happen")
                                         sys.exit()
-                         
+                                    if (coeff**2-4*n*ktf) == (div*1**2):
+                                        print("found one")
+                                    
+                                    if (coeff**2-4*n*ktf)%lmod != (div*1**2)%lmod:
+                                       print("fuck")              
+                                        ###Note to self: Can figure out the correct ktf by adding the modulus... this above condition has to be true in Z and in gmod
+                                    
+                                    
                                     disc=coeff**2-4*n*k_fin
+                                    if disc%gmod != (new_r**2)%gmod:
+                                        print("not correct gmod")# klist: "+str(klist)+" coeff: "+str(coeff)+" kfin: "+str(k_fin)+" ktf: "+str(ktf))
+                                        k_fin_ind+=1
+                                        continue
+
+                                    #if disc%lmod != (new_r**2)%lmod:
+                                    #    print(gmod%lmod)
+                                    #    print("not correct lmod")# klist: "+str(klist)+" coeff: "+str(coeff)+" kfin: "+str(k_fin)+" ktf: "+str(ktf))
+                                    #    k_fin_ind+=1
+                                    #    continue
                                     if disc > 0:
                                         test=math.isqrt(disc)
                                         if test**2 == disc:
