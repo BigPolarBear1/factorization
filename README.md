@@ -21,7 +21,7 @@ So there is these two conditions that I talk about in the paper. First is two si
 
 Update: Will fix this PoC soon. Its kind of broken an not really doing what its supposed to do. I'll fix it somewhere this week. Got a bit ill and been doing other things.
 
-Update: Wait wait, actually, if lmod and gmod are the same. And the result is a modular reduced result of a square relation in Z ... then taking the square root over the modulus might reveal a factor... 
+Update: Wait wait, actually, if lmod and gmod are the same. And the result is a modular reduced result of a square relation in Z ... then taking the square root over the modulus might reveal a factor... that should work based on what I'm seeing. I'll upload a version doing this tomorrow.
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
