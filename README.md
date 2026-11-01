@@ -16,7 +16,7 @@ Pronounced the fuck you algorithm
 
 There we go. Fucking kut hoeren. Fuck you haha.
 
-Next improve this and also use this leading coefficient.. since this will divide out the root of the quadratic.
+Next improve this and also use this leading coefficient.. since this will divide out the root of the quadratic. 
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
