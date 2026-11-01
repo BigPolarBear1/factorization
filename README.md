@@ -10,16 +10,13 @@ Note: This paper was written at different stages in my  research project, and as
 
 #### To run from folder "fu_algo":</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 40 -base 5000 -debug 0 -lin_size 10 -quad_size 1
+To run: python3 run_qs.py -keysize 50 -base 5000 -debug 0 -lin_size 10 -quad_size 1
 
 Pronounced the fuck you algorithm
 
-Update: Almost there. I added some new code in process_interval2d as a replacement for psieve. Two modifications though:
+There we go. Fucking kut hoeren. Fuck you haha.
 
-1. lmod and gmod should be the same modulus.
-2. Need to take a square root inside lmod. One of those results will map to an actual result in Z .. .this bypasses an earlier issue I had and fixes something I had been trying for a long time...
-
-Will upload a PoC tomorrow
+Next improve this and also use this leading coefficient.. since this will divide out the root of the quadratic.
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
