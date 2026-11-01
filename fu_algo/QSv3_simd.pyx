@@ -1083,7 +1083,7 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                     coefficients=[]
                     possible_k=[]
                     i=0 
-                    while i < len(sbase) and bitlen(lmod)<(keysize*0.2):
+                    while i < len(sbase) and bitlen(lmod)<(keysize*0.25):
                             
                         prime=sbase[i]
                         sqr=find_roots_poly([1,0,-div], prime) 
