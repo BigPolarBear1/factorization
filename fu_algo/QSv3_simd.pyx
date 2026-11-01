@@ -1083,7 +1083,7 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                     coefficients=[]
                     possible_k=[]
                     i=0 
-                    while i < len(sbase) and bitlen(lmod)<(keysize*0.25):
+                    while i < len(sbase) and bitlen(lmod)<(keysize*0.3):
                             
                         prime=sbase[i]
                         sqr=find_roots_poly([1,0,-div], prime) 
@@ -1139,7 +1139,7 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                         coefft=coefft%lmod
    
                         mod_ind=0
-                        while mod_ind < 1000:
+                        while mod_ind < 1:
                             coeff=coefft+mod_ind*lmod
                             
                             if (div*1**2+4*n*ktf)%lmod != (coeff**2)%lmod:
@@ -1153,12 +1153,12 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                             gmod_primes=[]
                             i=0 
                             while i < len(sbase):
-                                if gmod > keysize:# and i not in lmod_primes_ind:
+                                #if bitlen(gmod) > keysize*0.3:# and i not in lmod_primes_ind:
+                                  #  i+=1
+                                  #  continue
+                                if i not in lmod_primes_ind:
                                     i+=1
                                     continue
-                                #if i not in lmod_primes_ind:
-                                #    i+=1
-                                 #   continue
                                 prime=sbase[i]
 
                                 colist=resmaps2[i][ktf%prime][1]
@@ -1212,27 +1212,72 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                                     if (coeff**2-4*n*ktf)%lmod != (div*1**2)%lmod:
                                        print("fuck")              
                                         ###Note to self: Can figure out the correct ktf by adding the modulus... this above condition has to be true in Z and in gmod
-                                    
-                                    
-                                    disc=coeff**2-4*n*k_fin
-                                    if disc%gmod != (new_r**2)%gmod:
-                                        print("not correct gmod")# klist: "+str(klist)+" coeff: "+str(coeff)+" kfin: "+str(k_fin)+" ktf: "+str(ktf))
-                                        k_fin_ind+=1
-                                        continue
+                                    residues=[]
+                                    for index in lmod_primes_ind:
+                                        prime=sbase[index]
+                                        div2=modinv(2,lmod)
+                                        div4=modinv(4,lmod)
+                                        k_fin2=(k_fin*div4)%lmod
+                                        coeff2=(coeff*div2)%lmod
+                                        
+                                        ##Leading coefficient needs to be used here
+                                        roots=find_roots_poly([1,-coeff2,n*k_fin2],prime)
+                                        if len(roots)>0:
+                                            residues.append(prime)
+                                            residues.append(roots)
+                                        else:
+                                            print("the fuck??????????")
+
+                                    residues=get_partials(lmod,residues)
+                                    #print(residues)
+                                    r_enum=[]
+                                    i=0
+                                    while i < len(residues):
+
+                                        r_enum.append(residues[i+1])
+                                        i+=2
+                                  #  print(r_enum)
+                                    for idx3 in enumerated_product(*r_enum):
+                                        res=0
+             
+                                        i=0
+                                        while i < len(idx3):
+                                            ind=idx3[i]
+                                            res+=r_enum[i][ind]
+
+                                            i+=1
+                                        
+                                        res=res%lmod
+                                        res_ind=0
+                                        while res_ind < 10_000:
+                                            re=res+res_ind*lmod
+                                            gcdtest=math.gcd(re,n)
+                                            if gcdtest!=1 and gcdtest!=n:
+                                                print("k_fin: "+str(k_fin)+" gmod: "+str(gmod)+" lmod: "+str(lmod)+" coeff: "+str(coeff)+" mod_ind: "+str(mod_ind)+" ktf: "+str(ktf))
+                                                print("[i]Found with psieve, factors of N are: "+str(gcdtest)+" and "+str(n//gcdtest))#+" test: "+str(test)+" fin_k: "+str(fin_k//4))
+         
+                                                sys.exit()   
+                                            res_ind+=1
+                                    #disc=coeff**2-4*n*k_fin
+                                    #if disc%gmod != (new_r**2)%gmod:
+                                    #    print("not correct gmod")# klist: "+str(klist)+" coeff: "+str(coeff)+" kfin: "+str(k_fin)+" ktf: "+str(ktf))
+                                    #    k_fin_ind+=1
+                                    #    continue
 
                                     #if disc%lmod != (new_r**2)%lmod:
                                     #    print(gmod%lmod)
                                     #    print("not correct lmod")# klist: "+str(klist)+" coeff: "+str(coeff)+" kfin: "+str(k_fin)+" ktf: "+str(ktf))
                                     #    k_fin_ind+=1
                                     #    continue
-                                    if disc > 0:
-                                        test=math.isqrt(disc)
-                                        if test**2 == disc:
-                                            gcdtest=math.gcd(test+(coeff),n)
-                                            if gcdtest!=1 and gcdtest!=n:
-                                                print("[i]Found with psieve, factors of N are: "+str(gcdtest)+" and "+str(n//gcdtest))#+" test: "+str(test)+" fin_k: "+str(fin_k//4))
+                                    #if disc > 0:
+                                     #   test=math.isqrt(disc)
+                                    ##    if test**2 == disc:
+                                     #       gcdtest=math.gcd(test+(coeff),n)
+                                     #       if gcdtest!=1 and gcdtest!=n:
+                                     #           print("k_fin: "+str(k_fin)+" gmod: "+str(gmod)+" lmod: "+str(lmod)+" coeff: "+str(coeff)+" mod_ind: "+str(mod_ind)+" ktf: "+str(ktf))
+                                    #            print("[i]Found with psieve, factors of N are: "+str(gcdtest)+" and "+str(n//gcdtest))#+" test: "+str(test)+" fin_k: "+str(fin_k//4))
          
-                                                sys.exit()       
+                                     #           sys.exit()       
 
                                    # if k_fin == 156*4 and coeff == (1708*2):
                                    #     print("klist: "+str(klist))#+" "
