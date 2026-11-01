@@ -1,10 +1,3 @@
-Update: My father is about to die. Everyone is talking about giving up on him now. He was healthy and fine. And now he's gone. For a misdiagnosed tumor that didnt need this type of surgery. And Im broke. All the people that seemed to give a damn about me are dissappearing from my life. My father never even got to know that I ran 100k last weekend. He was supposed to wait for me at the finish line, like he always did. I feel like my existence has become a fight I cannot win.
-
-Update: how does my father, who was perfectly healthy and up bleeding out with multiple strokes in the ICU? I shouldnt have been broke. I could have gotten him a proper surgeon outside this belgian clown country. Belgium took my father from me. This country has taken everything from me. I hope belgium gets destroyed in nuclear hellfire and everyone dies.
-
-How about someone fucking do something about those incels who keep emailing me while my father is dying. I swear im going to fucking kill those fuckers. Come talk like that to me irl, and ill fucking kill you on the spot. shitheads. degenerate apes. literal fucking monkey behavior. Fucking incel clowns. 8 years. Non stop emails by these incels. 8 years. Fucking do something already. fucking cowards. Also you know why i can threaten to kill you fucking incels on github and my github never gets taken offline? Bc i know you incels weaponize the report function. I hope you fuckers get shot in the head in broad daylight. Shitheads. 8 years of emails. Fucking 8 years. Even when my father is dying. 
-
-
 Note: This project is pro-lgbtq, so fck off haters.
 
 #### References (re-used many of the core number theoretical functions from these PoCs to fit my own algorithm): 
