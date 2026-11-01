@@ -30,6 +30,8 @@ Update: Will fix this PoC soon. Its kind of broken an not really doing what its 
 
 Update: fixed the PoC a little.. that previous version was broken. Atleast the math now works (mostly) .. let me think now how to exploit this... I have some ideas.. I'll try something out this weekend.
 
+Update: Did some more thinking, at the very least lmod and gmod should be the same. Probably should also use hensel lifting. Thats going to give a larger modulus with fewer solutions. Then next we can use the other primes to figure out how much we need to add lmod/gmod to "coeff" and "k_fin"   .. knowing that it has to satisfy both conditions that I added to the last chapter in the paper. Lets see now how to best approaching this.
+
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size 1</br>
