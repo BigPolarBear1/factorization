@@ -21,9 +21,7 @@ So there is these two conditions that I talk about in the paper. First is two si
 
 Update: Will fix this PoC soon. Its kind of broken an not really doing what its supposed to do. I'll fix it somewhere this week. Got a bit ill and been doing other things.
 
-Update: OH! This is it! I already got it! a similar thing to psieve is going on here, but better and much stronger. I just need to optimize the PoC now. Add hensel to the lmod modulus and add sieving intervals. Damnit, should have hit me sooner.
-
-
+Update: Wait wait, actually, if lmod and gmod are the same. And the result is a modular reduced result of a square relation in Z ... then taking the square root over the modulus might reveal a factor... 
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
