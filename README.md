@@ -14,14 +14,12 @@ To run: python3 run_qs.py -keysize 40 -base 5000 -debug 0 -lin_size 10 -quad_siz
 
 Pronounced the fuck you algorithm
 
-This will be my final iteration.. reworking psieve so it works purely with residues and direct computation of solutions inside a modulus.
-I've added some code to the bottom of process_interval2d(), which replaces the psieve() function. Just showcases the math I recently added to the paper. I need to re-org that code a little bit now though. 
+Update: Almost there. I added some new code in process_interval2d as a replacement for psieve. Two modifications though:
 
-So there is these two conditions that I talk about in the paper. First is two sibling roots both yielding the same value for x^2-4Nk = s ... If we find a b-smooth with SIQS.. on the right hand side we can factor out any squares to get the form x^2-4Nk = s, then we need to find a second sibling root. We can calculate residues inside a modulus. Next, knowing that both roots are also a difference of square itself (the one fermat's factorization algorithm looks for, lets start calling these fermat squares) and thus there must exist some "k" where they have a shared root.. we can then use those residues to figure out how often we need to add the modulus.. this last part I still need to implement but all the math is already in the code.. let me see if I can get it done soon.. very tired after running a 100k ultra marathon last weekend. 
+1. lmod and gmod should be the same modulus.
+2. Need to take a square root inside lmod. One of those results will map to an actual result in Z .. .this bypasses an earlier issue I had and fixes something I had been trying for a long time...
 
-Update: Will fix this PoC soon. Its kind of broken an not really doing what its supposed to do. I'll fix it somewhere this week. Got a bit ill and been doing other things.
-
-Update: Wait wait, actually, if lmod and gmod are the same. And the result is a modular reduced result of a square relation in Z ... then taking the square root over the modulus might reveal a factor... that should work based on what I'm seeing. I'll upload a version doing this tomorrow.
+Will upload a PoC tomorrow
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
