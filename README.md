@@ -18,6 +18,8 @@ There we go. Fucking kut hoeren. Fuck you haha.
 
 Next improve this and also use this leading coefficient.. since this will divide out the root of the quadratic. 
 
+FUCK YOU ALL 1000 TIMES OVER. GO TO HELL. 
+
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size 1</br>
