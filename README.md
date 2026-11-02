@@ -16,7 +16,7 @@ Pronounced the fuck you algorithm
 
 Update: Will complete somewhere this week. It already works and showcases the math from the paper, including final chapter. Whats missing is hensel and proper sieve intervals. 
 
-Its fucking hard to focus. This week will be grim. Discussions about whether or not to let me father die. I just want my father back. I dont understand why he keeps developing complications. It's statistically unlikely the bad luck he had. He should have never gone to a belgian hospital. Belgium is a country of sadists and incompetent bureaucrats, human life has no value in belgian society, unless youre friends with all the right people. I despise this country so much. I've wasted my entire life here and now it has also taken my father from me.
+Its fucking hard to focus. This week will be grim. Discussions about whether or not to let me father die. I just want my father back. I dont understand why he keeps developing complications. It's statistically unlikely the bad luck he had, its like they are trying to kill him on purpose in that hospital. He should have never gone to a belgian hospital. Belgium is a country of sadists and incompetent bureaucrats, human life has no value in belgian society, unless youre friends with all the right people. I despise this country so much. I've wasted my entire life here and now it has also taken my father from me.
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
