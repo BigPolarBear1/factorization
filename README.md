@@ -14,13 +14,7 @@ To run: python3 run_qs.py -keysize 50 -base 5000 -debug 0 -lin_size 10 -quad_siz
 
 Pronounced the fuck you algorithm
 
-There we go. Fucking kut hoeren. Fuck you haha.
-
-Next improve this and also use this leading coefficient.. since this will divide out the root of the quadratic. 
-
-FUCK YOU ALL 1000 TIMES OVER. GO TO HELL. 
-
-Note to self: Factorization of the original root will probably help here too. Let me check tomorrow.
+Update: Will complete somewhere this week. It already works and showcases the math from the paper, including final chapter. Whats missing is hensel and proper sieve intervals. 
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
