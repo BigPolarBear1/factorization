@@ -22,6 +22,13 @@ Its fucking hard to focus. This week will be grim. Discussions about whether or 
 
 Update: Fairly sure you can use the factorization of the original root to figure out how often to add the modulus to the final square root step. Let me think..
 
+Update: This also has to hold true, where plugging in that shared root, also reveals the k value of the other sibling solutions. Let me see if I can use that:
+
+(2\times41\times26)^{2}-(1708\times2)\times(2\times41\times26)+4387\times665=41\times4387
+
+(2\times41\times26)^{2}-(1708\times2)\times(2\times41\times26)+4387\times156\times4=0(2\times41\times26)^{2}-(424\times2)\times(2\times*41\times26)+4387\times41=665\times4387
+
+(2\times41\times26)^{2}-(424\times2)\times(2\times41\times26)-4387\times156\times4=0
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
