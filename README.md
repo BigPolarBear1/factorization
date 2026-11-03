@@ -30,6 +30,8 @@ Update: This also has to hold true, where plugging in that shared root, also rev
 (2\*41\*26)^2-(424\*2)\*(2\*41\*26)+4387\*41 = 665\*4387</br>
 (2\*41\*26)^2-(424\*2)\*(2\*41\*26)-4387\*156\*4 = 0</br></br>
 
+Having a hard time focusing today. But in the above example, the correct coefficients will solve for 0 mod 41 (here k = 41 just happens to be a factor of N, but its coincidence, I should probably change this example in my paper eventually), so you can use these divisor of the original k value whose sibling solution we are trying to find. So you got this mechanism to lift yourself from a local solution to a global solution. I can see, I know it will work. Just too tired right now. I'll do it tomorrow. My father was a better person then all these fucking ghouls in this world. I just feel rage. When this is done, I'm not ever sharing anything ever again. Hell, I'm not ever talking to anyone ever again. Except to tell them to fuck off. Just this fucking rage. Fucking ghouls and troglodytes destroying everything that is beautiful in this world. Drop dead you stupid fuckers. And I swear, if people dont fuck off and keep harassing me like those fucking incels have been doing for the last fucking 8 years, I'm going to fucking kill someone.
+
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size 1</br>
