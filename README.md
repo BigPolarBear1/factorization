@@ -24,11 +24,11 @@ Update: Fairly sure you can use the factorization of the original root to figure
 
 Update: This also has to hold true, where plugging in that shared root, also reveals the k value of the other sibling solutions. Let me see if I can use that:
 
-(2\times41\times26)^{2}-(1708\times2)\times(2\times41\times26)+4387\times665=41\times4387
+(2\*41\*26)^2-(1708\*2)\*(2\*41\*26)+4387\*665 = 41\*4387
+(2\*41\*26)^2-(1708\*2)\*(2\*41\*26)+4387\*156\*4 = 0
 
-(2\times41\times26)^{2}-(1708\times2)\times(2\times41\times26)+4387\times156\times4=0(2\times41\times26)^{2}-(424\times2)\times(2\times*41\times26)+4387\times41=665\times4387
-
-(2\times41\times26)^{2}-(424\times2)\times(2\times41\times26)-4387\times156\times4=0
+(2\*41\*26)^2-(424\*2)\*(2\*41\*26)+4387\*41 = 665\*4387
+(2\*41\*26)^2-(424\*2)\*(2\*41\*26)-4387\*156\*4 = 0
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
