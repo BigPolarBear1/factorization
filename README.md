@@ -18,6 +18,8 @@ Pronounced the fuck you algorithm
 
  Added the new condition at line 1230 (it's shown in the final chapter of the paper), it does work as a filter. Next we need to use it to actually lift a modular solution to Z. Based on what I'm seeing, everything still indicates that it works. But its a bit of finnicky coding work.. I'll get it done somewhere this week.
 
+ See, this is how you lift a local solution to a global one by exploiting characteristics of the system. I did it. I know this is it. Just need to finish it now. Geef mijn vader terug vieze hoerenzonen. 
+
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size 1</br>
