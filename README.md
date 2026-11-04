@@ -18,6 +18,8 @@ Pronounced the fuck you algorithm
 
 Update: There we go. Figured out the final details. So if we have a root, lets say a root with lots of 2^e or some small prime. The more b-smooths we can find with this root, the more we can narrow down our sibling solution. It's actually very elegant. Time to finish this... I'll fix the PoC in the coming days. 
 
+Pretty much know how to finish it now... going to start a clean code project tomorrow.. since the SIQS variant needs to be adapted to sieve specifically with roots that have a small prime(s) with exponent p^e ... then that should allow me to filter out solutions within a finite field. Until just a handful remain and then it becomes trivial to figure out the factor of N. 
+
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size 1</br>
