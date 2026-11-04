@@ -20,6 +20,8 @@ Update: There we go. Figured out the final details. So if we have a root, lets s
 
 Pretty much know how to finish it now... going to start a clean code project tomorrow.. since the SIQS variant needs to be adapted to sieve specifically with roots that have a small prime(s) with exponent p^e ... then that should allow me to filter out solutions within a finite field. Until just a handful remain and then it becomes trivial to figure out the factor of N. 
 
+I womder if we even need bsmooths... probably not.. probably matters fuck all. probably cam just reduce solutions with arbitrary numbers generated with x^2+Nk at different k where x contains p^e for some small prime p. Cant be that simple... that would defeaf factorization completely and break RSA.
+
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size 1</br>
