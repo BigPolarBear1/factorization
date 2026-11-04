@@ -22,6 +22,8 @@ Pronounced the fuck you algorithm
 
 Update: Doing some further testing... so you shouldn't use a prime that divides new_k ... instead you should use a small prime (or multiple small primes) and use hensel. And we should focus on singular roots.......
 
+Update: There we go. Figured out the final details. So if we have a root, lets say a root with lots of 2^e or some small prime. The more b-smooths we can find with this root, the more we can narrow down our sibling solution. It's actually very elegant. Time to finish this... 
+
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size 1</br>
