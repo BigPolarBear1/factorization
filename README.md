@@ -16,13 +16,7 @@ To run: python3 run_qs.py -keysize 25 -base 5000 -debug 0 -lin_size 10 -quad_siz
 
 Pronounced the fuck you algorithm
 
- Added the new condition at line 1230 (it's shown in the final chapter of the paper), it does work as a filter. Next we need to use it to actually lift a modular solution to Z. Based on what I'm seeing, everything still indicates that it works. But its a bit of finnicky coding work.. I'll get it done somewhere this week.
-
- See, this is how you lift a local solution to a global one by exploiting characteristics of the system. I did it. I know this is it. Just need to finish it now. Geef mijn vader terug vieze hoerenzonen. 
-
-Update: Doing some further testing... so you shouldn't use a prime that divides new_k ... instead you should use a small prime (or multiple small primes) and use hensel. And we should focus on singular roots.......
-
-Update: There we go. Figured out the final details. So if we have a root, lets say a root with lots of 2^e or some small prime. The more b-smooths we can find with this root, the more we can narrow down our sibling solution. It's actually very elegant. Time to finish this... 
+Update: There we go. Figured out the final details. So if we have a root, lets say a root with lots of 2^e or some small prime. The more b-smooths we can find with this root, the more we can narrow down our sibling solution. It's actually very elegant. Time to finish this... I'll fix the PoC in the coming days. 
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
