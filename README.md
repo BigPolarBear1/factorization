@@ -20,7 +20,7 @@ Pronounced the fuck you algorithm
 
  See, this is how you lift a local solution to a global one by exploiting characteristics of the system. I did it. I know this is it. Just need to finish it now. Geef mijn vader terug vieze hoerenzonen. 
 
-Update: Doing some further testing... so you shouldn't use a prime that divides new_k ... instead you should use a small prime (or multiple small primes) and use hensel.
+Update: Doing some further testing... so you shouldn't use a prime that divides new_k ... instead you should use a small prime (or multiple small primes) and use hensel. And we should focus on singular roots.......
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
