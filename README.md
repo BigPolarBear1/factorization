@@ -1,5 +1,7 @@
 The only thing that will fix this is if my father survives (and makes a reasonable recovery) and all these incels who send me hate mail over the past 8 years, if they disappear never to be found again. And if everyone around me that I care about, including friends from the past (like my former managers), if nothing bad happens to any of them and all these people get to live a life completely insulated from the horrors of this shit world. I'm done with people just dying all around me. If my father dies, then congrats, you have succesfully succeeded at destroying me, but I suspect that was the objective all along. People think I'm some type of idiot, that I'm blind. I see everything you fuckers. 
 
+Update: What a shitshow. My father really ended up in the worst ICU of belgium. And if I wasnt broke I could atleast make sure everything is done for him. They are just giving up on my father without doing proper diagnostics like EEG of the brain. You know of anyone wanted to buy my loyalty, they could just make sure my father had access to world class care... like right this moment before he dies in that shithole belgian ICU. I cannot lose my father. It wasnt even his time yet. He was murdered by belgian incompetence.
+
 Note: This project is pro-lgbtq, so fck off haters.
 
 #### References (re-used many of the core number theoretical functions from these PoCs to fit my own algorithm): 
