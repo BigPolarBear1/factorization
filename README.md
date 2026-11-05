@@ -20,7 +20,7 @@ Pronounced the fuck you algorithm
 
 Update: I'll update the paper first when I come back from running. There is a way to filter solutions within a finite field using hensel. Because sometimes it will yield fewer solutions and if we start from an original bsmooth and multiply both sides with squares, then all those results are linked and it just becomes a case of filtering out solutions. So first the paper.. then the daunting task of writing the PoC.. but almost there, I see a way it can be done now. 
 
-Update: I'll update the paper tomorrow.. so if we're working, for example mod 16, then we must multiply the odd exponent factor part of a b-smooth by 16**2 and calculate all the possible residues that hold the condition I added in the final chapter of the paper.. then valid residues should show up both when we multiply with 16 and when we dont. It does work. 
+Update: I'll update the paper tomorrow.. so if we're working, for example mod 16, then we must multiply the odd exponent factor part of a b-smooth by 16**2 and calculate all the possible residues that hold the condition I added in the final chapter of the paper.. then valid residues should show up both when we multiply with 16 and when we dont. It does work. If this is going to work... then somebody go help my father so he doesn't die, like right this moment. I cannot lose my father and there is no time to waste.
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
