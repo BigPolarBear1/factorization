@@ -22,6 +22,8 @@ Pretty much know how to finish it now... going to start a clean code project tom
 
 I womder if we even need bsmooths... probably not.. probably matters fuck all. probably cam just reduce solutions with arbitrary numbers generated with x^2+Nk at different k where x contains p^e for some small prime p. Cant be that simple... that would defeaf factorization completely and break RSA.
 
+Update: worked out the details mostly.. let me see. Singular roots can be used to eliminate solutions within a finite field. But we need to multiply both sides with squares and reduce mod N and find a coefficient with the correct factors (can be figured out with residue maps). Its not that hard... just extremely finnicky to implement.. hence this will probably take a few days, but let me add an example to the paper already.
+
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size 1</br>
