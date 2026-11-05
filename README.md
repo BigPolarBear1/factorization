@@ -16,13 +16,7 @@ To run: python3 run_qs.py -keysize 25 -base 5000 -debug 0 -lin_size 10 -quad_siz
 
 Pronounced the fuck you algorithm
 
-Update: There we go. Figured out the final details. So if we have a root, lets say a root with lots of 2^e or some small prime. The more b-smooths we can find with this root, the more we can narrow down our sibling solution. It's actually very elegant. Time to finish this... I'll fix the PoC in the coming days. 
-
-Pretty much know how to finish it now... going to start a clean code project tomorrow.. since the SIQS variant needs to be adapted to sieve specifically with roots that have a small prime(s) with exponent p^e ... then that should allow me to filter out solutions within a finite field. Until just a handful remain and then it becomes trivial to figure out the factor of N. 
-
-I womder if we even need bsmooths... probably not.. probably matters fuck all. probably cam just reduce solutions with arbitrary numbers generated with x^2+Nk at different k where x contains p^e for some small prime p. Cant be that simple... that would defeaf factorization completely and break RSA.
-
-Update: worked out the details mostly.. let me see. Singular roots can be used to eliminate solutions within a finite field. But we need to multiply both sides with squares and reduce mod N and find a coefficient with the correct factors (can be figured out with residue maps). Its not that hard... just extremely finnicky to implement.. hence this will probably take a few days, but let me add an example to the paper already.
+Update: I'll update the paper first when I come back from running. There is a way to filter solutions within a finite field using hensel. Because sometimes it will yield fewer solutions and if we start from an original bsmooth and multiply both sides with squares, then all those results are linked and it just becomes a case of filtering out solutions. So first the paper.. then the daunting task of writing the PoC.. but almost there, I see a way it can be done now. 
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
