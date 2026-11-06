@@ -26,6 +26,8 @@ I know somebody must know I'm closing in if I didn't already solve it today (whi
 
 Update: Just finished the paper... that shows how to do direct computation of that k multiplier to N to find that sibling root. So I guess it was possible after all.. and not even that complicated. I'll finish the PoC tomorrow.. and it should work.. and that will have been that....
 
+Update: PoC time tomorrow.. if this works the way it should.. then factorization falls tomorrow. Like completely. All of RSA will be broken... all of it. People should start praying I missed something in my math.. because else.. something is about to happen that will echo through the ages. And I couldnt care less amymore.
+
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size 1</br>
