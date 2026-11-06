@@ -24,6 +24,8 @@ Update: I'll update the paper tomorrow.. so if we're working, for example mod 16
 
 I know somebody must know I'm closing in if I didn't already solve it today (which I'll upload tomorrow) then save my father before it is too late. There are things I can never forgive and my father dying, at this point in my life, when it wasn't even his time yet, that is the one thing that I can never forgive. 
 
+Update: Just finished the paper... that shows how to do direct computation of that k multiplier to N to find that sibling root. So I guess it was possible after all.. and not even that complicated. I'll finish the PoC tomorrow.. and it should work.. and that will have been that....
+
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size 1</br>
