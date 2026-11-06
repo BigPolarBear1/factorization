@@ -26,8 +26,6 @@ I know somebody must know I'm closing in if I didn't already solve it today (whi
 
 Update: Just finished the paper... that shows how to do direct computation of that k multiplier to N to find that sibling root. So I guess it was possible after all.. and not even that complicated. I'll finish the PoC tomorrow.. and it should work.. and that will have been that....
 
-Update: Some retard shouting what I'm pretty sure was insults after I came back home from running. Sadly couldn't figure out where it was coming from. Nearly went outside with a knife in my hand to kill that fucker. Fed up with all the fucking harassment by these shitheads for years.
-
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size 1</br>
