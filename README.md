@@ -20,7 +20,7 @@ Pronounced the fuck you algorithm
 
 Update: Modified the PoC... now to improve it. Aside from some quick and dirty bruteforce loops that I need to fix, the main thing will be looking at other primes to properly calculate adjusted_k... once that is done, performance should be very quick.
 
-I'll start with minimizing and cleaning up the PoC first though.. because this code that I used while doing research gets a bit messy.
+I'll start with minimizing and cleaning up the PoC first though.. because this code that I used while doing research gets a bit messy. But the general math is there now.. doing the same what I describe in the final chapter of the paper. 
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
