@@ -956,9 +956,9 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
     k=0
     length=len(indexlist)
     while k < length:# length:  
-        i=indexlist[k]
-        if temp[i]>threshold:       
-            x=root+cmod*int(i)
+        ind=indexlist[k]
+        if temp[ind]>threshold:       
+            x=root+cmod*int(ind)
             if quad_sign=="neg":
                 poly_val=quad_can*x**2-n
             else: 
@@ -1058,13 +1058,23 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                 keysize=bitlen(n)
                 if value==1 and div!=1 and div%2!=0 and bitlen(div)<(keysize*0.5):# and poly_val >0:# and isPrime(value,5)==1:# and isPrime(div,5)==1:# and value2==1:# and len(div_fac)==1:
                     print("[i]Trying psieve b: "+str(2*new_root)+" a: "+str(div)+" bitlen a: "+str(bitlen(div)))
-                    
+                   # n=4387
+                    #poly_val=-277
+                    #div=-277
+                    #new_root=672
                     check=0
+                    #print(poly_val//div)
                     inv_n=modinv(math.isqrt(poly_val//div),n)
-                    new_r=(new_root*inv_n)%n
-                    new_r=new_r*2
-               
+                    fprime=3
+                    fexp=8
                     
+                    ffmod=fprime**fexp
+                    new_r=(new_root*inv_n)%n
+                    nr=(new_r)*ffmod
+                    new_r=(nr-n)*2
+                    #print("nr: "+str(nr))
+                    #print("new_r: "+str(new_r))
+                    div=div*ffmod**2
                     div=div*4
 
                    # o_k=(new_root**2-div)//(n)
@@ -1082,166 +1092,126 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                     if len(new_k_div)==0:
                         k+=1
                         continue
-                    print("new_r: "+str(new_r)+" new_k: "+str(new_k))
+                  #  print("new_r: "+str(new_r)+" new_k: "+str(new_k))
                     if div*1**2+4*n*new_k != new_r**2:
                         print("well this shouldnt happen really")
                         sys.exit()          
-                    keysize=bitlen(n)
-                    lmod=1
-                    lmod_primes_ind=[]
-                    coefficients=[]
-                    possible_k=[]
-                    i=0 
-                    while i < len(sbase):# and bitlen(lmod)<(keysize*0.5):
-                        if  bitlen(lmod)>(keysize*0.3):#  and sbase[i]!=53:
-                            i+=1
-                            continue             
-                        prime=sbase[i]
-                        sqr=find_roots_poly([1,0,-div], prime) 
+                    solsc=[]
+                    solsk=[]
+                    solskt=[]
+                    
 
-                        if len(sqr)>1:  #to do: Check that both sqr roots are yielding the same k's
-                            possible_k.append(prime)
-                            possible_k.append([])
-                            coefficients.append(prime)
-                            coefficients.append([])
-                            lmod*=prime
-                            lmod_primes_ind.append(i)
-                            kt=0
-                            while kt < prime:
-                                colist=resmaps2[i][kt%prime][1]
-                                colist2=resmaps[i][kt%prime][1]
-                                j=0
-                                while j < len(colist):
-                                    if (1*sqr[0])%prime == colist[j]:
-                                        if colist2[j] not in coefficients[-1]:
-                                            possible_k[-1].append(kt)
-                                            if (div*1**2+4*n*kt)%prime != (colist2[j]**2)%prime:
-                                                print("bleep blaap")
-                                                sys.exit()
-                                            coefficients[-1].append(colist2[j])
-                       # break
-                                    j+=1
+                    prime=fprime
+                    
+                    
+                    lift=1
+                    exp=fexp
 
 
-                                kt+=1
-                        i+=1 
- 
-                    #i=0
-                   # while i < len(possible_k):
-                    #    print("prime: "+str(possible_k[i])+" "+str(possible_k[i+1]))
-                    #    print("prime: "+str(coefficients[i])+" "+str(coefficients[i+1]))
-                    #    i+=2
+                    j=0
+                    while j < prime**exp:
+                        nco=0
+                        nk=j
 
-                    possible_k=get_partials(lmod,possible_k)
-                    coefficients=get_partials(lmod,coefficients)
-                    kenum=[]
-                    cenum=[]
-                    i=0
-                    while i < len(possible_k):
-                        kenum.append(possible_k[i+1])
-                        cenum.append(coefficients[i+1])
-                        i+=2
+                     
 
-                    for idx in enumerated_product(*kenum):
-                        ktf=0
-                        coefft=0
-                        i=0
-                        while i < len(idx):
-                            ind=idx[i]
-                            ktf+=kenum[i][ind]
-                            coefft+=cenum[i][ind]
-                            i+=1
-                        ktf=ktf%lmod
-                        coefft=coefft%lmod
-   
-                        mod_ind=0
-                        while mod_ind < 100:
-                            coeff=coefft+mod_ind*lmod
-                            
-                            if (div*1**2+4*n*ktf)%lmod != (coeff**2)%lmod:
-                                print("fatal error.. should always hold true: "+str((div*1**2+4*n*ktf)%lmod)+" "+str((coeff**2)%lmod)+" lmod: "+str(lmod))
-                                print("k: "+str(possible_k))
-                                print("c: "+str(coefficients))
-                                sys.exit()
-                            klist=[]
-                            co2=[]
-                            gmod=1
-                            gmod_primes_ind=[]
-                            i=0 
-                            while i < len(sbase):# and bitlen(gmod)<keysize:
-                                if i not in lmod_primes_ind:# and sbase[i]!=53:# and i > 10:# and i >10:
-                                    i+=1
-                                    continue
-                                prime=sbase[i]
+                        roots=find_roots_poly([1,nco,n*nk],prime)
+                        if lift == 1:
+                            q=0
+                            while q < len(roots):
+                                if len(roots)>1:
+                                    tmp=lift_root2([1,nco,n*nk], roots[q],prime,exp)
+                                    if evaluate([1,nco,n*nk],tmp)%prime**exp ==0:
+                                        roots[q]=tmp
+                                else:
+                                    startx=roots[0]
+                                    roots=[]
+                                    while startx < prime**exp:
+                                        if evaluate([1,nco,n*nk],startx)%prime**exp ==0:
+                                            roots.append(startx)
+                                        startx+=prime
+                                    break
+                                q+=1
 
-                                colist=resmaps2[i][ktf%prime][1]
-                                colist2=resmaps[i][ktf%prime][1]                            
-                                tempklist=[]
-                                check_possible_k(resmaps[i],resmaps2[i],prime,n,coeff%prime,(new_r)%prime,tempklist)
-                                if tempklist!=[0]:
-                                    klist.append(prime)
-                                    klist.append(tempklist)
-                                    gmod*=prime
-                                    gmod_primes_ind.append(i)
-                                i+=1 
+                        roots2=find_roots_poly([1,-new_r,-n*nk],prime)
+                        if lift == 1:
+                            q=0
+                            while q < len(roots2):
+                                if len(roots2)>1:
+                                    tmp=lift_root2([1,-new_r,-n*nk], roots2[q],prime,exp)
+                                    if evaluate([1,-new_r,-n*nk],tmp)%prime**exp ==0:
+                                        roots2[q]=tmp
+                                else:
+                        
+                                    startx=roots2[0]
+                                    roots2=[]
+                                    while startx < prime**exp:
+                                        if evaluate([1,-new_r,-n*nk],startx)%prime**exp ==0:
+                                            roots2.append(startx)
+                                        startx+=prime
+                                    break
+                                q+=1
+                        divn=modinv(n,prime**exp)
+                        for r in roots2:
+                            res=evaluate([1,-new_r,n*new_k],r)%prime**exp
+                            k_can=(res*divn)%prime**exp
+                            roots3=find_roots_poly([1,nco,n*k_can-new_k*n],prime)
+                            if lift == 1:
+                                q=0
+                                while q < len(roots3):
+                                    if len(roots3)>1:
+                                        tmp=lift_root2([1,nco,n*k_can-new_k*n], roots3[q],prime,exp)
+                                        if evaluate([1,nco,n*k_can-new_k*n],tmp)%prime**exp ==0:
+                                            roots3[q]=tmp
+                                        q+=1
+                                    else:
+                                        startx=roots3[0]
+                                        roots3=[]
+                                        while startx < prime**exp:
 
-                            klist=get_partials(gmod,klist)
-                            kenum2=[]
-     
-                            i=0
-                            while i < len(klist):
-                                kenum2.append(klist[i+1])
- 
-                                i+=2
+                                            if evaluate([1,nco,n*k_can-new_k*n],startx)%prime**exp ==0:
+                                                roots3.append(startx)
+                                            startx+=prime
+                                        break
+                            r123=evaluate([1,nco,n*k_can],r)
+                            if (r123*divn)%prime**exp == new_k%prime**exp:
+                                if r in roots and r in roots2 and r in roots3 and nk%prime**exp == (k_can-new_k)%prime**exp:
+                                    if (nco**2-n*k_can*4)%prime**exp == div%prime**exp:
+                                        found=0
+                                        y=0
+                                        while y < len(solsc):
+                                            if solsc[y] == nco and solsk[y]==nk:
+                                                found=1
+                                            y+=1
+                                        if found ==0:
+                                            solsc.append(nco)
+                                            solsk.append(nk)
+                                            solskt.append(k_can)
+         
+                        j+=1
 
 
-                            for idx2 in enumerated_product(*kenum2):
-                                k_fin=0
-             
-                                i=0
-                                while i < len(idx2):
-                                    ind=idx2[i]
-                                    k_fin+=kenum2[i][ind]
-            
-                                    i+=1
-                                k_fint=k_fin%gmod
 
-                                k_fin_ind = 0
-                                while k_fin_ind < 100:
-                                    k_fin=k_fint+k_fin_ind*gmod
-
-                                    if (coeff**2-4*n*ktf)%lmod != (div*1**2)%lmod:
-                                        print("super fatal error should never happen")
+                    kt=solsk[0]
+                    i=1
+                    while i < 10_000_000:
+                        adjusted_k=(kt+(i*ffmod))-(2*nr-n)
+                        if adjusted_k%ffmod**2 ==0:
+                            adjusted_k//=ffmod**2
+                            new_root2=(nr)//ffmod
+                          #  print("kt: "+str(kt)+" adjusted k: "+str(adjusted_k)+" i: "+str(i))
+                            poly=[1,2*new_root2,(-n*adjusted_k)]
+                           # print("poly: "+str(poly))
+                            x=0
+                            while x < ffmod:
+                                if evaluate(poly,x)%ffmod == 0:
+                                    gcdtest=math.gcd(x,n)
+                                    #print("x: "+str(x)+" gcd: "+str(gcdtest))
+                                    if gcdtest !=1 and gcdtest !=n:# and adjusted_k == 76:
+                                        print("Found with psieve, factor of "+str(n)+" are: "+str(gcdtest)+" and "+str(n//gcdtest))
                                         sys.exit()
-
-                                    if 1:#k_fin%gmod == (76)%gmod and coeff%gmod == (886*2)%gmod:# and re == 2*26*41:
-                                        check+=1
-                                        prime=new_k_div[-1]
-                                        roots=find_roots_poly([1,coeff,n*k_fin],prime)
-                                        roots2=find_roots_poly([1,-new_r,-n*k_fin],prime)
-                                        divn=modinv(n,prime)
-                                        for r in roots2:
-                                            res=evaluate([1,-new_r,n*new_k],r)%prime
-                                            k_can=(res*divn)%prime
-                                            roots3=find_roots_poly([1,coeff,n*k_can],prime)
-
-                                            r123=evaluate([1,coeff,n*k_can],r)
-                                            if (r123*divn)%prime == new_k%prime:
-                                                if r in roots and r in roots2 and r in roots3:
-                                                    #print("hit r2: "+str(r)+" check: "+str(check))
-                                                    #print("hit the case: "+str(roots)+" "+" "+str(roots2)+" "+str(roots3))
-
-                                                    #print("coeff: "+str(coeff)+" kfin: "+str(k_fin)+" ktf: "+str(ktf)+" new_k: "+str(new_k)+" lmod: "+str(lmod)+" gmod: "+str(gmod))
-                                                    gcdtest=math.gcd(coeff+new_r,n)
-                                                    if gcdtest != 1 and gcdtest != n:
-                                                        print("found factors of n with psieve: "+str(gcdtest)+" and "+str(n//gcdtest))
-                                                        sys.exit()
-
-
-
-                                    k_fin_ind+=1
-
-                            mod_ind+=1
+                                x+=1
+                        i+=1
 
                   #  sys.exit()
             #    print("***seen_primes: "+str(local_factors)+" cmod: "+str(cmod)+" root: "+str(new_root)+" polyval: "+str(poly_val))
