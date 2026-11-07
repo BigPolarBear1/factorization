@@ -28,6 +28,8 @@ Update: Just finished the paper... that shows how to do direct computation of th
 
 Update: Last chapter I added today needs cleaning up, lots of typos. Let me start with the code tomorrow first though.
 
+TOMORROW I WILL UPLOAD A PROPER CODE IMPLEMENTATION. AND TELL EVERYONE. THAT OR GO SAVE MY FATHER LIKE RIGHT NOW U FCKING CUNTS. TIME'S UP.
+
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size 1</br>
