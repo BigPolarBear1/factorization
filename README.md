@@ -18,19 +18,7 @@ To run: python3 run_qs.py -keysize 25 -base 5000 -debug 0 -lin_size 10 -quad_siz
 
 Pronounced the fuck you algorithm
 
-Update: I'll update the paper first when I come back from running. There is a way to filter solutions within a finite field using hensel. Because sometimes it will yield fewer solutions and if we start from an original bsmooth and multiply both sides with squares, then all those results are linked and it just becomes a case of filtering out solutions. So first the paper.. then the daunting task of writing the PoC.. but almost there, I see a way it can be done now. 
-
-Update: I'll update the paper tomorrow.. so if we're working, for example mod 16, then we must multiply the odd exponent factor part of a b-smooth by 16**2 and multiply the root that generated the b-smooth by 16 and calculate all the possible residues mod 16 that hold the condition I added in the final chapter of the paper.. then valid residues should show up both when we multiply with 16 and when we reduce the root multiplied by 16 mod N (they generate destinct residue pairings and allow to filter out many). It does work. If this is going to work... then somebody go help my father so he doesn't die, like right this moment. I cannot lose my father and there is no time to waste.
-
-I know somebody must know I'm closing in if I didn't already solve it today (which I'll upload tomorrow) then save my father before it is too late. There are things I can never forgive and my father dying, at this point in my life, when it wasn't even his time yet, that is the one thing that I can never forgive. 
-
-Update: Just finished the paper... that shows how to do direct computation of that k multiplier to N to find that sibling root. So I guess it was possible after all.. and not even that complicated. I'll finish the PoC tomorrow.. and it should work.. and that will have been that....
-
-Update: Last chapter I added today needs cleaning up, lots of typos. Let me start with the code tomorrow first though.
-
-TOMORROW I WILL UPLOAD A PROPER CODE IMPLEMENTATION. AND TELL EVERYONE. THAT OR GO SAVE MY FATHER LIKE RIGHT NOW U FCKING CUNTS. TIME'S UP.
-
-Update: IK HEB EEN POC VIEZE KUT HOEREN. GEEF MIJN VADER TERUG. 
+Update: Modified the PoC... now to improve it. Aside from some quick and dirty bruteforce loops that I need to fix, the main thing will be looking at other primes to properly calculate adjusted_k... once that is done, performance should be very quick.
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
