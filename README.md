@@ -22,6 +22,8 @@ Update: Modified the PoC... now to improve it. Aside from some quick and dirty b
 
 I'll start with minimizing and cleaning up the PoC first though.. because this code that I used while doing research gets a bit messy. But the general math is there now.. doing the same what I describe in the final chapter of the paper. 
 
+Note-to-self: After some thinking, taking a root inside ffmod is probably the way to go, because then we don't need to find the correct "adjusted_k" because we're already garantueed to be in the correct one in ffmod. The problem just becomes dividing the root by ffmod.. since it also gets multiplied.. I can probably construct something with the help of residue maps of other primes to make that division happen. And then the factor should reveal itself modulo ffmod. Almost..so close now.
+
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size 1</br>
