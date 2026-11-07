@@ -24,6 +24,8 @@ I'll start with minimizing and cleaning up the PoC first though.. because this c
 
 Note-to-self: After some thinking, taking a root inside ffmod is probably the way to go, because then we don't need to find the correct "adjusted_k" because we're already garantueed to be in the correct one in ffmod. The problem just becomes dividing the root by ffmod.. since it also gets multiplied.. I can probably construct something with the help of residue maps of other primes to make that division happen. And then the factor should reveal itself modulo ffmod. Almost..so close now.
 
+UPDATE: I figured it out! If we subtract N from the linear coefficient.. then this effectively also adds N to the root. I got it. :) Watch magic happen tomorrow... I WANT MY FATHER BACK. DO SOMETHING. I won't forgive it if my father doesn't survive. 
+
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size 1</br>
