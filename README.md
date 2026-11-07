@@ -26,6 +26,8 @@ Note-to-self: After some thinking, taking a root inside ffmod is probably the wa
 
 UPDATE: I figured it out! If we subtract N from the linear coefficient.. then this effectively also adds N to the root. I got it. :) Watch magic happen tomorrow... I WANT MY FATHER BACK. DO SOMETHING. I won't forgive it if my father doesn't survive. 
 
+Update: Made some quick slight modifications at line 1070 rather then adding the modulus there we need to look at other primes to figure out modular division of the root and just purely work inside ffmod.
+
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size 1</br>
