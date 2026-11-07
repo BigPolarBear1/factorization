@@ -935,23 +935,24 @@ def check_possible_k(resmaps,resmaps2,prime,n,b1,b2,found):
 
 
 def psieve(n,new_root,poly_val,div,largeprime):
-    #n=4387
-    #poly_val=-277
-    #div=-277
-    #new_root=672
+   # n=4387
+   # poly_val=-277
+   # div=-277
+   # new_root=672
 
     check=0
                     #print(poly_val//div)
     inv_n=modinv(math.isqrt(poly_val//div),n)
     fprime=3
-    fexp=6
+    fexp=7
                     
     ffmod=fprime**fexp
     new_r=(new_root*inv_n)%n
     nr=(new_r)*ffmod
     new_r=(nr-n)*2
     #print("nr: "+str(nr))
-    #print("new_r: "+str(new_r))
+  #  print("new_r: "+str(new_r)+" nr: "+str(nr))
+   # sys.exit()
     div=div*ffmod**2
     div=div*4
 
@@ -1060,32 +1061,35 @@ def psieve(n,new_root,poly_val,div,largeprime):
         j+=1
 
     print("checking")
-
+   # poly=[1,2*new_root2,(-n*kt)]
+  #  roots=find_roots_poly(poly,largeprime)
     kt=solsk[0]
-    stepsize=solve_lin_con(ffmod,(2*nr-n)-kt,ffmod**2)
+   # stepsize=solve_lin_con(ffmod,(2*nr-n)-kt,ffmod**2)
     i=0
     while i < 10_000_000:
-        adjusted_k=(kt+((stepsize+i*ffmod)*ffmod))-(2*nr-n)
-        if adjusted_k%ffmod**2 ==0:
-            adjusted_k//=ffmod**2
-            new_root2=(nr)//ffmod
+        adjusted_k=kt+ffmod*i#(kt+((stepsize+i*ffmod)*ffmod))-(2*nr-n)
+      #  if adjusted_k%ffmod**2 ==0:
+         #   adjusted_k//=ffmod**2
+         #   new_root2=(nr)//ffmod
            # print("stepsize: "+str(stepsize))
                           #  print("kt: "+str(kt)+" adjusted k: "+str(adjusted_k)+" i: "+str(i))
-            poly=[1,2*new_root2,(-n*adjusted_k)]
-          #  print("poly: "+str(poly)+" i: "+str(i)+" adjusted k: "+str(adjusted_k))
+        poly=[1,new_r,(-n*adjusted_k)]
+       #print("poly: "+str(poly)+" i: "+str(i)+" adjusted k: "+str(adjusted_k))
 
-
-            roots=find_roots_poly(poly,largeprime)
-            for x in roots:
-      
-                gcdtest=math.gcd(x,n)
+        polyc=copy.deepcopy(poly)
+        roots=find_roots_poly(polyc,largeprime)
+        for x in roots:
+            x=(x-n)%largeprime
+            div_ff=modinv(ffmod,largeprime)
+            x=(x*div_ff)%largeprime
+            gcdtest=math.gcd(x,n)
                                     #print("x: "+str(x)+" gcd: "+str(gcdtest))
-                if gcdtest !=1 and gcdtest !=n:# and adjusted_k == 76:
-                    print("Found with psieve, factor of "+str(n)+" are: "+str(gcdtest)+" and "+str(n//gcdtest)+" poly: "+str(poly)+" x: "+str(x)+" k: "+str(adjusted_k)+" i: "+str(i))
-                    sys.exit()
-        else:
-            print("should never happen")
-            sys.exit()        
+            if gcdtest !=1 and gcdtest !=n:# and adjusted_k == 366440585:
+                print("Found with psieve, factor of "+str(n)+" are: "+str(gcdtest)+" and "+str(n//gcdtest)+" poly: "+str(poly)+" x: "+str(x)+" k: "+str(adjusted_k)+" i: "+str(i))
+                sys.exit()
+      #  else:
+       #     print("should never happen")
+       #     sys.exit()        
         i+=1
 
     return
