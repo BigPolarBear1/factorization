@@ -933,7 +933,163 @@ def check_possible_k(resmaps,resmaps2,prime,n,b1,b2,found):
 
     return   
 
+
+def psieve(n,new_root,poly_val,div,largeprime):
+
+    check=0
+                    #print(poly_val//div)
+    inv_n=modinv(math.isqrt(poly_val//div),n)
+    fprime=3
+    fexp=5
+                    
+    ffmod=fprime**fexp
+    new_r=(new_root*inv_n)%n
+    nr=(new_r)*ffmod
+    new_r=(nr-n)*2
+    #print("nr: "+str(nr))
+    #print("new_r: "+str(new_r))
+    div=div*ffmod**2
+    div=div*4
+
+
+    new_k=(new_r**2-div)//(n*4)
+    if (new_r**2-div)%n !=0:
+        print("fatal errosddsdr: "+" odd: "+str(div))
+        sys.exit()
+
+                  #  print("new_r: "+str(new_r)+" new_k: "+str(new_k))
+    if div*1**2+4*n*new_k != new_r**2:
+        print("well this shouldnt happen really")
+        sys.exit()          
+    solsc=[]
+    solsk=[]
+    solskt=[]
+                    
+
+    prime=fprime
+                    
+                    
+    lift=1
+    exp=fexp
+
+
+    j=0
+    while j < prime**exp:
+        nco=0
+        nk=j
+
+                     
+
+        roots=find_roots_poly([1,nco,n*nk],prime)
+        if lift == 1:
+            q=0
+            while q < len(roots):
+                if len(roots)>1:
+                    tmp=lift_root2([1,nco,n*nk], roots[q],prime,exp)
+                    if evaluate([1,nco,n*nk],tmp)%prime**exp ==0:
+                        roots[q]=tmp
+                else:
+                    startx=roots[0]
+                    roots=[]
+                    while startx < prime**exp:
+                        if evaluate([1,nco,n*nk],startx)%prime**exp ==0:
+                            roots.append(startx)
+                        startx+=prime
+                    break
+                q+=1
+
+        roots2=find_roots_poly([1,-new_r,-n*nk],prime)
+        if lift == 1:
+            q=0
+            while q < len(roots2):
+                if len(roots2)>1:
+                    tmp=lift_root2([1,-new_r,-n*nk], roots2[q],prime,exp)
+                    if evaluate([1,-new_r,-n*nk],tmp)%prime**exp ==0:
+                        roots2[q]=tmp
+                else:
+                        
+                    startx=roots2[0]
+                    roots2=[]
+                    while startx < prime**exp:
+                        if evaluate([1,-new_r,-n*nk],startx)%prime**exp ==0:
+                            roots2.append(startx)
+                        startx+=prime
+                    break
+                q+=1
+        divn=modinv(n,prime**exp)
+        for r in roots2:
+            res=evaluate([1,-new_r,n*new_k],r)%prime**exp
+            k_can=(res*divn)%prime**exp
+            roots3=find_roots_poly([1,nco,n*k_can-new_k*n],prime)
+            if lift == 1:
+                q=0
+                while q < len(roots3):
+                    if len(roots3)>1:
+                        tmp=lift_root2([1,nco,n*k_can-new_k*n], roots3[q],prime,exp)
+                        if evaluate([1,nco,n*k_can-new_k*n],tmp)%prime**exp ==0:
+                            roots3[q]=tmp
+                        q+=1
+                    else:
+                        startx=roots3[0]
+                        roots3=[]
+                        while startx < prime**exp:
+
+                            if evaluate([1,nco,n*k_can-new_k*n],startx)%prime**exp ==0:
+                                roots3.append(startx)
+                            startx+=prime
+                        break
+            r123=evaluate([1,nco,n*k_can],r)
+            if (r123*divn)%prime**exp == new_k%prime**exp:
+                if r in roots and r in roots2 and r in roots3 and nk%prime**exp == (k_can-new_k)%prime**exp:
+                    if (nco**2-n*k_can*4)%prime**exp == div%prime**exp:
+                        found=0
+                        y=0
+                        while y < len(solsc):
+                            if solsc[y] == nco and solsk[y]==nk:
+                                found=1
+                            y+=1
+                        if found ==0:
+                            solsc.append(nco)
+                            solsk.append(nk)
+                            solskt.append(k_can)
+         
+        j+=1
+
+
+
+    kt=solsk[0]
+    i=1
+    while i < 10_000_000:
+        adjusted_k=(kt+(i*ffmod))-(2*nr-n)
+        if adjusted_k%ffmod**2 ==0:
+            adjusted_k//=ffmod**2
+            new_root2=(nr)//ffmod
+                          #  print("kt: "+str(kt)+" adjusted k: "+str(adjusted_k)+" i: "+str(i))
+            poly=[1,2*new_root2,(-n*adjusted_k)]
+                           # print("poly: "+str(poly))
+
+
+            roots=find_roots_poly(poly,largeprime)
+            for x in roots:
+      
+                gcdtest=math.gcd(x,n)
+                                    #print("x: "+str(x)+" gcd: "+str(gcdtest))
+                if gcdtest !=1 and gcdtest !=n:# and adjusted_k == 76:
+                    print("Found with psieve, factor of "+str(n)+" are: "+str(gcdtest)+" and "+str(n//gcdtest)+" poly: "+str(poly)+" x: "+str(x)+" k: "+str(adjusted_k))
+                    sys.exit()
+                 
+        i+=1
+
+    return
+
 cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,partials,lin,cmod,factor_ranking,fb_map,bSeenOnly,seen_factors,interval,primeslist,resmaps,resmaps2,valid_quads,valid_quads_factors,qlist,primelist,sbase,a_mul_list):#,lin,cmod,sum_list):
+    u=1
+    while 1:
+        if isPrime(n+u,5) == 1:
+            largeprime=n+u
+            break
+        u+=1
+    
     linsize=lin_sieve_size
     if bSeenOnly==1:
         linsize=lin_sieve_size2
@@ -1058,160 +1214,13 @@ cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,parti
                 keysize=bitlen(n)
                 if value==1 and div!=1 and div%2!=0 and bitlen(div)<(keysize*0.5):# and poly_val >0:# and isPrime(value,5)==1:# and isPrime(div,5)==1:# and value2==1:# and len(div_fac)==1:
                     print("[i]Trying psieve b: "+str(2*new_root)+" a: "+str(div)+" bitlen a: "+str(bitlen(div)))
-                   # n=4387
+                    
+                    psieve(n,new_root,poly_val,div,largeprime)
+                    #n=4387
                     #poly_val=-277
                     #div=-277
                     #new_root=672
-                    check=0
-                    #print(poly_val//div)
-                    inv_n=modinv(math.isqrt(poly_val//div),n)
-                    fprime=3
-                    fexp=8
-                    
-                    ffmod=fprime**fexp
-                    new_r=(new_root*inv_n)%n
-                    nr=(new_r)*ffmod
-                    new_r=(nr-n)*2
-                    #print("nr: "+str(nr))
-                    #print("new_r: "+str(new_r))
-                    div=div*ffmod**2
-                    div=div*4
 
-                   # o_k=(new_root**2-div)//(n)
-                    new_k=(new_r**2-div)//(n*4)
-                    if (new_r**2-div)%n !=0:
-                        print("fatal errosddsdr: "+" odd: "+str(div))
-                        sys.exit()
-                    new_k_div=[]
-                    i=0
-                    while i < len(primeslist):
-                        if new_k%primeslist[i]==0:
-                            new_k_div.append(primeslist[i])
-
-                        i+=1
-                    if len(new_k_div)==0:
-                        k+=1
-                        continue
-                  #  print("new_r: "+str(new_r)+" new_k: "+str(new_k))
-                    if div*1**2+4*n*new_k != new_r**2:
-                        print("well this shouldnt happen really")
-                        sys.exit()          
-                    solsc=[]
-                    solsk=[]
-                    solskt=[]
-                    
-
-                    prime=fprime
-                    
-                    
-                    lift=1
-                    exp=fexp
-
-
-                    j=0
-                    while j < prime**exp:
-                        nco=0
-                        nk=j
-
-                     
-
-                        roots=find_roots_poly([1,nco,n*nk],prime)
-                        if lift == 1:
-                            q=0
-                            while q < len(roots):
-                                if len(roots)>1:
-                                    tmp=lift_root2([1,nco,n*nk], roots[q],prime,exp)
-                                    if evaluate([1,nco,n*nk],tmp)%prime**exp ==0:
-                                        roots[q]=tmp
-                                else:
-                                    startx=roots[0]
-                                    roots=[]
-                                    while startx < prime**exp:
-                                        if evaluate([1,nco,n*nk],startx)%prime**exp ==0:
-                                            roots.append(startx)
-                                        startx+=prime
-                                    break
-                                q+=1
-
-                        roots2=find_roots_poly([1,-new_r,-n*nk],prime)
-                        if lift == 1:
-                            q=0
-                            while q < len(roots2):
-                                if len(roots2)>1:
-                                    tmp=lift_root2([1,-new_r,-n*nk], roots2[q],prime,exp)
-                                    if evaluate([1,-new_r,-n*nk],tmp)%prime**exp ==0:
-                                        roots2[q]=tmp
-                                else:
-                        
-                                    startx=roots2[0]
-                                    roots2=[]
-                                    while startx < prime**exp:
-                                        if evaluate([1,-new_r,-n*nk],startx)%prime**exp ==0:
-                                            roots2.append(startx)
-                                        startx+=prime
-                                    break
-                                q+=1
-                        divn=modinv(n,prime**exp)
-                        for r in roots2:
-                            res=evaluate([1,-new_r,n*new_k],r)%prime**exp
-                            k_can=(res*divn)%prime**exp
-                            roots3=find_roots_poly([1,nco,n*k_can-new_k*n],prime)
-                            if lift == 1:
-                                q=0
-                                while q < len(roots3):
-                                    if len(roots3)>1:
-                                        tmp=lift_root2([1,nco,n*k_can-new_k*n], roots3[q],prime,exp)
-                                        if evaluate([1,nco,n*k_can-new_k*n],tmp)%prime**exp ==0:
-                                            roots3[q]=tmp
-                                        q+=1
-                                    else:
-                                        startx=roots3[0]
-                                        roots3=[]
-                                        while startx < prime**exp:
-
-                                            if evaluate([1,nco,n*k_can-new_k*n],startx)%prime**exp ==0:
-                                                roots3.append(startx)
-                                            startx+=prime
-                                        break
-                            r123=evaluate([1,nco,n*k_can],r)
-                            if (r123*divn)%prime**exp == new_k%prime**exp:
-                                if r in roots and r in roots2 and r in roots3 and nk%prime**exp == (k_can-new_k)%prime**exp:
-                                    if (nco**2-n*k_can*4)%prime**exp == div%prime**exp:
-                                        found=0
-                                        y=0
-                                        while y < len(solsc):
-                                            if solsc[y] == nco and solsk[y]==nk:
-                                                found=1
-                                            y+=1
-                                        if found ==0:
-                                            solsc.append(nco)
-                                            solsk.append(nk)
-                                            solskt.append(k_can)
-         
-                        j+=1
-
-
-
-                    kt=solsk[0]
-                    i=1
-                    while i < 10_000_000:
-                        adjusted_k=(kt+(i*ffmod))-(2*nr-n)
-                        if adjusted_k%ffmod**2 ==0:
-                            adjusted_k//=ffmod**2
-                            new_root2=(nr)//ffmod
-                          #  print("kt: "+str(kt)+" adjusted k: "+str(adjusted_k)+" i: "+str(i))
-                            poly=[1,2*new_root2,(-n*adjusted_k)]
-                           # print("poly: "+str(poly))
-                            x=0
-                            while x < ffmod:
-                                if evaluate(poly,x)%ffmod == 0:
-                                    gcdtest=math.gcd(x,n)
-                                    #print("x: "+str(x)+" gcd: "+str(gcdtest))
-                                    if gcdtest !=1 and gcdtest !=n:# and adjusted_k == 76:
-                                        print("Found with psieve, factor of "+str(n)+" are: "+str(gcdtest)+" and "+str(n//gcdtest))
-                                        sys.exit()
-                                x+=1
-                        i+=1
 
                   #  sys.exit()
             #    print("***seen_primes: "+str(local_factors)+" cmod: "+str(cmod)+" root: "+str(new_root)+" polyval: "+str(poly_val))
@@ -2291,184 +2300,7 @@ def best_a_mul(a, n, k, good):          # good = prefiltered odd primes: gcd(k,p
                     best = (g, m)
     return best[1]
    
-def psieve(n,ret_array,primelist_f,fbase,a_o,sbase,original_b,resmaps,resmaps2,a_mul_list):#(n,fbase,div,hmap2,ret_array):
-    found=0
-    a=a_o
-    primes_to_mark=[]
-    primes_to_mark_debug=[]
-    sqr_list=[]
-    i=0 
-    while i < len(sbase):
-        prime=sbase[i]
-        sqr=find_roots_poly([1,0,-a], prime) 
-        if len(sqr)>1: 
-            primes_to_mark.append(i)
-            sqr_list.append(sqr)
-            primes_to_mark_debug.append(prime)
-            if len(primes_to_mark)==9:
-                break
-        i+=1
 
-    
-    primes_to_check=[]
-    for prime in fbase:
-        if a%prime==0:
-            primes_to_check.append(prime)
-
-
-
-    k=2
-    while k < 100: #To do: I know how to calculate possible "k" values for a modulus.. but there seems to be something else also going on.. kronecker(a,-n) must be 1.. but thats still not enough. Investigate later. Can add squares to a instead to optimize the interval.
-        if isPrime(k,5)!=1 and k != 1:
-            k+=1
-            continue
-       # krons=[]
-        skip=0
-        for prime in primes_to_check:
-        #    krons.append(jacobi(n*k,prime))
-            if kronecker_symbol(4*n*k,prime)==-1:
-                skip=1
-        if skip == 1:
-            k+=1
-            continue
-        if jacobi(a_o,n*k) == -1: ##To do: Explore this a bit deeper eventually... does seem to hold true
-            k+=1
-            continue
-        a_mul_ind=0
-      #  if 1:
-        
-        
-        while a_mul_ind < 1:
-            sbase_temp=[]
-            for prime in sbase:
-                if kronecker_symbol(n*k,prime)==1 and math.gcd(prime,k)==1 and a_o%prime!=0 and kronecker_symbol(a_o, prime) == 1:
-                    sbase_temp.append(prime)
-            a_mul=best_a_mul(a_o,n,k,sbase_temp)
-             #   a_mul=optimize_a_mul(a,n,k,sbase)
-            if a_mul==-1:
-                return found
-            skip=0
-          #  print("a_mul: "+str(a_mul))
-            a=a_o*(a_mul**2)
-
-       # print("trying k: "+str(k))
-        
-            if math.gcd(a,k)!=1:# or kronecker_symbol(a,n) != 1: #to do: does not need to be prime.. just need to avoid squares in the factorization... fix later
-                a_mul_ind+=1
-                continue
-
-
-       # print("*trying k: "+str(k))
-            if skip == 0:
-
-               
-                blist_otherside,mod_otherside=build_disc_residues(fbase,a,n,k)
-                if mod_otherside!=a:
-                    #print("skipping: "+str(a_mul))
-                    a_mul_ind+=1
-                    continue
-
-                blist_disc=get_partials(mod_otherside,blist_otherside)            
-                enum=[]            
-                i=0
-                while i < len(blist_disc):
-                    enum.append(blist_disc[i+1])
-                    i+=2
-               # print("checking k: "+str(k)+" a: "+str(a_mul)+" "+str(jacobi(a,n*k))+" "+str(jacobi(a,k))+" "+str(jacobi(n*k,a))+" mod_otherside: "+str(mod_otherside)+" krons: "+str(krons))#+" enum: "+str(enum))
-                for idx in enumerated_product(*enum):
-                    b=0
-                    i=0
-                    while i < len(idx):
-                        ind=idx[i]
-                        b+=enum[i][ind]
-                        i+=1
-                    b_temp=b%mod_otherside
-
-                    if (b_temp**2-4*n*k)%a != 0:
-                        print("something weird went wrong: "+str(b_temp))
-                        sys.exit()
-
-                    interval=psieve_build_interval(resmaps,n,k,b_temp,a,sbase,primes_to_mark,sqr_list)
-                
-                ##note: Just for debugging....
-                    icounter=0
-                    q=0
-                    while q < len(interval):
-                        if interval[q]==1:
-                            icounter+=1
-                        q+=1
-                    q=0
-                    ####
-                   # print("sols: "+str(icounter))
-
-                    while q < len(interval):
-                        if interval[q]==0:
-                            q+=1
-                            continue
-                  
-                        b=b_temp+mod_otherside*q
-                        if b == original_b:
-                            q+=1
-                            continue
-                        disc=b**2-4*n*k
-                        if disc%a!=0:
-                            print("fatal error")
-                            sys.exit()
-                        disc//=a
- 
-                        new_root=math.isqrt(abs(disc))
-                        if new_root**2!=disc:
-                            q+=1
-                            continue
-
-
-                       # new_root=math.isqrt(abs(disc))
-                        if b!=original_b and b**2 not in ret_array[1]:
-                            poly_val=(b)**2-4*n*k 
-                            local_factors, value = factorise_fast(poly_val,primelist_f)
-
-                            ret_array[1].append((b)**2)
-                            ret_array[0].append(poly_val)
-                            ret_array[2].append(local_factors)
-                            ret_array[3].append([])
-                           # debug_blist_otherside,debug_mod=lift_disc_residues(a,k,n,mod_otherside,blist_otherside)
-                            i=0
-                            while i < len(primes_to_mark):
-                                ind=primes_to_mark[i]
-                                prime=sbase[ind]#blist_otherside2[i][0]**blist_otherside2[i][1]
-                                colist=resmaps2[ind][k%prime][1]
-                                sqr=find_roots_poly([1,0,-a], prime) 
-                                disc=b**2-4*n*k
-                                a_inv=modinv(a,prime)
-                                disc=(disc*a_inv)%prime
-
-                                ###Important: This line below will fail for invalid solutions.. this gives a clue on how to solve what I'm trying to do here....
-                                nroots=find_roots_poly([1,0,-disc], prime) 
-                                
-                                sqr=find_roots_poly([1,0,-a], prime) 
-                                if (nroots[0]*sqr[0])%prime not in colist:
-                                    print("fatal error should neer happen. Bear fail: "+str(resmaps2[ind][k%prime])+" prime: "+str(prime)+" new_root: "+str(new_root)+" k: "+str(k)+" sqr: "+str(sqr))
-                                    sys.exit()
-                                i+=1  
-                          #  print("a*b**2+4*n*k: "+str(a*new_root**2+4*n*k)+" (a*b)**2+4*n*k*a: "+str((a*new_root)**2+4*n*k*a)+" b: "+str(b)+" a: "+str(a)+" k: "+str(k)+" mod_otherside: "+str(mod_otherside)+" new_root: "+str(new_root)+" b**2-4*n*k: "+str(b**2-4*n*k)+" b_temp: "+str(b_temp)+" primes used to mark: "+str(primes_to_mark_debug))
-                            print("[i]Found one with psieve()!!!!!!!!!!!!! b: "+str(b)+" k: "+str(k)+" #smooths: "+str(len(ret_array[0]))+" index: "+str(q)+" interval[q]: "+str(interval[q])+" sols in interval: "+str(icounter)+" a_mul: "+str(a_mul)+" kronecker_symbol(a,n*k): "+str(kronecker_symbol(a,n*k))+" "+str(kronecker_symbol(a,k)))#+" interval2: "+str(interval2[q])+" k: "+str(k))
-                            if kronecker_symbol(a,n*k) != 1:
-                                print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!THOUSIDOADJOASDHODSA")
-                                sys.exit()
-                            found+=1
-                            
-
-
-                        q+=1
-            a_mul_ind+=1
- 
-        if found > 0:
-            return found #should be enouhg..
-
-        k+=1
-
-
-    return found
 
 def construct_interval(ret_array,partials,n,primeslist,hmap,large_prime_bound,primeslist2):
 
