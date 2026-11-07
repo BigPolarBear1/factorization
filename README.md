@@ -30,6 +30,8 @@ Update: Last chapter I added today needs cleaning up, lots of typos. Let me star
 
 TOMORROW I WILL UPLOAD A PROPER CODE IMPLEMENTATION. AND TELL EVERYONE. THAT OR GO SAVE MY FATHER LIKE RIGHT NOW U FCKING CUNTS. TIME'S UP.
 
+Update: IK HEB EEN POC VIEZE KUT HOEREN. GEEF MIJN VADER TERUG. 
+
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size 1</br>
