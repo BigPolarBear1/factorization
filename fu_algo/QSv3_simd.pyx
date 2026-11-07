@@ -707,8 +707,8 @@ def get_root(p,b,a):
 
 def solve_lin_con(a,b,m):
     ##ax=b mod m
-    #g=gcd(a,m)
-    #a,b,m = a//g,b//g,m//g
+    g=gcd(a,m)
+    a,b,m = a//g,b//g,m//g
     return pow(a,-1,m)*b%m  
     
 #@cython.boundscheck(False)
@@ -935,12 +935,16 @@ def check_possible_k(resmaps,resmaps2,prime,n,b1,b2,found):
 
 
 def psieve(n,new_root,poly_val,div,largeprime):
+    #n=4387
+    #poly_val=-277
+    #div=-277
+    #new_root=672
 
     check=0
                     #print(poly_val//div)
     inv_n=modinv(math.isqrt(poly_val//div),n)
     fprime=3
-    fexp=5
+    fexp=7
                     
     ffmod=fprime**fexp
     new_r=(new_root*inv_n)%n
@@ -1058,15 +1062,17 @@ def psieve(n,new_root,poly_val,div,largeprime):
 
 
     kt=solsk[0]
-    i=1
-    while i < 10_000_000:
-        adjusted_k=(kt+(i*ffmod))-(2*nr-n)
+    stepsize=solve_lin_con(ffmod,(2*nr-n)-kt,ffmod**2)
+    i=stepsize
+    while i < 10_000_000*ffmod:
+        adjusted_k=(kt+((i)*ffmod))-(2*nr-n)
         if adjusted_k%ffmod**2 ==0:
             adjusted_k//=ffmod**2
             new_root2=(nr)//ffmod
+           # print("stepsize: "+str(stepsize))
                           #  print("kt: "+str(kt)+" adjusted k: "+str(adjusted_k)+" i: "+str(i))
             poly=[1,2*new_root2,(-n*adjusted_k)]
-                           # print("poly: "+str(poly))
+          #  print("poly: "+str(poly)+" i: "+str(i))
 
 
             roots=find_roots_poly(poly,largeprime)
@@ -1077,8 +1083,10 @@ def psieve(n,new_root,poly_val,div,largeprime):
                 if gcdtest !=1 and gcdtest !=n:# and adjusted_k == 76:
                     print("Found with psieve, factor of "+str(n)+" are: "+str(gcdtest)+" and "+str(n//gcdtest)+" poly: "+str(poly)+" x: "+str(x)+" k: "+str(adjusted_k))
                     sys.exit()
-                 
-        i+=1
+        else:
+            print("should never happen")
+            sys.exit()        
+        i+=ffmod
 
     return
 
