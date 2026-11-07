@@ -944,7 +944,7 @@ def psieve(n,new_root,poly_val,div,largeprime):
                     #print(poly_val//div)
     inv_n=modinv(math.isqrt(poly_val//div),n)
     fprime=3
-    fexp=7
+    fexp=6
                     
     ffmod=fprime**fexp
     new_r=(new_root*inv_n)%n
@@ -1059,20 +1059,20 @@ def psieve(n,new_root,poly_val,div,largeprime):
          
         j+=1
 
-
+    print("checking")
 
     kt=solsk[0]
     stepsize=solve_lin_con(ffmod,(2*nr-n)-kt,ffmod**2)
-    i=stepsize
-    while i < 10_000_000*ffmod:
-        adjusted_k=(kt+((i)*ffmod))-(2*nr-n)
+    i=0
+    while i < 10_000_000:
+        adjusted_k=(kt+((stepsize+i*ffmod)*ffmod))-(2*nr-n)
         if adjusted_k%ffmod**2 ==0:
             adjusted_k//=ffmod**2
             new_root2=(nr)//ffmod
            # print("stepsize: "+str(stepsize))
                           #  print("kt: "+str(kt)+" adjusted k: "+str(adjusted_k)+" i: "+str(i))
             poly=[1,2*new_root2,(-n*adjusted_k)]
-          #  print("poly: "+str(poly)+" i: "+str(i))
+          #  print("poly: "+str(poly)+" i: "+str(i)+" adjusted k: "+str(adjusted_k))
 
 
             roots=find_roots_poly(poly,largeprime)
@@ -1081,12 +1081,12 @@ def psieve(n,new_root,poly_val,div,largeprime):
                 gcdtest=math.gcd(x,n)
                                     #print("x: "+str(x)+" gcd: "+str(gcdtest))
                 if gcdtest !=1 and gcdtest !=n:# and adjusted_k == 76:
-                    print("Found with psieve, factor of "+str(n)+" are: "+str(gcdtest)+" and "+str(n//gcdtest)+" poly: "+str(poly)+" x: "+str(x)+" k: "+str(adjusted_k))
+                    print("Found with psieve, factor of "+str(n)+" are: "+str(gcdtest)+" and "+str(n//gcdtest)+" poly: "+str(poly)+" x: "+str(x)+" k: "+str(adjusted_k)+" i: "+str(i))
                     sys.exit()
         else:
             print("should never happen")
             sys.exit()        
-        i+=ffmod
+        i+=1
 
     return
 
