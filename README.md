@@ -28,7 +28,7 @@ UPDATE: I figured it out! If we subtract N from the linear coefficient.. then th
 
 Update: Made some quick slight modifications at line 1070 rather then adding the modulus there we need to look at other primes to figure out modular division of the root and just purely work inside ffmod.
 
-Update: Believe I can use the divisors of the original root now to finish this.. 
+UPDATE: I'll finish it tomorrow. I looked at other primes today, and with these conditions that must be met in the 4 polynomials (See last chapter paper) we can calculate the root residues for other primes in a way that avoid residue explosion (so just one valid root pair per prime). So then we can figure out which multiple of ffmod our root actually is quite trivially. But I'll do it tomorrow.... I just want my father back and I really cant focus on fucking math and numbers today.
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
