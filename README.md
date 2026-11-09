@@ -32,6 +32,8 @@ UPDATE: I'll finish it tomorrow. I looked at other primes today, and with these 
 
 UPDATE: The way I believe it should work now is that we must simply extend ffmod with other primes. This then gives us a modular inverse we can calculate using the original ffmod. That way I can probably work out how to divide that root.... and strip away ffmod from it.. and what remains should then let us take the GCD if ffmod is large enough.
 
+Updatr: Ill continue tomorrow. I struggle focusing with whats happening to my father. The physiological effects of months of sustained stress (my father entered the hospital late August, went to ICU a week later.. where he is still fighting for his life) .. I feel like a bear who's about to maul someone. 
+
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size 1</br>
