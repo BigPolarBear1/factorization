@@ -30,6 +30,8 @@ Update: Made some quick slight modifications at line 1070 rather then adding the
 
 UPDATE: I'll finish it tomorrow. I looked at other primes today, and with these conditions that must be met in the 4 polynomials (See last chapter paper) we can calculate the root residues for other primes in a way that avoid residue explosion (so just one valid root pair per prime). So then we can figure out which multiple of ffmod our root actually is quite trivially. But I'll do it tomorrow.... I just want my father back and I really cant focus on fucking math and numbers today.
 
+UPDATE: The way I believe it should work now is that we must simply extend ffmod with other primes. This then gives us a modular inverse we can calculate using the original ffmod. That way I can probably work out how to divide that root.... and strip away ffmod from it.. and what remains should then let us take the GCD if ffmod is large enough.
+
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size 1</br>
