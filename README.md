@@ -18,23 +18,9 @@ To run: python3 run_qs.py -keysize 40 -base 5000 -debug 0 -lin_size 10 -quad_siz
 
 Pronounced the fuck you algorithm
 
-Update: Modified the PoC... now to improve it. Aside from some quick and dirty bruteforce loops that I need to fix, the main thing will be looking at other primes to properly calculate adjusted_k... once that is done, performance should be very quick.
-
-I'll start with minimizing and cleaning up the PoC first though.. because this code that I used while doing research gets a bit messy. But the general math is there now.. doing the same what I describe in the final chapter of the paper. 
-
-Note-to-self: After some thinking, taking a root inside ffmod is probably the way to go, because then we don't need to find the correct "adjusted_k" because we're already garantueed to be in the correct one in ffmod. The problem just becomes dividing the root by ffmod.. since it also gets multiplied.. I can probably construct something with the help of residue maps of other primes to make that division happen. And then the factor should reveal itself modulo ffmod. Almost..so close now.
-
-UPDATE: I figured it out! If we subtract N from the linear coefficient.. then this effectively also adds N to the root. I got it. :) Watch magic happen tomorrow... I WANT MY FATHER BACK. DO SOMETHING. I won't forgive it if my father doesn't survive. 
-
-Update: Made some quick slight modifications at line 1070 rather then adding the modulus there we need to look at other primes to figure out modular division of the root and just purely work inside ffmod.
-
-UPDATE: I'll finish it tomorrow. I looked at other primes today, and with these conditions that must be met in the 4 polynomials (See last chapter paper) we can calculate the root residues for other primes in a way that avoid residue explosion (so just one valid root pair per prime). So then we can figure out which multiple of ffmod our root actually is quite trivially. But I'll do it tomorrow.... I just want my father back and I really cant focus on fucking math and numbers today.
-
-UPDATE: The way I believe it should work now is that we must simply extend ffmod with other primes. This then gives us a modular inverse we can calculate using the original ffmod. That way I can probably work out how to divide that root.... and strip away ffmod from it.. and what remains should then let us take the GCD if ffmod is large enough.
-
-Updatr: Ill continue tomorrow. I struggle focusing with whats happening to my father. The physiological effects of months of sustained stress (my father entered the hospital late August, went to ICU a week later.. where he is still fighting for his life) .. I feel like a bear who's about to maul someone. 
-
-Update: Yeap.. it does seem to work to divide out the root that way, let me update the paper and polish up that final chapter so some asshole/AI cant come in and steal my work and claim priority. Or however the fuck this math shit works.
+Update: I will fix it shortly. The final chapter isn't quite correct. It starts out correct but then overcomplicates everything.
+So any root solution for a given coefficient (the way I calculate them) encodes some multiple of the factors of N. Ofcourse the problem is that this is unbounded. 
+However if modulo every prime there is some root such that we add subtract the same multiple of N it becomes 0 modulo some large modulus, which can be a finite field for example.. like mod p^e, to make it easier to search for those.. then we have a solution inside that finite that we can take the GCD with. Actually its quite elegant and simple.. and I'm an idiot because I had come so close already many months ago. Especially when I was exploring lifting and singular roots. But here we are now... better late then never. Going for a run. I'll start fixing everything now. 
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
