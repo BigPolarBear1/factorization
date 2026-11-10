@@ -20,7 +20,7 @@ Pronounced the fuck you algorithm
 
 Update: I will fix it shortly. The final chapter isn't quite correct. It starts out correct but then overcomplicates everything.
 So any root solution for a given coefficient (the way I calculate them) encodes some multiple of the factors of N. Ofcourse the problem is that this is unbounded. 
-However if modulo every prime there is some root such that we add subtract the same multiple of N it becomes 0 modulo some large modulus, which can be a finite field for example.. like mod p^e, to make it easier to search for those.. then we have a solution inside that finite that we can take the GCD with. Actually its quite elegant and simple.. and I'm an idiot because I had come so close already many months ago. Especially when I was exploring lifting and singular roots. But here we are now... better late then never. Going for a run. I'll start fixing everything now. 
+However if modulo every prime there is some root such that we subtract the same multiple of N it becomes 0 modulo some large modulus, which can be a finite field for example.. like mod p^e, to make it easier to search for those.. then we have a solution inside that finite that we can take the GCD with. Actually its quite elegant and simple.. and I'm an idiot because I had come so close already many months ago. Especially when I was exploring lifting and singular roots. But here we are now... better late then never. Going for a run. I'll start fixing everything now. 
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
