@@ -36,8 +36,6 @@ Updatr: Ill continue tomorrow. I struggle focusing with whats happening to my fa
 
 Update: Yeap.. it does seem to work to divide out the root that way, let me update the paper and polish up that final chapter so some asshole/AI cant come in and steal my work and claim priority. Or however the fuck this math shit works.
 
-UPDATE: AAAAAAAAAAAAAAAAAH I DONT NEED TO EXTEND WITH OTHER PRIMES. I CAN JUST CALCULATE THE MODULAR INVERSE OF FFMOD mod N!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! I DID IT!!!! POC TIME. FUCK YOU CUNTS.
-
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size 1</br>
