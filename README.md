@@ -34,6 +34,8 @@ UPDATE: The way I believe it should work now is that we must simply extend ffmod
 
 Updatr: Ill continue tomorrow. I struggle focusing with whats happening to my father. The physiological effects of months of sustained stress (my father entered the hospital late August, went to ICU a week later.. where he is still fighting for his life) .. I feel like a bear who's about to maul someone. 
 
+Update: Yeap.. it does seem to work to divide out the root that way, let me update the paper and polish up that final chapter so some asshole/AI cant come in and steal my work and claim priority. Or however the fuck this math shit works.
+
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size 1</br>
