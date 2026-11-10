@@ -24,6 +24,8 @@ However if modulo every prime there is some root such that we subtract the same 
 
 If I get murdered on my run. You know I was right and I still want my father to be saved. Shithead cunts. 
 
+Update: ill try and upload some code tomorrow. Its hard to focus. I think i may legit be losing my mind bc of my father being in the ICU for months now. My father really was the one person I cant miss in my life right now. Like some cruel twist of fate that ill never understand. Anyway, I understand the math now.. so this week for sure. Going to finish it.
+
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size 1</br>
