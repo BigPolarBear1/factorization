@@ -30,7 +30,7 @@ Update: ill try and upload some code tomorrow. Its hard to focus. I think i may 
 
 Update: Today is the day. Will try and upload by the evening. These last few years have been a shitshow. Ive learned a truth about this world. Its that humans as a collective, they really hate outcasts, especially when those outcasts are able to do things none of these shitheads could even if they spent their entire life trying. I have lived in paralell with human society for most of my life now. I may aswell be a different species, a bear. Good thing im tall and big and people know to stay away from me. I feel sorry for people like me who arnt tall and big. Their lifes must not be great. I will fix this world. I will bring into this world things no normal human can ever conjure. And that will be my big fuck you.
 
-Update: Uploaded my work in progress.. will start improving quickly. Just demonstrates the general math.. need to leverage hensel and stuff now .... give me a few days.
+Update: Uploaded my work in progress.. will start improving quickly. Just demonstrates the general math.. need to leverage hensel and stuff now .... give me a few days. Still something I havn't implemented yet. For example (4387\*1867)%2187 = 2\*107   ... and for every prime this root solution ((4387\*1867)%2187)%prime will exist. And ideally rather then directly computing 2\*107 as root residues which is what it does now, we need to focus on that 1867 value in  (4387\*1867)%2187 = 2\*107  .. because the root will always be large for a proper RSA modulus.. but that "1867" can end up small.. let me do some thinking, very close though.
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
