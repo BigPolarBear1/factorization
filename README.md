@@ -30,7 +30,7 @@ Update: ill try and upload some code tomorrow. Its hard to focus. I think i may 
 
 Update: Today is the day. Will try and upload by the evening. These last few years have been a shitshow. Ive learned a truth about this world. Its that humans as a collective, they really hate outcasts, especially when those outcasts are able to do things none of these shitheads could even if they spent their entire life trying. I have lived in paralell with human society for most of my life now. I may aswell be a different species, a bear. Good thing im tall and big and people know to stay away from me. I feel sorry for people like me who arnt tall and big. Their lifes must not be great. I will fix this world. I will bring into this world things no normal human can ever conjure. And that will be my big fuck you.
 
-Update: Trying to upload my work but my internet isnt working probably. Feels like an MITM attack... not sure whats happening.
+Update: Uploaded my work in progress.. will start improving quickly.
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
