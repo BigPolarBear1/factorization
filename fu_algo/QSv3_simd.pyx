@@ -337,7 +337,7 @@ def launch(n,primeslist,primeslist2):
     primelist_f=copy.copy(primeslist)
     primelist_f.insert(0,len(primelist_f)+1)
     primelist_f=array.array('q',primelist_f)
-    sbase=copy.deepcopy(primeslist[0:8])
+    sbase=copy.deepcopy(primeslist[0:6])
     print("[i]Building psieve Residue Map (to do: some duplication here from merging two algos, fix later)")
     resmaps,resmaps2=build_residues(sbase,n)
     print("[i]Finished building... ")
@@ -1064,21 +1064,24 @@ def psieve_residues(prime,n,exp,div_o,ffmod,new_r_o):
 def psieve(n,new_root,poly_val,div,largeprime,resmaps,resmaps2,sbase):
     found=0
     found_s=0
-   # new_root=886
+  #  new_root=886
   #  n=4387
-
+    gcdtested_global=0
     co2=2*new_root#*2187
     k_test=1
-
+    modulus=3*3*3*3*3*3*3*3#*3#*3#*3#*3*3*3*3
     while k_test < 1000:       
         co_t=1
         while co_t < 1000:
+            gcdtested=0
             co=co_t*2
             fail_glob=0
             marked=0
             marked_mod=1
             interval=[0]*10_000
             co2_res=[]
+            co2_res_final=[]
+            x_res=[]
             r_res=[]
             i=0
             while i < len(sbase):
@@ -1092,8 +1095,12 @@ def psieve(n,new_root,poly_val,div,largeprime,resmaps,resmaps2,sbase):
                 marked_mod*=prime
                 co2_res.append(prime)
                 co2_res.append([])
+                co2_res_final.append(prime)
+                co2_res_final.append([])
                 r_res.append(prime)
                 r_res.append([])
+                x_res.append(prime)
+                x_res.append([])
                 j=0
                 while j < len(colist2):
                     if colist2[j]==co%prime:
@@ -1124,56 +1131,106 @@ def psieve(n,new_root,poly_val,div,largeprime,resmaps,resmaps2,sbase):
                 #    print(l)
 
                 for c in co2_res[-1]:
-
+                    x_res[-1].append([])
                     r,kf=psieve_find_x(c,co,n,1,prime,div)
-                    r_res[-1].append(r)
+                    if kf%prime != k_test%prime:
+                        print("bleepblaahlbooh")
                     #x=0
-                   # while x < modulus:
-                    #    if r%prime == ((n*x)%modulus)%prime:
-                    #        interval[x]+=1
-                     #   x+=1
-                
- 
                     
+                    hit=0
+                    x=0
+                    while x < modulus:
+                        if r%prime == ((n*x)%modulus)%prime:
+  
+                            x_res[-1][-1].append(x)
+                            hit=1
+                          # if co%prime == (672*2)%prime and c%prime == 1772%prime:
+                             #   print("prime: "+str(prime)+" x: "+str(x)+" c: "+str(c))
+                                #if prime != 3:
+                                  #  time.sleep(1)
+                       # interval[x]+=1
+                        x+=1
+                    if hit == 1:
+                        r_res[-1].append(r)
+                        co2_res_final[-1].append(c)
                   # break
+                if len(r_res[-1])==0:
+                    fail_glob=1
+                    break
+                i+=1 
 
-                i+=1
+            
             if fail_glob == 1:
                 co_t+=1
                 continue
-         #   print("checking r_res: "+str(r_res)+" co_res: "+str(co2_res))
+         #   print("checking r_res: "+str(r_res)+" co_res: "+str(co2_res_final)+" x_res: "+str(x_res))
 
 
-            co2_res=get_partials(marked_mod,co2_res)
+            co2_res_final=get_partials(marked_mod,co2_res_final)
             r_res=get_partials(marked_mod,r_res)
+            size=1
             enum=[]
             enum2=[]
+            enum3=[]
             t=0
-            while t < len(co2_res):
-                enum.append(co2_res[t+1])
+            while t < len(co2_res_final):
+                size*=len(co2_res_final[t+1])
+                enum.append(co2_res_final[t+1])
                 enum2.append(r_res[t+1])
+                enum3.append(x_res[t+1])
                 t+=2
 
             for idx in enumerated_product(*enum):
                 l=0
                 r=0
+                x_values=[]
                 y=0
                 while y < len(idx):
                     ind=idx[y]
                     l+=enum[y][ind]
                     r+=enum2[y][ind]
+                    x_values.append(enum3[y][ind])
                     y+=1
                 l%=marked_mod
                 r%=marked_mod
                 mult=solve_lin_con(co2,l,marked_mod)
                 mult_inv=modinv(mult,marked_mod)
                 r_can=(r*mult_inv)%marked_mod
-                gcdtest=math.gcd(r_can,n)
-                
-                if gcdtest != 1 and gcdtest != n:
-                    print("co: "+str(l)+" r: "+str(r)+" co/mult: "+str((l*mult_inv)%marked_mod)+" r/mult: "+str((r*mult_inv)%marked_mod)+" gcdtest: "+str(gcdtest))
-                    print("Found with psieve, factors of "+str(n)+" are: "+str(gcdtest)+" and "+str(n//gcdtest))
-                    sys.exit()
+                #gcdtest=math.gcd(r_can,n)
+
+
+                x=0
+                while x < modulus:
+                    fail=0
+                    x2=0
+                    while x2 < len(x_values):
+                        if x not in x_values[x2]:
+                           # if x == 1867 and r == 214:
+                            #   print("failing")
+                             #  sys.exit()
+                            fail=1
+                            break
+
+                        x2+=1
+                    if fail == 0:
+
+                        print("valid x: "+str(x))
+                        root=(n*x)%modulus
+                        gcdtest=math.gcd(root,n)
+                        gcdtested+=1
+                        gcdtested_global+=1
+                        if gcdtest != n and gcdtest != 1:
+                            print("Found with psieve, factors of "+str(n)+" are: "+str(gcdtest)+" and "+str(n//gcdtest)+" gcdtested: "+str(gcdtested)+" gcdtested_global: "+str(gcdtested_global)+" size: "+str(size))
+
+                            sys.exit()
+                    x+=1
+
+              #  if gcdtest != 1 and gcdtest != n:
+              #      print("co: "+str(l)+" r: "+str(r)+" co/mult: "+str((l*mult_inv)%marked_mod)+" r/mult: "+str((r*mult_inv)%marked_mod)+" gcdtest: "+str(gcdtest))
+              #      print("Found with psieve, factors of "+str(n)+" are: "+str(gcdtest)+" and "+str(n//gcdtest)+" gcdtested: "+str(gcdtested)+" gcdtested_global: "+str(gcdtested_global)+" size: "+str(size))
+                  #  sys.exit()
+
+
            # j=0
            # while j < len(interval):
              #   if interval[j]>(marked-1):
@@ -1187,8 +1244,6 @@ def psieve(n,new_root,poly_val,div,largeprime,resmaps,resmaps2,sbase):
             co_t+=1
 
         k_test+=1
-   
-    sys.exit()
     return
 
 cdef process_interval2d(n,ret_array,quad_can,primelist_f,large_prime_bound,partials,lin,cmod,factor_ranking,fb_map,bSeenOnly,seen_factors,interval,primeslist,resmaps,resmaps2,valid_quads,valid_quads_factors,qlist,primelist,sbase,a_mul_list):#,lin,cmod,sum_list):
