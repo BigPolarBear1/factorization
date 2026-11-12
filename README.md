@@ -16,21 +16,11 @@ Note: This paper was written at different stages in my  research project, and as
 
 #### To run from folder "fu_algo":</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 40 -base 5000 -debug 0 -lin_size 10 -quad_size 1
+To run: python3 run_qs.py -keysize 25 -base 5000 -debug 0 -lin_size 10 -quad_size 1
 
 Pronounced the fuck you algorithm
 
-Update: I will fix it shortly. The final chapter isn't quite correct. It starts out correct but then overcomplicates everything.
-So any root solution for a given coefficient (the way I calculate them) encodes some multiple of the factors of N. Ofcourse the problem is that this is unbounded. 
-However if modulo every prime there is some root such that we subtract the same multiple of N it becomes 0 modulo some large modulus, which can be a finite field for example.. like mod p^e, to make it easier to search for those.. then we have a solution inside that finite field that we can take the GCD with. Actually its quite elegant and simple.. and I'm an idiot because I had come so close already many months ago. Especially when I was exploring lifting and singular roots. But here we are now... better late then never. Going for a run. I'll start fixing everything now.
-
-If I get murdered on my run. You know I was right and I still want my father to be saved. Shithead cunts. 
-
-Update: ill try and upload some code tomorrow. Its hard to focus. I think i may legit be losing my mind bc of my father being in the ICU for months now. My father really was the one person I cant miss in my life right now. Like some cruel twist of fate that ill never understand. Anyway, I understand the math now.. so this week for sure. Going to finish it.
-
-Update: Today is the day. Will try and upload by the evening. These last few years have been a shitshow. Ive learned a truth about this world. Its that humans as a collective, they really hate outcasts, especially when those outcasts are able to do things none of these shitheads could even if they spent their entire life trying. I have lived in paralell with human society for most of my life now. I may aswell be a different species, a bear. Good thing im tall and big and people know to stay away from me. I feel sorry for people like me who arnt tall and big. Their lifes must not be great. I will fix this world. I will bring into this world things no normal human can ever conjure. And that will be my big fuck you.
-
-Update: Uploaded my work in progress.. will start improving quickly. Just demonstrates the general math.. need to leverage hensel and stuff now .... give me a few days. Still something I havn't implemented yet. For example (4387\*1867)%2187 = 2\*107   ... and for every prime this root solution ((4387\*1867)%2187)%prime will exist. And ideally rather then directly computing 2\*107 as root residues which is what it does now, we need to focus on that 1867 value in  (4387\*1867)%2187 = 2\*107  .. because the root will always be large for a proper RSA modulus.. but that "1867" can end up small.. let me do some thinking, very close though, the way to exploit that is through lifting though so I havnt implemented it yet.
+Update: All the main math is in here now. But in psieve() the modulus should start a small prime and then slowly expand p-adically. The good thing is that if we add N to a root, it doesn't matter how often, as long as the root % N is a QR.... so that tells us how we can build up a modulus there.. give me a few more days.. almost now.
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
