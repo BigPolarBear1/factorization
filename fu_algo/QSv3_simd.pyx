@@ -398,7 +398,7 @@ def psieve(n,resmaps,resmaps2,sbase):
   #  n=4387
     gcdtested_global=0
     k_test=1
-    modulus=3*3*3*3*3*3*3*3#*3#*3#*3#*3*3*3*3
+    modulus=3*3*3*3*3*3*3*3#*3*3*3*3*3#*3#*3#*3#*3*3*3*3
     while k_test < 1000:       
         co_t=1
         while co_t < 1000:
@@ -441,43 +441,21 @@ def psieve(n,resmaps,resmaps2,sbase):
                     fail_glob=1
                     break
                 
-                
-                #co2_res=get_partials(marked_mod,co2_res)
-                #enum=[]
-                #t=0
-                #while t < len(co2_res):
-                #    enum.append(co2_res[t+1])
-                #    t+=2
-
-                #for idx in enumerated_product(*enum):
-                #    l=0
-                #    y=0
-                #    while y < len(idx):
-                #        ind=idx[y]
-                #        l+=enum[y][ind]
-                #        y+=1
-                #    l%=marked_mod
-                #    print(l)
-
+            
                 for c in co2_res[-1]:
                     x_res[-1].append([])
                     poly1=[1,-c,n*k_test]
                     poly2=[1,co,-n*k_test]
                     poly1c=copy.deepcopy(poly1)
                     roots=find_roots_poly(poly1c,prime)
-                    debug=[]
+                  #  debug=[]
                     for r1 in roots:
                         if evaluate(poly2,r1)%prime==0:
                             r=r1
-                            debug.append(r1)
-                            if len(debug)>1:
-                                print("asddasd")
-                  #  r,kf=psieve_find_x(c,co,n,1,prime,div)
-                   # if r not in roots:
-                   #     print("something went wrong: "+str(roots))
-                   # if kf%prime != k_test%prime:
-                   #     print("bleepblaahlbooh")
-                    #x=0
+                           # debug.append(r1)
+                          #  if len(debug)>1:
+                           #     print("asddasd: "+str(roots)+" prime: "+str(prime))
+
                     
                     hit=0
                     x=0
@@ -486,11 +464,6 @@ def psieve(n,resmaps,resmaps2,sbase):
   
                             x_res[-1][-1].append(x)
                             hit=1
-                          # if co%prime == (672*2)%prime and c%prime == 1772%prime:
-                             #   print("prime: "+str(prime)+" x: "+str(x)+" c: "+str(c))
-                                #if prime != 3:
-                                  #  time.sleep(1)
-                       # interval[x]+=1
                         x+=1
                     if hit == 1:
                         r_res[-1].append(r)
@@ -557,27 +530,10 @@ def psieve(n,resmaps,resmaps2,sbase):
                         gcdtested+=1
                         gcdtested_global+=1
                         if gcdtest != n and gcdtest != 1:
-                            print("Found with psieve, factors of "+str(n)+" are: "+str(gcdtest)+" and "+str(n//gcdtest)+" gcdtested: "+str(gcdtested)+" gcdtested_global: "+str(gcdtested_global)+" size: "+str(size))
+                            print("Found with psieve, factors of "+str(n)+" are: "+str(gcdtest)+" and "+str(n//gcdtest)+" gcdtested: "+str(gcdtested)+" gcdtested_global: "+str(gcdtested_global)+" size: "+str(size)+" co: "+str(l)+" r: "+str(r)+" root: "+str(root))
 
                             sys.exit()
                     x+=1
-
-              #  if gcdtest != 1 and gcdtest != n:
-              #      print("co: "+str(l)+" r: "+str(r)+" co/mult: "+str((l*mult_inv)%marked_mod)+" r/mult: "+str((r*mult_inv)%marked_mod)+" gcdtest: "+str(gcdtest))
-              #      print("Found with psieve, factors of "+str(n)+" are: "+str(gcdtest)+" and "+str(n//gcdtest)+" gcdtested: "+str(gcdtested)+" gcdtested_global: "+str(gcdtested_global)+" size: "+str(size))
-                  #  sys.exit()
-
-
-           # j=0
-           # while j < len(interval):
-             #   if interval[j]>(marked-1):
-             #       print("j: "+str(j)+" co2_res: "+str(co2_res))
-             #       root=(n*j)%modulus
-            #        gcdtest=math.gcd(root,n)
-             #       if gcdtest != n and gcdtest != 1:
-             #           print(" k_test: "+str(k_test)+" k: "+str(j)+" root: "+str(root)+" gctest: "+str(gcdtest))
-
-           #     j+=1
             co_t+=1
 
         k_test+=1
