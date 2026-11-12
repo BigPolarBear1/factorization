@@ -22,6 +22,8 @@ Pronounced the fuck you algorithm
 
 Update: All the main math is in here now. But in psieve() the modulus should start a small prime and then slowly expand p-adically. The good thing is that if we add N to a root, it doesn't matter how often, as long as the root % N is a QR.... so that tells us how we can build up a modulus there.. give me a few more days.. almost now.
 
+Update: deleted a ton of code and simplified psieve() so tomorrow I can finish it without all the other garbage.
+
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size 1</br>
