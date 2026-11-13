@@ -24,6 +24,9 @@ Update: All the main math is in here now. But in psieve() the modulus should sta
 
 Update: deleted a ton of code and simplified psieve() so tomorrow I can finish it without all the other garbage.
 
+Update: Also going to start a complete rewrite of the paper. Its so fucking conveluted now that I understand everything. Can probably be compressed down to one or two page lol.
+
+
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size 1</br>
