@@ -26,6 +26,7 @@ Update: deleted a ton of code and simplified psieve() so tomorrow I can finish i
 
 Update: Also going to start a complete rewrite of the paper. Its so fucking conveluted now that I understand everything. Can probably be compressed down to one or two page lol.
 
+Update: May have been too quick to delete all that SIQS code.. it works as a driver for psieve below.. so it should work for this aswell... bah, let me think.
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
