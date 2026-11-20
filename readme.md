@@ -17,7 +17,7 @@ Pronounced the fuck you algorithm
 
 Update: Gave it some thought today... so the distance between co and co2 (see psieve()) should be 2x the root. The root and coefficients are calculated in seperate moduli... (modulus and marked_mod in psieve())... see we got leverage there. I'll go for a run and continue tomorrow. 
 
-Update: Starting making improvements.. it's quite complicated.. main idea is kind of in the code, but I need to improve it still.
+Update: Started making improvements.. it's quite complicated.. main idea is kind of in the code, but I need to improve it still.
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
