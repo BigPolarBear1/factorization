@@ -11,11 +11,13 @@ I'll be doing a rewrite of the paper in the coming weeks as my work is nearing c
 
 #### To run from folder "fu_algo":</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 40 -base 5000 -debug 0 -lin_size 10 -quad_size 1
+To run: python3 run_qs.py -keysize 35 -base 5000 -debug 0 -lin_size 10 -quad_size 1
 
 Pronounced the fuck you algorithm
 
 Update: Gave it some thought today... so the distance between co and co2 (see psieve()) should be 2x the root. The root and coefficients are calculated in seperate moduli... (modulus and marked_mod in psieve())... see we got leverage there. I'll go for a run and continue tomorrow. 
+
+Update: Starting making improvements.. it's quite complicated.. main idea is kind of in the code, but I need to improve it still.
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
