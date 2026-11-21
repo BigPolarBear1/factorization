@@ -19,6 +19,8 @@ Update: Gave it some thought today... so the distance between co and co2 (see ps
 
 Update: Started making improvements.. it's quite complicated.. main idea is kind of in the code, but I need to improve it still.
 
+Update: Low mood today, didn't get much done. I did have a quick look at the algorithm so far, what I need to do next is this: In calculate_modulus_root(), so mod_prime, mod_exp and co should be found through SIQS style sieving. Just find a small linear coefficient whose discriminant yields a small b-smooth with many of the same primes.. then use that prime to set mod_prime and mod_exp ... when we then hit calculate_modulus_root(), now the roots there will be singular and we don't have to deal with having two valid residues. And then I can properly do what I'm trying to do now.. and also garantuee that any root is also 0 mod mod_prime**mod_exp. I'll do this tomorrow.. 
+
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size 1</br>
