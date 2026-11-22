@@ -1,6 +1,6 @@
 I'm broke, to support me: http://ko-fi.com/sandboxescaper
 
-In Europe you can be gay, queer, transgender, or whatever. This is the free world. If you don't like it, move to some shithole country like Russia, Turkey or Saudi Arabia instead. Losers.
+In Europe you can be gay, queer, transgender, or whatever. This is the free world. If you don't like it, move to some shithole country like Russia, Turkey or Saudi Arabia instead (or basically any muslim or african country because they all jail gay people, should say the truth, even if it offends people. If you arrest people like me for being themself, then fuck you, you're a fucking shithole country that hates freedom.) 
 
 Note: This project is pro-lgbtq, so fck off haters.
 
