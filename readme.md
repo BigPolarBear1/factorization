@@ -1,5 +1,7 @@
 I'm broke, to support me: http://ko-fi.com/sandboxescaper
 
+In Europe you can be gay, queer, transgender, or whatever. This is the free world. If you don't like it, move to some shithole country like Russia, Turkey or Saudi Arabia instead. Losers.
+
 Note: This project is pro-lgbtq, so fck off haters.
 
 #### References (re-used many of the core number theoretical functions from these PoCs to fit my own algorithm): 
