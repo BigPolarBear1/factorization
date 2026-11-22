@@ -15,7 +15,7 @@ To run: python3 run_qs.py -keysize 35 -base 5000 -debug 0 -lin_size 10 -quad_siz
 
 Pronounced the fuck you algorithm
 
-Update: Changed to using singular roots for mod_prime**mod_exp. That works better because for b^2-4Nk = y^2 we only now need to find b in Z, everything else, including k, can be modulo reduced and we never need to reconstruct it to Z. So that's now and that works now. Whats missing is psieve style bitsieving, because now we iterate every possible residue in sbase and only check if fdist is smaller then some bound. Which is a really bad way to do it.. and with psieve style bitsieving we can also use more primes in the factor base (sbase)... so we can actually do filtering. I'll start implementing this tomorrow... so close now. 100% will be an improvement over psieve, how much of an improvement.. well.. we're about to found out now. At the threshold. Ready to cross it.
+Update: Changed to using singular roots for mod_prime**mod_exp. That works better because for b^2-4Nk = y^2 we only now need to find b in Z, everything else, including k, can be modulo reduced and we never need to reconstruct it to Z. So that's new and that works now. Whats missing is psieve style bitsieving, because now we iterate every possible residue in sbase and only check if fdist is smaller then some bound. Which is a really bad way to do it.. and with psieve style bitsieving we can also use more primes in the factor base (sbase)... so we can actually do filtering. I'll start implementing this tomorrow... so close now. 100% will be an improvement over psieve, how much of an improvement.. well.. we're about to find out now. At the threshold. Ready to cross it.
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
