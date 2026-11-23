@@ -25,7 +25,7 @@ So thing is this, lets say we have a polynomial that solves for 0 in Z:
 
 But that k value (899) can be modulo reduced modulo 729, since the discriminant 1832^2+4\*4387\*899 divides by 729. Which gives us the polynomial: 
 
-(41\*31)^2+14954\*(41\*31)-4387\*170 = 19876185
+(41\*31)^2+14954\*(41\*31)-4387\*170 = 19876185 (note: I use another linear coefficient here, i.e 14954.. as long as its the same mod 729 as 1832... which this one is)
 
 So this root will also have a factor of N. But the polynomial value is only 0 modulo some primes (i.e 5,7).
 However if we where to calculate the root modulo 729\*5\*7 then we would succesfully factor N after taking the gcd.
