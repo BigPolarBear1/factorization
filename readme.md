@@ -17,6 +17,21 @@ Pronounced the fuck you algorithm
 
 Update: A little closer. The thing In noticed is that if k_test is a valid residue modulo the modulus but not in Z, then we can still get the correct root residues.. but when inspecting residues in primes outside the modulus the coefficient will keep growing.. so ideally we shouldn't consider the entire factor base in that case.. maybe just find a bunch of primes that bump up the coefficient inside an interval, and calculate the root using only those primes (and the original root calculated inside the modulus)... anyway, time to go for a run... i'll implement a sieve tomorrow.. until then there isn't really much filtering yet... but I suspect one the interval works properly it will start to take off for real.
 
+Update:
+
+So thing is this, lets say we have a polynomial that solves for 0 in Z:
+
+(41\*31)^2+1832\*(41\*31)-4387\*899 = 0
+
+But that k value (899) can be modulo reduced modulo 729, since the discriminant 1832^2+4\*4387\*899 divides by 729. Which gives us the polynomial: 
+
+(41\*31)^2+14954\*(41\*31)-4387\*170 = 19876185
+
+So this root will also have a factor of N. But the polynomial value is only 0 modulo some primes (i.e 5,7).
+However if we where to calculate the root modulo 729\*5\*7 then we would succesfully factor N after taking the gcd.
+So that gives me a clue as to how this can be solved now. But time for that tomorrow...
+
+
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size 1</br>
