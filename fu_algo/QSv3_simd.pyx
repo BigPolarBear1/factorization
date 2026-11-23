@@ -168,7 +168,7 @@ def gcd(a,b): # Euclid's algorithm ##
         return gcd(b,a)
 
 def launch(n,primeslist,primeslist2):
-    sbase=copy.deepcopy(primeslist[0:4])
+    sbase=copy.deepcopy(primeslist[0:3])
   #  print("sbase: "+str(sbase)+" primeslist: "+str(primeslist))
     print("[i]Building psieve Residue Map (to do: some duplication here from merging two algos, fix later)")
     resmaps,resmaps2=build_residues(sbase,n)
@@ -453,7 +453,7 @@ def psieve(n,resmaps,resmaps2,sbase):
 
     print("modulus: "+str(modulus))
     k_test=1
-    while k_test <10_000:
+    while k_test <100_000:
         if k_test%mod_prime==0:
             k_test+=1
             continue
@@ -481,7 +481,7 @@ def psieve(n,resmaps,resmaps2,sbase):
                 marked_mod*=resmaps[i][k_test%prime][0][0]**resmaps[i][k_test%prime][0][1]
                 i+=1
             co_ind=0
-            while co_ind < 100: ###This needs to be turned into an interval now. If k_test is a residue solution in modulus but not in Z, then we need to use a subset of the factor base.. let me think how to sieve it.
+            while co_ind < 30: ###This needs to be turned into an interval now. If k_test is a residue solution in modulus but not in Z, then we need to use a subset of the factor base.. let me think how to sieve it.
                 ###To do: Maybe a 2d sieve for coefficients in one dimension and dist (calculated with the roots) in the other. 
                 co=cotemp+modulus*co_ind
                 interval=array.array("i",[1]*1000)
@@ -519,6 +519,7 @@ def psieve(n,resmaps,resmaps2,sbase):
                                             rres[-1].append(dis)
                             j+=1
                         i+=2
+                  #  print(str(rres)+" "+str(co))
                     dist=get_partials(marked_mod,rres)
                     fdist=0
                     denum=[]
@@ -535,15 +536,17 @@ def psieve(n,resmaps,resmaps2,sbase):
                             l+=denum[i][ind]
                             i+=1
                         l%=marked_mod   
+                        poly=[1,co,-n*k_test]
                        # print("l: "+str(l))
-                        if l < 1000:
-                            r=fr+modulus*l
+                        r=fr+modulus*l
+                        if l < 50 and evaluate(poly,r)%modulus == 0:##To do: This evaluate.. how to make sure this always passes? Fix soon..
+                        #    print("checking r: "+str(r))
                             gcdtest=math.gcd(r,n)      
                             gcdtested+=1
                             gcdtested_global+=1  
                             if gcdtest != n and gcdtest != 1:# and:# r == 214:# not in debug_seen:
-                                print("**Found with psieve, factors of "+str(n)+" are: "+str(gcdtest)+" and "+str(n//gcdtest)+" gcdtested: "+str(gcdtested)+" gcdtested_global: "+str(gcdtested_global)+" root: "+str(r)+" k: "+str(k_test)+" marked_mod: "+str(marked_mod)+" fmodrl: "+str(fmodrl)+" marked: "+str(marked)+" i: "+str(l))
-
+                                print("**Found with psieve, factors of "+str(n)+" are: "+str(gcdtest)+" and "+str(n//gcdtest)+" gcdtested: "+str(gcdtested)+" gcdtested_global: "+str(gcdtested_global)+" root: "+str(r)+" k: "+str(k_test)+" marked_mod: "+str(marked_mod)+" fmodrl: "+str(fmodrl)+" marked: "+str(marked)+" i: "+str(l)+" co: "+str(co))
+                                
                                 sys.exit()
      
                 co_ind+=1
