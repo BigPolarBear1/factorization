@@ -31,6 +31,9 @@ So this root will also have a factor of N. But the polynomial value is only 0 mo
 However if we where to calculate the root modulo 729\*5\*7 then we would succesfully factor N after taking the gcd.
 So that gives me a clue as to how this can be solved now. But time for that tomorrow...
 
+Update: Been investigating this deeper. So if the polynomial value is 19876185 (see above example) then this boils down to finding an integer solution to 19876185 = 4387\*729\*x+1271\*729\*y if the integer solution exists, then this polynomial value must also have a factor of N. This is however kind of a chicken and egg problem... however.. I do know from exactly a year ago, how to add an offset to that constant 4387 in my polynomials... AND THEN... the problem becomes much easier to solve. Let me do some digging how exactly I did those things last year.. was around christmas.. should be easy to find those files again. Almost there.. pfft. 
+
+
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
