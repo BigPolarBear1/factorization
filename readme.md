@@ -19,10 +19,6 @@ Update: After recent furthering of my understanding, I'm rewriting the algorithm
 
 The current version only expands on exponent up so its not working on big keys yet.. I'll continue tomorrow.... wtf man. Coming for RSA now. Go to hell shit world. FUck you.
 
-Update: I got it! Its not offsets amd changing the constant. Its all right there. If a polynomial value can not be represented by this diophantine linear equation.. then we must keep adding the modulus until it can, because the residues will  be correctely modulo the modulus by setting it up like the uploaded PoC does. That concludes my work.. now I need to wait until the power goes back up in the neighbourhood... a few nore hours. bleh. Sucks and unfortunate timing. 
-
-I guess people have a few more hours until I destroy them.  Fyi, I told the FBI i was working on factorization in january of 2024 before it was public knowledge. So good luck trying to smear my reputation because I was given no other choices. Dumbfucks. Also makes me wonder if all the misfortune that happened to people around me in the last couple of years was just an unfortunate series of events or malice. If I ever find out that what happened to my father was malice, Im going to kill someone. I am literally going to kill someone if that was the case.
-
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size 1</br>
