@@ -33,6 +33,8 @@ So that gives me a clue as to how this can be solved now. But time for that tomo
 
 Update: Been investigating this deeper. So if the polynomial value is 19876185 (see above example) then this boils down to finding an integer solution to 19876185 = 4387\*729\*x+1271\*729\*y if the integer solution exists, then this polynomial value must also have a factor of N. This is however kind of a chicken and egg problem... however.. I do know from exactly a year ago, how to add an offset to that constant 4387 in my polynomials... AND THEN... the problem becomes much easier to solve. Let me do some digging how exactly I did those things last year.. was around christmas.. should be easy to find those files again. Almost there.. pfft. 
 
+Update: I got it! Its not offsets amd changing the constant. Its all right there. If a polynomial value can not be represented by this diophantine linear equation.. then we must keep adding the modulus until it can, because the residues will  be correctely modulo the modulus by setting it up like the uploaded PoC does. That concludes my work.. now I need to wait until the power goes back up in the neighbourhood... a few nore hours. bleh. Sucks and unfortunate timing. 
+
 
 
 #### To run from folder "psieve":</br>
