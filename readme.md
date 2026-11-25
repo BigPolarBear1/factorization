@@ -15,9 +15,9 @@ To run: python3 run_qs.py -keysize 18 -base 5000 -debug 0 -lin_size 10 -quad_siz
 
 Pronounced the fuck you algorithm
 
-Update: After recent furthering of my understanding, I'm rewriting the algorithm. Its late so just uploading my work for today. Actually, we can have a perfect filter within a finite field and build up a solution exponent by exponent... AND the ONLY condition is that the coefficient is corrent in Z. Everything else, the root, k_test it can all be modulo reduced.. and we can build up both of them exponent by exponent..... and it works.... it fucking works... what the hell.
+Update: After recent furthering of my understanding, I'm rewriting the algorithm. Its late so just uploading my work for today. Actually, we can have a perfect filter within a finite field and can build up a solution exponent by exponent... AND the ONLY condition is that the coefficient is correct in Z. Everything else, the root, k_test (see psieve()) it can all be modulo reduced inside the finite field.. and we can build up both of them exponent by exponent..... and it works.... it fucking works... what the hell.
 
-The current version only expands on exponent up so its not working on big keys yet.. I'll continue tomorrow.... wtf man. Coming for RSA now. Go to hell shit world. FUck you.
+The current version only expands one exponent up so its not working on big keys yet.. I'll continue tomorrow.... wtf man. Coming for RSA now. Go to hell shit world. FUck you.
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
