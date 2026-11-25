@@ -11,27 +11,13 @@ I'll be doing a rewrite of the paper in the coming weeks as my work is nearing c
 
 #### To run from folder "fu_algo":</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 35 -base 5000 -debug 0 -lin_size 10 -quad_size 1
+To run: python3 run_qs.py -keysize 18 -base 5000 -debug 0 -lin_size 10 -quad_size 1
 
 Pronounced the fuck you algorithm
 
-Update: A little closer. The thing In noticed is that if k_test is a valid residue modulo the modulus but not in Z, then we can still get the correct root residues.. but when inspecting residues in primes outside the modulus the coefficient will keep growing.. so ideally we shouldn't consider the entire factor base in that case.. maybe just find a bunch of primes that bump up the coefficient inside an interval, and calculate the root using only those primes (and the original root calculated inside the modulus)... anyway, time to go for a run... i'll implement a sieve tomorrow.. until then there isn't really much filtering yet... but I suspect one the interval works properly it will start to take off for real.
+Update: After recent furthering of my understanding, I'm rewriting the algorithm. Its late so just uploading my work for today. Actually, we can have a perfect filter within a finite field and build up a solution exponent by exponent... AND the ONLY condition is that the coefficient is corrent in Z. Everything else, the root, k_test it can all be modulo reduced.. and we can build up both of them exponent by exponent..... and it works.... it fucking works... what the hell.
 
-Update:
-
-So thing is this, lets say we have a polynomial that solves for 0 in Z:
-
-(41\*31)^2+1832\*(41\*31)-4387\*899 = 0
-
-But that k value (899) can be modulo reduced modulo 729, since the discriminant 1832^2+4\*4387\*899 divides by 729. Which gives us the polynomial: 
-
-(41\*31)^2+14954\*(41\*31)-4387\*170 = 19876185 (note: I use another linear coefficient here, i.e 14954.. as long as its the same mod 729 as 1832... which this one is)
-
-So this root will also have a factor of N. But the polynomial value is only 0 modulo some primes (i.e 5,7).
-However if we where to calculate the root modulo 729\*5\*7 then we would succesfully factor N after taking the gcd.
-So that gives me a clue as to how this can be solved now. But time for that tomorrow...
-
-Update: Been investigating this deeper. So if the polynomial value is 19876185 (see above example) then this boils down to finding an integer solution to 19876185 = 4387\*729\*x+1271\*729\*y if the integer solution exists, then this polynomial value must also have a factor of N. This is however kind of a chicken and egg problem... however.. I do know from exactly a year ago, how to add an offset to that constant 4387 in my polynomials... AND THEN... the problem becomes much easier to solve. Let me do some digging how exactly I did those things last year.. was around christmas.. should be easy to find those files again. Almost there.. pfft. 
+The current version only expands on exponent up so its not working on big keys yet.. I'll continue tomorrow.... wtf man. Coming for RSA now. Go to hell shit world. FUck you.
 
 
 
