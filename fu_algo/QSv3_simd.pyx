@@ -168,7 +168,7 @@ def gcd(a,b): # Euclid's algorithm ##
         return gcd(b,a)
 
 def launch(n,primeslist,primeslist2):
-    sbase=copy.deepcopy(primeslist[0:3])
+    sbase=copy.deepcopy(primeslist[0:8])
   #  print("sbase: "+str(sbase)+" primeslist: "+str(primeslist))
     print("[i]Building psieve Residue Map (to do: some duplication here from merging two algos, fix later)")
     resmaps,resmaps2=build_residues(sbase,n)
@@ -444,7 +444,7 @@ def psieve(n,resmaps,resmaps2,sbase):
     fb_map = {val: i for i, val in enumerate(sbase)}
     gcdtested_global=0
     debug_seen=[]
-    mod_exp=4
+    mod_exp=3
     mod_prime=3
     modulus=mod_prime**mod_exp#*3*3*3*3*3#*3#*3#*3#*3*3*3*3
 
@@ -471,7 +471,10 @@ def psieve(n,resmaps,resmaps2,sbase):
                 if co%2!=0:
                     i+=1
                     continue
+
                 step_dist=((co//2)+r1)//modulus
+                #if co == 1832:
+                #    print("hit 22402: "+str(step_dist))
                 poly1=[1,co,-n*k_test]
                 pval=evaluate(poly1,r1)             
                 
@@ -483,26 +486,47 @@ def psieve(n,resmaps,resmaps2,sbase):
                     while h < modulus:
 
                         if tpval2%modulus**2==0:
-                            #if co == 1832:
-                              #  print("*tpval2: "+str(tpval2)+" tpval2%modulus"+str(tpval2%modulus**2))
+                           # if co == 22402:
+                           #     print("*tpval2: "+str(tpval2)+" tpval2%modulus"+str(tpval2%modulus**2)+"abs((ttpval2-n*h)-step_dist**2): "+str(abs((ttpval2-n*h)-step_dist**2)))
                             ttpval2=tpval2//modulus**2
-                            if math.log(abs((ttpval2-n*h)-step_dist**2),3)%1 ==0:        
-                                print("found one: "+str(pval)+" tpval2: "+str(tpval2)+" step_dist: "+str(step_dist)+" co: "+str(co)+" poly1: "+str(poly1)+" root: "+str(r1)+" r1+(step_dist*2+1)*modulus: "+str(r1+(step_dist*2+1)*modulus)+" h: "+str(h))
+                            #if math.log(abs((ttpval2-n*h)-step_dist**2),3)%1 ==0:
+                           # if 1:#math.log(abs((ttpval2-n*h)-step_dist**2),3)%1 ==0:
+                            if abs((ttpval2-n*h)-step_dist**2)%(mod_prime**mod_exp) == 0:# or math.log(abs((ttpval2-n*h)-step_dist**2),3)%1 ==0:
+                            #if math.log(abs((ttpval2-n*h)-step_dist**2),3)%1 ==0: #abs((ttpval2-n*h)-step_dist**2)%(mod_prime**8) == 0:#math.log(abs((ttpval2-n*h)-step_dist**2),3)%1 ==0:        
+                                #print("found one: "+str(pval)+" tpval2: "+str(tpval2)+" step_dist: "+str(step_dist)+" co: "+str(co)+" poly1: "+str(poly1)+" root: "+str(r1)+" r1+(step_dist*2+1)*modulus: "+str(r1+(step_dist*2+1)*modulus)+" h: "+str(h))
                                 u=0
                                 while u < 1000:   ###To do: Can be trivially sieved
                                     new_k=(k_test+j*modulus)+(modulus**2)*u
                                    # poly2=[1,co,-n*new_k]
+                                    fail=0
                                     for fprime in sbase:
-                                        if fprime !=mod_prime:
+                                        if fprime != mod_prime:
                                             rr=find_roots_poly([1,co,-n*new_k],fprime)
+                                            hit=0
                                             for rr2 in rr:
                                                 rr2=lift_root2([1,co,-n*new_k],rr2,fprime,10)
-                                              #  print(str(new_k)+" rr2: "+str(rr2)+" poly: "+str([1,co,-n*new_k]))
-                                                gcdtest=math.gcd(rr2,n)
-                                                if gcdtest !=1 and gcdtest !=n:
-                                                    print("Factors of "+str(n)+" are: "+str(gcdtest)+" and "+str(n//gcdtest))
-                                                    sys.exit()
-                                            break
+                                                if rr2%modulus == r1:
+                                                    hit=1
+                                            if hit==0:
+                                                fail=1
+                                                    #print(str(new_k)+" rr2: "+str(rr2)+" poly: "+str([1,co,-n*new_k])+" u: "+str(u)+" rr2: "+str(rr2)+" rr: "+str(rr)+" r1: "+str(r1))
+                                    
+                                    if fail == 0:
+                                        prime=sbase[-1]
+                                        rr=find_roots_poly([1,co,-n*new_k],fprime)
+                                                                       
+                                        for rr2 in rr:
+                                            rr2=lift_root2([1,co,-n*new_k],rr2,fprime,10)
+                                            gcdtest=math.gcd(rr2,n)
+                                            gcdtested_global+=1
+                                            fpval=evaluate([1,co,-n*new_k],rr2)
+                                            print("gcdtested_global: "+str(gcdtested_global)+" fpval: "+str(fpval)+" rr2: "+str(rr2))
+                                            disc=co**2+4*n*new_k
+                                            fpval=evaluate([1,co,-n*new_k],rr2)
+                                            if gcdtest !=1 and gcdtest !=n:
+                                                print("Factors of "+str(n)+" are: "+str(gcdtest)+" and "+str(n//gcdtest)+" new_k: "+str(new_k)+" disc: "+str(disc)+" u: "+str(u)+" b: "+str(co)+" gcdtested_global: "+str(gcdtested_global)+" fpval: "+str(fpval))
+                                                sys.exit()
+                                            #break
                                     u+=1
                         h+=1               
                     j+=1

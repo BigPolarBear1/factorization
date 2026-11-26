@@ -11,13 +11,15 @@ I'll be doing a rewrite of the paper in the coming weeks as my work is nearing c
 
 #### To run from folder "fu_algo":</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 18 -base 5000 -debug 0 -lin_size 10 -quad_size 1
+To run: python3 run_qs.py -keysize 20 -base 5000 -debug 0 -lin_size 10 -quad_size 1
 
 Pronounced the fuck you algorithm
 
 Update: After recent furthering of my understanding, I'm rewriting the algorithm. Its late so just uploading my work for today. Actually, we can have a perfect filter within a finite field and can build up a solution exponent by exponent... AND the ONLY condition is that the coefficient is correct in Z. Everything else, the root, k_test (see psieve()) it can all be modulo reduced inside the finite field.. and we can build up both of them exponent by exponent..... and it works.... it fucking works... what the hell.
 
 The current version only expands one exponent up so its not working on big keys yet.. I'll continue tomorrow.... wtf man. Coming for RSA now. Go to hell shit world. FUck you.
+
+Update: Digging deeper into what I found.. so basically we inspect polynomial values and if atleast the coefficient is correct in Z, then figuring out how much we need to add the the modulus and k_test is trivial. But I need to generalize all of this a bit more... its still very buggy and inefficient. More in the right direction then what I was doing a week ago though.. really zero-ing in on the polynomial values of the quadratics representing the discriminants.. and using the fact that polynomial values can also be representeds as a linear diophantine equation. Which is basically what I'm exploiting in this new code.. but much of it can likely be simplified enormously... which is what I'll focus on next.... in addition, one can use an iterative approach and keep growing the modulus like this I suspect. Let me see... very close now... 
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
