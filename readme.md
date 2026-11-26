@@ -11,7 +11,7 @@ I'll be doing a rewrite of the paper in the coming weeks as my work is nearing c
 
 #### To run from folder "fu_algo":</br>
 To build: python3 setup.py build_ext --inplace</br>
-To run: python3 run_qs.py -keysize 20 -base 5000 -debug 0 -lin_size 10 -quad_size 1
+To run: python3 run_qs.py -keysize 30 -base 5000 -debug 0 -lin_size 10 -quad_size 1
 
 Pronounced the fuck you algorithm
 
@@ -19,12 +19,7 @@ Update: After recent furthering of my understanding, I'm rewriting the algorithm
 
 The current version only expands one exponent up so its not working on big keys yet.. I'll continue tomorrow.... wtf man. Coming for RSA now. Go to hell shit world. FUck you.
 
-Update: Digging deeper into what I found.. so basically we inspect polynomial values and if atleast the coefficient is correct in Z, then figuring out how much we need to add the modulus to the root and k_test is trivial. But I need to generalize all of this a bit more... its still very buggy and inefficient. More in the right direction then what I was doing a week ago though.. really zero-ing in on the polynomial values of the quadratics representing the discriminants.. and using the fact that polynomial values can also be represented as a linear diophantine equation. Which is basically what I'm exploiting in this new code.. but much of it can likely be simplified enormously... which is what I'll focus on next.... in addition, one can use an iterative approach and keep growing the modulus like this I suspect. Let me see... very close now... 
-
-Update: Replaced a bunch of loops with linear congruences. The biggest to do item is now getting rid of this loop at line 479:                         
-while u < 1000:   ###To do: Need to get rid of this loop next..
-
-Let me think... in addition, at this line : if abs((tpval2-n\*h)-step_dist\*\*2)%(mod_prime\*\*mod_exp) == 0 the bigger the exponent this divides by... the better our filter on new_k... but I havnt implemented that yet. I should also look at divisors that are not fprime.. give me a few more days to finish this now. Fcking stressed. Not that I care about the consequences anymore. For fcking years I warned and told people I was working on this. Fcking fools.        
+Update: Almost there. Let me keep digging. 
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>

@@ -168,7 +168,7 @@ def gcd(a,b): # Euclid's algorithm ##
         return gcd(b,a)
 
 def launch(n,primeslist,primeslist2):
-    sbase=copy.deepcopy(primeslist[0:8])
+    sbase=copy.deepcopy(primeslist[0:15])
   #  print("sbase: "+str(sbase)+" primeslist: "+str(primeslist))
     print("[i]Building psieve Residue Map (to do: some duplication here from merging two algos, fix later)")
     resmaps,resmaps2=build_residues(sbase,n)
@@ -442,7 +442,7 @@ def psieve(n,resmaps,resmaps2,sbase):
     fb_map = {val: i for i, val in enumerate(sbase)}
     gcdtested_global=0
     debug_seen=[]
-    mod_exp=6
+    mod_exp=3
     mod_prime=3
     modulus=mod_prime**mod_exp#*3*3*3*3*3#*3#*3#*3#*3*3*3*3
     print("modulus: "+str(modulus))
@@ -456,13 +456,16 @@ def psieve(n,resmaps,resmaps2,sbase):
         for r1 in roots:
             r1=lift_root2([1,0,n*k_test],r1,mod_prime,mod_exp)
             disc=r1**2+n*k_test
+            
             if disc%(modulus)!=0:
                 print("fatal")
 
             co_temp=(-r1*2)%(modulus)
             i=0
-            while i < 1000: 
+            while i < 10_000: 
                 co=co_temp+modulus*i
+                disc2=co**2+4*n*k_test
+             #   print("r1: "+str(r1)+" disc: "+str(disc)+" disc2: "+str(disc2))
                 if co%2!=0:
                     i+=1
                     continue
@@ -471,30 +474,26 @@ def psieve(n,resmaps,resmaps2,sbase):
                 pval=evaluate(poly1,r1)             
                 j=solve_lin_con(n*modulus,pval,modulus**2)
                 tpval2=pval-n*j*modulus
-                if tpval2%modulus**2==0:
+                if tpval2%modulus==0:
                     tpval2//=modulus**2
                     h=solve_lin_con(n,-step_dist**2+tpval2,modulus)
-                    if abs((tpval2-n*h)-step_dist**2)%(mod_prime**mod_exp) == 0:# or math.log(abs((ttpval2-n*h)-step_dist**2),3)%1 ==0:
+                    if abs((tpval2-n*h)-step_dist**2)%(mod_prime**(mod_exp)) == 0:# or math.log(abs((ttpval2-n*h)-step_dist**2),3)%1 ==0:
+                        new_modulus=mod_prime**(mod_exp+1)
                         u=0
-                        while u < 1000:   ###To do: Need to get rid of this loop next..
+                        while u < 1:   ###To do: Need to get rid of this loop next..
                             new_k=(k_test+j*modulus)+(modulus**2)*u
                             fail=0
-                            for fprime in sbase:
+                            ind=0
+                            while ind < len(sbase):
+                                fprime=sbase[ind]
+                            #for fprime in sbase:
                                 if fprime != mod_prime:
-                                    rr=find_roots_poly([1,co,-n*new_k],fprime)
-                                    hit=0
-                                    for rr2 in rr:
-                                        rr2=lift_root2([1,co,-n*new_k],rr2,fprime,10)
+                                    colist=resmaps2[ind][new_k%fprime][1]
+                                    if co%fprime not in colist:
+                                        fail = 1
+                                        break
 
-                                        if rr2%modulus == r1:
-                                            #if fprime == 5:
-                                            #    disc=co**2+4*n*new_k
-                                            #    fpval=evaluate([1,co,-n*new_k],rr2)
-                                            
-                                            #    print("fpval: "+str(fpval)+" rr2: "+str(rr2)+" r1: "+str(r1)+" poly: "+str([1,co,-n*new_k])+" u: "+str(u))
-                                            hit=1
-                                    if hit==0:
-                                        fail=1
+                                ind+=1
                                     
                             if fail == 0:
                                 prime=sbase[-1]
