@@ -442,13 +442,13 @@ def psieve(n,resmaps,resmaps2,sbase):
     fb_map = {val: i for i, val in enumerate(sbase)}
     gcdtested_global=0
     debug_seen=[]
-    mod_exp=3
+    mod_exp=6
     mod_prime=3
     modulus=mod_prime**mod_exp#*3*3*3*3*3#*3#*3#*3#*3*3*3*3
     print("modulus: "+str(modulus))
     k_test=1
     while k_test <modulus:
-        print("trying k_test: "+str(k_test))
+       # print("trying k_test: "+str(k_test))
         if k_test%mod_prime==0:
             k_test+=1
             continue
@@ -462,7 +462,7 @@ def psieve(n,resmaps,resmaps2,sbase):
 
             co_temp=(-r1*2)%(modulus)
             i=0
-            while i < 10_000: 
+            while i < 100_000: 
                 co=co_temp+modulus*i
                 disc2=co**2+4*n*k_test
              #   print("r1: "+str(r1)+" disc: "+str(disc)+" disc2: "+str(disc2))
@@ -503,7 +503,7 @@ def psieve(n,resmaps,resmaps2,sbase):
                                     gcdtest=math.gcd(rr2,n)
                                     gcdtested_global+=1
                                     fpval=evaluate([1,co,-n*new_k],rr2)
-                                    print("gcdtested_global: "+str(gcdtested_global)+" fpval: "+str(fpval)+" rr2: "+str(rr2)+" (tpval2-n*h)-step_dist**2: "+str((tpval2-n*h)-step_dist**2))
+                                   # print("gcdtested_global: "+str(gcdtested_global)+" fpval: "+str(fpval)+" rr2: "+str(rr2)+" (tpval2-n*h)-step_dist**2: "+str((tpval2-n*h)-step_dist**2))
                                     disc=co**2+4*n*new_k
                                     fpval=evaluate([1,co,-n*new_k],rr2)
                                     if gcdtest !=1 and gcdtest !=n:
