@@ -442,13 +442,13 @@ def psieve(n,resmaps,resmaps2,sbase):
     fb_map = {val: i for i, val in enumerate(sbase)}
     gcdtested_global=0
     debug_seen=[]
-    mod_exp=6
+    mod_exp=4
     mod_prime=3
     modulus=mod_prime**mod_exp#*3*3*3*3*3#*3#*3#*3#*3*3*3*3
-    print("modulus: "+str(modulus))
+    print("modulus: "+str(modulus)+" note: increase modulus if it fails")
     k_test=1
     while k_test <modulus:
-       # print("trying k_test: "+str(k_test))
+        print("trying k_test: "+str(k_test)+" / "+str(modulus))
         if k_test%mod_prime==0:
             k_test+=1
             continue
@@ -480,7 +480,7 @@ def psieve(n,resmaps,resmaps2,sbase):
                     if abs((tpval2-n*h)-step_dist**2)%(mod_prime**(mod_exp)) == 0:# or math.log(abs((ttpval2-n*h)-step_dist**2),3)%1 ==0:
                         new_modulus=mod_prime**(mod_exp+1)
                         u=0
-                        while u < 1:   ###To do: Need to get rid of this loop next..
+                        while u < 50:   ###To do: Need to get rid of this loop next..
                             new_k=(k_test+j*modulus)+(modulus**2)*u
                             fail=0
                             ind=0
@@ -500,15 +500,17 @@ def psieve(n,resmaps,resmaps2,sbase):
                                 rr=find_roots_poly([1,co,-n*new_k],fprime)
                                 for rr2 in rr:
                                     rr2=lift_root2([1,co,-n*new_k],rr2,fprime,10)
-                                    gcdtest=math.gcd(rr2,n)
-                                    gcdtested_global+=1
-                                    fpval=evaluate([1,co,-n*new_k],rr2)
-                                   # print("gcdtested_global: "+str(gcdtested_global)+" fpval: "+str(fpval)+" rr2: "+str(rr2)+" (tpval2-n*h)-step_dist**2: "+str((tpval2-n*h)-step_dist**2))
-                                    disc=co**2+4*n*new_k
-                                    fpval=evaluate([1,co,-n*new_k],rr2)
-                                    if gcdtest !=1 and gcdtest !=n:
-                                        print("Factors of "+str(n)+" are: "+str(gcdtest)+" and "+str(n//gcdtest)+" new_k: "+str(new_k)+" disc: "+str(disc)+" u: "+str(u)+" b: "+str(co)+" gcdtested_global: "+str(gcdtested_global)+" fpval: "+str(fpval))
-                                        sys.exit()
+                                    if rr2%modulus == r1: ##To do: This condition is important.. should check how to force it though...
+                                        gcdtest=math.gcd(rr2,n)
+                                        gcdtested_global+=1
+                                        fpval=evaluate([1,co,-n*new_k],rr2)
+                                    #print("gcdtested_global: "+str(gcdtested_global)+" fpval: "+str(fpval)+" rr2: "+str(rr2%modulus)+" r1: "+str(r1)+" (tpval2-n*h)-step_dist**2: "+str((tpval2-n*h)-step_dist**2))
+                                        disc=co**2+4*n*new_k
+                                        fpval=evaluate([1,co,-n*new_k],rr2)
+                                        if gcdtest !=1 and gcdtest !=n:
+
+                                            print("Factors of "+str(n)+" are: "+str(gcdtest)+" and "+str(n//gcdtest)+" new_k: "+str(new_k)+" disc: "+str(disc)+" u: "+str(u)+" b: "+str(co)+" gcdtested_global: "+str(gcdtested_global)+" fpval: "+str(fpval)+" rr2%modulus: "+str(rr2%modulus)+" r1: "+str(r1)+" i: "+str(i))
+                                            sys.exit()
                             u+=1  
                 i+=1
         k_test+=1
