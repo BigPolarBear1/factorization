@@ -438,17 +438,13 @@ def calculate_modulus_root(n,prime_ind,mod_exp,sbase,k_test,resmaps,resmaps2,co,
     return modr,col
 
 def psieve(n,resmaps,resmaps2,sbase):
-    ##To do: This loop is nice but we should keep expanding this to the next exponent.... and this proves it works.
-
     dupe_map={}
     fb_map = {val: i for i, val in enumerate(sbase)}
     gcdtested_global=0
     debug_seen=[]
-    mod_exp=3
+    mod_exp=6
     mod_prime=3
     modulus=mod_prime**mod_exp#*3*3*3*3*3#*3#*3#*3#*3*3*3*3
-
-
     print("modulus: "+str(modulus))
     k_test=1
     while k_test <modulus:
@@ -464,47 +460,24 @@ def psieve(n,resmaps,resmaps2,sbase):
                 print("fatal")
 
             co_temp=(-r1*2)%(modulus)
-            
             i=0
-            while i < 1000: ##To do: To many nested loops.. much of this can also be trivially sieved
+            while i < 1000: 
                 co=co_temp+modulus*i
                 if co%2!=0:
                     i+=1
                     continue
-
                 step_dist=((co//2)+r1)//modulus
-                #if co != 1832:
-                #    i+=1
-                #    continue
                 poly1=[1,co,-n*k_test]
                 pval=evaluate(poly1,r1)             
                 j=solve_lin_con(n*modulus,pval,modulus**2)
-
-
                 tpval2=pval-n*j*modulus
                 if tpval2%modulus**2==0:
                     tpval2//=modulus**2
-
-
                     h=solve_lin_con(n,-step_dist**2+tpval2,modulus)
-
-
-                 #   if co == 1832:
-                  #      print("hit 22402: "+str(step_dist)+" poly1: "+str(poly1)+" pval: "+str(pval)+" tpval2: "+str(tpval2)+" j: "+str(j)+" abs((tpval2-n*h)-step_dist**2): "+str(abs((tpval2-n*h)-step_dist**2))+" h: "+str(h)+" hdis: "+str(hdis))   
-
-                        
-                           # if co == 22402:
-                           #     print("*tpval2: "+str(tpval2)+" tpval2%modulus"+str(tpval2%modulus**2)+"abs((ttpval2-n*h)-step_dist**2): "+str(abs((ttpval2-n*h)-step_dist**2)))
-                            
-                            #if math.log(abs((ttpval2-n*h)-step_dist**2),3)%1 ==0:
-                           # if 1:#math.log(abs((ttpval2-n*h)-step_dist**2),3)%1 ==0:
                     if abs((tpval2-n*h)-step_dist**2)%(mod_prime**mod_exp) == 0:# or math.log(abs((ttpval2-n*h)-step_dist**2),3)%1 ==0:
-                            #if math.log(abs((ttpval2-n*h)-step_dist**2),3)%1 ==0: #abs((ttpval2-n*h)-step_dist**2)%(mod_prime**8) == 0:#math.log(abs((ttpval2-n*h)-step_dist**2),3)%1 ==0:        
-                                #print("found one: "+str(pval)+" tpval2: "+str(tpval2)+" step_dist: "+str(step_dist)+" co: "+str(co)+" poly1: "+str(poly1)+" root: "+str(r1)+" r1+(step_dist*2+1)*modulus: "+str(r1+(step_dist*2+1)*modulus)+" h: "+str(h))
                         u=0
-                        while u < 1000:   ###To do: Can be trivially sieved
+                        while u < 1000:   ###To do: Need to get rid of this loop next..
                             new_k=(k_test+j*modulus)+(modulus**2)*u
-                                   # poly2=[1,co,-n*new_k]
                             fail=0
                             for fprime in sbase:
                                 if fprime != mod_prime:
@@ -512,16 +485,20 @@ def psieve(n,resmaps,resmaps2,sbase):
                                     hit=0
                                     for rr2 in rr:
                                         rr2=lift_root2([1,co,-n*new_k],rr2,fprime,10)
+
                                         if rr2%modulus == r1:
+                                            #if fprime == 5:
+                                            #    disc=co**2+4*n*new_k
+                                            #    fpval=evaluate([1,co,-n*new_k],rr2)
+                                            
+                                            #    print("fpval: "+str(fpval)+" rr2: "+str(rr2)+" r1: "+str(r1)+" poly: "+str([1,co,-n*new_k])+" u: "+str(u))
                                             hit=1
                                     if hit==0:
                                         fail=1
-                                                    #print(str(new_k)+" rr2: "+str(rr2)+" poly: "+str([1,co,-n*new_k])+" u: "+str(u)+" rr2: "+str(rr2)+" rr: "+str(rr)+" r1: "+str(r1))
                                     
                             if fail == 0:
                                 prime=sbase[-1]
                                 rr=find_roots_poly([1,co,-n*new_k],fprime)
-                                                                       
                                 for rr2 in rr:
                                     rr2=lift_root2([1,co,-n*new_k],rr2,fprime,10)
                                     gcdtest=math.gcd(rr2,n)
@@ -533,152 +510,8 @@ def psieve(n,resmaps,resmaps2,sbase):
                                     if gcdtest !=1 and gcdtest !=n:
                                         print("Factors of "+str(n)+" are: "+str(gcdtest)+" and "+str(n//gcdtest)+" new_k: "+str(new_k)+" disc: "+str(disc)+" u: "+str(u)+" b: "+str(co)+" gcdtested_global: "+str(gcdtested_global)+" fpval: "+str(fpval))
                                         sys.exit()
-                                        #break
-                            u+=1
-            
+                            u+=1  
                 i+=1
-
-
-
-
-
-
-        
-#            cotemp=(-r1*2)%(modulus)
-#            marked_mod=1
-#            clist1=[]
-#            clist2=[]
-#            i=0
-#            while i < len(sbase):
-#                prime=sbase[i]
-#                if n%prime ==0 or modulus%prime == 0:
-#                    i+=1
-#                    continue
-#                clist1.append(resmaps[i][k_test%prime][0][0]**resmaps[i][k_test%prime][0][1])
-#                clist1.append(resmaps[i][k_test%prime][1])
-#                clist2.append(resmaps2[i][k_test%prime][0][0]**resmaps2[i][k_test%prime][0][1])
-#                clist2.append(resmaps2[i][k_test%prime][1])
-#                marked_mod*=resmaps[i][k_test%prime][0][0]**resmaps[i][k_test%prime][0][1]
-#                i+=1
-#            co_ind=0
-#            while co_ind < 100_000:
-#             ###This needs to be turned into an interval now. If k_test is a residue solution in modulus but not in Z, then we need to use a subset of the factor base.. let me think how to sieve it.
-#                ###To do: Maybe a 2d sieve for coefficients in one dimension and dist (calculated with the roots) in the other. 
-#                co=cotemp+(modulus)*co_ind
-#                #roots=find_roots_poly([1,co,-n*k_test],mod_prime)
-#               # evaltest=evaluate()
-#                #der=get_derivative([1,co,-n*k_test])
-#                #exp=2
-#                #while exp < (mod_exp*2)+1:
-#                    #new_roots=[]
-#                    #u = 0
-#                    #while u < len(roots):
-#                    #    deriv=evaluate(der,roots[u])%mod_prime**exp
-#                    #    new_r=lift_root2([1,deriv,n*k_test],roots[u],mod_prime,exp)
-#                    #    if evaluate([1,co,-n*k_test],new_r)%mod_prime**exp ==0:
-#                    #        new_roots.append(new_r)
-#                    #   # print("evaltest: "+str(evaltest))
-#                    #    u+=1
-#                    #print("new_roots: "+str(new_roots)+" exp: "+str(exp)+" [1,co,-n*k_test]: "+str([1,co,-n*k_test])+" [1,-deriv,n*k_test]: "+str([1,-deriv,n*k_test]))
-#                    #roots=new_roots
-#                    #exp+=1
-#                #print("roots: "+str(roots))
-#                interval=array.array("i",[1]*1000)
-#                gcdtested=0 
-#                fmodrl=[r1,(-r1)%modulus]
-#                for fr in fmodrl:
-#                    #print("Trying fr: "+str(fr)+" co: "+str(co)+" cotemp: "+str(cotemp))
-#                    marked=0     
-#                    mmod=1                                        
-#                    rres=[]
-#                    i=0
-#                    while i < len(clist1):
-#                        prime=clist1[i]
-#                        if n%prime ==0 or modulus%prime == 0:
-#                            i+=2
-#                            continue
-#                        rres_temp=[prime,[]]
-#                       # rres.append(prime)
-#                       # rres.append([])
-#                        
-#                        colist1=clist2[i+1]
-#                        colist2=clist1[i+1]
-#                        
-#                       # all_roots=[]
-#                        j=0
-#                        while j < len(colist1):
-#                            ##TO DO: Need something better here. 
-#                            fco=colist1[j]
-#                            if fco%prime == co%prime:
-#                                fco2=colist2[j]
-#                                roots=find_roots_poly([1,fco,-n*k_test],prime)
-#                                poly2=[1,-fco2,n*k_test]
-#                                for tr in roots:
-#                                    if evaluate(poly2,tr)%prime ==0:
-#                                        #if tr ==0 or prime == 31 or prime == 29:
-#                                        #    print("prime: "+str(prime)+" root: "+str(tr)+" co: "+str(co))
-#                                        dis=solve_lin_con(modulus,tr-fr,prime)
-#                                        if dis not in rres_temp[-1]:
-#                                            rres_temp[-1].append(dis)
-#                            j+=1
-#                        if len(rres_temp[-1])>0:
-#                            rres.extend(rres_temp)
-#                            marked+=1
-#                            mmod*=prime
-#                        i+=2
-#                  #  print(str(rres)+" "+str(co))
-#                    dist=get_partials(mmod,rres)
-#                    fdist=0
-#                    denum=[]
-#                    i=0
-#                    while i < len(dist):
-#                        denum.append(dist[i+1])#+=dist[i+1][0]
-#    
-#                        i+=2
-#
-#                    
-#                    l=0
-#                    while l < 20:
-#                        mod_found=0
-#                        
-#                        ind=0
-#                        while ind < len(rres):
-#                            if l in rres[ind+1]:
-#                                mod_found+=1
-#                            ind+=2
-#                   # for idx in enumerated_product(*denum):
-#                   #     l=0
-#                   #     i=0
-#                   #     while i < len(idx):
-#                   #         ind=idx[i]
-#                   #         l+=denum[i][ind]
-#                   #         i+=1
-#                   #     l%=mmod 
-#                        if mod_found > 1:  
-#                            poly=[1,co,-n*k_test]
-#                            poly2=[1,-co,-n*k_test]
-#                            disc=co**2+4*n*k_test
-#                       # print("l: "+str(l))
-#                            r=fr+(modulus)*l
-#                            mr=(-r)%(modulus)
-#                            eval2=evaluate(poly2,mr)
-#                            if evaluate(poly,r)%(modulus) == 0:# and eval2%(modulus) == 0:##To do: This evaluate.. how to make sure this always passes? Fix soon..
-#                            #i=0
-#                            #while i < len(rres):
-#                            #    print("jacobi: "+str(rres[i])+" "+str(jacobi(rres[i],disc)))
-#                            #    i+=2
-#                                print(str(rres)+" "+str(co)+" r: "+str(r)+" val: "+str(evaluate(poly,r)//modulus)+" l: "+str(l)+" co_ind: "+str(co_ind)+" poly2: "+str(poly2)+" eval2: "+str(eval2))
-#                        #    print("checking r: "+str(r))
-#                                gcdtest=math.gcd(r,n)      
-#                                gcdtested+=1
-#                                gcdtested_global+=1  
-#                                if gcdtest != n and gcdtest != 1:# and:# r == 214:# not in debug_seen:
-#                              #  print(str(rres)+" "+str(co)+" r: "+str(r)+" val: "+str(evaluate(poly,r)//modulus)+" l: "+str(l))
-#                                    print("**Found with psieve, factors of "+str(n)+" are: "+str(gcdtest)+" and "+str(n//gcdtest)+" gcdtested: "+str(gcdtested)+" gcdtested_global: "+str(gcdtested_global)+" root: "+str(r)+" k: "+str(k_test)+" marked_mod: "+str(mmod)+" marked: "+str(marked)+" i: "+str(l)+" co: "+str(co)+" fr: "+str(fr))
-#                                
-#                                    sys.exit()
-#                        l+=1
-#                co_ind+=1
         k_test+=1
     return
 
