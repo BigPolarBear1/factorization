@@ -21,6 +21,8 @@ The current version only expands one exponent up so its not working on big keys 
 
 Update: Almost there. Let me keep digging. 
 
+Update: Its 1am right now. I was doing some further analysis, looking at different exponents. As a matter of fact, the higher we can lift a root, without the root changing.. the stronger this algorithm will become.... because it won't bump up that k_new value. Headed toward a major calamity and nobody seems to be all the wiser. I knew what I had. I knew it nearly 4 years ago and I still know it today. Just took me too damn long. Let me add this tomorrow.... good thing I'm all powerful and nobody can harm me, good to be born a polar bear.
+
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size 1</br>
