@@ -19,6 +19,8 @@ Pronounced the fuck you algorithm
 
 Update: Did some more thinking.. even without sieving, it is already fairly strong (Stronger then the psieve algorithm below was without sieving). To make this super strong, the most important thing is to force this condition "if rr2%modulus == r1:"  in psieve() and not waste cpu cycles on anything else. I've been doing some analysis and should be able to implement this tomorrow. Aside from that, once that is done, we can make it more strong by using singular roots from an existing b-smooth... because that will garantuee the existence of a solution < N...
 
+Update: Figured out how to sieve the coefficients quite trivially. Let me implement that tomorrow.. that alone could be enough to begin getting obscene speeds. I'll upload a PoC tomorrow... I also have some ideas for forcing that condition I spoke about earlier... plus in the paper I talk about how the roots will basically be a multiple of either p or q (where p*q = N) ... so dividing out the roots to get rid of that multiplier is another strategy that I must consider... but that would still assume we have atleast the correct k_new value, because those divisors are encoded into that.
+
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size 1</br>
