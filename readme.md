@@ -17,19 +17,7 @@ To run: python3 run_qs.py -keysize 50 -base 5000 -debug 0 -lin_size 10 -quad_siz
 
 Pronounced the fuck you algorithm
 
-Update: After recent furthering of my understanding, I'm rewriting the algorithm. Its late so just uploading my work for today. Actually, we can have a perfect filter within a finite field and can build up a solution exponent by exponent... AND the ONLY condition is that the coefficient is correct in Z. Everything else, the root, k_test (see psieve()) it can all be modulo reduced inside the finite field.. and we can build up both of them exponent by exponent..... and it works.... it fucking works... what the hell.
-
-The current version only expands one exponent up so its not working on big keys yet.. I'll continue tomorrow.... wtf man. Coming for RSA now. Go to hell shit world. FUck you.
-
-Update: Almost there. Let me keep digging. 
-
-Update: Its 1am right now. I was doing some further analysis, looking at different exponents. As a matter of fact, the higher we can lift a root, without the root changing.. the stronger this algorithm will become.... because it won't bump up that k_new value. Headed toward a major calamity and nobody seems to be all the wiser. I knew what I had. I knew it nearly 4 years ago and I still know it today. Just took me too damn long. Let me add this tomorrow.... good thing I'm all powerful and nobody can harm me, good to be born a polar bear.
-
-Update: Added some more updates to the code. Now lets you control minimum bounds for the finite field and maximum bounds for the root. Not entirely convinced yet that it helps, but it gives some more parameters to test with. Sieving the "while u < 10:" (in psieve()) loop is quite trivially done, but that loop should be kept small. The more important loop that needs to get sieved is the coefficient loop..."while i < 100_000:" (in psieve())... either sieved or straight up calculated modulo factor base primes.. I'll explore both.
-
-The most important condition that must be met, and the largest indicator of a root that will solve in Z is this line: "if rr2%modulus == r1:" in psieve() .... so any sieving/calculations to find the right coefficient should leveraege this condition.
-
-Update: Did some more thinking.. even without sieving, it is already fairly strong. To make this super strong, the most important thing is to force this condition "if rr2%modulus == r1:"  in psieve() and not waste cpu cycles on anything else. I've been doing some analysis and should be able to implement this tomorrow. Aside from that, once that is done, we can make it more strong by using singular roots from an existing b-smooth... because that will garantuee the existence of a solution < N...
+Update: Did some more thinking.. even without sieving, it is already fairly strong (Stronger then the psieve algorithm below was without sieving). To make this super strong, the most important thing is to force this condition "if rr2%modulus == r1:"  in psieve() and not waste cpu cycles on anything else. I've been doing some analysis and should be able to implement this tomorrow. Aside from that, once that is done, we can make it more strong by using singular roots from an existing b-smooth... because that will garantuee the existence of a solution < N...
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
