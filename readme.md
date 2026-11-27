@@ -25,6 +25,8 @@ Update: Almost there. Let me keep digging.
 
 Update: Its 1am right now. I was doing some further analysis, looking at different exponents. As a matter of fact, the higher we can lift a root, without the root changing.. the stronger this algorithm will become.... because it won't bump up that k_new value. Headed toward a major calamity and nobody seems to be all the wiser. I knew what I had. I knew it nearly 4 years ago and I still know it today. Just took me too damn long. Let me add this tomorrow.... good thing I'm all powerful and nobody can harm me, good to be born a polar bear.
 
+Update: Added some more updates to the code. Now lets you control minimum bounds for the finite field and maximum bounds for the root. Not entirely convinced yet that it helps, but it gives some more parameters to test with. Sieving the "while u < 100:" (in psieve()) loop is quite trivially done, but that loop should be kept small. The more important loop that needs to get sieved is the coefficient loop..."while i < 100_000:" (in psieve())... either sieved or straight up calculated modulo factor base primes.. I'll explore both.
+
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size 1</br>
