@@ -2,7 +2,7 @@ I'm broke, to support me: http://ko-fi.com/sandboxescaper
 
 Note: This project is pro-lgbtq, so fck off haters.
 
-Note2: I'm still looking for work. Just not in Belgium, I want nothing to do with that country. They had their chance when I returned from the US. Bunch of traitors and cowards. Will consider countries like China. Just want to get out of this Belgian nightmare: big_polar_bear1@proton.me
+Note2: I'm still looking for work. Just not in Belgium, I want nothing to do with that country. They had their chance when I returned from the US. Bunch of traitors and cowards. Will consider countries like China. Just want to get out of this Belgian nightmare: big_polar_bear1@proton.me . You want to know, why I have been unemployed for 4 years here in the west, unable to even secure a single interview? Because all these losers have always been jealous of what I'm able of, because none of them can do what I can. And they know it. And that's why they don't want to see me succeed, because it makes them feel inferior. And fuck them. Fuck them all. Go to hell losers.
 
 #### References (re-used many of the core number theoretical functions from these PoCs to fit my own algorithm): 
 https://stackoverflow.com/questions/79330304/optimizing-sieving-code-in-the-self-initializing-quadratic-sieve-for-pypy
