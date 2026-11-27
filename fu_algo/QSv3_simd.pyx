@@ -476,7 +476,7 @@ def psieve(n,resmaps,resmaps2,sbase):
 
                     co_temp=(-r1*2)%(modulus)
                     i=0
-                    while i < 100_000:  ###To do: This is the main loop we need to exploit for further gains, need some additional shortcuts here, or a way of sieving this.
+                    while i < 1_000_000:  ###To do: This is the main loop we need to exploit for further gains, need some additional shortcuts here, or a way of sieving this.
                         co=co_temp+modulus*i
                         #print("trying co: "+str(co))
                         disc2=co**2+4*n*k_test
@@ -495,7 +495,7 @@ def psieve(n,resmaps,resmaps2,sbase):
                             if abs((tpval2-n*h)-step_dist**2)%(mod_prime**(mod_exp)) == 0:# or math.log(abs((ttpval2-n*h)-step_dist**2),3)%1 ==0:
                                 new_modulus=mod_prime**(mod_exp+1)
                                 u=0
-                                while u < 100:   ###To do: Need to get rid of this loop next..
+                                while u < 10:   ###To do: Need to get rid of this loop next..
                                     new_k=(k_test+j*modulus)+(modulus**2)*u
                                     fail=0
                                     ind=0
