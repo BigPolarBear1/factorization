@@ -2,6 +2,8 @@ I'm broke, to support me: http://ko-fi.com/sandboxescaper
 
 Note: This project is pro-lgbtq, so fck off haters.
 
+Note2: I'm still looking for work. Just not in Belgium, I want nothing to do with that country. They had their chance when I returned from the US. Bunch of traitors and cowards. Will consider countries like China. Just want to get out of this Belgian nightmare: big_polar_bear1@proton.me
+
 #### References (re-used many of the core number theoretical functions from these PoCs to fit my own algorithm): 
 https://stackoverflow.com/questions/79330304/optimizing-sieving-code-in-the-self-initializing-quadratic-sieve-for-pypy
 https://github.com/basilegithub/General-number-field-sieve-Python 
