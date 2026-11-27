@@ -2,7 +2,7 @@ I'm broke, to support me: http://ko-fi.com/sandboxescaper
 
 Note: This project is pro-lgbtq, so fck off haters.
 
-Note2: I'm still looking for work. Just not in Belgium, I want nothing to do with that country. They had their chance when I returned from the US. Bunch of traitors and cowards. Will consider countries like China. Just want to get out of this Belgian nightmare: big_polar_bear1@proton.me . You want to know, why I have been unemployed for 4 years here in the west, unable to even secure a single interview? Because all these losers have always been jealous of what I'm able of, because none of them can do what I can. And they know it. And that's why they don't want to see me succeed, because it makes them feel inferior. And fuck them. Fuck them all. Go to hell losers.
+If I die, you should 100% go and complete this work because I garantuee my death was not an accident. People think I'm blind, but I know my country is just a bunch of cowards and if I die, let it be known Belgium betrayed one of their own citizens for lack of courage. The worst kind of traitor, is a government that conspires with another country against its own citizens. I see everything and I know everything. I see betrayal.
 
 #### References (re-used many of the core number theoretical functions from these PoCs to fit my own algorithm): 
 https://stackoverflow.com/questions/79330304/optimizing-sieving-code-in-the-self-initializing-quadratic-sieve-for-pypy
@@ -28,6 +28,8 @@ Update: Its 1am right now. I was doing some further analysis, looking at differe
 Update: Added some more updates to the code. Now lets you control minimum bounds for the finite field and maximum bounds for the root. Not entirely convinced yet that it helps, but it gives some more parameters to test with. Sieving the "while u < 10:" (in psieve()) loop is quite trivially done, but that loop should be kept small. The more important loop that needs to get sieved is the coefficient loop..."while i < 100_000:" (in psieve())... either sieved or straight up calculated modulo factor base primes.. I'll explore both.
 
 The most important condition that must be met, and the largest indicator of a root that will solve in Z is this line: "if rr2%modulus == r1:" in psieve() .... so any sieving/calculations to find the right coefficient should leveraege this condition.
+
+Update: Did some more thinking.. even without sieving, it is already fairly strong. To make this super strong, the most important thing is to force this condition "if rr2%modulus == r1:"  in psieve() and not waste cpu cycles on anything else. I've been doing some analysis and should be able to implement this tomorrow. 
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
