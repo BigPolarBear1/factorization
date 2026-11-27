@@ -29,7 +29,7 @@ Update: Added some more updates to the code. Now lets you control minimum bounds
 
 The most important condition that must be met, and the largest indicator of a root that will solve in Z is this line: "if rr2%modulus == r1:" in psieve() .... so any sieving/calculations to find the right coefficient should leveraege this condition.
 
-Update: Did some more thinking.. even without sieving, it is already fairly strong. To make this super strong, the most important thing is to force this condition "if rr2%modulus == r1:"  in psieve() and not waste cpu cycles on anything else. I've been doing some analysis and should be able to implement this tomorrow. 
+Update: Did some more thinking.. even without sieving, it is already fairly strong. To make this super strong, the most important thing is to force this condition "if rr2%modulus == r1:"  in psieve() and not waste cpu cycles on anything else. I've been doing some analysis and should be able to implement this tomorrow. Aside from that, once that is done, we can make it more strong by using singular roots from an existing b-smooth... because that will garantuee the existence of a solution < N...
 
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
