@@ -21,6 +21,8 @@ Update: Did some more thinking.. even without sieving, it is already fairly stro
 
 Update: Figured out how to sieve the coefficients quite trivially. Let me implement that tomorrow.. that alone could be enough to begin getting obscene speeds. I'll upload a PoC tomorrow... I also have some ideas for forcing that condition I spoke about earlier... plus in the paper I talk about how the roots will basically be a multiple of either p or q (where p*q = N) ... so dividing out the roots to get rid of that multiplier is another strategy that I must consider... but that would still assume we have atleast the correct k_new value, because those divisors are encoded into that.
 
+Update: I've added sieving, plus this can trivially be sieved in 2d (with the while u2 < 10: being the second dimension). This needs to be bitsieving, but I'll add that later. While looking at this, because now we're working with a polynomial that must solve for 0... we can actually know which part of the sieve region a solution may be... this can be changed with the modulus size or the u2 parameter.. so I need to focus on that for a moment before I add bitsieving. Still also not forcing "if rr2%modulus == r1:" or using singular roots by using the factorization of an actual b-smooth... 
+
 #### To run from folder "psieve":</br>
 To build: python3 setup.py build_ext --inplace</br>
 To run:  python3 run_qs.py -keysize 150 -base 10_000 -lin_size 10_000 -quad_size 1</br>

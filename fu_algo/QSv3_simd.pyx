@@ -441,12 +441,13 @@ def psieve(n,resmaps,resmaps2,sbase):
     dupe_map={}
     fb_map = {val: i for i, val in enumerate(sbase)}
     gcdtested_global=0
+    gcdtested_global2=0
     debug_seen=[]
 
     mod_prime=3
     #*3*3*3*3*3#*3#*3#*3#*3*3*3*3
-    bound=50
-    min_exp=2
+    bound=100
+    min_exp=3
     #print("modulus: "+str(modulus)+" note: increase modulus if it fails")
     k_test=1
     while k_test <10_000:
@@ -476,11 +477,8 @@ def psieve(n,resmaps,resmaps2,sbase):
 
                     co_temp=(-r1*2)%(modulus)
                     i=0
-                    while i < 1_000_000:  ###To do: This is the main loop we need to exploit for further gains, need some additional shortcuts here, or a way of sieving this.
-                        co=co_temp+modulus*i
-                        #print("trying co: "+str(co))
-                        disc2=co**2+4*n*k_test
-             #   print("r1: "+str(r1)+" disc: "+str(disc)+" disc2: "+str(disc2))
+                    while i < modulus and i < 500: 
+                        co=(co_temp+modulus*i)
                         if co%2!=0:
                             i+=1
                             continue
@@ -492,52 +490,89 @@ def psieve(n,resmaps,resmaps2,sbase):
                         if tpval2%modulus**2!=0:
                             print("linear congruence failed1")
                         tpval2//=modulus**2
-
-
-                            #sys.exit()
                         h=solve_lin_con(n,-step_dist**2+tpval2,modulus)
                         if abs((tpval2-n*h)-step_dist**2)%(mod_prime**(mod_exp)) != 0:
                             print("linear congruence failed2")
                             sys.exit()
-
-
-                        new_modulus=mod_prime**(mod_exp+1)
-                        u=0
-                        while u < 10:   ###To do: Need to get rid of this loop next..
-                            new_k=(k_test+j*modulus)+(modulus**2)*u
-                            fail=0
+                        u2=0
+                        while u2 < 50: #To do: this can be turned into a 2d interval
+                            interval=array.array("i",[1]*100_000) #to do: bit sieving
+                            start_k=(k_test+j*modulus)+(modulus**2)*u2 
                             ind=0
                             while ind < len(sbase):
                                 fprime=sbase[ind]
-                              #  if fprime==5:
-                                  #  debugroots=find_roots_poly([1,co,-n*new_k],fprime)
-                                  #  if len(debugroots)>0:
-                                       # print("co: "+str(co%fprime)+" debugroots: "+str(debugroots)+" u: "+str(u)+" k_test: "+str(k_test)+" co: "+str(co)+" new_k: "+str(new_k)+" r1: "+str(r1%fprime)+" start_k: "+str((k_test+j*modulus)))
-                                if fprime != mod_prime:
-                                    colist=resmaps2[ind][new_k%fprime][1]
-                                    if co%fprime not in colist:
-                                        fail = 1
-                                        break
 
+                                if fprime != mod_prime:
+                                #marked_mod*=fprime
+                                    colist=resmaps2[ind][start_k%fprime][1]
+                                    r=0
+                                    while r < fprime:
+                           #         if r%fprime == 344%fprime and i == 2:
+                            #            print("fprime: "+str(fprime)+" colist: "+str(colist)+" start_k: "+str(start_k))
+                                        if r not in colist:
+                                            dist=solve_lin_con(2*(modulus**2),r-co,fprime)
+                                            while dist < len(interval):
+                                                interval[dist]=0
+                                                dist+=fprime
+                                        r+=1
                                 ind+=1
-                                    
-                            if fail == 0:
+                       # print("interval: "+str(interval))
+                            i2=0
+                            while i2 < len(interval):
+                                if interval[i2]==0:
+                                    i2+=1
+                                    continue
+                                #print("Checking i2: "+str(i2))
+                                co2=co+((2*modulus**2))*i2
+
+
+
+
+
+                                new_k=start_k
+                                fail=0
+                                if g_debug == 1:
+                                    ind=0
+                                    while ind < len(sbase):
+                                        fprime=sbase[ind]
+
+                                        if fprime != mod_prime:
+                                      #  if fprime == 5:
+                                       #     debugroots=find_roots_poly([1,co,-n*new_k],fprime)
+                                       #     if len(debugroots)>0:
+                                    #    debug_roots.append(fprime)
+                                    #    debug_roots.append([])
+                                    #    for tr in debugroots:
+                                    #        dis=solve_lin_con(modulus,tr-r1,fprime)
+                                     #       debug_roots[-1].append(dis)
+                                            #    print("co: "+str(co%fprime)+" debugroots: "+str(debugroots)+" u: "+str(u)+" k_test: "+str(k_test)+" co: "+str(co)+" co%modulus**2: "+str(co%(modulus**2))+" new_k: "+str(new_k)+" r1: "+str(r1%fprime)+" start_k: "+str((k_test+j*modulus))+" i: "+str(i)+" i2: "+str(i2))
+
+
+                                            colist=resmaps2[ind][new_k%fprime][1]
+                                            if co2%fprime not in colist:
+                                                print("fatal error should never happen")
+                                                sys.exit()
+                                        ind+=1
+                            
                                 fprime=sbase[-1]
-                                rr=find_roots_poly([1,co,-n*new_k],fprime)
+                                rr=find_roots_poly([1,co2,-n*new_k],fprime)
+                                fexp=15
                                 for rr2 in rr:
-                                    rr2=lift_root2([1,co,-n*new_k],rr2,fprime,10)
+                                    rr2=lift_root2([1,co2,-n*new_k],rr2,fprime,fexp)
                                     if rr2%modulus == r1: ##To do: This condition is important.. should check how to force it though...
                                         gcdtest=math.gcd(rr2,n)
                                         gcdtested_global+=1
-                                        fpval=evaluate([1,co,-n*new_k],rr2)
+                                        fpval=evaluate([1,co2,-n*new_k],rr2)
                                     #print("gcdtested_global: "+str(gcdtested_global)+" fpval: "+str(fpval)+" rr2: "+str(rr2%modulus)+" r1: "+str(r1)+" (tpval2-n*h)-step_dist**2: "+str((tpval2-n*h)-step_dist**2))
-                                        disc=co**2+4*n*new_k
-                                        fpval=evaluate([1,co,-n*new_k],rr2)
+                                        disc=co2**2+4*n*new_k
+                                        #fpval=evaluate([1,co,-n*new_k],rr2)
                                         if gcdtest !=1 and gcdtest !=n:
-                                            print("Factors of "+str(n)+" are: "+str(gcdtest)+" and "+str(n//gcdtest)+" new_k: "+str(new_k)+" disc: "+str(disc)+" u: "+str(u)+" b: "+str(co)+" gcdtested_global: "+str(gcdtested_global)+" fpval: "+str(fpval)+" rr2%modulus: "+str(rr2%modulus)+" r1: "+str(r1)+" i: "+str(i))
+                                            print("Factors of "+str(n)+" are: "+str(gcdtest)+" and "+str(n//gcdtest)+" new_k: "+str(new_k)+" disc: "+str(disc)+" u2: "+str(u2)+" b: "+str(co)+" gcdtested_global: "+str(gcdtested_global)+" fpval: "+str(fpval)+" rr2%modulus: "+str(rr2)+" r1: "+str(r1)+" i: "+str(i)+" i2: "+str(i2)+" interval: "+str(interval[i2]))
                                             sys.exit()
-                            u+=1
-                          
+
+                               
+                                i2+=1
+                            u2+=1
                         i+=1
                     break
                 mod_exp+=1      
